@@ -6,23 +6,21 @@ This is a Corevia project created with Better-T-Stack CLI.
 
 This is a monorepo with the following structure:
 
-
 - **`apps/server/`** - Backend server (Fastify)
-
 
 ## Available Scripts
 
-- `npm run dev` - Start all apps in development mode
-- `npm run dev:server` - Start only the server
+- `yarn dev` - Start all apps in development mode
+- `yarn dev:server` - Start only the server
 
 ## Database Commands
 
 All database operations should be run from the server workspace:
 
-- `npm run db:push` - Push schema changes to database
-- `npm run db:studio` - Open database studio
-- `npm run db:generate` - Generate Drizzle files
-- `npm run db:migrate` - Run database migrations
+- `yarn db:push` - Push schema changes to database
+- `yarn db:studio` - Open database studio
+- `yarn db:generate` - Generate Drizzle files
+- `yarn db:migrate` - Run database migrations
 
 Database schema files are located in `apps/server/src/db/schema/`
 
@@ -34,6 +32,7 @@ Database schema files are located in `apps/server/src/db/schema/`
 ## Authentication
 
 Authentication is enabled in this project:
+
 - Server auth logic is in `apps/server/src/lib/auth.ts`
 
 ## Adding More Features
@@ -46,6 +45,7 @@ add
 ```
 
 Available addons you can add:
+
 - **Documentation**: Starlight, Fumadocs
 - **Linting**: Biome, Oxlint, Ultracite
 - **Other**: Ruler, Turborepo, PWA, Tauri, Husky
@@ -66,7 +66,6 @@ This project includes a `bts.jsonc` configuration file that stores your Better-T
 - This is a Turborepo monorepo using npm workspaces
 - Each app has its own `package.json` and dependencies
 - Run commands from the root to execute across all workspaces
-- Run workspace-specific commands with `npm run command-name`
+- Run workspace-specific commands with `yarn warkspace <workspace%name> <command-name>`
 - Turborepo handles build caching and parallel execution
-- Use `npx
-create-better-t-stack add` to add more features later
+- Use `npx create-better-t-stack add` to add more features later

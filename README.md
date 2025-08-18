@@ -18,8 +18,9 @@ This project was created with [Better-T-Stack](https://github.com/AmanVarshney01
 First, install the dependencies:
 
 ```bash
-npm install
+yarn
 ```
+
 ## Database Setup
 
 This project uses PostgreSQL with Drizzle ORM.
@@ -28,20 +29,24 @@ This project uses PostgreSQL with Drizzle ORM.
 2. Update your `apps/server/.env` file with your PostgreSQL connection details.
 
 3. Apply the schema to your database:
-```bash
-npm run db:push
-```
 
+```bash
+yarn db:migrate
+```
 
 Then, run the development server:
 
 ```bash
-npm run dev
+yarn dev
 ```
 
 The API is running at [http://localhost:3000](http://localhost:3000).
 
+API reference (Swagger/OpenAPI): the backend exposes a web UI for the API reference at /api/auth/reference — for a local dev server open:
 
+```
+http://localhost:3000/api/auth/reference
+```
 
 ## Project Structure
 
@@ -53,10 +58,10 @@ Corevia/
 
 ## Available Scripts
 
-- `npm run dev`: Start all applications in development mode
-- `npm run build`: Build all applications
-- `npm run dev:web`: Start only the web application
-- `npm run dev:server`: Start only the server
-- `npm run check-types`: Check TypeScript types across all apps
-- `npm run db:push`: Push schema changes to database
-- `npm run db:studio`: Open database studio UI
+- `yarn dev`: Start all applications in development mode
+- `yarn build`: Build all applications
+- `yarn dev:web`: Start only the web application
+- `yarn dev:server`: Start only the server
+- `yarn check-types`: Check TypeScript types across all apps
+- `yarn db:push`: Push schema changes to database
+- `yarn db:studio`: Open database studio UI
