@@ -1,0 +1,20 @@
+name: 🧾 Commit Message Lint
+
+on: [pull_request]
+
+permissions:
+  contents: read
+  pull-requests: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  commitlint:
+    name: ✅ Lint Commit Messages
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🧾 Run Commitlint
+        uses: wagoid/commitlint-github-action@v6
