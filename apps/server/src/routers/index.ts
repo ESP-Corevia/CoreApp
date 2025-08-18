@@ -1,8 +1,5 @@
-import {
-  protectedProcedure, publicProcedure,
-  router,
-} from "../lib/trpc";
-
+import { protectedProcedure, publicProcedure, router } from "../middlewares";
+import { helloWorldRouter } from "./helloWorld";
 export const appRouter = router({
   healthCheck: publicProcedure.query(() => {
     return "OK";
@@ -13,5 +10,6 @@ export const appRouter = router({
       user: ctx.session.user,
     };
   }),
+  helloWorld: helloWorldRouter,
 });
 export type AppRouter = typeof appRouter;
