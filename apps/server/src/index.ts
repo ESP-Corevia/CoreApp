@@ -15,6 +15,85 @@ import {
 import ScalarApiReference from "@scalar/fastify-api-reference";
 import { auth } from "./lib/auth";
 import pkg from "../package.json" assert { type: "json" };
+
+function mergeOpenApiDocs(a: any, b: any) {
+  const merged = {
+    openapi: a.openapi || b.openapi || "3.0.3",
+    info: {
+      title: "Corevia API",
+      version: pkg.version,
+      description: "Schéma OpenAPI fusionné (tRPC + Better Auth).",
+    },
+    servers: [
+      ...new Map(
+        [...(a.servers ?? []), ...(b.servers ?? [])].map((s) => [
+          JSON.stringify(s),
+          s,
+        ])
+      ).values(),
+    ],
+    tags: [
+      ...new Map(
+        [...(a.tags ?? []), ...(b.tags ?? [])].map((t) => [t.name, t])
+      ).values(),
+    ],
+    paths: { ...(a.paths ?? {}), ...(b.paths ?? {}) },
+    components: {
+      schemas: {
+        ...(a.components?.schemas ?? {}),
+        ...(b.components?.schemas ?? {}),
+      },
+      securitySchemes: {
+        ...(a.components?.securitySchemes ?? {}),
+        ...(b.components?.securitySchemes ?? {}),
+      },
+      parameters: {
+        ...(a.components?.parameters ?? {}),
+        ...(b.components?.parameters ?? {}),
+      },
+      requestBodies: {
+        ...(a.components?.requestBodies ?? {}),
+        ...(b.components?.requestBodies ?? {}),
+      },
+      responses: {
+        ...(a.components?.responses ?? {}),
+        ...(b.components?.responses ?? {}),
+      },
+      headers: {
+        ...(a.components?.headers ?? {}),
+        ...(b.components?.headers ?? {}),
+      },
+      examples: {
+        ...(a.components?.examples ?? {}),
+        ...(b.components?.examples ?? {}),
+      },
+      links: { ...(a.components?.links ?? {}), ...(b.components?.links ?? {}) },
+      callbacks: {
+        ...(a.components?.callbacks ?? {}),
+        ...(b.components?.callbacks ?? {}),
+      },
+    },
+    security: a.security ?? b.security ?? [],
+    externalDocs: a.externalDocs ?? b.externalDocs,
+  };
+
+  const seen = new Set<string>();
+  for (const [p, methods] of Object.entries<any>(merged.paths)) {
+    for (const [m, op] of Object.entries<any>(methods)) {
+      if (!op || typeof op !== "object") continue;
+      if (op.operationId) {
+        let id = op.operationId as string;
+        if (seen.has(id)) {
+          op.operationId = `auth:${id}`;
+        }
+        seen.add(op.operationId);
+      }
+    }
+  }
+
+  return merged;
+}
+
 const baseCorsConfig = {
   origin: process.env.CORS_ORIGIN || "",
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -89,22 +168,25 @@ await fastify.register(fastifyTRPCOpenApiPlugin, {
   router: appRouter,
   createContext,
 });
-fastify.get("/openapi.json", (_req, reply) => {
-  const openApiDoc = generateOpenApiDocument(appRouter, {
-    title: "My APIs",
+fastify.get("/openapi.json", async (_req, reply) => {
+  const trpcDoc = generateOpenApiDocument(appRouter, {
+    title: "Corevia tRPC API",
     version: pkg.version,
     baseUrl: "http://localhost:3000/api",
+
     securitySchemes: {
       apiKeyHeader: {
-        description: "API key required for access",
+        description: "API key for selected routes",
         type: "apiKey",
         name: "X-API-KEY",
         in: "header",
       },
     },
   });
+  const authDoc = await auth.api.generateOpenAPISchema();
+  const merged = mergeOpenApiDocs(trpcDoc, authDoc);
 
-  reply.header("Content-Type", "application/json").send(openApiDoc);
+  reply.header("Content-Type", "application/json").send(merged);
 });
 
 await fastify.register(ScalarApiReference, {
