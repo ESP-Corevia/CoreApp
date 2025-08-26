@@ -1,10 +1,13 @@
 # Corevia
 
-This project was created with [Better-T-Stack](https://github.com/AmanVarshney01/create-better-t-stack), a modern TypeScript stack that combines Fastify, TRPC, and more.
+This project was created with [Better-T-Stack](https://github.com/AmanVarshney01/create-better-t-stack), a modern TypeScript stack that combines React, React Router, Fastify, TRPC, and more.
 
 ## Features
 
 - **TypeScript** - For type safety and improved developer experience
+- **React Router** - Declarative routing for React
+- **TailwindCSS** - Utility-first CSS for rapid UI development
+- **shadcn/ui** - Reusable UI components
 - **Fastify** - Fast, low-overhead web framework
 - **tRPC** - End-to-end type-safe APIs
 - **Node.js** - Runtime environment
@@ -40,6 +43,7 @@ Then, run the development server:
 yarn dev
 ```
 
+Open [http://localhost:5173](http://localhost:5173) in your browser to see the web application.
 The API is running at [http://localhost:3000](http://localhost:3000).
 
 API reference (Swagger/OpenAPI): the backend exposes a web UI for the API reference at /api/auth/reference — for a local dev server open:
@@ -53,6 +57,7 @@ http://localhost:3000/api/auth/reference
 ```
 Corevia/
 ├── apps/
+│   ├── web/         # Frontend application (React + React Router)
 │   └── server/      # Backend API (Fastify, TRPC)
 ```
 

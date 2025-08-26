@@ -1,7 +1,7 @@
 node_modules
 .turbo
-
-
+.alchemy
+.env
 # START Ruler Generated Files
 *.bak
 .codex/config.toml
