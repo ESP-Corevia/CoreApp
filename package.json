@@ -16,11 +16,7 @@
     "db:push": "turbo -F server db:push",
     "db:studio": "turbo -F server db:studio",
     "db:generate": "turbo -F server db:generate",
-    "db:migrate": "turbo -F server db:migrate",
-    "db:start": "turbo -F server db:start",
-    "db:watch": "turbo -F server db:watch",
-    "db:stop": "turbo -F server db:stop",
-    "db:down": "turbo -F server db:down"
+    "db:migrate": "turbo -F server db:migrate"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",
