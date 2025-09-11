@@ -17,7 +17,6 @@ COPY ./apps/server ./apps/server
 
 RUN yarn build
 
-RUN ls -la /app/
 FROM node:24.7-bullseye-slim
 
 WORKDIR /app
@@ -25,7 +24,6 @@ WORKDIR /app
 ENV NODE_ENV=production
 
 COPY --chown=node:node --from=builder /app/apps/server/dist ./dist
-COPY --chown=node:node --from=builder /app/apps/server/public/js/standalone.js /app/dist/js/standalone.js
 
 COPY --chown=node:node --from=builder /app/apps/server/package*.json ./
 COPY --chown=node:node --from=builder /app/yarn.lock ./
