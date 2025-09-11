@@ -1,5 +1,5 @@
 import { protectedProcedure, publicProcedure, router } from "../middlewares";
-import { helloWorldRouter } from "./helloWorld";
+import { helloWorldRouter } from "./helloworld";
 export const appRouter = router({
   healthCheck: publicProcedure.query(() => {
     return "OK";
