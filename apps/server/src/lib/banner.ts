@@ -1,5 +1,6 @@
-import CFonts from "cfonts";
-import chalk from "chalk";
+/* eslint-disable no-console */
+import CFonts from 'cfonts';
+import chalk from 'chalk';
 
 /**
  * Affiche un header ASCII + une barre d'état style "listening at …"
@@ -8,17 +9,17 @@ import chalk from "chalk";
  */
 export default function printBanner(appName: string, status: string) {
   CFonts.say(appName.toUpperCase(), {
-    font: "simple",
-    env: "node",
+    font: 'simple',
+    env: 'node',
   });
 
-  const padL = " ";
-  const padR = " ";
+  const padL = ' ';
+  const padR = ' ';
   const line = padL + status + padR;
 
-  const top = chalk.bgBlue(" ".repeat(line.length));
+  const top = chalk.bgBlue(' '.repeat(line.length));
   const middle = chalk.bgBlue.white.bold(line);
-  const bottom = chalk.bgBlue(" ".repeat(line.length));
+  const bottom = chalk.bgBlue(' '.repeat(line.length));
 
   console.log(top);
   console.log(middle);
