@@ -16,13 +16,18 @@ spec:
           image: backend:latest
           resources:
             limits:
-              memory: "128Mi"
+              memory: "512Mi"
               cpu: "500m"
             requests:
-              memory: "64Mi"
+              memory: "256Mi"
               cpu: "250m"
           ports:
             - containerPort: 3000
+          env:
+            - name: BETTER_AUTH_SECRET
+              value: "0YyafjMCfnADbUK9zSlf7t8GVnS2u9bMutPMi6GPEqukTkd4QWf78iv1QpoJJOamLpxfJJq/L+0b7PwiCu4Xbg=="
+            - name: CORS_ORIGIN
+              value: "*"
           readinessProbe:
             httpGet:
               path: /
