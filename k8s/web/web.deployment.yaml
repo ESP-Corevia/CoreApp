@@ -16,10 +16,10 @@ spec:
           image: frontend
           resources:
             limits:
-              memory: "16Mi"
+              memory: "32Mi"
               cpu: "10m"
             requests:
-              memory: "8Mi"
+              memory: "16Mi"
               cpu: "5m"
           ports:
             - containerPort: 80

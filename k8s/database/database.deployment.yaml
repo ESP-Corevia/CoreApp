@@ -16,11 +16,11 @@ spec:
           image: postgres:17.6
           resources:
             limits:
-              memory: "128Mi"
-              cpu: "200m"
-            requests:
-              memory: "64Mi"
+              memory: "172Mi"
               cpu: "100m"
+            requests:
+              memory: "128Mi"
+              cpu: "50m"
           ports:
             - containerPort: 5432
           env:
