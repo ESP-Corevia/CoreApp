@@ -25,7 +25,10 @@ spec:
             - containerPort: 3000
           env:
             - name: BETTER_AUTH_SECRET
-              value: "0YyafjMCfnADbUK9zSlf7t8GVnS2u9bMutPMi6GPEqukTkd4QWf78iv1QpoJJOamLpxfJJq/L+0b7PwiCu4Xbg=="
+              valueFrom:
+                secretKeyRef:
+                  name: server-secret
+                  key: BETTER_AUTH_SECRET
             - name: CORS_ORIGIN
               value: "*"
           readinessProbe:

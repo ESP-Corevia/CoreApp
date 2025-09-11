@@ -29,7 +29,10 @@ spec:
             - name: POSTGRES_DB
               value: Corevia
             - name: POSTGRES_PASSWORD
-              value: password
+              valueFrom:
+                secretKeyRef:
+                  name: database-secret
+                  key: POSTGRES_PASSWORD
           readinessProbe:
             exec:
               command:
