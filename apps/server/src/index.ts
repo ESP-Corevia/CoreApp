@@ -15,7 +15,7 @@ import {
 import ScalarApiReference from "@scalar/fastify-api-reference";
 import { auth } from "./lib/auth";
 import pkg from "../package.json" assert { type: "json" };
-
+import printBanner from "./lib/banner";
 function mergeOpenApiDocs(a: any, b: any) {
   const merged = {
     openapi: a.openapi || b.openapi || "3.0.3",
@@ -95,7 +95,7 @@ function mergeOpenApiDocs(a: any, b: any) {
 }
 
 const baseCorsConfig = {
-  origin: process.env.CORS_ORIGIN || "",
+  origin: process.env.CORS_ORIGIN || "*",
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
   credentials: true,
@@ -163,7 +163,7 @@ fastify.register(fastifyTRPCPlugin, {
 fastify.get("/", async () => {
   return "OK";
 });
-await fastify.register(fastifyTRPCOpenApiPlugin, {
+fastify.register(fastifyTRPCOpenApiPlugin, {
   basePath: "/api",
   router: appRouter,
   createContext,
@@ -189,7 +189,7 @@ fastify.get("/openapi.json", async (_req, reply) => {
   reply.header("Content-Type", "application/json").send(merged);
 });
 
-await fastify.register(ScalarApiReference, {
+fastify.register(ScalarApiReference, {
   routePrefix: "/reference",
   configuration: {
     url: "/openapi.json",
@@ -204,5 +204,12 @@ fastify.listen({ port: 3000, host: '0.0.0.0' }, (err) => {
     fastify.log.error(err);
     process.exit(1);
   }
+  const addr = fastify.server.address();
+  const url =
+    addr && typeof addr === "object"
+      ? `http://${addr.address}:${addr.port}`
+      : "http://localhost:3000";
+  printBanner("CoreviaBackend", `Corevia API listening at ${url}`);
+
   fastify.log.info("Server running on port 3000");
 });
