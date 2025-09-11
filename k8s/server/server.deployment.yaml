@@ -14,6 +14,7 @@ spec:
       containers:
         - name: server
           image: backend:latest
+          imagePullPolicy: IfNotPresent
           resources:
             limits:
               memory: "512Mi"
