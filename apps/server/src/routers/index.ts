@@ -1,12 +1,13 @@
-import { protectedProcedure, publicProcedure, router } from "../middlewares";
-import { helloWorldRouter } from "./helloWorld";
+import { protectedProcedure, publicProcedure, router } from '../middlewares';
+
+import { helloWorldRouter } from './helloworld';
 export const appRouter = router({
   healthCheck: publicProcedure.query(() => {
-    return "OK";
+    return 'OK';
   }),
   privateData: protectedProcedure.query(({ ctx }) => {
     return {
-      message: "This is private",
+      message: 'This is private',
       user: ctx.session.user,
     };
   }),

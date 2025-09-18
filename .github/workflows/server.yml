@@ -1,0 +1,122 @@
+name: 🧩 Backend CI (Server)
+
+on:
+  pull_request:
+    paths:
+      - "apps/server/**"
+
+permissions:
+  contents: read
+  pull-requests: write
+  deployments: write
+  statuses: write
+
+env:
+  TURBO_CACHE: ${{ (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork) && 'local:,remote:r' || 'local:,remote:rw' }}
+  TURBO_TELEMETRY_DISABLED: "1"
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  lint:
+    name: 🧼 Lint Code
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: ./.github/actions/setup-yarn
+      - uses: ./.github/actions/setup-turbo
+        with:
+          token: ${{ secrets.TURBO_TOKEN }}
+          team: ${{ secrets.TURBO_TEAM }}
+      - name: 🧼 Run ESLint & Prettier
+        run: yarn turbo run server#check:lint --cache="${{env.TURBO_CACHE}}"
+
+  typecheck:
+    name: 🧠 Type Check
+    runs-on: ubuntu-latest
+
+    needs: lint
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: ./.github/actions/setup-yarn
+      - uses: ./.github/actions/setup-turbo
+        with:
+          token: ${{ secrets.TURBO_TOKEN }}
+          team: ${{ secrets.TURBO_TEAM }}
+      - name: 🧠 Run TS Check
+        run: yarn turbo run server#check:types --cache="${{env.TURBO_CACHE}}"
+
+  knip:
+    name: 🪓 Check Unused Code (knip + ts-prune)
+    runs-on: ubuntu-latest
+
+    needs: lint
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: ./.github/actions/setup-yarn
+      - uses: ./.github/actions/setup-turbo
+        with:
+          token: ${{ secrets.TURBO_TOKEN }}
+          team: ${{ secrets.TURBO_TEAM }}
+      - name: create env file
+        working-directory: apps/server
+        run: |
+          cat <<EOF > .env
+          GITHUB_CLIENT_ID='test_client_id'
+          GITHUB_CLIENT_SECRET='test_client_secret'
+          GOOGLE_CLIENT_ID='test_google_client_id'
+          GOOGLE_CLIENT_SECRET='test_google_client_secret'
+          SESSION_SECRET='test_session_secret'
+          EOF
+      - name: 🪓 Run Knip
+        run: yarn turbo run server#check:knip --cache="${{env.TURBO_CACHE}}"
+
+  depcheck:
+    name: 📦 Check Unused Dependencies
+    runs-on: ubuntu-latest
+
+    needs: lint
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: ./.github/actions/setup-yarn
+      - uses: ./.github/actions/setup-turbo
+        with:
+          token: ${{ secrets.TURBO_TOKEN }}
+          team: ${{ secrets.TURBO_TEAM }}
+      - name: 📦 Run depcheck
+        run: yarn turbo run server#check:dep --cache="${{env.TURBO_CACHE}}"
+#   test:
+#     name: 🧪 Run Tests
+#     runs-on: ubuntu-latest
+#     needs: [lint, typecheck, knip, depcheck]
+#     steps:
+#       - uses: actions/checkout@v4
+#         with:
+#           fetch-depth: 1
+#       - uses: ./.github/actions/setup-yarn
+
+#       - name: 🧪 Run Tests
+#         run: yarn turbo run server#check:test
+#       - name: 📈 Report Coverage
+#         if: always()
+#         uses: davelosert/vitest-coverage-report-action@v2
+#         with:
+#           name: "Server Coverage Report"
+#           json-summary-path: server/coverage/coverage-summary.json
+#           json-summary-compare-path: server/coverage/coverage-summary.json
+#           json-final-path: server/coverage/coverage-final.json
+#           vite-config-path: server/vitest.config.ts
+#           github-token: ${{ secrets.GITHUB_TOKEN }}
