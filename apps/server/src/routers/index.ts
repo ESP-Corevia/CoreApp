@@ -14,4 +14,3 @@ export const appRouter = router({
   helloWorld: helloWorldRouter,
 });
 export type AppRouter = typeof appRouter;
-export const test = 45;

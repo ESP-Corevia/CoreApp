@@ -10,6 +10,7 @@ export const helloWorldRouter = protectedProcedure
       summary: 'Hello World',
       description: 'Returns a hello world message.',
       protect: true,
+      tags: ['Example'],
     },
   })
   .input(

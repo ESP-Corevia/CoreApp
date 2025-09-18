@@ -1,0 +1,25 @@
+name: "Setup Turborepo credentials"
+description: "Exports TURBO_TOKEN and TURBO_TEAM to GITHUB_ENV for the job"
+
+inputs:
+  token:
+    description: "Turborepo token"
+    required: true
+  team:
+    description: "Turborepo team slug"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Export Turborepo credentials
+      shell: bash
+      run: |
+        if [ -z "${{ inputs.token }}" ] || [ -z "${{ inputs.team }}" ]; then
+          echo "::warning::Missing token or team; remote cache will be disabled."
+          exit 0
+        fi
+
+        echo "TURBO_TOKEN=${{ inputs.token }}" >> "$GITHUB_ENV"
+        echo "TURBO_TEAM=${{ inputs.team }}"   >> "$GITHUB_ENV"
+        echo "::notice::Turborepo credentials exported for this job."

@@ -24,9 +24,5 @@
     "skipLibCheck": true,
     "strict": true
   },
-  "references": [
-    {
-      "references": [{ "path": "../server/tsconfig.build.json" }]
-    }
-  ]
+  "references": [{ "path": "../server/tsconfig.build.json" }]
 }

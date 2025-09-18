@@ -12,6 +12,10 @@ import printBanner from './lib/banner';
 import { createContext } from './lib/context';
 import { appRouter, type AppRouter } from './routers/index';
 function mergeOpenApiDocs(a: any, b: any) {
+  const servers = [
+    { url: '/api' }, // tRPC
+    { url: '/api/auth' }, // Better Auth
+  ];
   const merged = {
     openapi: a.openapi || b.openapi || '3.0.3',
     info: {
@@ -19,11 +23,7 @@ function mergeOpenApiDocs(a: any, b: any) {
       version: pkg.version,
       description: 'Schéma OpenAPI fusionné (tRPC + Better Auth).',
     },
-    servers: [
-      ...new Map(
-        [...(a.servers ?? []), ...(b.servers ?? [])].map((s) => [JSON.stringify(s), s]),
-      ).values(),
-    ],
+    servers,
     tags: [...new Map([...(a.tags ?? []), ...(b.tags ?? [])].map((t) => [t.name, t])).values()],
     paths: { ...(a.paths ?? {}), ...(b.paths ?? {}) },
     components: {
@@ -156,11 +156,11 @@ fastify.register(fastifyTRPCOpenApiPlugin, {
   createContext,
 });
 fastify.get('/openapi.json', async (_req, reply) => {
+  //TODO: add env BASE_URL
   const trpcDoc = generateOpenApiDocument(appRouter, {
     title: 'Corevia tRPC API',
     version: pkg.version,
-    baseUrl: 'http://localhost:3000/api/auth',
-
+    baseUrl: 'http://localhost:3000/api',
     securitySchemes: {
       apiKeyHeader: {
         description: 'API key for selected routes',
