@@ -1,15 +1,16 @@
-import { betterAuth } from "better-auth";
-import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { db } from "../db";
-import * as schema from "../db/schema/auth";
-import { openAPI } from "better-auth/plugins";
+import { betterAuth } from 'better-auth';
+import { drizzleAdapter } from 'better-auth/adapters/drizzle';
+import { openAPI } from 'better-auth/plugins';
+
+import { db } from '../db';
+import * as schema from '../db/schema/auth';
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
-    provider: "pg",
+    provider: 'pg',
     debugLogs: true,
     schema: schema,
   }),
-  trustedOrigins: [process.env.CORS_ORIGIN || ""],
+  trustedOrigins: [process.env.CORS_ORIGIN || ''],
   emailAndPassword: {
     enabled: true,
   },
@@ -18,7 +19,7 @@ export const auth = betterAuth({
   plugins: [openAPI()],
   advanced: {
     defaultCookieAttributes: {
-      sameSite: "none",
+      sameSite: 'none',
       secure: true,
       httpOnly: true,
     },

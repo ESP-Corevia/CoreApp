@@ -1,3 +1,3 @@
 export default {
-  external: ["@scalar/fastify-api-reference", "@fastify/*"],
+  external: ['@scalar/fastify-api-reference', '@fastify/*'],
 };

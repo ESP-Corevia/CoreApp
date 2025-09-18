@@ -32,6 +32,31 @@
     "db:generate": {
       "cache": false,
       "persistent": true
+    },
+    "check:types": {
+      "dependsOn": ["^check:types"],
+      "outputs": [],
+      "cache": true
+    },
+    "check:lint": {
+      "dependsOn": ["^check:lint"],
+      "outputs": [],
+      "cache": true
+    },
+    "check:knip": {
+      "dependsOn": ["^check:knip"],
+      "outputs": [],
+      "cache": true
+    },
+    "check:dep": {
+      "dependsOn": ["^check:dep"],
+      "outputs": [],
+      "cache": true
+    },
+    "check:all": {
+      "dependsOn": ["check:types", "check:lint", "check:knip", "check:dep"],
+      "outputs": [],
+      "cache": true
     }
   }
 }

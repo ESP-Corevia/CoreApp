@@ -1,42 +1,30 @@
-import "dotenv/config";
-import Fastify from "fastify";
-import fastifyCors from "@fastify/cors";
+import 'dotenv/config';
+import fastifyCors from '@fastify/cors';
+import ScalarApiReference from '@scalar/fastify-api-reference';
+import { fastifyTRPCPlugin, type FastifyTRPCPluginOptions } from '@trpc/server/adapters/fastify';
+import Fastify from 'fastify';
+import { fastifyTRPCOpenApiPlugin, generateOpenApiDocument } from 'trpc-to-openapi';
 
-import {
-  fastifyTRPCPlugin,
-  type FastifyTRPCPluginOptions,
-} from "@trpc/server/adapters/fastify";
-import { createContext } from "./lib/context";
-import { appRouter, type AppRouter } from "./routers/index";
-import {
-  fastifyTRPCOpenApiPlugin,
-  generateOpenApiDocument,
-} from "trpc-to-openapi";
-import ScalarApiReference from "@scalar/fastify-api-reference";
-import { auth } from "./lib/auth";
-import pkg from "../package.json" assert { type: "json" };
-import printBanner from "./lib/banner";
+import pkg from '../package.json' assert { type: 'json' };
+
+import { auth } from './lib/auth';
+import printBanner from './lib/banner';
+import { createContext } from './lib/context';
+import { appRouter, type AppRouter } from './routers/index';
 function mergeOpenApiDocs(a: any, b: any) {
+  const servers = [
+    { url: '/api' }, // tRPC
+    { url: '/api/auth' }, // Better Auth
+  ];
   const merged = {
-    openapi: a.openapi || b.openapi || "3.0.3",
+    openapi: a.openapi || b.openapi || '3.0.3',
     info: {
-      title: "Corevia API",
+      title: 'Corevia API',
       version: pkg.version,
-      description: "Schéma OpenAPI fusionné (tRPC + Better Auth).",
+      description: 'Schéma OpenAPI fusionné (tRPC + Better Auth).',
     },
-    servers: [
-      ...new Map(
-        [...(a.servers ?? []), ...(b.servers ?? [])].map((s) => [
-          JSON.stringify(s),
-          s,
-        ])
-      ).values(),
-    ],
-    tags: [
-      ...new Map(
-        [...(a.tags ?? []), ...(b.tags ?? [])].map((t) => [t.name, t])
-      ).values(),
-    ],
+    servers,
+    tags: [...new Map([...(a.tags ?? []), ...(b.tags ?? [])].map((t) => [t.name, t])).values()],
     paths: { ...(a.paths ?? {}), ...(b.paths ?? {}) },
     components: {
       schemas: {
@@ -78,9 +66,11 @@ function mergeOpenApiDocs(a: any, b: any) {
   };
 
   const seen = new Set<string>();
+  // eslint-disable-next-line ts/no-unused-vars
   for (const [p, methods] of Object.entries<any>(merged.paths)) {
+    // eslint-disable-next-line ts/no-unused-vars
     for (const [m, op] of Object.entries<any>(methods)) {
-      if (!op || typeof op !== "object") continue;
+      if (!op || typeof op !== 'object') continue;
       if (op.operationId) {
         let id = op.operationId as string;
         if (seen.has(id)) {
@@ -95,9 +85,9 @@ function mergeOpenApiDocs(a: any, b: any) {
 }
 
 const baseCorsConfig = {
-  origin: process.env.CORS_ORIGIN || "*",
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+  origin: process.env.CORS_ORIGIN || '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   credentials: true,
   maxAge: 86400,
 };
@@ -105,11 +95,11 @@ const baseCorsConfig = {
 const fastify = Fastify({
   logger: {
     transport: {
-      target: "pino-pretty",
+      target: 'pino-pretty',
       options: {
         colorize: true,
         levelFirst: true,
-        translateTime: "HH:MM:ss Z",
+        translateTime: 'HH:MM:ss Z',
       },
     },
   },
@@ -118,8 +108,8 @@ const fastify = Fastify({
 fastify.register(fastifyCors, baseCorsConfig);
 
 fastify.route({
-  method: ["GET", "POST"],
-  url: "/api/auth/*",
+  method: ['GET', 'POST'],
+  url: '/api/auth/*',
   async handler(request, reply) {
     try {
       const url = new URL(request.url, `http://${request.headers.host}`);
@@ -137,65 +127,62 @@ fastify.route({
       response.headers.forEach((value, key) => reply.header(key, value));
       reply.send(response.body ? await response.text() : null);
     } catch (error) {
-      fastify.log.error({ err: error }, "Authentication Error:");
+      fastify.log.error({ err: error }, 'Authentication Error:');
       reply.status(500).send({
-        error: "Internal authentication error",
-        code: "AUTH_FAILURE",
+        error: 'Internal authentication error',
+        code: 'AUTH_FAILURE',
       });
     }
   },
 });
 
 fastify.register(fastifyTRPCPlugin, {
-  prefix: "/trpc",
+  prefix: '/trpc',
   trpcOptions: {
     router: appRouter,
     createContext,
     onError({ path, error }) {
-      fastify.log.error(
-        { path, err: error },
-        `Error in tRPC handler on path '${path}'`
-      );
+      fastify.log.error({ path, err: error }, `Error in tRPC handler on path '${path}'`);
     },
-  } satisfies FastifyTRPCPluginOptions<AppRouter>["trpcOptions"],
+  } satisfies FastifyTRPCPluginOptions<AppRouter>['trpcOptions'],
 });
 
-fastify.get("/", async () => {
-  return "OK";
+fastify.get('/', () => {
+  return 'OK';
 });
 fastify.register(fastifyTRPCOpenApiPlugin, {
-  basePath: "/api",
+  basePath: '/api',
   router: appRouter,
   createContext,
 });
-fastify.get("/openapi.json", async (_req, reply) => {
+fastify.get('/openapi.json', async (_req, reply) => {
+  //TODO: add env BASE_URL
   const trpcDoc = generateOpenApiDocument(appRouter, {
-    title: "Corevia tRPC API",
+    title: 'Corevia tRPC API',
     version: pkg.version,
-    baseUrl: "http://localhost:3000/api",
-
+    baseUrl: 'http://localhost:3000/api',
     securitySchemes: {
       apiKeyHeader: {
-        description: "API key for selected routes",
-        type: "apiKey",
-        name: "X-API-KEY",
-        in: "header",
+        description: 'API key for selected routes',
+        type: 'apiKey',
+        name: 'X-API-KEY',
+        in: 'header',
       },
     },
   });
   const authDoc = await auth.api.generateOpenAPISchema();
   const merged = mergeOpenApiDocs(trpcDoc, authDoc);
 
-  reply.header("Content-Type", "application/json").send(merged);
+  reply.header('Content-Type', 'application/json').send(merged);
 });
 
 fastify.register(ScalarApiReference, {
-  routePrefix: "/reference",
+  routePrefix: '/reference',
   configuration: {
-    url: "/openapi.json",
+    url: '/openapi.json',
     title: `Corevia tRPC API`,
-    layout: "modern",
-    theme: "purple",
+    layout: 'modern',
+    theme: 'purple',
     darkMode: true,
   },
 });
@@ -206,10 +193,10 @@ fastify.listen({ port: 3000 }, (err) => {
   }
   const addr = fastify.server.address();
   const url =
-    addr && typeof addr === "object"
+    addr && typeof addr === 'object'
       ? `http://${addr.address}:${addr.port}`
-      : "http://localhost:3000";
-  printBanner("CoreviaBackend", `Corevia API listening at ${url}`);
+      : 'http://localhost:3000';
+  printBanner('CoreviaBackend', `Corevia API listening at ${url}`);
 
-  fastify.log.info("Server running on port 3000");
+  fastify.log.info('Server running on port 3000');
 });
