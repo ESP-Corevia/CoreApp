@@ -7,7 +7,7 @@ const envSchema = z.object({
   DATABASE_URL: z.url().default('postgres://postgres:postgres@localhost:5432/postgres'),
   BASE_URL: z.url().default('http://localhost:3000'),
   SESSION_SECRET: z.string(),
-  CORS_ORIGIN: z.url().default('http://localhost:3000'),
+  CORS_ORIGIN: z.url().default('http://localhost:5173'),
   BETTER_AUTH_SECRET: z.string(),
   BETTER_AUTH_URL: z.url().default('http://localhost:3000'),
   LOG_LEVEL: z.enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal']).default('info'),
