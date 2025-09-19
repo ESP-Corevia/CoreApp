@@ -1,0 +1,20 @@
+name: 🧾 PR Title Lint
+
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - reopened
+      - synchronize
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  PrTitleLint:
+    name: ✅ Lint PR Title
+    uses: ESP-Corevia/.github/.github/workflows/pr-message-lint.yml@master
+    permissions:
+      contents: read
+      pull-requests: read
