@@ -29,3 +29,4 @@ GEMINI.md.bak
 # END Ruler Generated Files
 .yarn/install-state.gz
 .vscode/settings.json
+**/coverage/*

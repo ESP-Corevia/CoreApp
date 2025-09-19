@@ -98,25 +98,25 @@ jobs:
           team: ${{ secrets.TURBO_TEAM }}
       - name: 📦 Run depcheck
         run: yarn turbo run server#check:dep --cache="${{env.TURBO_CACHE}}"
-#   test:
-#     name: 🧪 Run Tests
-#     runs-on: ubuntu-latest
-#     needs: [lint, typecheck, knip, depcheck]
-#     steps:
-#       - uses: actions/checkout@v4
-#         with:
-#           fetch-depth: 1
-#       - uses: ./.github/actions/setup-yarn
+  test:
+    name: 🧪 Run Tests
+    runs-on: ubuntu-latest
+    needs: [lint, typecheck, knip, depcheck]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: ./.github/actions/setup-yarn
 
-#       - name: 🧪 Run Tests
-#         run: yarn turbo run server#check:test
-#       - name: 📈 Report Coverage
-#         if: always()
-#         uses: davelosert/vitest-coverage-report-action@v2
-#         with:
-#           name: "Server Coverage Report"
-#           json-summary-path: server/coverage/coverage-summary.json
-#           json-summary-compare-path: server/coverage/coverage-summary.json
-#           json-final-path: server/coverage/coverage-final.json
-#           vite-config-path: server/vitest.config.ts
-#           github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: 🧪 Run Tests
+        run: yarn turbo run server#check:test
+      - name: 📈 Report Coverage
+        if: always()
+        uses: davelosert/vitest-coverage-report-action@v2
+        with:
+          name: "Server Coverage Report"
+          json-summary-path: server/coverage/coverage-summary.json
+          json-summary-compare-path: server/coverage/coverage-summary.json
+          json-final-path: server/coverage/coverage-final.json
+          vite-config-path: server/vitest.config.ts
+          github-token: ${{ secrets.GITHUB_TOKEN }}
