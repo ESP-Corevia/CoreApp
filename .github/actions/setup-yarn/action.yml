@@ -16,20 +16,34 @@ runs:
   steps:
     - name: 🧱 Checkout code
       uses: actions/checkout@v4
-
-    - name: 🧶 Enable Corepack and Yarn v4
-      shell: bash
-      run: |
-        corepack enable
-        corepack prepare $(jq -r '.packageManager' package.json) --activate
-
     - name: 🔧 Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: ${{ inputs.node-version }}
-        cache: yarn
-
-    - name: 📦 Install dependencies
+    - name: 🔎 Detect Yarn version from package.json
+      id: pm
       shell: bash
-      run: yarn install --immutable
       working-directory: ${{ inputs.working-directory }}
+      run: |
+        ver=$(node -p "require('./package.json').packageManager ?? ''")
+        # keep empty if missing; otherwise remove 'yarn@' prefix
+        ver="${ver#yarn@}"
+        echo "pm=${ver}" >> "$GITHUB_OUTPUT"
+    - name: ♻️ Cache Yarn artifacts
+      uses: actions/cache@v4
+      with:
+        path: |
+          .yarn/cache
+          .yarn/unplugged
+          .yarn/build-state.yml
+          .yarn/install-state.gz
+        key: ${{ runner.os }}-node${{ inputs.node-version }}-yarn${{ steps.pm.outputs.pm || '4' }}-${{ hashFiles('yarn.lock', '.yarnrc.yml', 'package.json', 'apps/**/package.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node${{ inputs.node-version }}-yarn${{ steps.pm.outputs.pm || '4' }}-
+          ${{ runner.os }}-node${{ inputs.node-version }}-
+
+    - name: 🧶 Setup Yarn (Berry) & install
+      uses: threeal/setup-yarn-action@v2.0.0
+      with:
+        cache: false
+        version: ${{ steps.pm.outputs.pm }}

@@ -53,6 +53,11 @@
       "outputs": [],
       "cache": true
     },
+    "check:test": {
+      "dependsOn": ["^check:test"],
+      "outputs": [],
+      "cache": true
+    },
     "check:all": {
       "dependsOn": ["check:types", "check:lint", "check:knip", "check:dep"],
       "outputs": [],
