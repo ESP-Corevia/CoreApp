@@ -1,4 +1,3 @@
-import 'dotenv/config';
 import fastifyCors from '@fastify/cors';
 import ScalarApiReference from '@scalar/fastify-api-reference';
 import { fastifyTRPCPlugin, type FastifyTRPCPluginOptions } from '@trpc/server/adapters/fastify';
@@ -7,89 +6,19 @@ import { fastifyTRPCOpenApiPlugin, generateOpenApiDocument } from 'trpc-to-opena
 
 import pkg from '../package.json' assert { type: 'json' };
 
+import { env } from './env';
 import { auth } from './lib/auth';
 import printBanner from './lib/banner';
 import { createContext } from './lib/context';
 import { appRouter, type AppRouter } from './routers/index';
-function mergeOpenApiDocs(a: any, b: any) {
-  const servers = [
-    { url: '/api' }, // tRPC
-    { url: '/api/auth' }, // Better Auth
-  ];
-  const merged = {
-    openapi: a.openapi || b.openapi || '3.0.3',
-    info: {
-      title: 'Corevia API',
-      version: pkg.version,
-      description: 'Schéma OpenAPI fusionné (tRPC + Better Auth).',
-    },
-    servers,
-    tags: [...new Map([...(a.tags ?? []), ...(b.tags ?? [])].map((t) => [t.name, t])).values()],
-    paths: { ...(a.paths ?? {}), ...(b.paths ?? {}) },
-    components: {
-      schemas: {
-        ...(a.components?.schemas ?? {}),
-        ...(b.components?.schemas ?? {}),
-      },
-      securitySchemes: {
-        ...(a.components?.securitySchemes ?? {}),
-        ...(b.components?.securitySchemes ?? {}),
-      },
-      parameters: {
-        ...(a.components?.parameters ?? {}),
-        ...(b.components?.parameters ?? {}),
-      },
-      requestBodies: {
-        ...(a.components?.requestBodies ?? {}),
-        ...(b.components?.requestBodies ?? {}),
-      },
-      responses: {
-        ...(a.components?.responses ?? {}),
-        ...(b.components?.responses ?? {}),
-      },
-      headers: {
-        ...(a.components?.headers ?? {}),
-        ...(b.components?.headers ?? {}),
-      },
-      examples: {
-        ...(a.components?.examples ?? {}),
-        ...(b.components?.examples ?? {}),
-      },
-      links: { ...(a.components?.links ?? {}), ...(b.components?.links ?? {}) },
-      callbacks: {
-        ...(a.components?.callbacks ?? {}),
-        ...(b.components?.callbacks ?? {}),
-      },
-    },
-    security: a.security ?? b.security ?? [],
-    externalDocs: a.externalDocs ?? b.externalDocs,
-  };
-
-  const seen = new Set<string>();
-  // eslint-disable-next-line ts/no-unused-vars
-  for (const [p, methods] of Object.entries<any>(merged.paths)) {
-    // eslint-disable-next-line ts/no-unused-vars
-    for (const [m, op] of Object.entries<any>(methods)) {
-      if (!op || typeof op !== 'object') continue;
-      if (op.operationId) {
-        let id = op.operationId as string;
-        if (seen.has(id)) {
-          op.operationId = `auth:${id}`;
-        }
-        seen.add(op.operationId);
-      }
-    }
-  }
-
-  return merged;
-}
-
+import { mergeOpenApiDocs } from './utils/functions';
 const baseCorsConfig = {
-  origin: process.env.CORS_ORIGIN || '*',
+  origin: [env.CORS_ORIGIN, 'http://127.0.0.1:3000'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'x-api-key', 'x-language'],
   maxAge: 86400,
+  exposedHeaders: ['Set-Cookie'],
 };
 
 const fastify = Fastify({
@@ -156,19 +85,10 @@ fastify.register(fastifyTRPCOpenApiPlugin, {
   createContext,
 });
 fastify.get('/openapi.json', async (_req, reply) => {
-  //TODO: add env BASE_URL
   const trpcDoc = generateOpenApiDocument(appRouter, {
     title: 'Corevia tRPC API',
     version: pkg.version,
-    baseUrl: 'http://localhost:3000/api',
-    securitySchemes: {
-      apiKeyHeader: {
-        description: 'API key for selected routes',
-        type: 'apiKey',
-        name: 'X-API-KEY',
-        in: 'header',
-      },
-    },
+    baseUrl: env.BASE_URL + '/api',
   });
   const authDoc = await auth.api.generateOpenAPISchema();
   const merged = mergeOpenApiDocs(trpcDoc, authDoc);

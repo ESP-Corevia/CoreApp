@@ -43,6 +43,7 @@
     "better-auth-harmony",
     "better-auth",
     "better-auth-localization",
-    "@typescript-eslint/parser"
+    "@typescript-eslint/parser",
+    "dotenv"
   ]
 }
