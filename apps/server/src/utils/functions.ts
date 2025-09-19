@@ -1,4 +1,4 @@
-import pkg from '../../package.json' assert { type: 'json' };
+import pkg from '../../package.json';
 export function mergeOpenApiDocs(a: any, b: any) {
   const servers = [
     { url: '/api' }, // tRPC

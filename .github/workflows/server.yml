@@ -112,8 +112,8 @@ jobs:
         uses: davelosert/vitest-coverage-report-action@v2
         with:
           name: "Server Coverage Report"
-          json-summary-path: server/coverage/coverage-summary.json
-          json-summary-compare-path: server/coverage/coverage-summary.json
-          json-final-path: server/coverage/coverage-final.json
-          vite-config-path: server/vitest.config.ts
+          json-summary-path: apps/server/coverage/coverage-summary.json
+          json-summary-compare-path: apps/server/coverage/coverage-summary.json
+          json-final-path: apps/server/coverage/coverage-final.json
+          vite-config-path: apps/server/vitest.config.ts
           github-token: ${{ secrets.GITHUB_TOKEN }}
