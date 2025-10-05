@@ -4,7 +4,7 @@ import type { auth } from './auth';
 import type { Services } from '../db/services';
 import type { CreateFastifyContextOptions } from '@trpc/server/adapters/fastify';
 export interface CreateContextOptions {
-  services?: Services;
+  services: Services;
   // fastify: FastifyInstance;
   auth: typeof auth;
 }

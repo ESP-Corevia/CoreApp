@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import { UserOutputSchema } from '../../db/services/users.service';
 import { protectedProcedure, router } from '../../middlewares';
 
 export const userRouter = router({
@@ -17,11 +18,11 @@ export const userRouter = router({
     .input(z.object({}))
     .output(
       z.object({
-        user: z.any(),
+        user: UserOutputSchema,
       }),
     )
     .query(async ({ ctx: { services, session } }) => {
-      const user = await services?.usersService.getMe(session.userId);
+      const user = await services.usersService.getMe(session.userId);
       return {
         user,
       };

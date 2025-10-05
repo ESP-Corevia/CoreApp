@@ -1,15 +1,19 @@
+import { z } from 'zod';
+
 import type { Repositories } from '../repositories';
-type UserOutput = {
-  id: string;
-  name: string | null;
-  email: string;
-  createdAt: Date;
-  updatedAt: Date | null;
-  firstName: string;
-  lastName: string;
-  image: string | null;
-  lastLoginMethod: string | null;
-};
+
+export const UserOutputSchema = z.object({
+  id: z.uuid(),
+  name: z.string().nullable(),
+  email: z.email(),
+  createdAt: z.date(),
+  updatedAt: z.date().nullable(),
+  firstName: z.string(),
+  lastName: z.string(),
+  image: z.url().nullable(),
+  lastLoginMethod: z.string().nullable(),
+});
+type UserOutput = z.infer<typeof UserOutputSchema>;
 export const createUsersService = (repo: Repositories['usersRepo']) => ({
   /**
    * Finds a user by their ID, optionally including their API keys.
@@ -32,7 +36,7 @@ export const createUsersService = (repo: Repositories['usersRepo']) => ({
    * Get the current user's profile information
    * @param userId - The UUID of the user.
    * @returns The user profile information including API key if available.
-   * @throws {UserNotFoundError} When user is not found
+   * @throws Error if the user is not found.
    */
   getMe: async (userId: string): Promise<UserOutput> => {
     const user = await repo.findById({ id: userId });

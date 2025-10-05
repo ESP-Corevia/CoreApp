@@ -1,3 +1,4 @@
+import { faker } from '@faker-js/faker';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { createTestCaller } from '../../../test/caller';
@@ -8,13 +9,13 @@ describe('userRouter', () => {
   describe('getMe', () => {
     it('returns user information when authenticated', async () => {
       const fakeMe = {
-        id: 'test-user-123',
-        name: 'John Doe',
-        email: 'john@example.com',
-        createdAt: new Date(),
+        id: faker.string.uuid(),
+        name: faker.person.firstName(),
+        email: faker.internet.email(),
+        createdAt: faker.date.past(),
         updatedAt: null,
-        firstName: 'John',
-        lastName: 'Doe',
+        firstName: faker.person.firstName(),
+        lastName: faker.person.lastName(),
         image: null,
         lastLoginMethod: null,
       };

@@ -6,6 +6,7 @@ import { fastifyTRPCOpenApiPlugin, generateOpenApiDocument } from 'trpc-to-opena
 
 import pkg from '../package.json' assert { type: 'json' };
 
+import { services } from './db/services';
 import { env } from './env';
 import { auth } from './lib/auth';
 import printBanner from './lib/banner';
@@ -69,7 +70,7 @@ fastify.register(fastifyTRPCPlugin, {
   prefix: '/trpc',
   trpcOptions: {
     router: appRouter,
-    createContext: (opts) => createContext({ ...opts, auth }),
+    createContext: (opts) => createContext({ ...opts, auth, services }),
     onError({ path, error }) {
       fastify.log.error({ path, err: error }, `Error in tRPC handler on path '${path}'`);
     },
@@ -82,7 +83,7 @@ fastify.get('/', () => {
 fastify.register(fastifyTRPCOpenApiPlugin, {
   basePath: '/api',
   router: appRouter,
-  createContext: () => ({ auth }),
+  createContext: (opts: any) => ({ ...opts, auth }),
 });
 fastify.get('/openapi.json', async (_req, reply) => {
   const trpcDoc = generateOpenApiDocument(appRouter, {
