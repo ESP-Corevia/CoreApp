@@ -1,0 +1,77 @@
+{
+  "translation": {
+    "_index": {
+      "apiStatus": "Statut de l'API",
+      "checking": "Vérification...",
+      "connected": "Connecté",
+      "disconnected": "Déconnecté"
+    },
+    "dashboard": {
+      "loading": "Chargement...",
+      "privateData": "Données privées : {{message}}",
+      "title": "Tableau de bord",
+      "welcome": "Bienvenue {{userId}}"
+    },
+    "ErrorBoundary": {
+      "generic": "Erreur",
+      "notFound": "La page demandée est introuvable.",
+      "oops": "Oups !",
+      "unexpected": "Une erreur inattendue s'est produite."
+    },
+    "HydrateFallback": {
+      "loading": "Chargement…"
+    },
+    "modeToggle": {
+      "dark": "Sombre",
+      "light": "Clair",
+      "system": "Système",
+      "toggleTheme": "Changer le thème"
+    },
+    "signIn": {
+      "emailLabel": "E-mail",
+      "errors": {
+        "invalidEmail": "Adresse e-mail invalide",
+        "shortPassword": "Le mot de passe doit contenir au moins 8 caractères"
+      },
+      "passwordLabel": "Mot de passe",
+      "submit": "Se connecter",
+      "submitting": "Connexion...",
+      "success": "Connexion réussie",
+      "switchToSignUp": "Besoin d’un compte ? Inscrivez-vous",
+      "title": "Bon retour"
+    },
+    "signUp": {
+      "form": {
+        "email": {
+          "invalid": "Adresse e-mail invalide",
+          "label": "E-mail"
+        },
+        "firstName": {
+          "label": "Prénom",
+          "min": "Le prénom doit contenir au moins 2 caractères"
+        },
+        "lastName": {
+          "label": "Nom",
+          "min": "Le nom doit contenir au moins 2 caractères"
+        },
+        "name": {
+          "label": "Nom complet",
+          "min": "Le nom complet doit contenir au moins 2 caractères"
+        },
+        "password": {
+          "label": "Mot de passe",
+          "min": "Le mot de passe doit contenir au moins 8 caractères"
+        },
+        "submit": "S'inscrire"
+      },
+      "success": "Inscription réussie",
+      "switchToSignIn": "Vous avez déjà un compte ? Connectez-vous",
+      "title": "Créer un compte"
+    },
+    "userMenu": {
+      "myAccount": "Mon compte",
+      "signIn": "Se connecter",
+      "signOut": "Se déconnecter"
+    }
+  }
+}

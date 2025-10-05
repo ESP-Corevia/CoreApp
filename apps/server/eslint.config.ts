@@ -1,11 +1,19 @@
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 import { FlatCompat } from '@eslint/eslintrc';
-import tsPlugin from '@typescript-eslint/eslint-plugin'; // ✅ plugin import
+import tsPlugin from '@typescript-eslint/eslint-plugin';
 import parser from '@typescript-eslint/parser';
 import importPlugin from 'eslint-plugin-import';
 import nodePlugin from 'eslint-plugin-n';
 import eslintPluginPrettier from 'eslint-plugin-prettier';
 import securityPlugin from 'eslint-plugin-security';
-const compat = new FlatCompat({ baseDirectory: import.meta.dirname });
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const compat = new FlatCompat({ baseDirectory: __dirname });
+
 /** @type {import("eslint").Linter.FlatConfig[]} */
 export default [
   {
@@ -26,13 +34,13 @@ export default [
       parserOptions: {
         ecmaVersion: 'latest',
         sourceType: 'module',
-        project: './tsconfig.eslint.json',
+        project: path.resolve(__dirname, './tsconfig.eslint.json'), // ✅ Absolute path
       },
     },
     plugins: {
       import: importPlugin,
       prettier: eslintPluginPrettier,
-      ts: tsPlugin, // ✅ register plugin with a key
+      ts: tsPlugin,
       node: nodePlugin,
       security: securityPlugin,
     },
@@ -73,7 +81,6 @@ export default [
           importOrder: ['^react', '<THIRD_PARTY_MODULES>', '^@/.*', '^[./]'],
           importOrderSeparation: true,
           importOrderSortSpecifiers: true,
-          // Pour respecter les `type` séparés si tu veux :
           importOrderTypeScriptVersion: '5.0.0',
         },
       ],
@@ -83,7 +90,6 @@ export default [
       'ts/consistent-type-imports': ['error', { prefer: 'type-imports' }],
       'no-unused-vars': 'off',
       'ts/no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
-      // 'ts/explicit-function-return-type': ['warn', { allowExpressions: true }],
       'ts/no-floating-promises': 'error',
       'ts/no-misused-promises': 'error',
 
@@ -92,13 +98,13 @@ export default [
       'node/no-missing-import': 'off',
 
       // ✅ Other good backend defaults
-      'no-console': 'error', // could be info-only for logs
+      'no-console': 'error',
       'require-await': 'error',
       'no-useless-catch': 'error',
-      'no-throw-literal': 'error', // Enforce throwing Error objects
+      'no-throw-literal': 'error',
 
       // ✅ Security rules
-      'security/detect-object-injection': 'off', // false positive prone — disable or audit manually
+      'security/detect-object-injection': 'off',
       'security/detect-unsafe-regex': 'warn',
       'security/detect-non-literal-require': 'warn',
       'security/detect-non-literal-fs-filename': 'warn',

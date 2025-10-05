@@ -1,0 +1,14 @@
+[
+  {
+    "name": "Main bundle",
+    "path": "build/client/assets/**.js",
+    "limit": "1 MB",
+    "gzip": true
+  },
+  {
+    "name": "CSS",
+    "path": "build/client/assets/**.css",
+    "limit": "300 KB",
+    "gzip": true
+  }
+]

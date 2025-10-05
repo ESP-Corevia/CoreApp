@@ -53,13 +53,37 @@
       "outputs": [],
       "cache": true
     },
+    "check:i18n": {
+      "dependsOn": ["^check:i18n"],
+      "outputs": [],
+      "cache": true
+    },
+    "check:size": {
+      "dependsOn": ["^check:size"],
+      "outputs": [],
+      "cache": true
+    },
+    "check:audit": {
+      "dependsOn": ["^check:audit"],
+      "outputs": [],
+      "cache": true
+    },
     "check:test": {
       "dependsOn": ["^check:test"],
       "outputs": [],
       "cache": true
     },
     "check:all": {
-      "dependsOn": ["check:types", "check:lint", "check:knip", "check:dep"],
+      "dependsOn": [
+        "check:types",
+        "check:lint",
+        "check:knip",
+        "check:dep",
+        "check:size",
+        "check:audit",
+        "check:i18n",
+        "check:test"
+      ],
       "outputs": [],
       "cache": true
     }

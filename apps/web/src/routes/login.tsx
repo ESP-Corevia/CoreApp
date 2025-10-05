@@ -1,13 +1,8 @@
-import SignInForm from "@/components/sign-in-form";
-import SignUpForm from "@/components/sign-up-form";
-import { useState } from "react";
+import Login from '@/features/auth/routes/login';
 
-export default function Login() {
-	const [showSignIn, setShowSignIn] = useState(false);
-
-	return showSignIn ? (
-		<SignInForm onSwitchToSignUp={() => setShowSignIn(false)} />
-	) : (
-		<SignUpForm onSwitchToSignIn={() => setShowSignIn(true)} />
-	);
+import type { Route } from './+types/_index';
+// eslint-disable-next-line no-unused-vars
+export function meta(_: Route.MetaArgs) {
+  return [{ title: 'Login' }, { name: 'description', content: 'Corevia Login' }];
 }
+export default Login;
