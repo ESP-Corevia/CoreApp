@@ -4,6 +4,7 @@ import { Pool } from 'pg';
 import { env } from '../env';
 import { logger } from '../lib/logger';
 
+import * as schema from './schema';
 const pool = new Pool({
   connectionString: env.DATABASE_URL,
 });
@@ -17,6 +18,7 @@ pool.on('connect', () => {
 });
 
 export const db = drizzle(pool, {
+  schema,
   logger: true,
 });
 

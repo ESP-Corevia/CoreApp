@@ -1,16 +1,38 @@
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
-import { openAPI, customSession } from 'better-auth/plugins';
+import { openAPI, customSession, admin, lastLoginMethod } from 'better-auth/plugins';
 
 import { db } from '../db';
-import * as schema from '../db/schema/auth';
+import * as schemas from '../db/schema/auth';
 import { env } from '../env';
+
+import { ac, adminRole, userRole } from './permissions';
 export const auth = betterAuth({
+  appName: 'Corevia',
+  // basePath: '/api/auth',
   database: drizzleAdapter(db, {
     provider: 'pg',
-    debugLogs: true,
-    schema: schema,
+    usePlural: true,
+    debugLogs: env.NODE_ENV === 'development' || env.NODE_ENV === 'test',
+    schema: {
+      users: schemas.users,
+      sessions: schemas.sessions,
+      accounts: schemas.accounts,
+      verifications: schemas.verifications,
+    },
   }),
+  user: {
+    additionalFields: {
+      firstName: { type: 'string', required: true },
+      lastName: { type: 'string', required: true },
+    },
+  },
+  session: {
+    cookieCache: {
+      enabled: true,
+      maxAge: 5 * 60,
+    },
+  },
   trustedOrigins: [env.CORS_ORIGIN],
   emailAndPassword: {
     enabled: true,
@@ -61,6 +83,13 @@ export const auth = betterAuth({
       isAuthenticated: !!session,
       userId: session?.userId,
     })),
+    admin({
+      ac,
+      roles: { user: userRole, admin: adminRole },
+    }),
+    lastLoginMethod({
+      storeInDatabase: true,
+    }),
   ],
 });
 export type Auth = typeof auth;
