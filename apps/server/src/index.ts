@@ -69,7 +69,7 @@ fastify.register(fastifyTRPCPlugin, {
   prefix: '/trpc',
   trpcOptions: {
     router: appRouter,
-    createContext,
+    createContext: (opts) => createContext({ ...opts, auth }),
     onError({ path, error }) {
       fastify.log.error({ path, err: error }, `Error in tRPC handler on path '${path}'`);
     },
@@ -82,7 +82,7 @@ fastify.get('/', () => {
 fastify.register(fastifyTRPCOpenApiPlugin, {
   basePath: '/api',
   router: appRouter,
-  createContext,
+  createContext: () => ({ auth }),
 });
 fastify.get('/openapi.json', async (_req, reply) => {
   const trpcDoc = generateOpenApiDocument(appRouter, {

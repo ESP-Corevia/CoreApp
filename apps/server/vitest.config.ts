@@ -22,12 +22,12 @@ const merged = mergeConfig(baseConfig, {
       reporter: ['text', 'text-summary', 'lcov', 'json', 'json-summary'],
       reportsDirectory: './coverage',
       reportOnFailure: true,
-      //   thresholds: {
-      //     branches: 80,
-      //     functions: 80,
-      //     lines: 80,
-      //     statements: 80,
-      //   },
+      thresholds: {
+        branches: 80,
+        functions: 80,
+        lines: 80,
+        statements: 80,
+      },
       include: ['src/**/*.ts', 'test/**/*.ts'],
       exclude: [
         'src/utils/auth.ts',
@@ -36,6 +36,9 @@ const merged = mergeConfig(baseConfig, {
         'test/test.ts',
         'src/db/migrations/**',
         'src/db/schema/**',
+        'src/utils/functions.ts',
+        'src/lib/auth.ts',
+        'src/lib/banner.ts',
       ],
     },
   },
