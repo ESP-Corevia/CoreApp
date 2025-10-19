@@ -1,15 +1,19 @@
-import { createAuthClient } from "better-auth/react";
-import type { Auth } from "@server/lib/auth";
 import {
   customSessionClient,
   lastLoginMethodClient,
   adminClient,
-} from "better-auth/client/plugins";
+  inferAdditionalFields,
+} from 'better-auth/client/plugins';
+import { createAuthClient } from 'better-auth/react';
+
+import type { Auth } from '@server/lib/auth';
+
 export const authClient = createAuthClient({
   baseURL: import.meta.env.VITE_SERVER_URL,
   plugins: [
     customSessionClient<Auth>(),
     lastLoginMethodClient(),
     adminClient(),
+    inferAdditionalFields<Auth>(),
   ],
 });

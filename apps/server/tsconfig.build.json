@@ -10,7 +10,7 @@
     "emitDeclarationOnly": true, // ⬅️ don’t emit .js files
     "target": "ES2022", // ⬅️ fixes `#private` error from zod
     "module": "ESNext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "esModuleInterop": true, // ⬅️ fixes `sharp` default import
     "allowSyntheticDefaultImports": true,
     "strict": true,
