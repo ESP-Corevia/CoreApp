@@ -7,11 +7,16 @@
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["dist/**"]
     },
+    "build:types": {
+      "dependsOn": ["^build:types"],
+      "outputs": ["types/**", "dist/**/*.d.ts"],
+      "cache": false
+    },
     "lint": {
       "dependsOn": ["^lint"]
     },
     "check-types": {
-      "dependsOn": ["^check-types"]
+      "dependsOn": ["^build:types", "^check-types"]
     },
     "dev": {
       "cache": false,
@@ -36,42 +41,42 @@
     "check:types": {
       "dependsOn": ["^check:types"],
       "outputs": [],
-      "cache": true
+      "cache": false
     },
     "check:lint": {
       "dependsOn": ["^check:lint"],
       "outputs": [],
-      "cache": true
+      "cache": false
     },
     "check:knip": {
       "dependsOn": ["^check:knip"],
       "outputs": [],
-      "cache": true
+      "cache": false
     },
     "check:dep": {
       "dependsOn": ["^check:dep"],
       "outputs": [],
-      "cache": true
+      "cache": false
     },
     "check:i18n": {
       "dependsOn": ["^check:i18n"],
       "outputs": [],
-      "cache": true
+      "cache": false
     },
     "check:size": {
       "dependsOn": ["^check:size"],
       "outputs": [],
-      "cache": true
+      "cache": false
     },
     "check:audit": {
       "dependsOn": ["^check:audit"],
       "outputs": [],
-      "cache": true
+      "cache": false
     },
     "check:test": {
       "dependsOn": ["^check:test"],
       "outputs": [],
-      "cache": true
+      "cache": false
     },
     "check:all": {
       "dependsOn": [
@@ -85,7 +90,7 @@
         "check:test"
       ],
       "outputs": [],
-      "cache": true
+      "cache": false
     }
   }
 }

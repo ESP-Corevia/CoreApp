@@ -31,7 +31,6 @@ export default function SignUpForm({ onSwitchToSignIn }: { onSwitchToSignIn: () 
           email: value.email,
           password: value.password,
           name: value.name,
-          // @ts-expect-error
           firstName: value.firstName,
           lastName: value.lastName,
         },

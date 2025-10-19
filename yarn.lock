@@ -75,17 +75,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@axe-core/playwright@npm:^4.10.2":
-  version: 4.10.2
-  resolution: "@axe-core/playwright@npm:4.10.2"
-  dependencies:
-    axe-core: "npm:~4.10.3"
-  peerDependencies:
-    playwright-core: ">= 1.0.0"
-  checksum: 10c0/3dc02d177eb1b4865bbef05df993a5ad94268cb862e7095a273d7c7191174855f9f5a444cd8ad3ccea4991fab884083d6fdc661d471515af0d6c571958162043
-  languageName: node
-  linkType: hard
-
 "@babel/code-frame@npm:^7.0.0, @babel/code-frame@npm:^7.10.4, @babel/code-frame@npm:^7.27.1":
   version: 7.27.1
   resolution: "@babel/code-frame@npm:7.27.1"
@@ -5030,15 +5019,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/eslint-plugin-jsx-a11y@npm:^6.10.1":
-  version: 6.10.1
-  resolution: "@types/eslint-plugin-jsx-a11y@npm:6.10.1"
-  dependencies:
-    eslint: "npm:^9"
-  checksum: 10c0/fe2ce003279f046225fc8ce5ea9b621254f0b6cf6577ea03da4cdd436c6780a7e1565308c2b3406851f5bb6abda0e9e2694f75dc462d8915f031854b10824012
-  languageName: node
-  linkType: hard
-
 "@types/eslint-plugin-security@npm:^3":
   version: 3.0.0
   resolution: "@types/eslint-plugin-security@npm:3.0.0"
@@ -6202,7 +6182,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axe-core@npm:^4.10.0, axe-core@npm:^4.10.3, axe-core@npm:~4.10.3":
+"axe-core@npm:^4.10.0, axe-core@npm:^4.10.3":
   version: 4.10.3
   resolution: "axe-core@npm:4.10.3"
   checksum: 10c0/1b1c24f435b2ffe89d76eca0001cbfff42dbf012ad9bd37398b70b11f0d614281a38a28bc3069e8972e3c90ec929a8937994bd24b0ebcbaab87b8d1e241ab0c7
@@ -8854,7 +8834,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^9, eslint@npm:^9.35.0, eslint@npm:^9.37.0, eslint@npm:^9.38.0":
+"eslint@npm:^9.35.0, eslint@npm:^9.37.0, eslint@npm:^9.38.0":
   version: 9.38.0
   resolution: "eslint@npm:9.38.0"
   dependencies:
@@ -13580,7 +13560,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright@npm:1.55.1, playwright@npm:^1.55.1":
+"playwright@npm:1.55.1":
   version: 1.55.1
   resolution: "playwright@npm:1.55.1"
   dependencies:
@@ -17255,7 +17235,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "web@workspace:apps/web"
   dependencies:
-    "@axe-core/playwright": "npm:^4.10.2"
     "@eslint/js": "npm:^9.37.0"
     "@eslint/json": "npm:^0.13.2"
     "@lhci/cli": "npm:^0.15.1"
@@ -17277,7 +17256,6 @@ __metadata:
     "@trpc/client": "npm:^11.5.0"
     "@trpc/server": "npm:^11.5.0"
     "@trpc/tanstack-react-query": "npm:^11.5.0"
-    "@types/eslint-plugin-jsx-a11y": "npm:^6.10.1"
     "@types/jsdom": "npm:^27.0.0"
     "@types/node": "npm:^20"
     "@types/react": "npm:~19.1.10"
@@ -17307,7 +17285,6 @@ __metadata:
     knip: "npm:^5.64.1"
     lucide-react: "npm:^0.511.0"
     next-themes: "npm:^0.4.6"
-    playwright: "npm:^1.55.1"
     prettier: "npm:^3.6.2"
     prettier-plugin-tailwindcss: "npm:^0.6.14"
     radix-ui: "npm:^1.4.2"

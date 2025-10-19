@@ -1,4 +1,5 @@
 {
+  "extends": "../../tsconfig.json",
   "include": ["src/**/*", ".react-router/types/**/*", "vite.config.ts", "react-router.config.ts"],
   "exclude": ["../server/**", "node_modules", "dist", "build"],
   "compilerOptions": {
