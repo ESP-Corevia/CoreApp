@@ -1,0 +1,77 @@
+{
+  "translation": {
+    "_index": {
+      "apiStatus": "API Status",
+      "checking": "Checking...",
+      "connected": "Connected",
+      "disconnected": "Disconnected"
+    },
+    "dashboard": {
+      "loading": "Loading...",
+      "privateData": "privateData: {{message}}",
+      "title": "Dashboard",
+      "welcome": "Welcome {{userId}}"
+    },
+    "ErrorBoundary": {
+      "generic": "Error",
+      "notFound": "The requested page could not be found.",
+      "oops": "Oops!",
+      "unexpected": "An unexpected error occurred."
+    },
+    "HydrateFallback": {
+      "loading": "Loading…"
+    },
+    "modeToggle": {
+      "dark": "Dark",
+      "light": "Light",
+      "system": "System",
+      "toggleTheme": "Toggle theme"
+    },
+    "signIn": {
+      "emailLabel": "Email",
+      "errors": {
+        "invalidEmail": "Invalid email address",
+        "shortPassword": "Password must be at least 8 characters"
+      },
+      "passwordLabel": "Password",
+      "submit": "Sign In",
+      "submitting": "Submitting...",
+      "success": "Sign in successful",
+      "switchToSignUp": "Need an account? Sign Up",
+      "title": "Welcome Back"
+    },
+    "signUp": {
+      "form": {
+        "email": {
+          "invalid": "Invalid email address",
+          "label": "Email"
+        },
+        "firstName": {
+          "label": "First Name",
+          "min": "First name must be at least 2 characters"
+        },
+        "lastName": {
+          "label": "Last Name",
+          "min": "Last name must be at least 2 characters"
+        },
+        "name": {
+          "label": "Name",
+          "min": "Name must be at least 2 characters"
+        },
+        "password": {
+          "label": "Password",
+          "min": "Password must be at least 8 characters"
+        },
+        "submit": "Sign Up"
+      },
+      "success": "Sign up successful",
+      "switchToSignIn": "Already have an account? Sign In",
+      "title": "Create Account"
+    },
+    "userMenu": {
+      "myAccount": "My Account",
+      "signIn": "Sign In",
+      "signOut": "Sign Out"
+    }
+  }
+}

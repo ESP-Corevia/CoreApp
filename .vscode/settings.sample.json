@@ -7,14 +7,14 @@
     "javascript",
     "javascriptreact",
     "typescript",
-    "typescriptreact",
-    "vue"
+    "typescriptreact"
   ],
   "eslint.workingDirectories": [
     { "mode": "auto" },
-    { "pattern": "apps/server" }
+    { "pattern": "apps/server" },
+    { "pattern": "apps/web" }
   ],
-
+  "files.eol": "\n",
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     // "source.organizeImports": "always",
@@ -37,5 +37,12 @@
   "typescript.tsdk": "node_modules\\typescript\\lib",
   "[dockerfile]": {
     "editor.defaultFormatter": "ms-azuretools.vscode-containers"
+  },
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.patterns": {
+    "tsconfig.json": "tsconfig.*.json, env.d.ts",
+    "*.ts": "${basename}.test.ts",
+    "*.tsx": "${basename}.test.tsx",
+    "*.env": "${basename}.local, ${basename}.development, ${basename}.production, ${basename}.staging, ${basename}.test, ${basename}.example, ${basename}.sample"
   }
 }
