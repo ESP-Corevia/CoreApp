@@ -1,1 +1,1 @@
-yarn check-types
+yarn turbo run check:all
