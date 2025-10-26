@@ -12,12 +12,6 @@
       "title": "Tableau de bord",
       "welcome": "Bienvenue {{userId}}"
     },
-    "ErrorBoundary": {
-      "generic": "Erreur",
-      "notFound": "La page demandée est introuvable.",
-      "oops": "Oups !",
-      "unexpected": "Une erreur inattendue s'est produite."
-    },
     "HydrateFallback": {
       "loading": "Chargement…"
     },
@@ -27,10 +21,81 @@
       "system": "Système",
       "toggleTheme": "Changer le thème"
     },
+    "profile": {
+      "accountStatus": "État du compte",
+      "accountStatusSubtitle": "État et vérification du compte",
+      "cancel": "Annuler",
+      "createdDate": "Date de création",
+      "editProfile": "Modifier le profil",
+      "email": "E-mail",
+      "emailInvalid": "Adresse e-mail invalide",
+      "emailModal": {
+        "close": "Fermer",
+        "description": "Saisissez votre nouvel e-mail et votre mot de passe actuel pour continuer",
+        "newEmail": "Nouvel e-mail",
+        "newEmailLabel": "Entrez votre nouvel e-mail",
+        "title": "Modifier l'e-mail",
+        "update": "Mettre à jour l'e-mail",
+        "updating": "Mise à jour de l'e-mail…"
+      },
+      "emailUpdated": "E-mail mis à jour avec succès. Veuillez vérifier votre nouvel e-mail.",
+      "emailUpdateError": "Échec de la mise à jour de l'e-mail",
+      "error": "Échec de la mise à jour du profil",
+      "firstName": "Prénom",
+      "firstNameLabel": "Entrez votre prénom",
+      "firstNameMin": "Le prénom doit contenir au moins 3 caractères",
+      "lastName": "Nom",
+      "lastNameLabel": "Entrez votre nom",
+      "lastNameMin": "Le nom doit contenir au moins 3 caractères",
+      "notVerified": "Non vérifié",
+      "passwordMax": "Le mot de passe doit contenir au plus 100 caractères",
+      "passwordMin": "Le mot de passe doit contenir au moins 8 caractères",
+      "passwordMismatch": "Les mots de passe ne correspondent pas",
+      "passwordModal": {
+        "close": "Fermer",
+        "confirmPassword": "Confirmer le mot de passe",
+        "confirmPasswordLabel": "Confirmez votre nouveau mot de passe",
+        "description": "Entrez votre mot de passe actuel et un nouveau mot de passe pour continuer",
+        "newPassword": "Nouveau mot de passe",
+        "newPasswordLabel": "Entrez votre nouveau mot de passe",
+        "oldPassword": "Mot de passe actuel",
+        "oldPasswordLabel": "Entrez votre mot de passe actuel",
+        "title": "Modifier le mot de passe",
+        "update": "Modifier le mot de passe",
+        "updating": "Modification du mot de passe…"
+      },
+      "passwordUpdated": "Mot de passe mis à jour avec succès",
+      "passwordUpdateError": "Échec de la mise à jour du mot de passe. Vérifiez votre mot de passe actuel.",
+      "personalDetails": "Vos détails personnels",
+      "previewLabel": "Aperçu des informations du profil",
+      "profileInformation": "Informations de profil",
+      "save": "Enregistrer",
+      "savingChanges": "Enregistrement des modifications…",
+      "success": "Profil mis à jour avec succès",
+      "updatedDate": "Date de mise à jour",
+      "updateEmail": "Modifier l'e-mail",
+      "updatePassword": "Modifier le mot de passe",
+      "userId": "ID utilisateur",
+      "verificationStatus": "État de vérification",
+      "verified": "Vérifié"
+    },
+    "settings": {
+      "appearance": "Apparence",
+      "appearanceSubtitle": "Personnalisez l'apparence de Corevia",
+      "currentLanguage": "Actuellement : {{language}}",
+      "dark": "Sombre",
+      "language": "Langue",
+      "languageSubtitle": "Choisissez votre langue préférée",
+      "light": "Clair",
+      "system": "Système",
+      "theme": "Thème",
+      "themeSubtitle": "Choisissez votre schéma de couleurs"
+    },
     "signIn": {
       "emailLabel": "E-mail",
       "errors": {
         "invalidEmail": "Adresse e-mail invalide",
+        "longPassword": "Le mot de passe doit contenir au plus 100 caractères",
         "shortPassword": "Le mot de passe doit contenir au moins 8 caractères"
       },
       "passwordLabel": "Mot de passe",
@@ -60,6 +125,7 @@
         },
         "password": {
           "label": "Mot de passe",
+          "max": "Le mot de passe doit contenir au plus 100 caractères",
           "min": "Le mot de passe doit contenir au moins 8 caractères"
         },
         "submit": "S'inscrire"
@@ -69,7 +135,6 @@
       "title": "Créer un compte"
     },
     "userMenu": {
-      "myAccount": "Mon compte",
       "signIn": "Se connecter",
       "signOut": "Se déconnecter"
     }

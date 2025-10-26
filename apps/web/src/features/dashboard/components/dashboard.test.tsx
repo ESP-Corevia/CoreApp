@@ -1,7 +1,6 @@
 import { waitFor } from '@testing-library/react';
 import { vi } from 'vitest';
 
-import { authClient } from '@/lib/auth-client';
 import { render } from '@/test/render';
 
 import Dashboard from './dashboard';
@@ -18,13 +17,7 @@ describe('Dashboard', () => {
   });
 
   it('redirects to login if not authenticated', async () => {
-    vi.mocked(authClient.useSession).mockReturnValue({
-      data: null,
-      isPending: false,
-      error: 'Not Authenticated',
-    } as any);
-
-    const { queryByText } = render(<Dashboard />, {
+    const { queryByText } = render(<Dashboard session={null} />, {
       router: { initialEntries: ['/dashboard'] },
     });
     await waitFor(() => {
@@ -33,40 +26,34 @@ describe('Dashboard', () => {
   });
 
   it('shows loading state when auth is pending', async () => {
-    vi.mocked(authClient.useSession).mockReturnValue({
-      data: null,
-      isPending: true,
-      error: null,
-    } as any);
-    const mockHandler = vi.fn(() => ({ message: 'ok-from-mock' }));
-    const { getByText } = render(<Dashboard />, {
+    const mockHandler = vi.fn(() => ({ isLoading: true }));
+    const { getByText } = render(<Dashboard session={{ isAuthenticated: true, userId: '123' }} />, {
       trpcHandlers: {
         privateData: mockHandler,
       },
     });
-    expect(mockHandler).not.toHaveBeenCalled();
+    expect(mockHandler).toHaveBeenCalled();
     await waitFor(() => {
       expect(getByText('Loading...')).toBeInTheDocument();
     });
   });
 
   it('shows private data when authenticated', async () => {
-    vi.mocked(authClient.useSession).mockReturnValue({
-      data: { userId: '123' },
-      isPending: false,
-      error: null,
-    } as any);
-    const mockHandler = vi.fn(() => ({ message: 'ok-from-mock' }));
-    const { getByRole, getByText } = render(<Dashboard />, {
-      trpcHandlers: {
-        privateData: mockHandler,
-      },
+    const mockHandler = vi.fn(() => ({ message: 'ok-from-mock', user: 123 }));
+    const { getByRole, getByText } = render(
+      <Dashboard session={{ isAuthenticated: true, userId: '123' }} />,
+      {
+        trpcHandlers: {
+          privateData: mockHandler,
+        },
+      }
+    );
+    await waitFor(() => {
+      expect(getByRole('heading', { name: 'Dashboard' })).toBeInTheDocument();
+
+      expect(getByText('Welcome 123')).toBeInTheDocument();
+      expect(mockHandler).toHaveBeenCalled();
     });
-
-    expect(getByRole('heading', { name: 'Dashboard' })).toBeInTheDocument();
-
-    expect(getByText('Welcome 123')).toBeInTheDocument();
-    expect(mockHandler).toHaveBeenCalled();
 
     await waitFor(() => expect(getByText('privateData: ok-from-mock')).toBeInTheDocument());
   });

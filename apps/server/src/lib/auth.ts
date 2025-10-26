@@ -26,6 +26,9 @@ export const auth = betterAuth({
       firstName: { type: 'string', required: true },
       lastName: { type: 'string', required: true },
     },
+    changeEmail: {
+      enabled: true,
+    },
   },
   session: {
     cookieCache: {
@@ -36,6 +39,8 @@ export const auth = betterAuth({
   trustedOrigins: [env.CORS_ORIGIN],
   emailAndPassword: {
     enabled: true,
+    minPasswordLength: 8,
+    maxPasswordLength: 100,
   },
   secret: env.BETTER_AUTH_SECRET,
   baseURL: env.BETTER_AUTH_URL,

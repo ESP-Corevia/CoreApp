@@ -135,3 +135,12 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+* {
+  user-select: none;
+}
+
+input,
+textarea {
+  user-select: text;
+}
