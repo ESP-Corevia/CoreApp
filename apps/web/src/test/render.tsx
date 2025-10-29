@@ -8,6 +8,7 @@ import { render as rtlRender } from '@testing-library/react';
 import { I18nextProvider } from 'react-i18next';
 import { MemoryRouter } from 'react-router';
 
+import { SidebarProvider } from '@/components/ui/sidebar';
 import { ThemeProvider } from '@/providers/theme';
 import { TrpcProvider } from '@/providers/trpc';
 
@@ -56,12 +57,14 @@ export function render(ui: React.ReactElement, opts: Options = {}) {
         <ThemeProvider attribute="class" defaultTheme="system" storageKey="test-theme">
           <QueryClientProvider client={queryClient}>
             <TrpcProvider client={trpcClient} queryClient={queryClient}>
-              <MemoryRouter
-                initialEntries={router?.initialEntries}
-                initialIndex={router?.initialIndex}
-              >
-                {children}
-              </MemoryRouter>
+              <SidebarProvider>
+                <MemoryRouter
+                  initialEntries={router?.initialEntries}
+                  initialIndex={router?.initialIndex}
+                >
+                  {children}
+                </MemoryRouter>
+              </SidebarProvider>
             </TrpcProvider>
           </QueryClientProvider>
         </ThemeProvider>

@@ -1,14 +1,14 @@
 import Loader from '@/components/loader';
 import { useRequireAuth } from '@/hooks/use-require-auth';
 
-import Home from '../components/home';
+import Profile from '../components/profile';
 
-export default function HomeRoute() {
+export default function ProfileRoute() {
   const { isLoading, session } = useRequireAuth();
 
   if (isLoading) {
     return <Loader open />;
   }
 
-  return <Home session={session} />;
+  return <Profile session={session} />;
 }

@@ -9,17 +9,17 @@ describe('Home', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
-
+  const session = { isAuthenticated: true, userId: '123' };
   it('renders the home page with title text', () => {
-    const { container } = render(<Home />);
+    const { container } = render(<Home session={session} />);
 
-    const preElement = container.querySelector('pre');
-    expect(preElement).toBeInTheDocument();
-    expect(preElement).toHaveAttribute('aria-label', 'Corevia');
+    const h1Element = container.querySelector('h1');
+    expect(h1Element).toBeInTheDocument();
+    expect(h1Element).toHaveAttribute('aria-label', 'Corevia');
   });
 
   it('renders API Status section', () => {
-    const { getByText } = render(<Home />);
+    const { getByText } = render(<Home session={session} />);
 
     expect(getByText('API Status')).toBeInTheDocument();
   });
@@ -27,7 +27,7 @@ describe('Home', () => {
   it('displays "Checking..." when health check is loading', () => {
     const mockHandler = vi.fn(() => new Promise(() => {}));
 
-    const { getByText } = render(<Home />, {
+    const { getByText } = render(<Home session={session} />, {
       trpcHandlers: {
         healthCheck: mockHandler,
       },
@@ -39,7 +39,7 @@ describe('Home', () => {
   it('displays "Connected" with green indicator when health check succeeds', async () => {
     const mockHandler = vi.fn(() => true);
 
-    const { getByText, container } = render(<Home />, {
+    const { getByText, container } = render(<Home session={session} />, {
       trpcHandlers: {
         healthCheck: mockHandler,
       },
@@ -59,7 +59,7 @@ describe('Home', () => {
       throw new Error('Health check failed');
     });
 
-    const { getByText, container } = render(<Home />, {
+    const { getByText, container } = render(<Home session={session} />, {
       trpcHandlers: {
         healthCheck: mockHandler,
       },
@@ -77,7 +77,7 @@ describe('Home', () => {
   it('displays "Disconnected" with red indicator when health check returns falsy value', async () => {
     const mockHandler = vi.fn(() => false);
 
-    const { getByText, container } = render(<Home />, {
+    const { getByText, container } = render(<Home session={session} />, {
       trpcHandlers: {
         healthCheck: mockHandler,
       },
@@ -93,10 +93,23 @@ describe('Home', () => {
   });
 
   it('renders with proper container and styling classes', () => {
-    const { container } = render(<Home />);
+    const { container } = render(<Home session={session} />);
 
     const mainContainer = container.querySelector('.container');
-    expect(mainContainer).toHaveClass('mx-auto', 'max-w-3xl', 'px-4', 'py-2');
+
+    expect(mainContainer).toHaveClass(
+      'mx-auto',
+      'flex',
+      'min-h-screen',
+      'max-w-5xl',
+      'flex-col',
+      'items-center',
+      'justify-center',
+      'px-4',
+      'py-6',
+      'sm:px-6',
+      'lg:px-8'
+    );
 
     const section = container.querySelector('section');
     expect(section).toHaveClass('rounded-lg', 'border', 'p-4');
@@ -105,7 +118,7 @@ describe('Home', () => {
   it('displays the status indicator as a small circle', () => {
     const mockHandler = vi.fn(() => true);
 
-    const { container } = render(<Home />, {
+    const { container } = render(<Home session={session} />, {
       trpcHandlers: {
         healthCheck: mockHandler,
       },
@@ -113,5 +126,10 @@ describe('Home', () => {
 
     const indicator = container.querySelector('.h-2.w-2.rounded-full');
     expect(indicator).toBeInTheDocument();
+  });
+  it('redirects to login if not authenticated', async () => {
+    const { container } = render(<Home session={null} />);
+    const h1Element = container.querySelector('h1');
+    expect(h1Element).not.toBeInTheDocument();
   });
 });

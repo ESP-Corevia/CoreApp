@@ -7,7 +7,7 @@
     "**/*.spec.{ts,tsx}",
     "playwright/**",
     "e2e/**",
-    "src/components/ui/**",
+    "src/components/**",
     "test-results/**",
     ".react-router/**"
   ],
@@ -30,7 +30,8 @@
     "stylelint",
     "i18next-cli",
     "@radix-ui/react-visually-hidden",
-    "shadcn"
+    "shadcn",
+    "ogl"
   ],
   "ignoreExportsUsedInFile": true,
   "ignoreBinaries": [

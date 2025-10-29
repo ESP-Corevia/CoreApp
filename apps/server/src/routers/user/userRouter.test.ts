@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 
 import { createTestCaller } from '../../../test/caller';
 import { mockServices } from '../../../test/services';
+
 beforeEach(() => {});
 
 describe('userRouter', () => {
@@ -18,6 +19,8 @@ describe('userRouter', () => {
         lastName: faker.person.lastName(),
         image: null,
         lastLoginMethod: null,
+        emailVerified: true,
+        role: 'user',
       };
       mockServices.usersService.getMe.mockResolvedValue(fakeMe);
 

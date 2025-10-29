@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
 
 import { authMock } from '../../test/caller';
+import { user } from '../../test/faker';
 
 import { createContext } from './context';
-
 describe('createContext', () => {
   it('return a context with the session and relays req/res/auth', async () => {
     const fakeSession = { isAuthenticated: true, userId: 'u_1' };

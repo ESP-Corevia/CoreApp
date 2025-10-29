@@ -21,3 +21,4 @@ ignores:
   - '@server/routers'
   - 'shadcn'
   - '@radix-ui/**'
+  - 'ogl'

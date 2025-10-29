@@ -24,6 +24,7 @@ export default defineConfig([
       'coverage/**',
       '.react-router/**',
       'playwright-report/**',
+      'src/components/**',
     ],
   },
 
