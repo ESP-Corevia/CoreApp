@@ -30,8 +30,9 @@ describe('Profile', () => {
     firstName: 'John',
     lastName: 'Doe',
     email: 'john@example.com',
-    emailVerified: new Date(),
+    emailVerified: true,
     createdAt: new Date(),
+    updatedAt: new Date(),
     image: null,
   };
 
@@ -110,7 +111,7 @@ describe('Profile', () => {
     });
 
     await waitFor(() => {
-      expect(getByRole('button', { name: /change email/i })).toBeInTheDocument();
+      expect(getByRole('button', { name: 'Change Email' })).toBeInTheDocument();
     });
   });
 
@@ -122,7 +123,7 @@ describe('Profile', () => {
     });
 
     await waitFor(() => {
-      expect(getByRole('button', { name: /change password/i })).toBeInTheDocument();
+      expect(getByRole('button', { name: 'Change Password' })).toBeInTheDocument();
     });
   });
 
@@ -150,21 +151,25 @@ describe('Profile', () => {
     });
 
     await waitFor(() => {
-      expect(getByRole('button', { name: /edit/i })).toBeInTheDocument();
+      expect(getByRole('button', { name: 'Edit Profile' })).toBeInTheDocument();
     });
 
-    const editButton = getByRole('button', { name: /edit/i });
+    const editButton = getByRole('button', { name: 'Edit Profile' });
     await user.click(editButton);
 
-    const firstNameInput = getByLabelText('First Name');
-    const lastNameInput = getByLabelText('Last Name');
+    await waitFor(() => {
+      expect(getByLabelText('First Name')).toBeVisible();
+    });
+
+    const firstNameInput = getByLabelText('First Name') as HTMLInputElement;
+    const lastNameInput = getByLabelText('Last Name') as HTMLInputElement;
 
     await user.clear(firstNameInput);
     await user.type(firstNameInput, 'Jane');
     await user.clear(lastNameInput);
     await user.type(lastNameInput, 'Smith');
 
-    const submitButton = getByRole('button', { name: /save/i });
+    const submitButton = getByRole('button', { name: 'Save' });
     await user.click(submitButton);
 
     await waitFor(() => {
@@ -172,6 +177,58 @@ describe('Profile', () => {
         firstName: 'Jane',
         lastName: 'Smith',
       });
+    });
+  });
+
+  it('renders account status section', async () => {
+    const { getByText } = render(<Profile session={session} />, {
+      trpcHandlers: {
+        'user.getMe': () => ({ user: mockUser }),
+      },
+    });
+
+    await waitFor(() => {
+      expect(getByText('Account Status')).toBeInTheDocument();
+      expect(getByText('Verified')).toBeInTheDocument();
+    });
+  });
+
+  it('opens email change modal when change email button is clicked', async () => {
+    const user = userEvent.setup();
+    const { getAllByRole, getByRole } = render(<Profile session={session} />, {
+      trpcHandlers: {
+        'user.getMe': () => ({ user: mockUser }),
+      },
+    });
+
+    await waitFor(() => {
+      expect(getAllByRole('button', { name: 'Change Email' }).length).toBeGreaterThan(0);
+    });
+
+    const emailButtons = getAllByRole('button', { name: 'Change Email' });
+    await user.click(emailButtons[0]);
+
+    await waitFor(() => {
+      expect(getByRole('button', { name: 'Update Email' })).toBeInTheDocument();
+    });
+  });
+
+  it('opens password change modal when change password button is clicked', async () => {
+    const user = userEvent.setup();
+    const { getAllByRole, getByRole } = render(<Profile session={session} />, {
+      trpcHandlers: {
+        'user.getMe': () => ({ user: mockUser }),
+      },
+    });
+
+    await waitFor(() => {
+      expect(getAllByRole('button', { name: 'Change Password' }).length).toBeGreaterThan(0);
+    });
+
+    const passwordButtons = getAllByRole('button', { name: 'Change Password' });
+    await user.click(passwordButtons[0]);
+    await waitFor(() => {
+      expect(getByRole('button', { name: 'Update Password' })).toBeInTheDocument();
     });
   });
 });

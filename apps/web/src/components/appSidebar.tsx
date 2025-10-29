@@ -68,7 +68,7 @@ const settingsItems: NavigationItem[] = [
 ];
 export default function FooterDateTime({ onlyYear = false }: { onlyYear?: boolean }) {
   const { i18n } = useTranslation();
-  const locale = i18n.language || navigator.language;
+  const locale = i18n.language;
 
   const [now, setNow] = useState(new Date());
   useEffect(() => {

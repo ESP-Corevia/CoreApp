@@ -20,6 +20,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
+import UserAvatar from '@/components/userAvatar';
 import { authClient } from '@/lib/auth-client';
 import { useTrpc } from '@/providers/trpc';
 
@@ -43,14 +44,6 @@ export default function Profile({
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
 
-  const getInitials = () => {
-    if (!user) return '';
-    const parts = user.name?.split(' ') ?? [];
-    return parts
-      .map(part => part[0])
-      .join('')
-      .toUpperCase();
-  };
   const nameSchema = z.object({
     firstName: z
       .string()
@@ -83,8 +76,8 @@ export default function Profile({
     });
   const profileForm = useForm({
     defaultValues: {
-      firstName: user?.firstName,
-      lastName: user?.lastName,
+      firstName: user?.firstName ?? '',
+      lastName: user?.lastName ?? '',
     },
     validators: {
       onChange: nameSchema,
@@ -188,9 +181,7 @@ export default function Profile({
           <div className="space-y-3">
             {/* User Avatar with Initials */}
             <div className="flex flex-col gap-4 rounded-lg border p-4 sm:flex-row sm:items-center">
-              <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600">
-                <span className="text-xl font-bold text-white">{getInitials()}</span>
-              </div>
+              <UserAvatar firstName={user?.firstName ?? ''} lastName={user?.lastName ?? ''} />
               <div className="flex-1">
                 <p className="font-medium">{user?.name}</p>
                 <p className="text-muted-foreground text-sm">{user?.email}</p>
@@ -282,7 +273,10 @@ export default function Profile({
                 </profileForm.Subscribe>
               </form>
             ) : (
-              <div aria-label={t('profile.previewLabel', 'Preview Profile Information')}>
+              <div
+                aria-label={t('profile.previewLabel', 'Preview Profile Information')}
+                className="space-y-3"
+              >
                 {/* Read-only display */}
                 <div className="flex flex-col gap-4 md:flex-row">
                   <div className="flex-1 rounded-lg border p-4">

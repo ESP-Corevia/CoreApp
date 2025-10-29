@@ -12,7 +12,7 @@ export default function UserMenu() {
   const navigate = useNavigate();
   const { data: session, isPending } = authClient.useSession();
   const trpc = useTrpc();
-  const { data: user, isLoading } = useQuery({
+  const { isLoading } = useQuery({
     ...trpc.user.getMe.queryOptions({}),
     enabled: Boolean(session),
   });

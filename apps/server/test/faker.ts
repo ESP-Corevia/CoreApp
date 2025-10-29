@@ -11,4 +11,5 @@ export const user = {
   image: null,
   lastLoginMethod: 'email',
   emailVerified: true,
+  role: 'user',
 };

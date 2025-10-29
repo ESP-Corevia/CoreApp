@@ -14,9 +14,19 @@ import { Label } from '../../../components/ui/label';
 
 export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp: () => void }) {
   const navigate = useNavigate();
+
   const { t } = useTranslation();
   const { isPending } = authClient.useSession();
-
+  const getRedirectPath = () => {
+    const params = new URLSearchParams(location.search);
+    const raw = params.get('redirectTo') ?? '';
+    try {
+      const decoded = decodeURIComponent(raw);
+      return decoded.startsWith('/') ? decoded : '/';
+    } catch {
+      return '/';
+    }
+  };
   const form = useForm({
     defaultValues: {
       email: '',
@@ -30,7 +40,7 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp: () 
         },
         {
           onSuccess: async () => {
-            await navigate('/');
+            await navigate(getRedirectPath(), { replace: true });
             toast.success(t('signIn.success', 'Sign in successful'));
           },
           onError: error => {
