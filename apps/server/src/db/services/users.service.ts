@@ -12,6 +12,8 @@ export const UserOutputSchema = z.object({
   lastName: z.string(),
   image: z.url().nullable(),
   lastLoginMethod: z.string().nullable(),
+  emailVerified: z.boolean().nullable(),
+  role: z.string().nullable(),
 });
 type UserOutput = z.infer<typeof UserOutputSchema>;
 export const createUsersService = (repo: Repositories['usersRepo']) => ({
@@ -53,6 +55,8 @@ export const createUsersService = (repo: Repositories['usersRepo']) => ({
       firstName: user.firstName,
       lastName: user.lastName,
       image: user.image,
+      emailVerified: user.emailVerified,
+      role: user.role,
     };
   },
 });

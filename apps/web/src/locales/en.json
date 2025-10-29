@@ -12,12 +12,6 @@
       "title": "Dashboard",
       "welcome": "Welcome {{userId}}"
     },
-    "ErrorBoundary": {
-      "generic": "Error",
-      "notFound": "The requested page could not be found.",
-      "oops": "Oops!",
-      "unexpected": "An unexpected error occurred."
-    },
     "HydrateFallback": {
       "loading": "Loading…"
     },
@@ -27,10 +21,81 @@
       "system": "System",
       "toggleTheme": "Toggle theme"
     },
+    "profile": {
+      "accountStatus": "Account Status",
+      "accountStatusSubtitle": "Your account status and verification",
+      "cancel": "Cancel",
+      "createdDate": "Created Date",
+      "editProfile": "Edit Profile",
+      "email": "Email",
+      "emailInvalid": "Invalid email address",
+      "emailModal": {
+        "close": "Close",
+        "description": "Enter your new email and current password to proceed",
+        "newEmail": "New Email",
+        "newEmailLabel": "Enter your new email",
+        "title": "Change Email",
+        "update": "Update Email",
+        "updating": "Updating email..."
+      },
+      "emailUpdated": "Email updated successfully. Please verify your new email.",
+      "emailUpdateError": "Failed to update email",
+      "error": "Failed to update profile",
+      "firstName": "First Name",
+      "firstNameLabel": "Enter your first name",
+      "firstNameMin": "First name must be at least 3 characters",
+      "lastName": "Last Name",
+      "lastNameLabel": "Enter your last name",
+      "lastNameMin": "Last name must be at least 3 characters",
+      "notVerified": "Not Verified",
+      "passwordMax": "Password must be at most 100 characters",
+      "passwordMin": "Password must be at least 8 characters",
+      "passwordMismatch": "Passwords do not match",
+      "passwordModal": {
+        "close": "Close",
+        "confirmPassword": "Confirm Password",
+        "confirmPasswordLabel": "Confirm your new password",
+        "description": "Enter your current password and a new password to proceed",
+        "newPassword": "New Password",
+        "newPasswordLabel": "Enter your new password",
+        "oldPassword": "Current Password",
+        "oldPasswordLabel": "Enter your current password",
+        "title": "Change Password",
+        "update": "Update Password",
+        "updating": "Updating password..."
+      },
+      "passwordUpdated": "Password updated successfully",
+      "passwordUpdateError": "Failed to update password. Check your current password.",
+      "personalDetails": "Your personal details",
+      "previewLabel": "Preview Profile Information",
+      "profileInformation": "Profile Information",
+      "save": "Save",
+      "savingChanges": "Saving changes...",
+      "success": "Profile updated successfully",
+      "updatedDate": "Updated Date",
+      "updateEmail": "Change Email",
+      "updatePassword": "Update Password",
+      "userId": "User ID",
+      "verificationStatus": "Verification Status",
+      "verified": "Verified"
+    },
+    "settings": {
+      "appearance": "Appearance",
+      "appearanceSubtitle": "Customize how Corevia looks",
+      "currentLanguage": "Current: {{language}}",
+      "dark": "Dark",
+      "language": "Language",
+      "languageSubtitle": "Choose your preferred language",
+      "light": "Light",
+      "system": "System",
+      "theme": "Theme",
+      "themeSubtitle": "Choose your color scheme"
+    },
     "signIn": {
       "emailLabel": "Email",
       "errors": {
         "invalidEmail": "Invalid email address",
+        "longPassword": "Password must be at most 100 characters",
         "shortPassword": "Password must be at least 8 characters"
       },
       "passwordLabel": "Password",
@@ -60,6 +125,7 @@
         },
         "password": {
           "label": "Password",
+          "max": "Password must be at most 100 characters",
           "min": "Password must be at least 8 characters"
         },
         "submit": "Sign Up"
@@ -69,7 +135,6 @@
       "title": "Create Account"
     },
     "userMenu": {
-      "myAccount": "My Account",
       "signIn": "Sign In",
       "signOut": "Sign Out"
     }
