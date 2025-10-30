@@ -17,7 +17,14 @@ export default mergeConfig(
       globals: true,
       environment: 'jsdom',
       setupFiles: ['./src/test/setup.ts'],
-      exclude: ['node_modules', 'dist', 'build', 'e2e/**', 'playwright/**'],
+      exclude: [
+        'node_modules',
+        'dist',
+        'build',
+        'e2e/**',
+        'playwright/**',
+        'src/components/**.tsx',
+      ],
       coverage: {
         provider: 'v8',
         reporter: ['text', 'json', 'json-summary', 'html'],

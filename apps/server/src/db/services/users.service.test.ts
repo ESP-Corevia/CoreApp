@@ -118,6 +118,8 @@ describe('getMe', () => {
       lastName: 'Doe',
       image: 'https://example.com/avatar.jpg',
       lastLoginMethod: 'google',
+      emailVerified: true,
+      role: 'user',
     });
 
     expect(mockRepositories.usersRepo.findById).toHaveBeenCalledWith({

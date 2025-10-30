@@ -11,7 +11,7 @@ const resources = { en, fr } as const;
 let initPromise: ReturnType<typeof i18n.init> | undefined;
 function ensureI18nInit() {
   initPromise ??= i18n.use(initReactI18next).init({
-    lng: 'en',
+    lng: localStorage.getItem('lang') ?? 'en',
     fallbackLng: 'en',
     resources,
     interpolation: { escapeValue: false },
