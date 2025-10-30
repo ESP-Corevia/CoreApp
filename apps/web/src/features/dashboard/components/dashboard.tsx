@@ -2,7 +2,10 @@ import { useQuery } from '@tanstack/react-query';
 
 import { Trans } from 'react-i18next';
 
+import { authClient } from '@/lib/auth-client';
 import { useTrpc } from '@/providers/trpc';
+
+import DataTableDemo from './table';
 
 export default function Dashboard({
   session,
@@ -14,6 +17,22 @@ export default function Dashboard({
     ...trpc.privateData.queryOptions(),
     enabled: !!session?.isAuthenticated,
   });
+  const {
+    data: users,
+    error,
+    isLoading: isLoadingUsers,
+  } = useQuery({
+    queryKey: ['admin', 'users'],
+    queryFn: async () => {
+      const res = await authClient.admin.listUsers({ query: {} });
+      return 'data' in res ? res.data : res;
+    },
+  });
+  if (error) console.error(error);
+  if (isLoadingUsers) {
+    // optional lightweight fallback; remove if you don't need it
+    return <div className="text-muted-foreground p-4 text-sm">Loading users…</div>;
+  }
   if (!session?.isAuthenticated) {
     return null;
   }
@@ -23,6 +42,7 @@ export default function Dashboard({
         <Trans i18nKey="dashboard.loading">Loading...</Trans>
       </div>
     );
+  const userRows = Array.isArray(users) ? users : (users?.users ?? []);
   return (
     <div>
       <h1 role="heading">
@@ -38,6 +58,7 @@ export default function Dashboard({
           values={{ message: privateData?.message }}
         />
       </p>
+      <DataTableDemo data={userRows} />
     </div>
   );
 }

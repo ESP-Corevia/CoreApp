@@ -1,6 +1,7 @@
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { useTheme } from 'next-themes';
+import { NuqsAdapter } from 'nuqs/adapters/react-router/v7';
 import { Trans } from 'react-i18next';
 import {
   isRouteErrorResponse,
@@ -127,7 +128,9 @@ function ThemedShell() {
                 <div className="container mx-auto max-w-screen-2xl space-y-4 p-4 md:p-6 lg:p-8">
                   {isNavigating && <PageLoadingSkeleton />}
                   <div style={isNavigating ? { opacity: 0.5, pointerEvents: 'none' } : {}}>
-                    <Outlet />
+                    <NuqsAdapter>
+                      <Outlet />
+                    </NuqsAdapter>
                   </div>
                 </div>
               </ClickSpark>
