@@ -13,8 +13,25 @@ import printBanner from './lib/banner';
 import { createContext } from './lib/context';
 import { appRouter, type AppRouter } from './routers/index';
 import { mergeOpenApiDocs } from './utils/functions';
+const isLocalhostOrigin = (origin: string): boolean => {
+  try {
+    const url = new URL(origin);
+    const hostname = url.hostname;
+    return hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1';
+  } catch {
+    return false;
+  }
+};
+
 const baseCorsConfig = {
-  origin: [env.CORS_ORIGIN, 'http://127.0.0.1:3000'],
+  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+    // Autoriser tous les localhost (127.0.0.1, localhost et ::1 avec tous les ports)
+    if (!origin || isLocalhostOrigin(origin) || origin === env.CORS_ORIGIN) {
+      callback(null, true);
+    } else {
+      callback(null, false);
+    }
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'x-api-key', 'x-language'],
