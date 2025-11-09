@@ -29,6 +29,13 @@
       "when": 1759350259636,
       "tag": "0003_jittery_cable",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1762649931938,
+      "tag": "0004_green_valkyrie",
+      "breakpoints": true
     }
   ]
 }

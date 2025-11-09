@@ -26,6 +26,7 @@ export const users = pgTable(
       .$defaultFn(() => /* @__PURE__ */ new Date())
       .notNull(),
     updatedAt: t.timestamp('updated_at').$onUpdateFn(() => new Date()),
+    seeded: t.boolean('seeded').default(false),
   }),
   (table) => [index('email_idx').on(table.email)],
 );
