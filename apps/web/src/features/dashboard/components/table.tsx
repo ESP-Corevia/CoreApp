@@ -9,6 +9,7 @@ import { CalendarClock, Mail, Shield, Text } from 'lucide-react';
 import { DataTable } from '@/components/data-table/data-table';
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
 import { DataTableToolbar } from '@/components/data-table/data-table-toolbar';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useDataTable } from '@/hooks/use-data-table';
@@ -20,8 +21,8 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  firstName?: string | null;
-  lastName?: string | null;
+  firstName: string;
+  lastName: string;
   role: string; // Better Auth returns role as string
   createdAt: string; // ISO string
   updatedAt?: string;
@@ -80,8 +81,21 @@ export default function DataTableDemo({
         id: 'name',
         accessorKey: 'name',
         header: ({ column }) => <DataTableColumnHeader column={column} label="Name" />,
-        cell: ({ cell }) => {
-          return <div className="font-medium">{cell.getValue<User['email']>()}</div>;
+        cell: ({ row }) => {
+          return (
+            <div className="flex items-center gap-2">
+              <Avatar className="h-8 w-8">
+                <AvatarImage src={row.original.image ?? undefined} />
+                <AvatarFallback>
+                  {row.original.firstName.charAt(0).toUpperCase() +
+                    row.original.lastName.charAt(0).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              <span className="font-medium">
+                {row.original.firstName} {row.original.lastName}
+              </span>
+            </div>
+          );
         },
         meta: {
           label: 'Name',
@@ -90,6 +104,7 @@ export default function DataTableDemo({
           icon: Text,
         },
         enableColumnFilter: true,
+        enableSorting: false,
       },
       {
         id: 'email',
@@ -109,7 +124,7 @@ export default function DataTableDemo({
           variant: 'text',
           icon: Mail,
         },
-        enableColumnFilter: true,
+        // enableColumnFilter: true,
       },
       {
         id: 'role',
@@ -151,6 +166,27 @@ export default function DataTableDemo({
         enableColumnFilter: true,
         meta: {
           label: 'Created At',
+          variant: 'dateRange',
+          icon: CalendarClock,
+        },
+      },
+      {
+        id: 'updatedAt',
+        accessorKey: 'updatedAt',
+        header: ({ column }) => <DataTableColumnHeader column={column} label="UpdatedAt" />,
+        cell: ({ cell }) => {
+          const updated = cell.getValue<User['updatedAt']>();
+          return (
+            <div className="text-muted-foreground inline-flex items-center gap-1 text-sm">
+              <CalendarClock className="h-4 w-4" />
+              {formatDate(updated)}
+            </div>
+          );
+        },
+        sortingFn: 'datetime',
+        enableColumnFilter: true,
+        meta: {
+          label: 'Updated At',
           variant: 'dateRange',
           icon: CalendarClock,
         },

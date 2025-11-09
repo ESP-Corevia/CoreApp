@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 
 import LoaderDialog from '@/components/loader';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -20,7 +21,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import UserAvatar from '@/components/userAvatar';
 import { authClient } from '@/lib/auth-client';
 import { useTrpc } from '@/providers/trpc';
 
@@ -181,7 +181,13 @@ export default function Profile({
           <div className="space-y-3">
             {/* User Avatar with Initials */}
             <div className="flex flex-col gap-4 rounded-lg border p-4 sm:flex-row sm:items-center">
-              <UserAvatar firstName={user?.firstName ?? ''} lastName={user?.lastName ?? ''} />
+              <Avatar className="h-16 w-16">
+                <AvatarImage src={user?.image ?? undefined} />
+                <AvatarFallback>
+                  {(user?.firstName.charAt(0).toUpperCase() ?? '') +
+                    (user?.lastName.charAt(0).toUpperCase() ?? '')}
+                </AvatarFallback>
+              </Avatar>
               <div className="flex-1">
                 <p className="font-medium">{user?.name}</p>
                 <p className="text-muted-foreground text-sm">{user?.email}</p>
