@@ -1,6 +1,6 @@
 {
-  "id": "ad8c1986-64ca-44b5-89f9-cd3a3dc2a228",
-  "prevId": "fbc9bd6e-a4be-4a5a-9d9e-af3e897de295",
+  "id": "07724b87-af28-467a-9c15-cfc61158783d",
+  "prevId": "ad8c1986-64ca-44b5-89f9-cd3a3dc2a228",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -100,20 +100,20 @@
             }
           ],
           "isUnique": false,
-          "concurrently": false,
+          "with": {},
           "method": "btree",
-          "with": {}
+          "concurrently": false
         }
       },
       "foreignKeys": {
         "accounts_user_id_users_id_fk": {
           "name": "accounts_user_id_users_id_fk",
           "tableFrom": "accounts",
-          "tableTo": "users",
           "columnsFrom": ["user_id"],
+          "tableTo": "users",
           "columnsTo": ["id"],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -194,9 +194,9 @@
             }
           ],
           "isUnique": false,
-          "concurrently": false,
+          "with": {},
           "method": "btree",
-          "with": {}
+          "concurrently": false
         },
         "token_idx": {
           "name": "token_idx",
@@ -209,28 +209,28 @@
             }
           ],
           "isUnique": false,
-          "concurrently": false,
+          "with": {},
           "method": "btree",
-          "with": {}
+          "concurrently": false
         }
       },
       "foreignKeys": {
         "sessions_user_id_users_id_fk": {
           "name": "sessions_user_id_users_id_fk",
           "tableFrom": "sessions",
-          "tableTo": "users",
           "columnsFrom": ["user_id"],
+          "tableTo": "users",
           "columnsTo": ["id"],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "sessions_token_unique": {
           "name": "sessions_token_unique",
-          "nullsNotDistinct": false,
-          "columns": ["token"]
+          "columns": ["token"],
+          "nullsNotDistinct": false
         }
       },
       "policies": {},
@@ -254,8 +254,8 @@
           "primaryKey": false,
           "notNull": false,
           "generated": {
-            "as": "\n        coalesce(first_name, '') ||\n        CASE WHEN first_name <> '' AND last_name <> '' THEN ' ' ELSE '' END ||\n        coalesce(last_name, '')",
-            "type": "stored"
+            "type": "stored",
+            "as": "\n        coalesce(first_name, '') ||\n        CASE WHEN first_name <> '' AND last_name <> '' THEN ' ' ELSE '' END ||\n        coalesce(last_name, '')"
           }
         },
         "first_name": {
@@ -351,9 +351,9 @@
             }
           ],
           "isUnique": false,
-          "concurrently": false,
+          "with": {},
           "method": "btree",
-          "with": {}
+          "concurrently": false
         }
       },
       "foreignKeys": {},
@@ -361,8 +361,8 @@
       "uniqueConstraints": {
         "users_email_unique": {
           "name": "users_email_unique",
-          "nullsNotDistinct": false,
-          "columns": ["email"]
+          "columns": ["email"],
+          "nullsNotDistinct": false
         }
       },
       "policies": {},
@@ -423,9 +423,9 @@
             }
           ],
           "isUnique": false,
-          "concurrently": false,
+          "with": {},
           "method": "btree",
-          "with": {}
+          "concurrently": false
         }
       },
       "foreignKeys": {},
@@ -438,10 +438,10 @@
   },
   "enums": {},
   "schemas": {},
+  "views": {},
   "sequences": {},
   "roles": {},
   "policies": {},
-  "views": {},
   "_meta": {
     "columns": {},
     "schemas": {},

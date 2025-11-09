@@ -4,6 +4,7 @@ import { defaultStatements, adminAc } from 'better-auth/plugins/admin/access';
 export const statements = {
   ...defaultStatements,
   account: ['create', 'update', 'delete'] as const,
+  panel: ['access'] as const,
 } as const;
 
 export const ac = createAccessControl(statements);
@@ -15,9 +16,11 @@ export const userRole = ac.newRole({
 export const adminRole = ac.newRole({
   ...adminAc.statements,
   account: ['create', 'update', 'delete'],
+  panel: ['access'],
 });
 export type Permissions = {
   account?: ('create' | 'update' | 'delete')[];
+  panel?: 'access'[];
   user?: (
     | 'create'
     | 'update'
@@ -34,6 +37,7 @@ export type Permissions = {
 
 export const ALL_PERMISSIONS: Permissions = {
   account: ['create', 'update', 'delete'],
+  panel: ['access'],
   user: [
     'create',
     'update',

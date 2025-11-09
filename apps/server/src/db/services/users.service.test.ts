@@ -26,6 +26,7 @@ describe('findById', () => {
       banReason: '',
       banExpires: null,
       lastLoginMethod: 'google',
+      seeded: false,
     };
 
     mockRepositories.usersRepo.findById.mockResolvedValue(mockUser);
@@ -66,6 +67,7 @@ describe('findByEmail', () => {
       banReason: '',
       banExpires: null,
       lastLoginMethod: 'google',
+      seeded: false,
     };
 
     mockRepositories.usersRepo.findByEmail.mockResolvedValue(mockUser);
@@ -102,6 +104,7 @@ describe('getMe', () => {
       banReason: '',
       banExpires: null,
       lastLoginMethod: 'google',
+      seeded: false,
     };
 
     mockRepositories.usersRepo.findById.mockResolvedValue(mockUser);
@@ -155,6 +158,7 @@ describe('getMe', () => {
       banReason: '',
       banExpires: null,
       lastLoginMethod: 'google',
+      seeded: false,
     };
 
     mockRepositories.usersRepo.findById.mockResolvedValue(mockUser);

@@ -1,13 +1,10 @@
-import { sql, relations } from 'drizzle-orm';
+import { relations } from 'drizzle-orm';
 import { pgTable, index } from 'drizzle-orm/pg-core';
 export const users = pgTable(
   'users',
   (t) => ({
     id: t.uuid('id').defaultRandom().primaryKey(),
-    name: t.text('name').generatedAlwaysAs(sql`
-        coalesce(first_name, '') ||
-        CASE WHEN first_name <> '' AND last_name <> '' THEN ' ' ELSE '' END ||
-        coalesce(last_name, '')`),
+    name: t.text('name'),
     firstName: t.text('first_name').notNull(),
     lastName: t.text('last_name').notNull(),
     email: t.text('email').notNull().unique(),

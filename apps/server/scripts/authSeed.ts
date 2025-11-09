@@ -3,31 +3,35 @@ import { seed } from 'drizzle-seed';
 
 import * as schema from '../src/db';
 const { db, schema: schemas } = schema;
+const AVATARS = Array.from({ length: 10 * 2 }, () => faker.image.avatar());
 async function main() {
-  await seed(db, schemas).refine((funcs) => ({
+  await seed(db, { users: schemas.users }).refine((funcs) => ({
     users: {
-      count: 10,
+      count: 100,
       columns: {
         firstName: funcs.firstName(),
         lastName: funcs.lastName(),
         email: funcs.email(),
-        image: funcs.valuesFromArray({ values: [faker.image.avatar()] }),
-        role: funcs.valuesFromArray({ values: [faker.helpers.arrayElement(['user', 'admin'])] }),
+        image: funcs.valuesFromArray({ values: AVATARS }),
+        role: funcs.valuesFromArray({ values: ['user', 'admin'] }),
         banned: funcs.boolean(),
         banReason: funcs.loremIpsum(),
         createdAt: funcs.date(),
         updatedAt: funcs.date(),
         seeded: funcs.valuesFromArray({ values: [true] }),
+        lastLoginMethod: funcs.valuesFromArray({ values: ['google', 'github', 'email'] }),
+        banExpires: funcs.date(),
+        emailVerified: funcs.boolean(),
       },
-      //   with: {
-      //     accounts: 2,
-      //     sessions: 2,
-      //   },
+      // with: {
+      //   accounts: 1,
+      //   sessions: 1,
+      // },
     },
     // accounts: {
     //   columns: {
     //     accountId: funcs.uuid(),
-    //     providerId: funcs.companyName(),
+    //     providerId: funcs.valuesFromArray({ values: [faker.company.name()] }),
     //     accessToken: funcs.string(),
     //     refreshToken: funcs.string(),
     //     idToken: funcs.string(),

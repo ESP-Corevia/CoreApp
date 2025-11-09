@@ -2,24 +2,19 @@
 
 import * as React from 'react';
 
-import type { Column, ColumnDef } from '@tanstack/react-table';
+import type { ColumnDef } from '@tanstack/react-table';
 
-import { CalendarClock, Mail, MoreHorizontal, Shield, Text } from 'lucide-react';
-import { parseAsArrayOf, parseAsString, useQueryState } from 'nuqs';
+import { CalendarClock, Mail, Shield, Text } from 'lucide-react';
 
 import { DataTable } from '@/components/data-table/data-table';
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
 import { DataTableToolbar } from '@/components/data-table/data-table-toolbar';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { useDataTable } from '@/hooks/use-data-table';
+
+import { UserActionsMenu } from './user-actions-menu';
+import { CreateUserDialog } from './user-create-dialog';
 
 export interface User {
   id: string;
@@ -27,7 +22,7 @@ export interface User {
   name: string;
   firstName?: string | null;
   lastName?: string | null;
-  role: 'admin' | 'user';
+  role: string; // Better Auth returns role as string
   createdAt: string; // ISO string
   updatedAt?: string;
   emailVerified?: boolean;
@@ -45,24 +40,16 @@ function formatDate(input?: string) {
   return d.toLocaleString();
 }
 
-export default function DataTableDemo({ data }: { data: User[] }) {
-  // URL-synced filters
-  const [nameQuery] = useQueryState('name', parseAsString.withDefault(''));
-  const [roles] = useQueryState('role', parseAsArrayOf(parseAsString).withDefault([]));
-
-  const filteredData = React.useMemo(() => {
-    const q = nameQuery.trim().toLowerCase();
-    const roleSet = new Set(roles as Array<User['role']>);
-
-    return (data ?? []).filter(user => {
-      const displayName =
-        user?.name || [user?.firstName, user?.lastName].filter(Boolean).join(' ') || '';
-      const matchesName =
-        q === '' || displayName.toLowerCase().includes(q) || user.email.toLowerCase().includes(q);
-      const matchesRole = roleSet.size === 0 || roleSet.has(user.role);
-      return matchesName && matchesRole;
-    });
-  }, [data, nameQuery, roles]);
+export default function DataTableDemo({
+  data,
+  pageCount: providedPageCount,
+}: {
+  data: User[];
+  pageCount?: number;
+}) {
+  // Data is already filtered/sorted/paginated by Better Auth
+  const users = React.useMemo(() => data, [data]);
+  const pageCount = providedPageCount ?? Math.ceil((users.length || 1) / 10);
 
   const columns = React.useMemo<ColumnDef<User>[]>(
     () => [
@@ -92,18 +79,13 @@ export default function DataTableDemo({ data }: { data: User[] }) {
       {
         id: 'name',
         accessorKey: 'name',
-        header: ({ column }: { column: Column<User, unknown> }) => (
-          <DataTableColumnHeader column={column} label="Name" />
-        ),
-        cell: ({ row, cell }) => {
-          const fallback =
-            [row.original.firstName, row.original.lastName].filter(Boolean).join(' ') || '';
-          const value = (cell.getValue<User['name']>() || fallback) as string;
-          return <div className="font-medium">{value || '—'}</div>;
+        header: ({ column }) => <DataTableColumnHeader column={column} label="Name" />,
+        cell: ({ cell }) => {
+          return <div className="font-medium">{cell.getValue<User['email']>()}</div>;
         },
         meta: {
-          label: 'Name or email',
-          placeholder: 'Search…',
+          label: 'Name',
+          // placeholder: 'Search…',
           variant: 'text',
           icon: Text,
         },
@@ -112,9 +94,7 @@ export default function DataTableDemo({ data }: { data: User[] }) {
       {
         id: 'email',
         accessorKey: 'email',
-        header: ({ column }: { column: Column<User, unknown> }) => (
-          <DataTableColumnHeader column={column} label="Email" />
-        ),
+        header: ({ column }) => <DataTableColumnHeader column={column} label="Email" />,
         cell: ({ cell }) => {
           const email = cell.getValue<User['email']>();
           return (
@@ -124,15 +104,19 @@ export default function DataTableDemo({ data }: { data: User[] }) {
             </div>
           );
         },
+        meta: {
+          label: 'Email',
+          variant: 'text',
+          icon: Mail,
+        },
+        enableColumnFilter: true,
       },
       {
         id: 'role',
         accessorKey: 'role',
-        header: ({ column }: { column: Column<User, unknown> }) => (
-          <DataTableColumnHeader column={column} label="Role" />
-        ),
+        header: ({ column }) => <DataTableColumnHeader column={column} label="Role" />,
         cell: ({ cell }) => {
-          const role = cell.getValue<User['role']>();
+          const role = cell.getValue<User['role']>() || 'user';
           return (
             <Badge variant="outline" className="inline-flex items-center gap-1 capitalize">
               <Shield className="h-3.5 w-3.5" />
@@ -153,9 +137,7 @@ export default function DataTableDemo({ data }: { data: User[] }) {
       {
         id: 'createdAt',
         accessorKey: 'createdAt',
-        header: ({ column }: { column: Column<User, unknown> }) => (
-          <DataTableColumnHeader column={column} label="Created" />
-        ),
+        header: ({ column }) => <DataTableColumnHeader column={column} label="CreatedAt" />,
         cell: ({ cell }) => {
           const created = cell.getValue<User['createdAt']>();
           return (
@@ -166,44 +148,44 @@ export default function DataTableDemo({ data }: { data: User[] }) {
           );
         },
         sortingFn: 'datetime',
+        enableColumnFilter: true,
+        meta: {
+          label: 'Created At',
+          variant: 'dateRange',
+          icon: CalendarClock,
+        },
       },
       {
         id: 'actions',
-        cell: function Cell() {
-          return (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <MoreHorizontal className="h-4 w-4" />
-                  <span className="sr-only">Open menu</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem>Edit</DropdownMenuItem>
-                <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          );
+        cell: function Cell({ row }) {
+          return <UserActionsMenu user={row.original} />;
         },
         size: 32,
+        enableSorting: false,
+        enableHiding: false,
       },
     ],
     []
   );
 
   const { table } = useDataTable({
-    data: filteredData,
+    data: users,
     columns,
-    pageCount: 1,
+    pageCount,
     initialState: {
-      sorting: [{ id: 'name', desc: false }],
+      sorting: [{ id: 'createdAt', desc: true }],
       columnPinning: { right: ['actions'] },
+      pagination: { pageIndex: 0, pageSize: 10 },
     },
     getRowId: row => row.id,
   });
 
   return (
-    <div className="data-table-container">
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold">User Management</h2>
+        <CreateUserDialog />
+      </div>
       <DataTable table={table}>
         <DataTableToolbar table={table} />
       </DataTable>

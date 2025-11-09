@@ -15,6 +15,7 @@ import {
 } from 'react-router';
 
 import { AppSidebar } from '@/components/appSidebar';
+import { ErrorScreen } from '@/components/errorScreen';
 import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
 import UserMenu from '@/components/userMenu';
 import { I18nProvider } from '@/providers/i18n';
@@ -65,7 +66,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-const ROUTES_WITHOUT_LAYOUT = ['/login', '/register', '/forgot-password'];
+const ROUTES_WITH_LAYOUT = ['/', '/dashboard', '/profile', '/settings'];
 
 function ThemedShell() {
   const { resolvedTheme } = useTheme();
@@ -73,7 +74,7 @@ function ThemedShell() {
   const location = useLocation();
   const isNavigating = state !== 'idle';
 
-  const shouldShowLayout = !ROUTES_WITHOUT_LAYOUT.includes(location.pathname);
+  const shouldShowLayout = ROUTES_WITH_LAYOUT.includes(location.pathname);
 
   function LoadingBar() {
     return (
@@ -177,58 +178,38 @@ export default function App() {
       <ReactQueryDevtools position="bottom" buttonPosition="bottom-right" />
     </QueryProvider>
   );
-}
+} // adjust the import path as needed
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
-  let message = 'Oops!';
-  let details = 'An unexpected error occurred.';
+  let code = 'Oops!';
+  let title = 'Error';
+  let description: React.ReactNode = 'An unexpected error occurred.';
   let stack: string | undefined;
 
   if (isRouteErrorResponse(error)) {
-    message = error.status === 404 ? '404' : 'Error';
-    details =
-      error.status === 404 ? 'The requested page could not be found.' : error.statusText || details;
-  } else if (import.meta.env.DEV && error && error instanceof Error) {
-    details = error.message;
+    code = String(error.status);
+    title = error.statusText || 'Error';
+    description = error.data ?? description;
+  } else if (import.meta.env.DEV && error instanceof Error) {
+    code = 'Error';
+    title = 'Something went wrong';
+    description = error.message || description;
     stack = error.stack;
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-4 text-center">
-        <div className="space-y-2">
-          <h1 className="text-destructive text-6xl font-bold">{message}</h1>
-          <p className="text-muted-foreground text-xl">{details}</p>
-        </div>
-
-        {stack && (
-          <details className="text-left">
-            <summary className="mb-2 cursor-pointer text-sm font-medium">Stack trace</summary>
-            <pre className="bg-muted overflow-x-auto rounded-lg p-4 text-xs">
-              <code>{stack}</code>
-            </pre>
-          </details>
-        )}
-
-        <div className="flex justify-center gap-2">
-          <button
-            onClick={() => window.history.back()}
-            className="bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded-md px-4 py-2"
-          >
-            Go Back
-          </button>
-          <button
-            onClick={() => (window.location.href = '/')}
-            className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-md px-4 py-2"
-          >
-            Go Home
-          </button>
-        </div>
-      </div>
-    </div>
+    <ErrorScreen code={code} title={title} description={description}>
+      {stack && (
+        <details className="text-left">
+          <summary className="mb-2 cursor-pointer text-sm font-medium">Stack trace</summary>
+          <pre className="bg-muted overflow-x-auto rounded-lg p-4 text-xs">
+            <code>{stack}</code>
+          </pre>
+        </details>
+      )}
+    </ErrorScreen>
   );
 }
-
 export function HydrateFallback() {
   const trpcClient = createRuntimeTrpcClient();
   return (

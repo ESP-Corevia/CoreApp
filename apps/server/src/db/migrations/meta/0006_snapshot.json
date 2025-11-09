@@ -1,6 +1,6 @@
 {
-  "id": "ad8c1986-64ca-44b5-89f9-cd3a3dc2a228",
-  "prevId": "fbc9bd6e-a4be-4a5a-9d9e-af3e897de295",
+  "id": "cd26ae86-6d54-4396-b630-f2df98716eb8",
+  "prevId": "07724b87-af28-467a-9c15-cfc61158783d",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -252,11 +252,7 @@
           "name": "name",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
-          "generated": {
-            "as": "\n        coalesce(first_name, '') ||\n        CASE WHEN first_name <> '' AND last_name <> '' THEN ' ' ELSE '' END ||\n        coalesce(last_name, '')",
-            "type": "stored"
-          }
+          "notNull": false
         },
         "first_name": {
           "name": "first_name",
