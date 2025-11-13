@@ -7,7 +7,7 @@ export default function Landing({
 }: {
   session : { isAuthenticated: boolean; userId: string } | null
 }) {
-  const brandColor = '#19CB1F';
+  const brandColor = '#008000';
   const stats = [
     { label: 'Patients monitored daily', value: '2.4k' },
     { label: 'Medication adherence lift', value: '38%' },

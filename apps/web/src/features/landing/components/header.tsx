@@ -11,14 +11,14 @@ export default function Header({
       <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
         <Link
           to="/"
-          className="text-xl font-semibold hover:text-gray-600 transition-colors decoration-[#19CB1F] underline"
+          className="text-xl font-semibold hover:text-gray-600 transition-colors decoration-[#008000] underline"
         >
           Corevia
         </Link>
 
         <Link to={alreadyLogin ? "/home" : "/login"}>
           <Button
-            className="border-[#19CB1F] cursor-pointer border-2 border-solid bg-white hover:text-gray-600 transition-colors"
+            className="border-[#008000] cursor-pointer border-2 border-solid bg-white hover:text-gray-600 transition-colors"
           >
             {alreadyLogin ? "Home" : "Login"}
           </Button>

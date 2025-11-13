@@ -7,7 +7,7 @@ const quickLinks = [
 
 export default function Footer() {
   const year = new Date().getFullYear();
-  const brandColor = '#19CB1F';
+  const brandColor = '#008000';
 
   return (
     <footer className="border-border/60 bg-white px-6 py-10 text-slate-700">
