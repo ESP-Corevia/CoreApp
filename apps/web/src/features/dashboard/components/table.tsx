@@ -4,7 +4,8 @@ import * as React from 'react';
 
 import type { ColumnDef } from '@tanstack/react-table';
 
-import { CalendarClock, Mail, Shield, Text } from 'lucide-react';
+import { SiGithub, SiGoogle } from '@icons-pack/react-simple-icons';
+import { CalendarClock, Mail, Shield, Text, User, History } from 'lucide-react';
 
 import { DataTable } from '@/components/data-table/data-table';
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
@@ -41,14 +42,22 @@ function formatDate(input?: string) {
   return d.toLocaleString();
 }
 
-export default function DataTableDemo({
+export default function DataTableUsers({
   data,
   pageCount: providedPageCount,
+  search,
+  onSearchChange,
+  isLoading,
+  title,
 }: {
   data: User[];
   pageCount?: number;
+  search?: string;
+  // eslint-disable-next-line no-unused-vars
+  onSearchChange?: (value: string) => void;
+  isLoading: boolean;
+  title: string;
 }) {
-  // Data is already filtered/sorted/paginated by Better Auth
   const users = React.useMemo(() => data, [data]);
   const pageCount = providedPageCount ?? Math.ceil((users.length || 1) / 10);
 
@@ -78,32 +87,47 @@ export default function DataTableDemo({
         enableHiding: false,
       },
       {
-        id: 'name',
-        accessorKey: 'name',
-        header: ({ column }) => <DataTableColumnHeader column={column} label="Name" />,
-        cell: ({ row }) => {
-          return (
-            <div className="flex items-center gap-2">
-              <Avatar className="h-8 w-8">
-                <AvatarImage src={row.original.image ?? undefined} />
-                <AvatarFallback>
-                  {row.original.firstName.charAt(0).toUpperCase() +
-                    row.original.lastName.charAt(0).toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-              <span className="font-medium">
-                {row.original.firstName} {row.original.lastName}
-              </span>
-            </div>
-          );
-        },
+        id: 'fullName',
+        accessorKey: 'fullName',
+        header: ({ column }) => <DataTableColumnHeader column={column} label="Full Name" />,
+        cell: ({ row }) => (
+          <div className="flex items-center gap-2">
+            <Avatar className="h-8 w-8">
+              <AvatarImage src={row.original.image ?? undefined} />
+              <AvatarFallback>
+                {row.original.firstName.charAt(0).toUpperCase() +
+                  row.original.lastName.charAt(0).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+            <span className="font-medium">
+              {row.original.firstName} {row.original.lastName}
+            </span>
+          </div>
+        ),
         meta: {
-          label: 'Name',
-          // placeholder: 'Search…',
+          label: 'Full Name',
           variant: 'text',
           icon: Text,
         },
-        enableColumnFilter: true,
+        // enableColumnFilter: true,
+        enableSorting: false,
+      },
+      {
+        id: 'name',
+        accessorKey: 'name',
+        header: ({ column }) => <DataTableColumnHeader column={column} label="Name" />,
+        cell: ({ row }) => (
+          <div className="inline-flex items-center gap-2">
+            <User className="h-4 w-4" />
+            <span className="text-muted-foreground text-sm">{row.original.name}</span>
+          </div>
+        ),
+        meta: {
+          label: 'Name',
+          variant: 'text',
+          icon: Text,
+        },
+        // enableColumnFilter: true,
         enableSorting: false,
       },
       {
@@ -124,7 +148,6 @@ export default function DataTableDemo({
           variant: 'text',
           icon: Mail,
         },
-        // enableColumnFilter: true,
       },
       {
         id: 'role',
@@ -152,7 +175,7 @@ export default function DataTableDemo({
       {
         id: 'createdAt',
         accessorKey: 'createdAt',
-        header: ({ column }) => <DataTableColumnHeader column={column} label="CreatedAt" />,
+        header: ({ column }) => <DataTableColumnHeader column={column} label="Created At" />,
         cell: ({ cell }) => {
           const created = cell.getValue<User['createdAt']>();
           return (
@@ -173,7 +196,7 @@ export default function DataTableDemo({
       {
         id: 'updatedAt',
         accessorKey: 'updatedAt',
-        header: ({ column }) => <DataTableColumnHeader column={column} label="UpdatedAt" />,
+        header: ({ column }) => <DataTableColumnHeader column={column} label="Updated At" />,
         cell: ({ cell }) => {
           const updated = cell.getValue<User['updatedAt']>();
           return (
@@ -192,10 +215,86 @@ export default function DataTableDemo({
         },
       },
       {
-        id: 'actions',
-        cell: function Cell({ row }) {
-          return <UserActionsMenu user={row.original} />;
+        id: 'lastLoginMethod',
+        accessorKey: 'lastLoginMethod',
+        header: ({ column }) => <DataTableColumnHeader column={column} label="Last Login Method" />,
+        cell: ({ cell }) => {
+          const method = cell.getValue<User['lastLoginMethod']>() ?? '—';
+          return (
+            <div className="text-muted-foreground inline-flex items-center gap-1 text-sm">
+              <History className="h-4 w-4" />
+              {method}
+            </div>
+          );
         },
+        meta: {
+          label: 'Last Login Method',
+          variant: 'multiSelect',
+          options: [
+            { label: 'GitHub', value: 'github', icon: SiGithub },
+            { label: 'Google', value: 'google', icon: SiGoogle },
+            { label: 'Email', value: 'email', icon: Mail },
+          ],
+        },
+        enableColumnFilter: true,
+        enableHiding: true,
+      },
+      {
+        id: 'banned',
+        accessorKey: 'banned',
+        header: ({ column }) => <DataTableColumnHeader column={column} label="Banned" />,
+        cell: ({ cell }) => {
+          const banned = cell.getValue<User['banned']>();
+          return (
+            <span className={`text-sm ${banned ? 'text-red-600' : 'text-green-600'}`}>
+              {banned ? 'Yes' : 'No'}
+            </span>
+          );
+        },
+        meta: {
+          label: 'Banned',
+          variant: 'boolean',
+          icon: Shield,
+        },
+        enableColumnFilter: true,
+        enableHiding: true,
+      },
+      {
+        id: 'banReason',
+        accessorKey: 'banReason',
+        header: ({ column }) => <DataTableColumnHeader column={column} label="Ban Reason" />,
+        cell: ({ cell }) => {
+          const reason = cell.getValue<User['banReason']>() ?? '—';
+          return <span className="text-sm">{reason}</span>;
+        },
+        meta: {
+          label: 'Ban Reason',
+          variant: 'text',
+          icon: Text,
+        },
+        enableColumnFilter: false,
+        enableHiding: true,
+      },
+      {
+        id: 'banExpires',
+        accessorKey: 'banExpires',
+        header: ({ column }) => <DataTableColumnHeader column={column} label="Ban Expires" />,
+        cell: ({ cell }) => {
+          const expires = cell.getValue<User['banExpires']>();
+          return <span className="text-sm">{formatDate(expires ?? undefined)}</span>;
+        },
+        sortingFn: 'datetime',
+        meta: {
+          label: 'Ban Expires',
+          variant: 'dateRange',
+          icon: CalendarClock,
+        },
+        enableColumnFilter: false,
+        enableHiding: true,
+      },
+      {
+        id: 'actions',
+        cell: ({ row }) => <UserActionsMenu user={row.original} />,
         size: 32,
         enableSorting: false,
         enableHiding: false,
@@ -204,26 +303,41 @@ export default function DataTableDemo({
     []
   );
 
-  const { table } = useDataTable({
+  const { table } = useDataTable<User>({
+    clearOnDefault: false,
     data: users,
     columns,
     pageCount,
+
     initialState: {
       sorting: [{ id: 'createdAt', desc: true }],
-      columnPinning: { right: ['actions'] },
+      columnPinning: { right: ['actions'], left: ['select'] },
       pagination: { pageIndex: 0, pageSize: 10 },
+      globalFilter: search,
+      columnVisibility: {
+        lastLoginMethod: false,
+        banned: false,
+        banReason: false,
+        banExpires: false,
+        updatedAt: false,
+        name: false,
+      },
     },
+
     getRowId: row => row.id,
+    onGlobalFilterChange: value => {
+      onSearchChange?.(value);
+    },
   });
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">User Management</h2>
+        <h1 className="text-2xl font-bold">{title}</h1>
         <CreateUserDialog />
       </div>
       <DataTable table={table}>
-        <DataTableToolbar table={table} />
+        <DataTableToolbar table={table} isLoading={isLoading} />
       </DataTable>
     </div>
   );

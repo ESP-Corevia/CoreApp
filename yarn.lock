@@ -1739,6 +1739,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@icons-pack/react-simple-icons@npm:^13.8.0":
+  version: 13.8.0
+  resolution: "@icons-pack/react-simple-icons@npm:13.8.0"
+  peerDependencies:
+    react: ^16.13 || ^17 || ^18 || ^19
+  checksum: 10c0/3cd5ad80c72b7615c80260321b80049f4313d0513ebafa06cf3b97c51da77a3e04117683405a1e1fed044b48710eb9a8b2a59c6ffb4669afd09e898c9ccfc0ad
+  languageName: node
+  linkType: hard
+
 "@inquirer/ansi@npm:^1.0.0, @inquirer/ansi@npm:^1.0.1":
   version: 1.0.1
   resolution: "@inquirer/ansi@npm:1.0.1"
@@ -3402,7 +3411,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@radix-ui/react-primitive@npm:2.1.3, @radix-ui/react-primitive@npm:^2.0.2":
+"@radix-ui/react-primitive@npm:2.1.3":
   version: 2.1.3
   resolution: "@radix-ui/react-primitive@npm:2.1.3"
   dependencies:
@@ -3421,7 +3430,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@radix-ui/react-primitive@npm:2.1.4":
+"@radix-ui/react-primitive@npm:2.1.4, @radix-ui/react-primitive@npm:^2.0.2":
   version: 2.1.4
   resolution: "@radix-ui/react-primitive@npm:2.1.4"
   dependencies:
@@ -5472,6 +5481,16 @@ __metadata:
     "@typescript-eslint/types": "npm:8.46.1"
     eslint-visitor-keys: "npm:^4.2.1"
   checksum: 10c0/4139a8d78ad95e59fff2285beb623a530b7c2e6af89b994a92e9d8728d0c86eb8d86f64f2372aa874f9f24924253ba9887a2f77bec6bfc6028380b024c24e582
+  languageName: node
+  linkType: hard
+
+"@uidotdev/usehooks@npm:^2.4.1":
+  version: 2.4.1
+  resolution: "@uidotdev/usehooks@npm:2.4.1"
+  peerDependencies:
+    react: ">=18.0.0"
+    react-dom: ">=18.0.0"
+  checksum: 10c0/181c43fb324dbe4fef9762c61ab4b8235efa48abedf39a9bfeab65872522c43dae789c4f85b82a1164ed7bb18ae7ff25c3a19e7c4e0eb944937ac7f8109cee9b
   languageName: node
   linkType: hard
 
@@ -17539,6 +17558,7 @@ __metadata:
     "@eslint/js": "npm:^9.37.0"
     "@eslint/json": "npm:^0.13.2"
     "@gsap/react": "npm:^2.1.2"
+    "@icons-pack/react-simple-icons": "npm:^13.8.0"
     "@lhci/cli": "npm:^0.15.1"
     "@playwright/test": "npm:^1.55.1"
     "@radix-ui/react-alert-dialog": "npm:^1.1.15"
@@ -17574,6 +17594,7 @@ __metadata:
     "@types/react-dom": "npm:^19.0.4"
     "@typescript-eslint/eslint-plugin": "npm:^8.45.0"
     "@typescript-eslint/parser": "npm:^8.45.0"
+    "@uidotdev/usehooks": "npm:^2.4.1"
     "@vitejs/plugin-react": "npm:^5.0.4"
     "@vitest/coverage-v8": "npm:^3.2.4"
     "@vitest/ui": "npm:^3.2.4"

@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/table';
 import { getCommonPinningStyles } from '@/lib/data-table';
 import { cn } from '@/lib/utils';
+import { Trans } from 'react-i18next';
 
 interface DataTableProps<TData> extends React.ComponentProps<'div'> {
   table: TanstackTable<TData>;
@@ -68,7 +69,7 @@ export function DataTable<TData>({
             ) : (
               <TableRow>
                 <TableCell colSpan={table.getAllColumns().length} className="h-24 text-center">
-                  No results.
+                  <Trans i18nKey="dataTable.noResults">No results.</Trans>
                 </TableCell>
               </TableRow>
             )}

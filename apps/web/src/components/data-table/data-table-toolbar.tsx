@@ -11,9 +11,12 @@ import { DataTableViewOptions } from '@/components/data-table/data-table-view-op
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
-
+import { useDebounce } from '@uidotdev/usehooks';
+import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group';
+import { Spinner } from '@/components/ui/spinner';
 interface DataTableToolbarProps<TData> extends React.ComponentProps<'div'> {
   table: Table<TData>;
+  isLoading?: boolean;
 }
 
 export function DataTableToolbar<TData>({
@@ -28,6 +31,19 @@ export function DataTableToolbar<TData>({
     () => table.getAllColumns().filter(column => column.getCanFilter()),
     [table]
   );
+  //global search
+  const globalFilter = table.getState().globalFilter ?? '';
+  const [inputValue, setInputValue] = React.useState(globalFilter);
+
+  React.useEffect(() => {
+    setInputValue(globalFilter);
+  }, [globalFilter]);
+
+  const debounced = useDebounce(inputValue, 300);
+
+  React.useEffect(() => {
+    table.setGlobalFilter(debounced || undefined);
+  }, [debounced]);
 
   const onReset = React.useCallback(() => {
     table.resetColumnFilters();
@@ -41,6 +57,21 @@ export function DataTableToolbar<TData>({
       {...props}
     >
       <div className="flex flex-1 flex-wrap items-center gap-2">
+        <InputGroup className="h-8 w-64 lg:w-80">
+          <InputGroupInput
+            placeholder="Search by name or email…"
+            value={inputValue}
+            onChange={e => setInputValue(e.target.value)}
+            disabled={props.isLoading}
+            type="text"
+          />
+          {props.isLoading && (
+            <InputGroupAddon align="inline-end">
+              <Spinner />
+            </InputGroupAddon>
+          )}
+        </InputGroup>
+
         {columns.map(column => (
           <DataTableToolbarFilter key={column.id} column={column} />
         ))}

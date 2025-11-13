@@ -45,3 +45,14 @@ export function useListUsers({
     enabled,
   });
 }
+export function useListSessions() {
+  return useQuery({
+    queryKey: ['list-sessions'],
+    queryFn: async () => {
+      const res = await authClient.listSessions();
+
+      return 'data' in res ? res.data : res;
+    },
+    enabled: true,
+  });
+}

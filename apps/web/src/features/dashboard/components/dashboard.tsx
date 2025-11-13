@@ -1,14 +1,17 @@
+import { useState } from 'react';
+
 import { useQuery } from '@tanstack/react-query';
 
 import { parseAsInteger, parseAsString, useQueryStates } from 'nuqs';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
+import Loader from '@/components/loader';
 import { useTrpc } from '@/providers/trpc';
 
 import { useListUsers } from '../../../queries';
 
-import DataTableDemo from './table';
+import DataTableUsers from './table';
 
 export default function Dashboard({
   session,
@@ -17,20 +20,21 @@ export default function Dashboard({
 }) {
   const { t } = useTranslation();
   const trpc = useTrpc();
-  const { data: privateData, isLoading } = useQuery({
+
+  const { isLoading } = useQuery({
     ...trpc.privateData.queryOptions(),
     enabled: !!session?.isAuthenticated,
   });
 
-  const [queryParams] = useQueryStates({
+  const [queryParams, setQueryParams] = useQueryStates({
     page: parseAsInteger.withDefault(1),
     perPage: parseAsInteger.withDefault(10),
-    search: parseAsString.withDefault(''),
     sortBy: parseAsString.withDefault('createdAt'),
     sortDirection: parseAsString.withDefault('desc'),
     filterBy: parseAsString.withDefault(''),
+    search: parseAsString.withDefault(''),
   });
-
+  const [search, setSearch] = useState(queryParams.search);
   const {
     data: usersData,
     error,
@@ -38,7 +42,7 @@ export default function Dashboard({
   } = useListUsers({
     page: queryParams.page,
     perPage: queryParams.perPage,
-    search: queryParams.search,
+    search,
     sortBy: queryParams.sortBy,
     sortDirection: queryParams.sortDirection,
     enabled: !!session?.isAuthenticated,
@@ -56,31 +60,35 @@ export default function Dashboard({
     return null;
   }
 
-  if (isLoading || isLoadingUsers)
+  if (isLoading || isLoadingUsers) {
     return (
-      <div>
-        <Trans i18nKey="dashboard.loading">Loading...</Trans>
+      <div className="flex h-full items-center justify-center">
+        <Loader />
       </div>
     );
+  }
 
   const userRows = (Array.isArray(usersData) ? usersData : (usersData?.users ?? [])).map(user => ({
     ...user,
     role: user.role ?? 'user',
   }));
+
   const totalUsers = usersData && 'total' in usersData ? usersData.total : userRows.length;
   const pageCount = Math.ceil(totalUsers / queryParams.perPage);
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 role="heading" className="text-3xl font-bold">
-          <Trans i18nKey="dashboard.title">Dashboard</Trans>
-        </h1>
-        <p className="text-muted-foreground">
-          <Trans i18nKey="dashboard.welcome">Welcome {{ userId: privateData?.user }}</Trans>
-        </p>
-      </div>
-      <DataTableDemo data={userRows} pageCount={pageCount} />
+      <DataTableUsers
+        title={t('dashboard.userManagement', 'Users Management')}
+        data={userRows}
+        pageCount={pageCount}
+        isLoading={isLoadingUsers}
+        search={search}
+        onSearchChange={async value => {
+          setSearch(value);
+          await setQueryParams({ ...queryParams, page: 1, search: value });
+        }}
+      />
     </div>
   );
 }
