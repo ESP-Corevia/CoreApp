@@ -25,20 +25,9 @@ export default function Footer() {
           </p>
         </div>
 
-        <nav className="flex min-w-[10rem] flex-col gap-3 text-sm" aria-label="Quick navigation">
+        <nav className="flex flex-col justify-center gap-6 text-sm font-semibold" aria-label="Quick navigation">
           {quickLinks.map(({ label, href }) => (
-            <a
-              key={href}
-              href={href}
-              className="transition-colors"
-              style={{ color: '#1f2933' }}
-              onMouseEnter={event => {
-                event.currentTarget.style.color = brandColor;
-              }}
-              onMouseLeave={event => {
-                event.currentTarget.style.color = '#1f2933';
-              }}
-            >
+            <a key={href} href={href} className="hover:opacity-80" style={{ color: brandColor }}>
               {label}
             </a>
           ))}
