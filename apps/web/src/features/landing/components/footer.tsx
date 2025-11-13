@@ -1,25 +1,24 @@
 const quickLinks = [
-  { label: 'Product', href: '#product' },
-  { label: 'Care Teams', href: '#clinicians' },
-  { label: 'Security', href: '#security' },
+  { label: 'Home', href: '#home' },
+  { label: 'Download', href: '#download' },
+  { label: 'Login', href: '#login' },
   { label: 'Contact', href: '#contact' },
 ];
 
 export default function Footer() {
   const year = new Date().getFullYear();
-  const brandColor = '#00ff00';
+  const brandColor = '#19CB1F';
 
   return (
     <footer className="border-border/60 bg-white px-6 py-10 text-slate-700">
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 md:flex-row md:items-start md:justify-between">
         <div className="max-w-sm space-y-3">
           <p
-            className="text-xs font-semibold uppercase tracking-[0.25em]"
+            className="text-4xl font-black uppercase tracking-wide"
             style={{ color: brandColor }}
           >
-            Corevia Health
+            Corevia
           </p>
-          <p className="text-2xl font-semibold text-slate-900">Breathe easy.</p>
           <p className="text-sm leading-relaxed text-slate-500">
             A minimalist health companion to follow your vitals, coordinate with clinicians, and stay
             centered on what matters.
