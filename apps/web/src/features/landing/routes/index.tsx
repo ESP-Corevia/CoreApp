@@ -1,14 +1,13 @@
 import Loader from '@/components/loader';
-import { useGuestOnly } from '@/hooks/use-require-auth';
-
 import Landing from '../components/landing';
+import { authClient } from '@/lib/auth-client';
 
 export default function LandingRoute() {
-  const { isLoading } = useGuestOnly();
+  const { data: session, isPending } = authClient.useSession();
 
-  if (isLoading) {
+  if (isPending) {
     return <Loader open />;
   }
 
-  return <Landing />;
+  return <Landing session={session} />;
 }

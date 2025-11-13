@@ -22,9 +22,9 @@ export default function SignUpForm({ onSwitchToSignIn }: { onSwitchToSignIn: () 
     const raw = params.get('redirectTo') ?? '';
     try {
       const decoded = decodeURIComponent(raw);
-      return decoded.startsWith('/') ? decoded : '/';
+      return decoded.startsWith('/') ? decoded : '/home';
     } catch {
-      return '/';
+      return '/home';
     }
   };
   const form = useForm({

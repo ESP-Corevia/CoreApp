@@ -3,13 +3,13 @@ import Footer from './footer';
 import Shuffle from '@/components/Shuffle';
 
 export default function Landing({
-  
+  session
 }: {
-  
+  session : { isAuthenticated: boolean; userId: string } | null
 }) {
   return (
     <div>
-      <Header />
+      <Header alreadyLogin={session?.isAuthenticated} />
 
       <main>
         <Shuffle

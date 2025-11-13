@@ -12,7 +12,7 @@ export function useRequireAuth() {
   useEffect(() => {
     const redirect = async () => {
       if (!isPending && !session?.isAuthenticated) {
-        await navigate(`/login?redirectTo=${encodeURIComponent(location.pathname)}`, {
+        await navigate(`/login?redirectTo=${encodeURIComponent(location.pathname != "/" ? location.pathname : "/home" )}`, {
           replace: true,
         });
       }
