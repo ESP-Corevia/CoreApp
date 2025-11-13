@@ -64,7 +64,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-const ROUTES_WITHOUT_LAYOUT = ['/login', '/register', '/forgot-password'];
+const ROUTES_WITHOUT_LAYOUT = ['/login', '/register', '/forgot-password', '/'];
 
 function ThemedShell() {
   const { resolvedTheme } = useTheme();
@@ -215,7 +215,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
             Go Back
           </button>
           <button
-            onClick={() => (window.location.href = '/')}
+            onClick={() => (window.location.href = '/home')}
             className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-md px-4 py-2"
           >
             Go Home

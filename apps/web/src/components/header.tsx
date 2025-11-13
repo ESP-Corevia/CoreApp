@@ -6,7 +6,7 @@ export default function Header() {
   // Convert pathname to readable page title
   const getPageTitle = (pathname: string) => {
     const titles: Record<string, string> = {
-      '/': 'Home',
+      '/home': 'Home',
       '/dashboard': 'Dashboard',
       '/team': 'Team',
       '/documents': 'Documents',

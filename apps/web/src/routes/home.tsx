@@ -1,4 +1,4 @@
-import Landing from '@/features/landing/routes';
+import HomeRoute from '@/features/home/routes';
 
 import type { Route } from './+types/_index';
 
@@ -6,4 +6,4 @@ import type { Route } from './+types/_index';
 export function meta(_: Route.MetaArgs) {
   return [{ title: 'Corevia' }, { name: 'description', content: 'Corevia is a web application' }];
 }
-export default Landing;
+export default HomeRoute;

@@ -30,7 +30,7 @@ interface NavigationItem {
 const mainItems: NavigationItem[] = [
   {
     title: 'Home',
-    url: '/',
+    url: '/home',
     icon: Home,
   },
   {
