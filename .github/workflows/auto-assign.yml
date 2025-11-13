@@ -1,0 +1,16 @@
+name: 🔧 Auto-assign Author
+on:
+  issues:
+    types: [opened, reopened]
+
+  pull_request_target:
+    types: [opened, reopened]
+
+jobs:
+  auto_assign_author:
+    name: 👤 Assign PR/Issue Author
+    uses: ESP-Corevia/.github/.github/workflows/auto-assign.yml@master # or @main
+    permissions:
+      issues: write
+      pull-requests: write
+    secrets: inherit

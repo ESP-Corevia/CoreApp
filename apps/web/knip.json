@@ -1,0 +1,50 @@
+{
+  "$schema": "https://unpkg.com/knip@latest/schema.json",
+  "entry": ["src/routes/**/*.tsx!"],
+  "project": ["src/**/*.{ts,tsx}"],
+  "ignore": [
+    "**/*.test.{ts,tsx}",
+    "**/*.spec.{ts,tsx}",
+    "playwright/**",
+    "e2e/**",
+    "src/components/**",
+    "test-results/**",
+    ".react-router/**"
+  ],
+  "ignoreDependencies": [
+    "@types/*",
+    "react-dom",
+    "tw-animate-css",
+    "@trpc/server",
+    "tailwindcss",
+    "@axe-core/playwright",
+    "@lhci/cli",
+    "playwright",
+    "size-limit",
+    "@size-limit/preset-app",
+    "depcheck",
+    "@testing-library/dom",
+    "@testing-library/user-event",
+    "prettier",
+    "react-router-devtools",
+    "stylelint",
+    "i18next-cli",
+    "@radix-ui/react-visually-hidden",
+    "shadcn",
+    "ogl"
+  ],
+  "ignoreExportsUsedInFile": true,
+  "ignoreBinaries": [
+    "tsc",
+    "stylelint",
+    "depcheck",
+    "react-router-serve",
+    "eslint",
+    "prettier",
+    "size-limit",
+    "playwright",
+    "lhci",
+    "tsx",
+    "i18next-cli"
+  ]
+}

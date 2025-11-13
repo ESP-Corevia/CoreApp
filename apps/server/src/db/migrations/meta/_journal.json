@@ -1,13 +1,34 @@
 {
-	"version": "7",
-	"dialect": "postgresql",
-	"entries": [
-		{
-			"idx": 0,
-			"version": "7",
-			"when": 1755524098999,
-			"tag": "0000_gifted_albert_cleary",
-			"breakpoints": true
-		}
-	]
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1758273038142,
+      "tag": "0000_enable_pgcrypto",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1758285863398,
+      "tag": "0001_fine_rictor",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1759349934945,
+      "tag": "0002_previous_jack_power",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1759350259636,
+      "tag": "0003_jittery_cable",
+      "breakpoints": true
+    }
+  ]
 }

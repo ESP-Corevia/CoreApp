@@ -1,0 +1,48 @@
+{
+  "eslint.enable": true,
+  "eslint.useFlatConfig": true,
+  "eslint.run": "onType",
+  "eslint.nodePath": ".yarn/sdks",
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+  "eslint.workingDirectories": [
+    { "mode": "auto" },
+    { "pattern": "apps/server" },
+    { "pattern": "apps/web" }
+  ],
+  "files.eol": "\n",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    // "source.organizeImports": "always",
+    "source.fixAll.eslint": "always"
+  },
+
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[javascript]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+
+  "typescript.tsdk": "node_modules\\typescript\\lib",
+  "[dockerfile]": {
+    "editor.defaultFormatter": "ms-azuretools.vscode-containers"
+  },
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.patterns": {
+    "tsconfig.json": "tsconfig.*.json, env.d.ts",
+    "*.ts": "${basename}.test.ts",
+    "*.tsx": "${basename}.test.tsx",
+    "*.env": "${basename}.local, ${basename}.development, ${basename}.production, ${basename}.staging, ${basename}.test, ${basename}.example, ${basename}.sample"
+  }
+}

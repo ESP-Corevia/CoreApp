@@ -1,0 +1,198 @@
+name: 🎨 Frontend CI (Web)
+
+on:
+  pull_request:
+    paths:
+      - "apps/web/**"
+
+permissions:
+  contents: read
+  pull-requests: write
+  deployments: write
+  statuses: write
+
+env:
+  TURBO_CACHE: ${{ (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork) && 'local:,remote:r' || 'local:,remote:rw' }}
+  TURBO_TELEMETRY_DISABLED: "1"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: 🧼 Lint Code
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: ./.github/actions/setup-yarn
+      - uses: ./.github/actions/setup-turbo
+        with:
+          token: ${{ secrets.TURBO_TOKEN }}
+          team: ${{ secrets.TURBO_TEAM }}
+      - name: 🧼 Run ESLint & Prettier
+        run: yarn turbo run web#check:lint --cache="${{env.TURBO_CACHE}}"
+
+  typecheck:
+    name: 🧠 Type Check
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: ./.github/actions/setup-yarn
+      - uses: ./.github/actions/setup-turbo
+        with:
+          token: ${{ secrets.TURBO_TOKEN }}
+          team: ${{ secrets.TURBO_TEAM }}
+      - name: 🧠 Run TS Check
+        run: yarn turbo run web#check:types --cache="${{env.TURBO_CACHE}}"
+
+  knip:
+    name: 🪓 Check Unused Code (knip + ts-prune)
+    runs-on: ubuntu-latest
+    needs: [lint, typecheck]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: ./.github/actions/setup-yarn
+      - uses: ./.github/actions/setup-turbo
+        with:
+          token: ${{ secrets.TURBO_TOKEN }}
+          team: ${{ secrets.TURBO_TEAM }}
+      - name: 🪓 Run Knip
+        run: yarn turbo run web#check:knip --cache="${{env.TURBO_CACHE}}"
+
+  depcheck:
+    name: 📦 Check Unused Dependencies
+    runs-on: ubuntu-latest
+    needs: [lint, typecheck]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: ./.github/actions/setup-yarn
+      - uses: ./.github/actions/setup-turbo
+        with:
+          token: ${{ secrets.TURBO_TOKEN }}
+          team: ${{ secrets.TURBO_TEAM }}
+      - name: 📦 Run depcheck
+        run: yarn turbo run web#check:dep --cache="${{env.TURBO_CACHE}}"
+
+  size:
+    name: 📏 Bundle Size Budget
+    runs-on: ubuntu-latest
+    needs: [knip, depcheck]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: ./.github/actions/setup-yarn
+      - uses: ./.github/actions/setup-turbo
+        with:
+          token: ${{ secrets.TURBO_TOKEN }}
+          team: ${{ secrets.TURBO_TEAM }}
+      - name: 📏 Run size-limit
+        run: yarn turbo run web#check:size --cache="${{env.TURBO_CACHE}}"
+
+  audit:
+    name: 🛡️ Security Audit
+    runs-on: ubuntu-latest
+    needs: [lint]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: ./.github/actions/setup-yarn
+      - uses: ./.github/actions/setup-turbo
+        with:
+          token: ${{ secrets.TURBO_TOKEN }}
+          team: ${{ secrets.TURBO_TEAM }}
+      - name: 🛡️ Run npm audit
+        run: yarn turbo run web#check:audit --cache="${{env.TURBO_CACHE}}"
+
+  i18n:
+    name: 🌍 i18n Checks
+    runs-on: ubuntu-latest
+    needs: [lint, typecheck]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: ./.github/actions/setup-yarn
+      - uses: ./.github/actions/setup-turbo
+        with:
+          token: ${{ secrets.TURBO_TOKEN }}
+          team: ${{ secrets.TURBO_TEAM }}
+      - name: 🌍 Run i18n CI check
+        run: yarn turbo run web#check:i18n --cache="${{env.TURBO_CACHE}}"
+
+  test:
+    name: 🧪 Unit Tests
+    runs-on: ubuntu-latest
+    needs: [lint, typecheck, knip, depcheck, size, audit, i18n]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: ./.github/actions/setup-yarn
+      - name: 🧪 Run Tests
+        run: yarn turbo run web#check:test
+      - name: 📈 Report Coverage
+        if: always()
+        uses: davelosert/vitest-coverage-report-action@v2
+        with:
+          name: "Web Coverage Report"
+          json-summary-path: apps/web/coverage/coverage-summary.json
+          json-summary-compare-path: apps/web/coverage/coverage-summary.json
+          json-final-path: apps/web/coverage/coverage-final.json
+          vite-config-path: apps/web/vitest.config.ts
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  # e2e:
+  #   name: 🚦 E2E Tests
+  #   runs-on: ubuntu-latest
+  #   needs: [test]
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 1
+  #     - uses: ./.github/actions/setup-yarn
+  #     - uses: microsoft/playwright-github-action@v1
+  #     - name: 🚦 Run Playwright
+  #       run: yarn turbo run web#e2e
+
+  # axe:
+  #   name: ♿ A11y Checks
+  #   runs-on: ubuntu-latest
+  #   needs: [test]
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 1
+  #     - uses: ./.github/actions/setup-yarn
+  #     - uses: microsoft/playwright-github-action@v1
+  #     - name: ♿ Run axe tests
+  #       run: yarn turbo run web#axe
+
+  # lighthouse:
+  #   name: 🔦 Lighthouse
+  #   runs-on: ubuntu-latest
+  #   needs: [test]
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 1
+  #     - uses: ./.github/actions/setup-yarn
+  #     - uses: ./.github/actions/setup-turbo
+  #       with:
+  #         token: ${{ secrets.TURBO_TOKEN }}
+  #         team: ${{ secrets.TURBO_TEAM }}
+  #     - name: 🏗️ Build
+  #       run: yarn turbo run web#build --cache="${{env.TURBO_CACHE}}"
+  #     - name: 🔦 Run LHCI
+  #       run: yarn turbo run web#lighthouse --cache="${{env.TURBO_CACHE}}"

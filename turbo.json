@@ -7,11 +7,16 @@
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["dist/**"]
     },
+    "build:types": {
+      "dependsOn": ["^build:types"],
+      "outputs": ["types/**", "dist/**/*.d.ts"],
+      "cache": false
+    },
     "lint": {
       "dependsOn": ["^lint"]
     },
     "check-types": {
-      "dependsOn": ["^check-types"]
+      "dependsOn": ["^build:types", "^check-types"]
     },
     "dev": {
       "cache": false,
@@ -32,6 +37,60 @@
     "db:generate": {
       "cache": false,
       "persistent": true
+    },
+    "check:types": {
+      "dependsOn": ["^check:types"],
+      "outputs": [],
+      "cache": false
+    },
+    "check:lint": {
+      "dependsOn": ["^check:lint"],
+      "outputs": [],
+      "cache": false
+    },
+    "check:knip": {
+      "dependsOn": ["^check:knip"],
+      "outputs": [],
+      "cache": false
+    },
+    "check:dep": {
+      "dependsOn": ["^check:dep"],
+      "outputs": [],
+      "cache": false
+    },
+    "check:i18n": {
+      "dependsOn": ["^check:i18n"],
+      "outputs": [],
+      "cache": false
+    },
+    "check:size": {
+      "dependsOn": ["^check:size"],
+      "outputs": [],
+      "cache": false
+    },
+    "check:audit": {
+      "dependsOn": ["^check:audit"],
+      "outputs": [],
+      "cache": false
+    },
+    "check:test": {
+      "dependsOn": ["^check:test"],
+      "outputs": [],
+      "cache": false
+    },
+    "check:all": {
+      "dependsOn": [
+        "check:types",
+        "check:lint",
+        "check:knip",
+        "check:dep",
+        "check:size",
+        "check:audit",
+        "check:i18n",
+        "check:test"
+      ],
+      "outputs": [],
+      "cache": false
     }
   }
 }
