@@ -20,6 +20,7 @@ declare module '@tanstack/react-table' {
     range?: [number, number];
     unit?: string;
     icon?: React.FC<React.SVGProps<SVGSVGElement>>;
+    operator?: FilterOperator;
   }
 }
 
@@ -53,4 +54,20 @@ export interface ExtendedColumnFilter<TData> extends FilterItemSchema {
 export interface DataTableRowAction<TData> {
   row: Row<TData>;
   variant: 'update' | 'delete';
+}
+export interface User {
+  id: string;
+  email: string;
+  name: string | null;
+  firstName: string;
+  lastName: string;
+  role: string | null;
+  createdAt: string;
+  updatedAt: string | null;
+  emailVerified?: boolean;
+  image: string | null;
+  banned: boolean | null;
+  banExpires?: string | null;
+  banReason?: string | null;
+  lastLoginMethod?: string | null;
 }

@@ -35,6 +35,7 @@ export default function ForbiddenRoute() {
           asChild
           onClick={async () => {
             await authClient.signOut().finally(async () => {
+              localStorage.clear();
               await navigate('/');
             });
           }}

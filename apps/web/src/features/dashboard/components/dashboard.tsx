@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 import { useQuery } from '@tanstack/react-query';
 
@@ -6,8 +6,8 @@ import { parseAsInteger, parseAsString, useQueryStates } from 'nuqs';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
-import Loader from '@/components/loader';
 import { useTrpc } from '@/providers/trpc';
+import type { User, ExtendedColumnFilter, ExtendedColumnSort } from '@/types/data-table';
 
 import { useListUsers } from '../../../queries';
 
@@ -21,7 +21,7 @@ export default function Dashboard({
   const { t } = useTranslation();
   const trpc = useTrpc();
 
-  const { isLoading } = useQuery({
+  useQuery({
     ...trpc.privateData.queryOptions(),
     enabled: !!session?.isAuthenticated,
   });
@@ -31,10 +31,15 @@ export default function Dashboard({
     perPage: parseAsInteger.withDefault(10),
     sortBy: parseAsString.withDefault('createdAt'),
     sortDirection: parseAsString.withDefault('desc'),
-    filterBy: parseAsString.withDefault(''),
     search: parseAsString.withDefault(''),
   });
+
   const [search, setSearch] = useState(queryParams.search);
+  const [filters, setFilters] = useState<ExtendedColumnFilter<User>[]>([]);
+  const [sorting, setSorting] = useState<ExtendedColumnSort<User>>({
+    id: queryParams.sortBy as keyof User,
+    desc: queryParams.sortDirection === 'desc',
+  });
   const {
     data: usersData,
     error,
@@ -43,37 +48,47 @@ export default function Dashboard({
     page: queryParams.page,
     perPage: queryParams.perPage,
     search,
-    sortBy: queryParams.sortBy,
-    sortDirection: queryParams.sortDirection,
+    sorting,
     enabled: !!session?.isAuthenticated,
-    filterBy: queryParams.filterBy,
+    filters,
   });
 
-  if (error)
-    toast.error(
-      t('dashboard.loadUsersError', 'Failed to load users: {{message}}', {
-        message: error instanceof Error ? error.message : 'Unknown error',
-      })
-    );
+  // Show error toast only once when error changes
+  useEffect(() => {
+    if (error) {
+      toast.error(
+        t('dashboard.loadUsersError', 'Failed to load users: {{message}}', {
+          message: error instanceof Error ? error.message : 'Unknown error',
+        })
+      );
+    }
+  }, [error, t]);
+
+  // Use useCallback to prevent creating new function on every render
+  const handleSearchChange = useCallback(
+    async (value: string) => {
+      setSearch(value);
+      await setQueryParams({ page: 1, search: value });
+    },
+    [setQueryParams]
+  );
+
+  // Use useCallback to prevent creating new function on every render
+  const handleFiltersChange = useCallback((value: ExtendedColumnFilter<User>[]) => {
+    setFilters(value);
+  }, []);
+
+  // Use useCallback to prevent creating new function on every render
+  const handleSortingChange = useCallback((value: ExtendedColumnSort<User>) => {
+    setSorting(value);
+  }, []);
 
   if (!session?.isAuthenticated) {
     return null;
   }
 
-  if (isLoading || isLoadingUsers) {
-    return (
-      <div className="flex h-full items-center justify-center">
-        <Loader />
-      </div>
-    );
-  }
-
-  const userRows = (Array.isArray(usersData) ? usersData : (usersData?.users ?? [])).map(user => ({
-    ...user,
-    role: user.role ?? 'user',
-  }));
-
-  const totalUsers = usersData && 'total' in usersData ? usersData.total : userRows.length;
+  const userRows = usersData?.users ?? [];
+  const totalUsers = usersData?.totalItems ?? 0;
   const pageCount = Math.ceil(totalUsers / queryParams.perPage);
 
   return (
@@ -84,10 +99,9 @@ export default function Dashboard({
         pageCount={pageCount}
         isLoading={isLoadingUsers}
         search={search}
-        onSearchChange={async value => {
-          setSearch(value);
-          await setQueryParams({ ...queryParams, page: 1, search: value });
-        }}
+        onSearchChange={handleSearchChange}
+        onFiltersChange={handleFiltersChange}
+        onSortingChange={handleSortingChange}
       />
     </div>
   );

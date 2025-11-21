@@ -23,6 +23,7 @@ export function DataTableToolbar<TData>({
   table,
   children,
   className,
+  isLoading,
   ...props
 }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
@@ -39,7 +40,7 @@ export function DataTableToolbar<TData>({
     setInputValue(globalFilter);
   }, [globalFilter]);
 
-  const debounced = useDebounce(inputValue, 300);
+  const debounced = useDebounce(inputValue, 700);
 
   React.useEffect(() => {
     table.setGlobalFilter(debounced || undefined);
@@ -62,10 +63,10 @@ export function DataTableToolbar<TData>({
             placeholder="Search by name or email…"
             value={inputValue}
             onChange={e => setInputValue(e.target.value)}
-            disabled={props.isLoading}
+            disabled={isLoading}
             type="text"
           />
-          {props.isLoading && (
+          {isLoading && (
             <InputGroupAddon align="inline-end">
               <Spinner />
             </InputGroupAddon>

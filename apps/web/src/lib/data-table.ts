@@ -1,6 +1,7 @@
-import type { Column } from '@tanstack/react-table';
+import type { Column, ColumnFiltersState } from '@tanstack/react-table';
 
 import { dataTableConfig } from '@/config/data-table';
+import { generateId } from '@/lib/id';
 import type { ExtendedColumnFilter, FilterOperator, FilterVariant } from '@/types/data-table';
 
 export function getCommonPinningStyles<TData>({
@@ -47,9 +48,14 @@ export function getFilterOperators(filterVariant: FilterVariant) {
   return operatorMap[filterVariant] ?? dataTableConfig.textOperators;
 }
 
-export function getDefaultFilterOperator(filterVariant: FilterVariant) {
+export function getDefaultFilterOperator(filterVariant: FilterVariant, operator?: FilterOperator) {
   const operators = getFilterOperators(filterVariant);
-
+  if (operator) {
+    const isValid = operators.some(op => op.value === operator);
+    if (isValid) {
+      return operator;
+    }
+  }
   return operators[0]?.value ?? (filterVariant === 'text' ? 'iLike' : 'eq');
 }
 
@@ -64,4 +70,26 @@ export function getValidFilters<TData>(
         ? filter.value.length > 0
         : filter.value !== '' && filter.value !== null && filter.value !== undefined)
   );
+}
+export function convertToExtendedFilters<TData>(
+  columnFilters: ColumnFiltersState,
+  columns: Column<TData>[]
+): ExtendedColumnFilter<TData>[] {
+  return columnFilters.map(filter => {
+    const column = columns.find(col => col.id === filter.id);
+    const variant = column?.columnDef.meta?.variant ?? 'text';
+    const operator = getDefaultFilterOperator(variant, column?.columnDef.meta?.operator);
+
+    return {
+      id: filter.id as Extract<keyof TData, string>,
+      value: Array.isArray(filter.value)
+        ? filter.value
+        : typeof filter.value === 'string'
+          ? filter.value
+          : String(filter.value ?? ''),
+      variant,
+      operator,
+      filterId: generateId({ length: 8 }),
+    };
+  });
 }

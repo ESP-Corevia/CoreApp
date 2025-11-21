@@ -19,7 +19,7 @@ const merged = mergeConfig(baseConfig, {
     coverage: {
       enabled: true,
       provider: 'istanbul',
-      reporter: ['text', 'text-summary', 'lcov', 'json', 'json-summary'],
+      reporter: ['text', 'text-summary', 'lcov', 'json', 'json-summary', 'html'],
       reportsDirectory: './coverage',
       reportOnFailure: true,
       thresholds: {

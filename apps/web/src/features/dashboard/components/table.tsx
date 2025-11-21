@@ -1,11 +1,11 @@
 'use client';
 
-import * as React from 'react';
+import { useEffect, useMemo } from 'react';
 
 import type { ColumnDef } from '@tanstack/react-table';
 
 import { SiGithub, SiGoogle } from '@icons-pack/react-simple-icons';
-import { CalendarClock, Mail, Shield, Text, User, History } from 'lucide-react';
+import { CalendarClock, Mail, Shield, Text, User as UserIcon, History } from 'lucide-react';
 
 import { DataTable } from '@/components/data-table/data-table';
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
@@ -14,26 +14,11 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useDataTable } from '@/hooks/use-data-table';
+import { convertToExtendedFilters } from '@/lib/data-table';
+import type { User, ExtendedColumnFilter, ExtendedColumnSort } from '@/types/data-table';
 
 import { UserActionsMenu } from './user-actions-menu';
 import { CreateUserDialog } from './user-create-dialog';
-
-export interface User {
-  id: string;
-  email: string;
-  name: string;
-  firstName: string;
-  lastName: string;
-  role: string; // Better Auth returns role as string
-  createdAt: string; // ISO string
-  updatedAt?: string;
-  emailVerified?: boolean;
-  image?: string | null;
-  banned?: boolean;
-  banExpires?: string | null;
-  banReason?: string | null;
-  lastLoginMethod?: string | null;
-}
 
 function formatDate(input?: string) {
   if (!input) return '';
@@ -48,6 +33,8 @@ export default function DataTableUsers({
   search,
   onSearchChange,
   isLoading,
+  onFiltersChange,
+  onSortingChange,
   title,
 }: {
   data: User[];
@@ -55,13 +42,17 @@ export default function DataTableUsers({
   search?: string;
   // eslint-disable-next-line no-unused-vars
   onSearchChange?: (value: string) => void;
+  // eslint-disable-next-line no-unused-vars
+  onFiltersChange?: (filters: ExtendedColumnFilter<User>[]) => void;
+  // eslint-disable-next-line no-unused-vars
+  onSortingChange?: (sorting: ExtendedColumnSort<User>) => void;
   isLoading: boolean;
   title: string;
 }) {
-  const users = React.useMemo(() => data, [data]);
+  const users = useMemo(() => data, [data]);
   const pageCount = providedPageCount ?? Math.ceil((users.length || 1) / 10);
 
-  const columns = React.useMemo<ColumnDef<User>[]>(
+  const columns = useMemo<ColumnDef<User>[]>(
     () => [
       {
         id: 'select',
@@ -118,7 +109,7 @@ export default function DataTableUsers({
         header: ({ column }) => <DataTableColumnHeader column={column} label="Name" />,
         cell: ({ row }) => (
           <div className="inline-flex items-center gap-2">
-            <User className="h-4 w-4" />
+            <UserIcon className="h-4 w-4" />
             <span className="text-muted-foreground text-sm">{row.original.name}</span>
           </div>
         ),
@@ -169,6 +160,7 @@ export default function DataTableUsers({
             { label: 'Admin', value: 'admin', icon: Shield },
             { label: 'User', value: 'user', icon: Shield },
           ],
+          operator: 'inArray',
         },
         enableColumnFilter: true,
       },
@@ -191,6 +183,7 @@ export default function DataTableUsers({
           label: 'Created At',
           variant: 'dateRange',
           icon: CalendarClock,
+          operator: 'isBetween',
         },
       },
       {
@@ -202,7 +195,7 @@ export default function DataTableUsers({
           return (
             <div className="text-muted-foreground inline-flex items-center gap-1 text-sm">
               <CalendarClock className="h-4 w-4" />
-              {formatDate(updated)}
+              {formatDate(updated ?? undefined)}
             </div>
           );
         },
@@ -212,6 +205,7 @@ export default function DataTableUsers({
           label: 'Updated At',
           variant: 'dateRange',
           icon: CalendarClock,
+          operator: 'isBetween',
         },
       },
       {
@@ -235,9 +229,11 @@ export default function DataTableUsers({
             { label: 'Google', value: 'google', icon: SiGoogle },
             { label: 'Email', value: 'email', icon: Mail },
           ],
+          operator: 'inArray',
         },
         enableColumnFilter: true,
         enableHiding: true,
+        enableSorting: false,
       },
       {
         id: 'banned',
@@ -258,6 +254,7 @@ export default function DataTableUsers({
         },
         enableColumnFilter: true,
         enableHiding: true,
+        enableSorting: false,
       },
       {
         id: 'banReason',
@@ -274,6 +271,7 @@ export default function DataTableUsers({
         },
         enableColumnFilter: false,
         enableHiding: true,
+        enableSorting: false,
       },
       {
         id: 'banExpires',
@@ -293,6 +291,27 @@ export default function DataTableUsers({
         enableHiding: true,
       },
       {
+        id: 'emailVerified',
+        accessorKey: 'emailVerified',
+        header: ({ column }) => <DataTableColumnHeader column={column} label="Email Verified" />,
+        cell: ({ cell }) => {
+          const emailVerified = cell.getValue<User['emailVerified']>();
+          return (
+            <span className={`text-sm ${emailVerified ? 'text-green-600' : 'text-red-600'}`}>
+              {emailVerified ? 'Yes' : 'No'}
+            </span>
+          );
+        },
+        meta: {
+          label: 'Email Verified',
+          variant: 'boolean',
+          icon: Shield,
+        },
+        enableColumnFilter: true,
+        enableHiding: true,
+        enableSorting: false,
+      },
+      {
         id: 'actions',
         cell: ({ row }) => <UserActionsMenu user={row.original} />,
         size: 32,
@@ -303,12 +322,11 @@ export default function DataTableUsers({
     []
   );
 
-  const { table } = useDataTable<User>({
+  const { table, filters, sorting } = useDataTable<User>({
     clearOnDefault: false,
     data: users,
     columns,
     pageCount,
-
     initialState: {
       sorting: [{ id: 'createdAt', desc: true }],
       columnPinning: { right: ['actions'], left: ['select'] },
@@ -323,13 +341,31 @@ export default function DataTableUsers({
         name: false,
       },
     },
-
     getRowId: row => row.id,
     onGlobalFilterChange: value => {
-      onSearchChange?.(value);
+      onSearchChange?.(value ?? '');
     },
   });
+  useEffect(() => {
+    const filterableColumns = table.getAllColumns().filter(col => col.columnDef.enableColumnFilter);
+    const extendedFilters = convertToExtendedFilters(filters, filterableColumns);
 
+    onFiltersChange?.(extendedFilters);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters, onFiltersChange]);
+  useEffect(() => {
+    const sortingState = table.getState().sorting;
+    // const extendedSorting = sortingState.map(sort => {
+    //   return {
+    //     id: sort.id as keyof User,
+    //     desc: sort.desc,
+    //   } as ExtendedColumnSort<User>;
+    // });
+    const extendedSorting = sortingState[0] as ExtendedColumnSort<User>;
+
+    onSortingChange?.(extendedSorting);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sorting, onSortingChange]);
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
