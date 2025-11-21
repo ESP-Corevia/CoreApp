@@ -1,4 +1,4 @@
-FROM node:24.7-bullseye-slim AS builder
+FROM node:24.11-bullseye-slim AS builder
 
 ENV NODE_ENV=production
 
@@ -17,7 +17,7 @@ COPY ./apps/server ./apps/server
 
 RUN yarn build
 
-FROM node:24.7-bullseye-slim
+FROM node:24.11-bullseye-slim
 
 WORKDIR /app
 
