@@ -9,6 +9,7 @@ COPY yarn.lock .
 COPY ./apps/server/package.json ./apps/server/
 COPY turbo.json .
 COPY .yarnrc.yml ./.yarnrc.yml
+COPY tsconfig.base.json tsconfig.json ./
 
 RUN corepack enable
 RUN yarn install
