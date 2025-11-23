@@ -44,8 +44,11 @@ export function SetPasswordDialog({ open, onOpenChange, user }: SetPasswordDialo
         .max(100, t('profile.passwordMax', 'Password must be at most 100 characters')),
       confirmPassword: z
         .string()
-        .min(8, t('profile.passwordMin', 'Password must be at least 8 characters'))
-        .max(100, t('profile.passwordMax', 'Password must be at most 100 characters')),
+        .min(8, t('profile.confirmPasswordMin', 'Confirm password must be at least 8 characters'))
+        .max(
+          100,
+          t('profile.confirmPasswordMax', 'Confirm password must be at most 100 characters')
+        ),
     })
     .refine(data => data.newPassword === data.confirmPassword, {
       message: t('profile.passwordMismatch', 'Passwords do not match'),
@@ -144,6 +147,11 @@ export function SetPasswordDialog({ open, onOpenChange, user }: SetPasswordDialo
                     size="icon"
                     className="absolute top-0 right-0 h-full px-3 hover:bg-transparent"
                     onClick={() => setShowPassword(!showPassword)}
+                    aria-label={
+                      showPassword
+                        ? t('userSetPasswordModal.hidePassword', 'Hide password')
+                        : t('userSetPasswordModal.showPassword', 'Show password')
+                    }
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </Button>
@@ -189,6 +197,11 @@ export function SetPasswordDialog({ open, onOpenChange, user }: SetPasswordDialo
                     size="icon"
                     className="absolute top-0 right-0 h-full px-3 hover:bg-transparent"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    aria-label={
+                      showConfirmPassword
+                        ? t('userSetPasswordModal.hideConfirmedPassword', 'Hide confirmed password')
+                        : t('userSetPasswordModal.showConfirmedPassword', 'Show confirmed password')
+                    }
                   >
                     {showConfirmPassword ? (
                       <EyeOff className="h-4 w-4" />

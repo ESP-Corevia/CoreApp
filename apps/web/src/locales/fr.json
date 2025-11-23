@@ -49,7 +49,6 @@
       "exit": "Quitter l'usurpation",
       "title": "Vous êtes actuellement en train d'usurper un utilisateur."
     },
-
     "modeToggle": {
       "dark": "Sombre",
       "light": "Clair",
@@ -63,6 +62,8 @@
       "accountStatus": "Statut du compte",
       "accountStatusSubtitle": "État et vérification de votre compte",
       "cancel": "Annuler",
+      "confirmPasswordMax": "Le mot de passe confirmé doit comporter au maximum 100 caractères",
+      "confirmPasswordMin": "Le mot de passe confirmé doit comporter au moins 8 caractères",
       "createdDate": "Date de création",
       "editProfile": "Modifier le profil",
       "email": "Email",
@@ -182,7 +183,6 @@
       "failedToImpersonate": "Échec de l'usurpation de l'utilisateur : {{message}}",
       "popupBlocked": "Popup bloquée — autorisez les popups pour usurper des utilisateurs."
     },
-
     "UserActionsMenu": {
       "banUser": "Bannir l'utilisateur",
       "deleteUser": "Supprimer l'utilisateur",
@@ -200,9 +200,11 @@
       "creating": "Création...",
       "email": "Email",
       "emailLabel": "Entrez votre email",
+      "hidePassword": "Cacher le mot de passe",
       "passwordLabel": "Mot de passe",
       "passwordPlaceholder": "Entrez votre mot de passe",
       "role": "Rôle",
+      "showPassword": "Afficher le mot de passe",
       "userCreated": "Utilisateur créé avec succès",
       "userCreateError": "Échec de la création de l'utilisateur : {{message}}"
     },
@@ -241,6 +243,8 @@
       "confirmPassword": "Confirmer le mot de passe",
       "confirmPasswordPlaceholder": "Confirmez le nouveau mot de passe",
       "description": "Définissez un nouveau mot de passe pour <strong>{{user}}</strong>.",
+      "hideConfirmedPassword": "Cacher le mot de passe confirmé",
+      "hidePassword": "Cacher le mot de passe",
       "newPassword": "Nouveau mot de passe",
       "newPasswordPlaceholder": "Entrez un nouveau mot de passe",
       "passwordUpdated": {
@@ -249,6 +253,8 @@
       },
       "setPassword": "Définir le mot de passe",
       "setting": "Définition...",
+      "showConfirmedPassword": "Afficher le mot de passe confirmé",
+      "showPassword": "Afficher le mot de passe",
       "title": "Définir un mot de passe"
     },
     "useUnbanUser": {

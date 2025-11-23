@@ -22,3 +22,4 @@ ignores:
   - 'shadcn'
   - '@radix-ui/**'
   - 'ogl'
+  - '@dnd-kit/utilities'

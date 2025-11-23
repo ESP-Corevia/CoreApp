@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { authClient } from '@/lib/auth-client';
 import { useTrpc } from '@/providers/trpc';
 import type { ExtendedColumnFilter, User, ExtendedColumnSort } from '@/types/data-table';
 
@@ -35,17 +34,5 @@ export function useListUsers({
       filters: filters ? JSON.stringify(filters) : undefined,
     }),
     enabled,
-  });
-}
-
-export function useListSessions() {
-  return useQuery({
-    queryKey: ['list-sessions'],
-    queryFn: async () => {
-      const res = await authClient.listSessions();
-
-      return 'data' in res ? res.data : res;
-    },
-    enabled: true,
   });
 }

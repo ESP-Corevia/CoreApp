@@ -24,9 +24,9 @@ const merged = mergeConfig(baseConfig, {
       reportOnFailure: true,
       thresholds: {
         branches: 80,
-        functions: 80,
-        lines: 80,
-        statements: 80,
+        functions: 90,
+        lines: 90,
+        statements: 90,
       },
       include: ['src/**/*.ts', 'test/**/*.ts'],
       exclude: [

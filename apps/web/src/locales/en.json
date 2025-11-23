@@ -62,6 +62,8 @@
       "accountStatus": "Account Status",
       "accountStatusSubtitle": "Your account status and verification",
       "cancel": "Cancel",
+      "confirmPasswordMax": "Confirm password must be at most 100 characters",
+      "confirmPasswordMin": "Confirm password must be at least 8 characters",
       "createdDate": "Created Date",
       "editProfile": "Edit Profile",
       "email": "Email",
@@ -198,9 +200,11 @@
       "creating": "Creating...",
       "email": "Email",
       "emailLabel": "Enter your email",
+      "hidePassword": "Hide password",
       "passwordLabel": "Password",
       "passwordPlaceholder": "Enter your password",
       "role": "Role",
+      "showPassword": "Show password",
       "userCreated": "User created successfully",
       "userCreateError": "Failed to create user: {{message}}"
     },
@@ -239,6 +243,8 @@
       "confirmPassword": "Confirm Password",
       "confirmPasswordPlaceholder": "Confirm new password",
       "description": "Set a new password for <strong>{{user}}</strong>.",
+      "hideConfirmedPassword": "Hide confirmed password",
+      "hidePassword": "Hide password",
       "newPassword": "New Password",
       "newPasswordPlaceholder": "Enter new password",
       "passwordUpdated": {
@@ -247,6 +253,8 @@
       },
       "setPassword": "Set Password",
       "setting": "Setting...",
+      "showConfirmedPassword": "Show confirmed password",
+      "showPassword": "Show password",
       "title": "Set Password"
     },
     "useUnbanUser": {

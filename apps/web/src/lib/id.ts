@@ -1,6 +1,6 @@
 import { customAlphabet } from 'nanoid';
 
-const prefixes: Record<string, unknown> = {};
+export const prefixes: Record<string, unknown> = {};
 
 interface GenerateIdOptions {
   length?: number;
