@@ -53,7 +53,6 @@ export default function Dashboard({
     filters,
   });
 
-  // Show error toast only once when error changes
   useEffect(() => {
     if (error) {
       toast.error(
@@ -64,7 +63,6 @@ export default function Dashboard({
     }
   }, [error, t]);
 
-  // Use useCallback to prevent creating new function on every render
   const handleSearchChange = useCallback(
     async (value: string) => {
       setSearch(value);
@@ -73,12 +71,10 @@ export default function Dashboard({
     [setQueryParams]
   );
 
-  // Use useCallback to prevent creating new function on every render
   const handleFiltersChange = useCallback((value: ExtendedColumnFilter<User>[]) => {
     setFilters(value);
   }, []);
 
-  // Use useCallback to prevent creating new function on every render
   const handleSortingChange = useCallback((value: ExtendedColumnSort<User>) => {
     setSorting(value);
   }, []);

@@ -59,7 +59,8 @@ export function getDefaultFilterOperator(filterVariant: FilterVariant, operator?
   return operators[0]?.value ?? (filterVariant === 'text' ? 'iLike' : 'eq');
 }
 
-export function getValidFilters<TData>(
+// eslint-disable-next-line no-unused-vars
+function getValidFilters<TData>(
   filters: ExtendedColumnFilter<TData>[]
 ): ExtendedColumnFilter<TData>[] {
   return filters.filter(

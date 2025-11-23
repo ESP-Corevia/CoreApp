@@ -25,6 +25,7 @@ import { TrpcProvider, createRuntimeTrpcClient } from '@/providers/trpc';
 
 import ClickSpark from './components/ClickSpark';
 import Header from './components/header';
+import ImpersonationBanner from './components/ImpersonationBanner';
 import { Skeleton } from './components/ui/skeleton';
 import { Toaster } from './components/ui/sonner';
 import { QueryProvider, queryClient } from './providers/query';
@@ -104,15 +105,21 @@ function ThemedShell() {
   return (
     <div className="bg-background text-foreground flex min-h-screen w-full flex-col">
       <LoadingBar />
+
       <SidebarProvider>
         <div className="bg-background flex min-h-screen w-full">
           <AppSidebar />
+
           <SidebarInset className="flex flex-1 flex-col">
             {/* Header */}
+            <div className="relative z-40">
+              <ImpersonationBanner />
+            </div>
             <header className="border-border bg-background/95 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-10 flex h-16 shrink-0 items-center gap-2 border-b px-4 backdrop-blur">
               <SidebarTrigger className="-ml-1" />
               <div className="bg-border mx-2 h-4 w-px" />
               <Header />
+
               <div className="flex-1" />
               <UserMenu />
             </header>

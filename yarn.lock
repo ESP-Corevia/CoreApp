@@ -3863,7 +3863,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@radix-ui/react-use-controllable-state@npm:1.2.2":
+"@radix-ui/react-use-controllable-state@npm:1.2.2, @radix-ui/react-use-controllable-state@npm:^1.2.2":
   version: 1.2.2
   resolution: "@radix-ui/react-use-controllable-state@npm:1.2.2"
   dependencies:
@@ -12227,12 +12227,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lucide-react@npm:^0.548.0":
-  version: 0.548.0
-  resolution: "lucide-react@npm:0.548.0"
+"lucide-react@npm:^0.554.0":
+  version: 0.554.0
+  resolution: "lucide-react@npm:0.554.0"
   peerDependencies:
     react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
-  checksum: 10c0/4b3416982927622a8aad49edd3ed53c7a7c202e7357188f56b8dd582e8f22d33b30fda736440a2e640e0faf9baa724a06d0d3c1de5ecf42d2844eb6b24ddefdd
+  checksum: 10c0/35b11d6f11e4b00047175fcc52f531156be66e5ae7c1f689d0d18bc7bbf06d9e0bf33c767f449e25d99f105acf420399346787491aafe0b55dc68b8d45937e87
   languageName: node
   linkType: hard
 
@@ -17572,6 +17572,7 @@ __metadata:
     "@radix-ui/react-slider": "npm:^1.3.6"
     "@radix-ui/react-slot": "npm:^1.2.4"
     "@radix-ui/react-tooltip": "npm:^1.2.8"
+    "@radix-ui/react-use-controllable-state": "npm:^1.2.2"
     "@react-router/dev": "npm:^7.6.1"
     "@react-router/fs-routes": "npm:^7.6.1"
     "@react-router/node": "npm:^7.6.1"
@@ -17620,7 +17621,7 @@ __metadata:
     isbot: "npm:^5.1.28"
     jsdom: "npm:^27.0.0"
     knip: "npm:^5.64.1"
-    lucide-react: "npm:^0.548.0"
+    lucide-react: "npm:^0.554.0"
     motion: "npm:^12.23.24"
     nanoid: "npm:^5.1.6"
     next-themes: "npm:^0.4.6"

@@ -6,50 +6,91 @@
       "connected": "Connecté",
       "disconnected": "Déconnecté"
     },
-    "dashboard": {
-      "loading": "Chargement...",
-      "privateData": "Données privées : {{message}}",
-      "title": "Tableau de bord",
-      "welcome": "Bienvenue {{userId}}"
+    "banUserDialog": {
+      "banning": "Bannissement...",
+      "banUser": "Bannir l'utilisateur",
+      "description": "Bannir {{ name }} de l'accès à l'application.",
+      "durationLabel": "Durée du bannissement",
+      "durations": {
+        "1Day": "1 jour",
+        "1Hour": "1 heure",
+        "30Days": "30 jours",
+        "7Days": "7 jours",
+        "Permanent": "Permanent"
+      },
+      "error": "Échec du bannissement : {{message}}",
+      "errors": {
+        "reasonTooShort": "La raison doit comporter au moins 3 caractères"
+      },
+      "reasonLabel": "Raison du bannissement",
+      "reasonPlaceholder": "Entrez la raison du bannissement...",
+      "success": "{{name}} a été banni",
+      "title": "Bannir l'utilisateur"
     },
+    "dashboard": {
+      "loadUsersError": "Échec du chargement des utilisateurs : {{message}}",
+      "userManagement": "Gestion des utilisateurs"
+    },
+    "dataTable": {
+      "noResults": "Aucun résultat."
+    },
+    "errorScreen": {
+      "permissionDenied": "Vous n'avez pas l'autorisation d'accéder à cette ressource."
+    },
+    "forbidden": {
+      "description": "L'accès à cette ressource est interdit. Vous n'avez pas les permissions nécessaires pour voir cette page.",
+      "goBackHome": "Retour à l'accueil"
+    },
+    "Go Back Home": "Retour à l'accueil",
     "HydrateFallback": {
       "loading": "Chargement…"
     },
+    "impersonationBanner": {
+      "exit": "Quitter l'usurpation",
+      "title": "Vous êtes actuellement en train d'usurper un utilisateur."
+    },
+
     "modeToggle": {
       "dark": "Sombre",
       "light": "Clair",
       "system": "Système",
-      "toggleTheme": "Changer le thème"
+      "toggleTheme": "Changer de thème"
+    },
+    "notFound": {
+      "title": "Page introuvable"
     },
     "profile": {
-      "accountStatus": "État du compte",
-      "accountStatusSubtitle": "État et vérification du compte",
+      "accountStatus": "Statut du compte",
+      "accountStatusSubtitle": "État et vérification de votre compte",
       "cancel": "Annuler",
       "createdDate": "Date de création",
       "editProfile": "Modifier le profil",
-      "email": "E-mail",
-      "emailInvalid": "Adresse e-mail invalide",
+      "email": "Email",
+      "emailInvalid": "Adresse email invalide",
       "emailModal": {
         "close": "Fermer",
-        "description": "Saisissez votre nouvel e-mail et votre mot de passe actuel pour continuer",
-        "newEmail": "Nouvel e-mail",
-        "newEmailLabel": "Entrez votre nouvel e-mail",
-        "title": "Modifier l'e-mail",
-        "update": "Mettre à jour l'e-mail",
-        "updating": "Mise à jour de l'e-mail…"
+        "description": "Entrez votre nouvel email et votre mot de passe actuel pour continuer",
+        "newEmail": "Nouvel email",
+        "newEmailLabel": "Entrez votre nouvel email",
+        "title": "Changer l'email",
+        "update": "Mettre à jour l'email",
+        "updating": "Mise à jour de l'email..."
       },
-      "emailUpdated": "E-mail mis à jour avec succès. Veuillez vérifier votre nouvel e-mail.",
-      "emailUpdateError": "Échec de la mise à jour de l'e-mail",
+      "emailUpdated": "Email mis à jour avec succès. Veuillez vérifier votre nouvel email.",
+      "emailUpdateError": "Échec de la mise à jour de l'email",
       "error": "Échec de la mise à jour du profil",
       "firstName": "Prénom",
       "firstNameLabel": "Entrez votre prénom",
-      "firstNameMin": "Le prénom doit contenir au moins 3 caractères",
+      "firstNameMin": "Le prénom doit comporter au moins 3 caractères",
       "lastName": "Nom",
       "lastNameLabel": "Entrez votre nom",
-      "lastNameMin": "Le nom doit contenir au moins 3 caractères",
+      "lastNameMin": "Le nom doit comporter au moins 3 caractères",
+      "name": "Nom complet",
+      "nameLabel": "Entrez votre nom complet",
+      "nameMin": "Le nom doit comporter au moins 3 caractères",
       "notVerified": "Non vérifié",
-      "passwordMax": "Le mot de passe doit contenir au plus 100 caractères",
-      "passwordMin": "Le mot de passe doit contenir au moins 8 caractères",
+      "passwordMax": "Le mot de passe doit comporter au maximum 100 caractères",
+      "passwordMin": "Le mot de passe doit comporter au moins 8 caractères",
       "passwordMismatch": "Les mots de passe ne correspondent pas",
       "passwordModal": {
         "close": "Fermer",
@@ -60,73 +101,73 @@
         "newPasswordLabel": "Entrez votre nouveau mot de passe",
         "oldPassword": "Mot de passe actuel",
         "oldPasswordLabel": "Entrez votre mot de passe actuel",
-        "title": "Modifier le mot de passe",
-        "update": "Modifier le mot de passe",
-        "updating": "Modification du mot de passe…"
+        "title": "Changer le mot de passe",
+        "update": "Mettre à jour le mot de passe",
+        "updating": "Mise à jour du mot de passe..."
       },
       "passwordUpdated": "Mot de passe mis à jour avec succès",
       "passwordUpdateError": "Échec de la mise à jour du mot de passe. Vérifiez votre mot de passe actuel.",
-      "personalDetails": "Vos détails personnels",
+      "personalDetails": "Vos informations personnelles",
       "previewLabel": "Aperçu des informations du profil",
-      "profileInformation": "Informations de profil",
+      "profileInformation": "Informations du profil",
       "save": "Enregistrer",
-      "savingChanges": "Enregistrement des modifications…",
+      "savingChanges": "Enregistrement des modifications...",
       "success": "Profil mis à jour avec succès",
       "updatedDate": "Date de mise à jour",
-      "updateEmail": "Modifier l'e-mail",
-      "updatePassword": "Modifier le mot de passe",
+      "updateEmail": "Changer l'email",
+      "updatePassword": "Changer le mot de passe",
       "userId": "ID utilisateur",
-      "verificationStatus": "État de vérification",
+      "verificationStatus": "Statut de vérification",
       "verified": "Vérifié"
     },
     "settings": {
       "appearance": "Apparence",
       "appearanceSubtitle": "Personnalisez l'apparence de Corevia",
-      "currentLanguage": "Actuellement : {{language}}",
+      "currentLanguage": "Langue actuelle",
       "dark": "Sombre",
       "language": "Langue",
       "languageSubtitle": "Choisissez votre langue préférée",
       "light": "Clair",
       "system": "Système",
       "theme": "Thème",
-      "themeSubtitle": "Choisissez votre schéma de couleurs"
+      "themeSubtitle": "Choisissez votre jeu de couleurs"
     },
     "signIn": {
-      "emailLabel": "E-mail",
+      "emailLabel": "Email",
       "errors": {
-        "invalidEmail": "Adresse e-mail invalide",
-        "longPassword": "Le mot de passe doit contenir au plus 100 caractères",
-        "shortPassword": "Le mot de passe doit contenir au moins 8 caractères"
+        "invalidEmail": "Adresse email invalide",
+        "longPassword": "Le mot de passe doit comporter au maximum 100 caractères",
+        "shortPassword": "Le mot de passe doit comporter au moins 8 caractères"
       },
       "passwordLabel": "Mot de passe",
       "submit": "Se connecter",
       "submitting": "Connexion...",
       "success": "Connexion réussie",
-      "switchToSignUp": "Besoin d’un compte ? Inscrivez-vous",
+      "switchToSignUp": "Besoin d'un compte ? Inscrivez-vous",
       "title": "Bon retour"
     },
     "signUp": {
       "form": {
         "email": {
-          "invalid": "Adresse e-mail invalide",
-          "label": "E-mail"
+          "invalid": "Adresse email invalide",
+          "label": "Email"
         },
         "firstName": {
           "label": "Prénom",
-          "min": "Le prénom doit contenir au moins 2 caractères"
+          "min": "Le prénom doit comporter au moins 2 caractères"
         },
         "lastName": {
           "label": "Nom",
-          "min": "Le nom doit contenir au moins 2 caractères"
+          "min": "Le nom doit comporter au moins 2 caractères"
         },
         "name": {
           "label": "Nom complet",
-          "min": "Le nom complet doit contenir au moins 2 caractères"
+          "min": "Le nom doit comporter au moins 2 caractères"
         },
         "password": {
           "label": "Mot de passe",
-          "max": "Le mot de passe doit contenir au plus 100 caractères",
-          "min": "Le mot de passe doit contenir au moins 8 caractères"
+          "max": "Le mot de passe doit comporter au maximum 100 caractères",
+          "min": "Le mot de passe doit comporter au moins 8 caractères"
         },
         "submit": "S'inscrire"
       },
@@ -134,9 +175,85 @@
       "switchToSignIn": "Vous avez déjà un compte ? Connectez-vous",
       "title": "Créer un compte"
     },
+    "The requested page could not be found": {
+      "": "La page demandée est introuvable."
+    },
+    "useImpersonateUser": {
+      "failedToImpersonate": "Échec de l'usurpation de l'utilisateur : {{message}}",
+      "popupBlocked": "Popup bloquée — autorisez les popups pour usurper des utilisateurs."
+    },
+
+    "UserActionsMenu": {
+      "banUser": "Bannir l'utilisateur",
+      "deleteUser": "Supprimer l'utilisateur",
+      "editUser": "Modifier l'utilisateur",
+      "impersonate": "Usurper",
+      "openUserMenu": "Ouvrir le menu utilisateur",
+      "revokeSessions": "Révoquer toutes les sessions",
+      "setPassword": "Définir un mot de passe",
+      "unbanUser": "Débannir l'utilisateur"
+    },
+    "userCreateModal": {
+      "cancel": "Annuler",
+      "createNewUser": "Créer un nouvel utilisateur",
+      "createUser": "Créer l'utilisateur",
+      "creating": "Création...",
+      "email": "Email",
+      "emailLabel": "Entrez votre email",
+      "passwordLabel": "Mot de passe",
+      "passwordPlaceholder": "Entrez votre mot de passe",
+      "role": "Rôle",
+      "userCreated": "Utilisateur créé avec succès",
+      "userCreateError": "Échec de la création de l'utilisateur : {{message}}"
+    },
+    "userDeletedQuery": {
+      "error": "Échec de la suppression de l'utilisateur : {{message}}",
+      "success": "Utilisateur supprimé avec succès"
+    },
+    "userDeleteModal": {
+      "cancel": "Annuler",
+      "delete": "Supprimer",
+      "deleting": "Suppression...",
+      "description": "Êtes-vous sûr de vouloir supprimer <strong>{{name}}</strong> ? Cette action est irréversible et supprimera définitivement l'utilisateur et toutes ses données.",
+      "title": "Supprimer l'utilisateur"
+    },
+    "userEditModal": {
+      "cancel": "Annuler",
+      "description": "Mettre à jour les informations et le rôle de l'utilisateur.",
+      "editUser": "Modifier l'utilisateur",
+      "emailCannotBeChanged": "L'email ne peut pas être modifié ici",
+      "error": "Échec de la mise à jour de l'utilisateur : {{message}}",
+      "roleLabel": "Rôle",
+      "saveChanges": "Enregistrer les modifications",
+      "saving": "Enregistrement...",
+      "success": "Utilisateur mis à jour avec succès"
+    },
+    "useRevokeUserSessions": {
+      "error": "Échec de la révocation des sessions : {{message}}",
+      "success": "Sessions de l'utilisateur révoquées avec succès"
+    },
     "userMenu": {
       "signIn": "Se connecter",
       "signOut": "Se déconnecter"
+    },
+    "userSetPasswordModal": {
+      "cancel": "Annuler",
+      "confirmPassword": "Confirmer le mot de passe",
+      "confirmPasswordPlaceholder": "Confirmez le nouveau mot de passe",
+      "description": "Définissez un nouveau mot de passe pour <strong>{{user}}</strong>.",
+      "newPassword": "Nouveau mot de passe",
+      "newPasswordPlaceholder": "Entrez un nouveau mot de passe",
+      "passwordUpdated": {
+        "error": "Échec de la mise à jour du mot de passe : {{message}}",
+        "success": "Mot de passe mis à jour avec succès"
+      },
+      "setPassword": "Définir le mot de passe",
+      "setting": "Définition...",
+      "title": "Définir un mot de passe"
+    },
+    "useUnbanUser": {
+      "error": "Échec du débannissement : {{message}}",
+      "success": "Utilisateur débanni avec succès"
     }
   }
 }

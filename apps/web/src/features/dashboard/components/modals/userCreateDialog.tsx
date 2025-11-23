@@ -4,6 +4,7 @@ import { useForm } from '@tanstack/react-form';
 import { useQueryClient } from '@tanstack/react-query';
 
 import { Eye, EyeOff, Plus } from 'lucide-react';
+import { useTranslation, Trans } from 'react-i18next';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
@@ -11,7 +12,6 @@ import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -27,25 +27,35 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { authClient } from '@/lib/auth-client';
-
-import { adminQueryKeys } from '../../../queries';
-
-const createUserSchema = z.object({
-  name: z.string().min(3, 'Name must be at least 3 characters'),
-  email: z.string().email('Invalid email address'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
-  role: z.enum(['admin', 'user']),
-});
+import { useTrpc } from '@/providers/trpc';
 
 export function CreateUserDialog() {
+  const { t } = useTranslation();
+  const trpc = useTrpc();
   const [open, setOpen] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-
+  const createUserSchema = z.object({
+    email: z.email(t('profile.emailInvalid', 'Invalid email address')),
+    firstName: z
+      .string()
+      .min(3, t('profile.firstNameMin', 'First name must be at least 3 characters')),
+    lastName: z
+      .string()
+      .min(3, t('profile.lastNameMin', 'Last name must be at least 3 characters')),
+    name: z.string().min(3, t('profile.nameMin', 'Name must be at least 3 characters')),
+    password: z
+      .string()
+      .min(8, t('profile.passwordMin', 'Password must be at least 8 characters'))
+      .max(100, t('profile.passwordMax', 'Password must be at most 100 characters')),
+    role: z.enum(['admin', 'user']),
+  });
   const queryClient = useQueryClient();
 
   const form = useForm({
     defaultValues: {
       name: '',
+      firstName: '',
+      lastName: '',
       email: '',
       password: '',
       role: 'user' as 'admin' | 'user',
@@ -60,17 +70,19 @@ export function CreateUserDialog() {
           email: value.email,
           password: value.password,
           name: value.name,
+          data: { firstName: value.firstName, lastName: value.lastName },
           role: value.role,
         });
 
-        toast.success('User created successfully');
-        void queryClient.invalidateQueries({ queryKey: adminQueryKeys.users() });
+        toast.success(t('userCreateModal.userCreated', 'User created successfully'));
+        void queryClient.invalidateQueries(trpc.admin.listUsers.queryFilter());
         setOpen(false);
         form.reset();
       } catch (error) {
-        console.error('Failed to create user:', error);
         toast.error(
-          `Failed to create user: ${error instanceof Error ? error.message : 'Unknown error'}`
+          t('userCreateModal.userCreateError', 'Failed to create user: {{message}}', {
+            message: error instanceof Error ? error.message : 'Unknown error',
+          })
         );
       }
     },
@@ -81,13 +93,14 @@ export function CreateUserDialog() {
       <DialogTrigger asChild>
         <Button>
           <Plus className="mr-2 h-4 w-4" />
-          Create User
+          <Trans i18nKey="userCreateModal.createUser">Create User</Trans>
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create New User</DialogTitle>
-          <DialogDescription>Add a new user to the system.</DialogDescription>
+          <DialogTitle>
+            <Trans i18nKey="userCreateModal.createNewUser">Create New User</Trans>
+          </DialogTitle>
         </DialogHeader>
 
         <form
@@ -98,21 +111,66 @@ export function CreateUserDialog() {
           }}
           className="space-y-4 py-4"
         >
-          {/* Name Field */}
           <form.Field name="name">
             {field => (
               <div className="space-y-2">
-                <Label htmlFor={field.name}>Name</Label>
+                <Label htmlFor={field.name}>
+                  <Trans i18nKey="profile.name">Name</Trans>
+                </Label>
                 <Input
                   id={field.name}
                   name={field.name}
                   value={field.state.value}
                   onBlur={field.handleBlur}
                   onChange={e => field.handleChange(e.target.value)}
-                  placeholder="John Doe"
+                  placeholder={t('profile.nameLabel', 'Enter your name')}
                 />
                 {field.state.meta.errors.map(error => (
-                  <p key={error?.message} className="text-destructive text-sm">
+                  <p key={error?.message} className="text-red-500">
+                    {error?.message}
+                  </p>
+                ))}
+              </div>
+            )}
+          </form.Field>
+          <form.Field name="firstName">
+            {field => (
+              <div className="space-y-2">
+                <Label htmlFor={field.name}>
+                  <Trans i18nKey="profile.firstName">First Name</Trans>
+                </Label>
+                <Input
+                  id={field.name}
+                  name={field.name}
+                  value={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={e => field.handleChange(e.target.value)}
+                  placeholder={t('profile.firstNameLabel', 'Enter your first name')}
+                />
+                {field.state.meta.errors.map(error => (
+                  <p key={error?.message} className="text-red-500">
+                    {error?.message}
+                  </p>
+                ))}
+              </div>
+            )}
+          </form.Field>
+          <form.Field name="lastName">
+            {field => (
+              <div className="space-y-2">
+                <Label htmlFor={field.name}>
+                  <Trans i18nKey="profile.lastName">Last Name</Trans>
+                </Label>
+                <Input
+                  id={field.name}
+                  name={field.name}
+                  value={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={e => field.handleChange(e.target.value)}
+                  placeholder={t('profile.lastNameLabel', 'Enter your last name')}
+                />
+                {field.state.meta.errors.map(error => (
+                  <p key={error?.message} className="text-red-500">
                     {error?.message}
                   </p>
                 ))}
@@ -120,11 +178,12 @@ export function CreateUserDialog() {
             )}
           </form.Field>
 
-          {/* Email Field */}
           <form.Field name="email">
             {field => (
               <div className="space-y-2">
-                <Label htmlFor={field.name}>Email</Label>
+                <Label htmlFor={field.name}>
+                  <Trans i18nKey="userCreateModal.email">Email</Trans>
+                </Label>
                 <Input
                   id={field.name}
                   name={field.name}
@@ -132,10 +191,10 @@ export function CreateUserDialog() {
                   value={field.state.value}
                   onBlur={field.handleBlur}
                   onChange={e => field.handleChange(e.target.value)}
-                  placeholder="user@example.com"
+                  placeholder={t('userCreateModal.emailLabel', 'Enter your email')}
                 />
                 {field.state.meta.errors.map(error => (
-                  <p key={error?.message} className="text-destructive text-sm">
+                  <p key={error?.message} className="text-red-500">
                     {error?.message}
                   </p>
                 ))}
@@ -143,11 +202,12 @@ export function CreateUserDialog() {
             )}
           </form.Field>
 
-          {/* Password Field */}
           <form.Field name="password">
             {field => (
               <div className="space-y-2">
-                <Label htmlFor={field.name}>Password</Label>
+                <Label htmlFor={field.name}>
+                  <Trans i18nKey="userCreateModal.passwordLabel">Password</Trans>
+                </Label>
                 <div className="relative">
                   <Input
                     id={field.name}
@@ -156,7 +216,7 @@ export function CreateUserDialog() {
                     value={field.state.value}
                     onBlur={field.handleBlur}
                     onChange={e => field.handleChange(e.target.value)}
-                    placeholder="Enter password"
+                    placeholder={t('userCreateModal.passwordPlaceholder', 'Enter your password')}
                   />
                   <Button
                     type="button"
@@ -177,11 +237,12 @@ export function CreateUserDialog() {
             )}
           </form.Field>
 
-          {/* Role Field */}
           <form.Field name="role">
             {field => (
               <div className="space-y-2">
-                <Label htmlFor={field.name}>Role</Label>
+                <Label htmlFor={field.name}>
+                  <Trans i18nKey="userCreateModal.role">Role</Trans>
+                </Label>
                 <Select
                   value={field.state.value}
                   onValueChange={value => field.handleChange(value as 'admin' | 'user')}
@@ -203,7 +264,6 @@ export function CreateUserDialog() {
             )}
           </form.Field>
 
-          {/* Form Actions */}
           <form.Subscribe selector={state => [state.canSubmit, state.isSubmitting]}>
             {([canSubmit, isSubmitting]) => (
               <DialogFooter>
@@ -216,10 +276,12 @@ export function CreateUserDialog() {
                   }}
                   disabled={isSubmitting}
                 >
-                  Cancel
+                  <Trans i18nKey="userCreateModal.cancel">Cancel</Trans>
                 </Button>
                 <Button type="submit" disabled={!canSubmit || isSubmitting}>
-                  {isSubmitting ? 'Creating...' : 'Create User'}
+                  {isSubmitting
+                    ? t('userCreateModal.creating', 'Creating...')
+                    : t('userCreateModal.createUser', 'Create User')}
                 </Button>
               </DialogFooter>
             )}

@@ -10,7 +10,7 @@ describe('adminRouter', () => {
         error: null,
       });
       const caller = createTestCaller({
-        customSession: { isAuthenticated: true, userId: 'test-user-123' },
+        customSession: { isAuthenticated: true, userId: 'test-user-123', impersonatedBy: null },
       });
       const res = await caller.admin.isAdmin({});
       expect(res).toEqual(true);
@@ -27,7 +27,7 @@ describe('adminRouter', () => {
       error: null,
     });
     const caller = createTestCaller({
-      customSession: { isAuthenticated: true, userId: 'test-user-123' },
+      customSession: { isAuthenticated: true, userId: 'test-user-123', impersonatedBy: null },
     });
     await expect(caller.admin.isAdmin({})).rejects.toThrow(
       'You must be an admin to access this resource',
@@ -43,7 +43,7 @@ describe('adminRouter', () => {
     });
     it('returns paginated users from the service with parsed filters & sorting', async () => {
       const caller = createTestCaller({
-        customSession: { isAuthenticated: true, userId: 'test-user-123' },
+        customSession: { isAuthenticated: true, userId: 'test-user-123', impersonatedBy: null },
       });
 
       const mockResponse = {
@@ -121,7 +121,7 @@ describe('adminRouter', () => {
 
     it('works with minimal input', async () => {
       const caller = createTestCaller({
-        customSession: { isAuthenticated: true, userId: 'admin-user' },
+        customSession: { isAuthenticated: true, userId: 'admin-user', impersonatedBy: null },
       });
 
       const emptyResponse = {

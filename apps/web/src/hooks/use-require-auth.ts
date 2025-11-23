@@ -50,7 +50,6 @@ export function useRequireAuth() {
     isPending: isSessionPending,
     error: sessionError,
   } = authClient.useSession();
-
   const {
     allowed,
     isChecking: isPermChecking,

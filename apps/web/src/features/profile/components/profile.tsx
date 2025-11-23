@@ -51,6 +51,7 @@ export default function Profile({
     lastName: z
       .string()
       .min(3, t('profile.lastNameMin', 'Last name must be at least 3 characters')),
+    name: z.string().min(3, t('profile.nameMin', 'Name must be at least 3 characters')),
   });
   const emailSchema = z.object({
     email: z.email(t('profile.emailInvalid', 'Invalid email address')),
@@ -78,6 +79,7 @@ export default function Profile({
     defaultValues: {
       firstName: user?.firstName ?? '',
       lastName: user?.lastName ?? '',
+      name: user?.name ?? '',
     },
     validators: {
       onChange: nameSchema,
@@ -88,6 +90,7 @@ export default function Profile({
         await authClient.updateUser({
           firstName: value.firstName,
           lastName: value.lastName,
+          name: value.name,
         });
         setIsEditing(false);
         await refetch();
@@ -204,6 +207,29 @@ export default function Profile({
                 }}
                 className="space-y-4"
               >
+                {/* Name */}
+                <profileForm.Field name="name">
+                  {field => (
+                    <div className="space-y-2">
+                      <Label htmlFor={field.name}>
+                        <Trans i18nKey="profile.name">Name</Trans>
+                      </Label>
+                      <Input
+                        id={field.name}
+                        name={field.name}
+                        value={field.state.value}
+                        onBlur={field.handleBlur}
+                        onChange={e => field.handleChange(e.target.value)}
+                        placeholder={t('profile.nameLabel', 'Enter your name')}
+                      />
+                      {field.state.meta.errors.map(error => (
+                        <p key={error?.message} className="text-red-500">
+                          {error?.message}
+                        </p>
+                      ))}
+                    </div>
+                  )}
+                </profileForm.Field>
                 {/* First Name */}
                 <profileForm.Field name="firstName">
                   {field => (

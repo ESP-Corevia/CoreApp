@@ -2,14 +2,16 @@
   "$schema": "https://unpkg.com/knip@latest/schema.json",
   "entry": ["src/routes/**/*.tsx!"],
   "project": ["src/**/*.{ts,tsx}"],
+
   "ignore": [
     "**/*.test.{ts,tsx}",
     "**/*.spec.{ts,tsx}",
     "playwright/**",
     "e2e/**",
-    "src/components/**",
     "test-results/**",
-    ".react-router/**"
+    ".react-router/**",
+    "src/lib/compose-refs.ts",
+    "src/types/**"
   ],
   "ignoreDependencies": [
     "@types/*",
@@ -31,7 +33,13 @@
     "i18next-cli",
     "@radix-ui/react-visually-hidden",
     "shadcn",
-    "ogl"
+    "ogl",
+    "@dnd-kit/core",
+    "@dnd-kit/modifiers",
+    "@dnd-kit/sortable",
+    "@radix-ui/react-dropdown-menu",
+    "date-fns",
+    "motion"
   ],
   "ignoreExportsUsedInFile": true,
   "ignoreBinaries": [

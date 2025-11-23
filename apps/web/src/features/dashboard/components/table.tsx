@@ -17,8 +17,8 @@ import { useDataTable } from '@/hooks/use-data-table';
 import { convertToExtendedFilters } from '@/lib/data-table';
 import type { User, ExtendedColumnFilter, ExtendedColumnSort } from '@/types/data-table';
 
-import { UserActionsMenu } from './user-actions-menu';
-import { CreateUserDialog } from './user-create-dialog';
+import { CreateUserDialog } from './modals/userCreateDialog';
+import { UserActionsMenu } from './userActionsMenu';
 
 function formatDate(input?: string) {
   if (!input) return '';
@@ -351,21 +351,13 @@ export default function DataTableUsers({
     const extendedFilters = convertToExtendedFilters(filters, filterableColumns);
 
     onFiltersChange?.(extendedFilters);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filters, onFiltersChange]);
+  }, [filters, onFiltersChange, table]);
   useEffect(() => {
     const sortingState = table.getState().sorting;
-    // const extendedSorting = sortingState.map(sort => {
-    //   return {
-    //     id: sort.id as keyof User,
-    //     desc: sort.desc,
-    //   } as ExtendedColumnSort<User>;
-    // });
     const extendedSorting = sortingState[0] as ExtendedColumnSort<User>;
 
     onSortingChange?.(extendedSorting);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sorting, onSortingChange]);
+  }, [table, onSortingChange, sorting]);
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">

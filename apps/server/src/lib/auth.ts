@@ -87,6 +87,7 @@ export const auth = betterAuth({
     customSession(async ({ session }) => ({
       isAuthenticated: !!session,
       userId: session?.userId,
+      impersonatedBy: (session as any).impersonatedBy ?? null,
     })),
     admin({
       ac,

@@ -14,38 +14,6 @@ interface UseListUsersParams {
   searchInFields?: string[];
 }
 
-// export function useListUsers({
-//   page,
-//   perPage,
-//   search,
-//   searchInFields,
-//   sortBy,
-//   sortDirection,
-//   filters,
-//   enabled = true,
-// }: UseListUsersParams) {
-//   return useQuery({
-//     queryKey: adminQueryKeys.usersList({ page, perPage, search, sortBy, sortDirection }),
-//     queryFn: async () => {
-//       const res = await authClient.admin.listUsers({
-//         query: {
-//           limit: perPage,
-//           offset: (page - 1) * perPage,
-//           ...(search && {
-//             searchValue: search,
-//             searchOperator: 'contains',
-//           }),
-//           sortBy,
-//           // filterField: filters,
-//           sortDirection: sortDirection as 'asc' | 'desc',
-//         },
-//       });
-
-//       return 'data' in res ? res.data : res;
-//     },
-//     enabled,
-//   });
-// }
 export function useListUsers({
   page,
   perPage,

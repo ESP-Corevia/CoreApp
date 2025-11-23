@@ -7,14 +7,14 @@ import type { Repositories } from '../repositories';
 import { buildQueryOptions, type QueryParams } from '@/utils/db';
 
 export const UserOutputSchema = z.object({
-  id: z.uuid(),
+  id: z.string(),
   name: z.string().nullable(),
   email: z.email(),
   createdAt: z.date(),
   updatedAt: z.date().nullable(),
   firstName: z.string(),
   lastName: z.string(),
-  image: z.url().nullable(),
+  image: z.string().nullable(),
   lastLoginMethod: z.string().nullable(),
   emailVerified: z.boolean().nullable(),
   role: z.string().nullable(),
