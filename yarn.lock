@@ -4554,45 +4554,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sitespeed.io/tracium@npm:0.3.3":
-  version: 0.3.3
-  resolution: "@sitespeed.io/tracium@npm:0.3.3"
-  dependencies:
-    debug: "npm:^4.1.1"
-  checksum: 10c0/1776ba3ecca5a70ddaee607d4287d739964bba4b0da3329d30845557ae904177ea675eef2b5a0d078e42d23f0ca69d940e3bfb217310626786d1d2a934f31c2c
-  languageName: node
-  linkType: hard
-
-"@size-limit/file@npm:11.2.0":
+"@size-limit/file@npm:^11.2.0":
   version: 11.2.0
   resolution: "@size-limit/file@npm:11.2.0"
   peerDependencies:
     size-limit: 11.2.0
   checksum: 10c0/25fb431c2afa9293774842f3abb12ee0aaa988585a2be545f2a4f90ffd5c638a13bada10a0b71e376cefb426bd991793d0e1ffe970b94a4e0bb8b0a8b504f343
-  languageName: node
-  linkType: hard
-
-"@size-limit/preset-app@npm:^11.2.0":
-  version: 11.2.0
-  resolution: "@size-limit/preset-app@npm:11.2.0"
-  dependencies:
-    "@size-limit/file": "npm:11.2.0"
-    "@size-limit/time": "npm:11.2.0"
-    size-limit: "npm:11.2.0"
-  peerDependencies:
-    size-limit: 11.2.0
-  checksum: 10c0/f735c4ea36177e5f588b0d313cc6c0ebcad5f92a506419042bf8af3ef4a9db743b3aab7f16bbe47d5e401b1dd1f49946a15f19e87fa15ff2c7dc5f3ed95767f9
-  languageName: node
-  linkType: hard
-
-"@size-limit/time@npm:11.2.0":
-  version: 11.2.0
-  resolution: "@size-limit/time@npm:11.2.0"
-  dependencies:
-    estimo: "npm:^3.0.3"
-  peerDependencies:
-    size-limit: 11.2.0
-  checksum: 10c0/8d138d6150590aa4f16ba46c535962d27cb084163f7f84f6eebe0d6544afa2a81710f582b60964a0a21bc237ec79a4f6d229b69f59bbc50299631ae33b92fb00
   languageName: node
   linkType: hard
 
@@ -6963,18 +6930,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chromium-bidi@npm:8.0.0":
-  version: 8.0.0
-  resolution: "chromium-bidi@npm:8.0.0"
-  dependencies:
-    mitt: "npm:^3.0.1"
-    zod: "npm:^3.24.1"
-  peerDependencies:
-    devtools-protocol: "*"
-  checksum: 10c0/d012b76c8b3ef06fd0d1e288668c92db56a8723edeff3a32e7c8029a18e3afcae435a0da381e22145611d9d96f20ea91a43fbb43ae84b6edfc76ab60c65d67f7
-  languageName: node
-  linkType: hard
-
 "chromium-bidi@npm:9.1.0":
   version: 9.1.0
   resolution: "chromium-bidi@npm:9.1.0"
@@ -7174,13 +7129,6 @@ __metadata:
   version: 2.0.20
   resolution: "colorette@npm:2.0.20"
   checksum: 10c0/e94116ff33b0ff56f3b83b9ace895e5bf87c2a7a47b3401b8c3f3226e050d5ef76cf4072fb3325f9dc24d1698f9b730baf4e05eeaf861d74a1883073f4c98a40
-  languageName: node
-  linkType: hard
-
-"commander@npm:12.0.0":
-  version: 12.0.0
-  resolution: "commander@npm:12.0.0"
-  checksum: 10c0/e51cac1d1d0aa1f76581981d2256a9249497e08f5a370bf63b0dfc7e76a647fc8cbc3ddd507928f2bdca6c514c83834e87e2687ace2fe2fc7cc7e631bf80f83d
   languageName: node
   linkType: hard
 
@@ -8002,13 +7950,6 @@ __metadata:
   version: 0.0.1467305
   resolution: "devtools-protocol@npm:0.0.1467305"
   checksum: 10c0/acbce42e10ddfe9c480c9e54f088a3ea8e73b61aa67f7f24f7819c2965df89adde9216f8adbf0bc1ff2857cd46a30ffdb8feba184669966f492e48393fe6f4ee
-  languageName: node
-  linkType: hard
-
-"devtools-protocol@npm:0.0.1495869":
-  version: 0.0.1495869
-  resolution: "devtools-protocol@npm:0.0.1495869"
-  checksum: 10c0/ef3f35ddd914f07112a4e9417cc6afbd82550976cdb30096710a3024db303d29d13a09c63cb7ef4e0f38e70986a90cb50b39f0f0bcf0fd30937e5a0cba3c521b
   languageName: node
   linkType: hard
 
@@ -9146,21 +9087,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"estimo@npm:^3.0.3":
-  version: 3.0.5
-  resolution: "estimo@npm:3.0.5"
-  dependencies:
-    "@sitespeed.io/tracium": "npm:0.3.3"
-    commander: "npm:12.0.0"
-    find-chrome-bin: "npm:2.0.4"
-    nanoid: "npm:5.1.5"
-    puppeteer-core: "npm:24.22.0"
-  bin:
-    estimo: scripts/cli.js
-  checksum: 10c0/8c30b3f186e7735d2f4539c41ed89c44be9ae4c07d7fbd19bdb12e7e427a715a66bfcc0602945f3f4d8ac4c07a5fe53607194f7eb0fb5cdc1d7c2816d63f886d
-  languageName: node
-  linkType: hard
-
 "estraverse@npm:^5.1.0, estraverse@npm:^5.2.0, estraverse@npm:^5.3.0":
   version: 5.3.0
   resolution: "estraverse@npm:5.3.0"
@@ -9678,15 +9604,6 @@ __metadata:
     parseurl: "npm:^1.3.3"
     statuses: "npm:^2.0.1"
   checksum: 10c0/da0bbca6d03873472ee890564eb2183f4ed377f25f3628a0fc9d16dac40bed7b150a0d82ebb77356e4c6d97d2796ad2dba22948b951dddee2c8768b0d1b9fb1f
-  languageName: node
-  linkType: hard
-
-"find-chrome-bin@npm:2.0.4":
-  version: 2.0.4
-  resolution: "find-chrome-bin@npm:2.0.4"
-  dependencies:
-    "@puppeteer/browsers": "npm:2.10.10"
-  checksum: 10c0/c1d082c4c5789907de8ae75b245674176c6582a5e3ee59d01deda240dc86e46f9cb6578801760e3a343bbd8409ec213e0a9ef90b97fa17d243dc9680886f2251
   languageName: node
   linkType: hard
 
@@ -14215,21 +14132,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"puppeteer-core@npm:24.22.0":
-  version: 24.22.0
-  resolution: "puppeteer-core@npm:24.22.0"
-  dependencies:
-    "@puppeteer/browsers": "npm:2.10.10"
-    chromium-bidi: "npm:8.0.0"
-    debug: "npm:^4.4.3"
-    devtools-protocol: "npm:0.0.1495869"
-    typed-query-selector: "npm:^2.12.0"
-    webdriver-bidi-protocol: "npm:0.2.11"
-    ws: "npm:^8.18.3"
-  checksum: 10c0/24059f35337d436a4d12a51ea67e47478a94869a2eb9b8fcebc53d83fc889d1eeb6d57b0bdb2668b3f8aa395e081f21615740e6878e45510551772c1826938da
-  languageName: node
-  linkType: hard
-
 "puppeteer-core@npm:^24.10.0":
   version: 24.23.0
   resolution: "puppeteer-core@npm:24.23.0"
@@ -15653,7 +15555,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"size-limit@npm:11.2.0, size-limit@npm:^11.2.0":
+"size-limit@npm:^11.2.0":
   version: 11.2.0
   resolution: "size-limit@npm:11.2.0"
   dependencies:
@@ -17578,7 +17480,7 @@ __metadata:
     "@react-router/fs-routes": "npm:^7.6.1"
     "@react-router/node": "npm:^7.6.1"
     "@react-router/serve": "npm:^7.6.1"
-    "@size-limit/preset-app": "npm:^11.2.0"
+    "@size-limit/file": "npm:^11.2.0"
     "@tailwindcss/vite": "npm:^4.1.8"
     "@tanstack/react-form": "npm:^1.12.0"
     "@tanstack/react-query": "npm:^5.85.5"
@@ -17655,13 +17557,6 @@ __metadata:
     zod: "npm:^4.1.12"
   languageName: unknown
   linkType: soft
-
-"webdriver-bidi-protocol@npm:0.2.11":
-  version: 0.2.11
-  resolution: "webdriver-bidi-protocol@npm:0.2.11"
-  checksum: 10c0/de03680e6c061801d730243eb8dead6d5cb1ea4eda63546528b52f25f9c7a3cc56709b0de689e155a3d070c3a97269d9b203aef010349ee5b0df9582929bd8bb
-  languageName: node
-  linkType: hard
 
 "webdriver-bidi-protocol@npm:0.3.6":
   version: 0.3.6

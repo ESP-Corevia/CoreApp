@@ -41,22 +41,22 @@ const mainItems: NavigationItem[] = [
 ];
 
 const secondaryItems: NavigationItem[] = [
-  {
-    title: 'Team',
-    url: '/team',
-    icon: Users,
-  },
-  {
-    title: 'Documents',
-    url: '/documents',
-    icon: FileText,
-  },
-  {
-    title: 'Notifications',
-    url: '/notifications',
-    icon: Bell,
-    badge: '3',
-  },
+  // {
+  //   title: 'Team',
+  //   url: '/team',
+  //   icon: Users,
+  // },
+  // {
+  //   title: 'Documents',
+  //   url: '/documents',
+  //   icon: FileText,
+  // },
+  // {
+  //   title: 'Notifications',
+  //   url: '/notifications',
+  //   icon: Bell,
+  //   badge: '3',
+  // },
 ];
 
 const settingsItems: NavigationItem[] = [

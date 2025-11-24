@@ -12,7 +12,6 @@ import { DataTableColumnHeader } from '@/components/data-table/data-table-column
 import { DataTableToolbar } from '@/components/data-table/data-table-toolbar';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Checkbox } from '@/components/ui/checkbox';
 import { useDataTable } from '@/hooks/use-data-table';
 import { convertToExtendedFilters } from '@/lib/data-table';
 import type { User, ExtendedColumnFilter, ExtendedColumnSort } from '@/types/data-table';
@@ -54,29 +53,29 @@ export default function DataTableUsers({
 
   const columns = useMemo<ColumnDef<User>[]>(
     () => [
-      {
-        id: 'select',
-        header: ({ table }) => (
-          <Checkbox
-            checked={
-              table.getIsAllPageRowsSelected() ||
-              (table.getIsSomePageRowsSelected() && 'indeterminate')
-            }
-            onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
-            aria-label="Select all"
-          />
-        ),
-        cell: ({ row }) => (
-          <Checkbox
-            checked={row.getIsSelected()}
-            onCheckedChange={value => row.toggleSelected(!!value)}
-            aria-label="Select row"
-          />
-        ),
-        size: 32,
-        enableSorting: false,
-        enableHiding: false,
-      },
+      // {
+      //   id: 'select',
+      //   header: ({ table }) => (
+      //     <Checkbox
+      //       checked={
+      //         table.getIsAllPageRowsSelected() ||
+      //         (table.getIsSomePageRowsSelected() && 'indeterminate')
+      //       }
+      //       onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
+      //       aria-label="Select all"
+      //     />
+      //   ),
+      //   cell: ({ row }) => (
+      //     <Checkbox
+      //       checked={row.getIsSelected()}
+      //       onCheckedChange={value => row.toggleSelected(!!value)}
+      //       aria-label="Select row"
+      //     />
+      //   ),
+      //   size: 32,
+      //   enableSorting: false,
+      //   enableHiding: false,
+      // },
       {
         id: 'fullName',
         accessorKey: 'fullName',

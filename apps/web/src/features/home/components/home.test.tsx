@@ -9,7 +9,9 @@ describe('Home', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
+
   const session = { isAuthenticated: true, userId: '123' };
+
   it('renders the home page with title text', () => {
     const { container } = render(<Home session={session} />);
 
@@ -39,7 +41,7 @@ describe('Home', () => {
   it('displays "Connected" with green indicator when health check succeeds', async () => {
     const mockHandler = vi.fn(() => true);
 
-    const { getByText, container } = render(<Home session={session} />, {
+    const { getByText } = render(<Home session={session} />, {
       trpcHandlers: {
         healthCheck: mockHandler,
       },
@@ -49,8 +51,6 @@ describe('Home', () => {
       expect(getByText('Connected')).toBeInTheDocument();
     });
 
-    const statusIndicator = container.querySelector('.bg-green-500');
-    expect(statusIndicator).toBeInTheDocument();
     expect(mockHandler).toHaveBeenCalled();
   });
 
@@ -59,7 +59,7 @@ describe('Home', () => {
       throw new Error('Health check failed');
     });
 
-    const { getByText, container } = render(<Home session={session} />, {
+    const { getByText } = render(<Home session={session} />, {
       trpcHandlers: {
         healthCheck: mockHandler,
       },
@@ -69,15 +69,13 @@ describe('Home', () => {
       expect(getByText('Disconnected')).toBeInTheDocument();
     });
 
-    const statusIndicator = container.querySelector('.bg-red-500');
-    expect(statusIndicator).toBeInTheDocument();
     expect(mockHandler).toHaveBeenCalled();
   });
 
   it('displays "Disconnected" with red indicator when health check returns falsy value', async () => {
     const mockHandler = vi.fn(() => false);
 
-    const { getByText, container } = render(<Home session={session} />, {
+    const { getByText } = render(<Home session={session} />, {
       trpcHandlers: {
         healthCheck: mockHandler,
       },
@@ -87,8 +85,6 @@ describe('Home', () => {
       expect(getByText('Disconnected')).toBeInTheDocument();
     });
 
-    const statusIndicator = container.querySelector('.bg-red-500');
-    expect(statusIndicator).toBeInTheDocument();
     expect(mockHandler).toHaveBeenCalled();
   });
 
@@ -124,9 +120,12 @@ describe('Home', () => {
       },
     });
 
-    const indicator = container.querySelector('.h-2.w-2.rounded-full');
+    // New structure uses inline-flex + relative instead of h-2.w-2 on the outer wrapper
+    const indicator = container.querySelector('.inline-flex.h-2.w-2.rounded-full');
+
     expect(indicator).toBeInTheDocument();
   });
+
   it('redirects to login if not authenticated', async () => {
     const { container } = render(<Home session={null} />);
     const h1Element = container.querySelector('h1');

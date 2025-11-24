@@ -18,6 +18,7 @@
     "src/components/ui/card.tsx",
     "src/components/ui/faceted.tsx",
     "src/components/ui/sortable.tsx",
+    "src/components/ui/checkbox.tsx",
     "src/lib/parsers.ts"
   ],
   "ignoreDependencies": [
