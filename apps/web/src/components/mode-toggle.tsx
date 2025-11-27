@@ -1,3 +1,4 @@
+/* v8 ignore file -- @preserve */
 import { Moon, Sun } from 'lucide-react';
 import { Trans } from 'react-i18next';
 

@@ -2,6 +2,7 @@ name: 🎨 Frontend CI (Web)
 
 on:
   pull_request:
+    types: [ready_for_review, review_requested, opened, reopened, synchronize]
     paths:
       - "apps/web/**"
 
@@ -87,17 +88,26 @@ jobs:
     name: 📏 Bundle Size Budget
     runs-on: ubuntu-latest
     needs: [knip, depcheck]
+    env:
+      CI_JOB_NUMBER: 1
+
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
+
+      # Required so Yarn 4 PnP works
       - uses: ./.github/actions/setup-yarn
-      - uses: ./.github/actions/setup-turbo
+
+      - name: Install deps
+        run: yarn install --immutable
+
+      - name: Build web app
+        run: yarn workspace web build
+
+      - name: 📏 Size Limit
+        uses: andresz1/size-limit-action@v1
         with:
-          token: ${{ secrets.TURBO_TOKEN }}
-          team: ${{ secrets.TURBO_TEAM }}
-      - name: 📏 Run size-limit
-        run: yarn turbo run web#check:size --cache="${{env.TURBO_CACHE}}"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          directory: apps/web/
 
   audit:
     name: 🛡️ Security Audit

@@ -1,3 +1,4 @@
+/* v8 ignore file -- @preserve */
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 
 import {

@@ -1,6 +1,7 @@
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { useTheme } from 'next-themes';
+import { NuqsAdapter } from 'nuqs/adapters/react-router/v7';
 import { Trans } from 'react-i18next';
 import {
   isRouteErrorResponse,
@@ -14,6 +15,7 @@ import {
 } from 'react-router';
 
 import { AppSidebar } from '@/components/appSidebar';
+import { ErrorScreen } from '@/components/errorScreen';
 import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
 import UserMenu from '@/components/userMenu';
 import { I18nProvider } from '@/providers/i18n';
@@ -23,6 +25,7 @@ import { TrpcProvider, createRuntimeTrpcClient } from '@/providers/trpc';
 
 import ClickSpark from './components/ClickSpark';
 import Header from './components/header';
+import ImpersonationBanner from './components/ImpersonationBanner';
 import { Skeleton } from './components/ui/skeleton';
 import { Toaster } from './components/ui/sonner';
 import { QueryProvider, queryClient } from './providers/query';
@@ -30,6 +33,30 @@ import { QueryProvider, queryClient } from './providers/query';
 import type { Route } from './+types/root';
 
 export const links: Route.LinksFunction = () => [
+  {
+    rel: 'icon',
+    type: 'image/png',
+    href: '/favicon-96x96.png',
+    sizes: '96x96',
+  },
+  {
+    rel: 'icon',
+    type: 'image/svg+xml',
+    href: '/favicon.svg',
+  },
+  {
+    rel: 'shortcut icon',
+    href: '/favicon.ico',
+  },
+  {
+    rel: 'apple-touch-icon',
+    sizes: '180x180',
+    href: '/apple-touch-icon.png',
+  },
+  {
+    rel: 'manifest',
+    href: '/site.webmanifest',
+  },
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
   {
     rel: 'preconnect',
@@ -52,6 +79,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="apple-mobile-web-app-title" content="Coreavia" />
         <Meta />
         <Links />
       </head>
@@ -64,7 +92,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-const ROUTES_WITHOUT_LAYOUT = ['/login', '/register', '/forgot-password'];
+const ROUTES_WITH_LAYOUT = ['/', '/dashboard', '/profile', '/settings'];
 
 function ThemedShell() {
   const { resolvedTheme } = useTheme();
@@ -72,7 +100,7 @@ function ThemedShell() {
   const location = useLocation();
   const isNavigating = state !== 'idle';
 
-  const shouldShowLayout = !ROUTES_WITHOUT_LAYOUT.includes(location.pathname);
+  const shouldShowLayout = ROUTES_WITH_LAYOUT.includes(location.pathname);
 
   function LoadingBar() {
     return (
@@ -102,15 +130,21 @@ function ThemedShell() {
   return (
     <div className="bg-background text-foreground flex min-h-screen w-full flex-col">
       <LoadingBar />
+
       <SidebarProvider>
         <div className="bg-background flex min-h-screen w-full">
           <AppSidebar />
+
           <SidebarInset className="flex flex-1 flex-col">
             {/* Header */}
+            <div className="relative z-40">
+              <ImpersonationBanner />
+            </div>
             <header className="border-border bg-background/95 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-10 flex h-16 shrink-0 items-center gap-2 border-b px-4 backdrop-blur">
               <SidebarTrigger className="-ml-1" />
               <div className="bg-border mx-2 h-4 w-px" />
               <Header />
+
               <div className="flex-1" />
               <UserMenu />
             </header>
@@ -127,7 +161,9 @@ function ThemedShell() {
                 <div className="container mx-auto max-w-screen-2xl space-y-4 p-4 md:p-6 lg:p-8">
                   {isNavigating && <PageLoadingSkeleton />}
                   <div style={isNavigating ? { opacity: 0.5, pointerEvents: 'none' } : {}}>
-                    <Outlet />
+                    <NuqsAdapter>
+                      <Outlet />
+                    </NuqsAdapter>
                   </div>
                 </div>
               </ClickSpark>
@@ -174,58 +210,38 @@ export default function App() {
       <ReactQueryDevtools position="bottom" buttonPosition="bottom-right" />
     </QueryProvider>
   );
-}
+} // adjust the import path as needed
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
-  let message = 'Oops!';
-  let details = 'An unexpected error occurred.';
+  let code = 'Oops!';
+  let title = 'Error';
+  let description: React.ReactNode = 'An unexpected error occurred.';
   let stack: string | undefined;
 
   if (isRouteErrorResponse(error)) {
-    message = error.status === 404 ? '404' : 'Error';
-    details =
-      error.status === 404 ? 'The requested page could not be found.' : error.statusText || details;
-  } else if (import.meta.env.DEV && error && error instanceof Error) {
-    details = error.message;
+    code = String(error.status);
+    title = error.statusText || 'Error';
+    description = error.data ?? description;
+  } else if (import.meta.env.DEV && error instanceof Error) {
+    code = 'Error';
+    title = 'Something went wrong';
+    description = error.message || description;
     stack = error.stack;
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-4 text-center">
-        <div className="space-y-2">
-          <h1 className="text-destructive text-6xl font-bold">{message}</h1>
-          <p className="text-muted-foreground text-xl">{details}</p>
-        </div>
-
-        {stack && (
-          <details className="text-left">
-            <summary className="mb-2 cursor-pointer text-sm font-medium">Stack trace</summary>
-            <pre className="bg-muted overflow-x-auto rounded-lg p-4 text-xs">
-              <code>{stack}</code>
-            </pre>
-          </details>
-        )}
-
-        <div className="flex justify-center gap-2">
-          <button
-            onClick={() => window.history.back()}
-            className="bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded-md px-4 py-2"
-          >
-            Go Back
-          </button>
-          <button
-            onClick={() => (window.location.href = '/')}
-            className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-md px-4 py-2"
-          >
-            Go Home
-          </button>
-        </div>
-      </div>
-    </div>
+    <ErrorScreen code={code} title={title} description={description}>
+      {stack && (
+        <details className="text-left">
+          <summary className="mb-2 cursor-pointer text-sm font-medium">Stack trace</summary>
+          <pre className="bg-muted overflow-x-auto rounded-lg p-4 text-xs">
+            <code>{stack}</code>
+          </pre>
+        </details>
+      )}
+    </ErrorScreen>
   );
 }
-
 export function HydrateFallback() {
   const trpcClient = createRuntimeTrpcClient();
   return (

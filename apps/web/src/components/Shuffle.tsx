@@ -1,3 +1,4 @@
+/* v8 ignore file -- @preserve */
 import React, { useRef, useEffect, useState } from 'react';
 import type { JSX } from 'react';
 

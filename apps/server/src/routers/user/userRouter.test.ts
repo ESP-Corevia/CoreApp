@@ -25,7 +25,7 @@ describe('userRouter', () => {
       mockServices.usersService.getMe.mockResolvedValue(fakeMe);
 
       const caller = createTestCaller({
-        customSession: { isAuthenticated: true, userId: 'test-user-123' },
+        customSession: { isAuthenticated: true, userId: 'test-user-123', impersonatedBy: null },
       });
       const res = await caller.user.getMe({});
       expect(res).toEqual({ user: fakeMe });

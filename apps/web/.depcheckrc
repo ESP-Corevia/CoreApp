@@ -22,3 +22,5 @@ ignores:
   - 'shadcn'
   - '@radix-ui/**'
   - 'ogl'
+  - '@dnd-kit/utilities'
+  - '@size-limit/file'

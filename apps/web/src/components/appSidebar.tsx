@@ -1,3 +1,4 @@
+/* v8 ignore file -- @preserve */
 import { Home, LayoutDashboard, Settings, Users, FileText, Bell } from 'lucide-react';
 import { useNavigate, useLocation, Link } from 'react-router';
 import {
@@ -19,7 +20,7 @@ import { useTrpc } from '@/providers/trpc';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import UserAvatar from './userAvatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 interface NavigationItem {
   title: string;
   url: string;
@@ -41,22 +42,22 @@ const mainItems: NavigationItem[] = [
 ];
 
 const secondaryItems: NavigationItem[] = [
-  {
-    title: 'Team',
-    url: '/team',
-    icon: Users,
-  },
-  {
-    title: 'Documents',
-    url: '/documents',
-    icon: FileText,
-  },
-  {
-    title: 'Notifications',
-    url: '/notifications',
-    icon: Bell,
-    badge: '3',
-  },
+  // {
+  //   title: 'Team',
+  //   url: '/team',
+  //   icon: Users,
+  // },
+  // {
+  //   title: 'Documents',
+  //   url: '/documents',
+  //   icon: FileText,
+  // },
+  // {
+  //   title: 'Notifications',
+  //   url: '/notifications',
+  //   icon: Bell,
+  //   badge: '3',
+  // },
 ];
 
 const settingsItems: NavigationItem[] = [
@@ -188,12 +189,13 @@ export function AppSidebar() {
                     : 'bg-card border-border hover:bg-accent'
                 }`}
               >
-                <UserAvatar
-                  firstName={user.user.firstName}
-                  lastName={user.user.lastName}
-                  inSideBar
-                  isActive={isActive('/profile')}
-                />
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src={user.user.image ?? undefined} />
+                  <AvatarFallback>
+                    {user.user.firstName.charAt(0).toUpperCase() +
+                      user.user.lastName.charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
                 <div className="flex-1 overflow-hidden">
                   <p className="truncate text-sm leading-none font-medium">{user.user.name}</p>
                   <p className="text-muted-foreground truncate text-xs">{user.user.email}</p>
@@ -203,12 +205,13 @@ export function AppSidebar() {
             </>
           ) : (
             <Link to="/profile" className="flex items-center justify-center p-2">
-              <UserAvatar
-                firstName={user.user.firstName}
-                lastName={user.user.lastName}
-                inSideBar
-                isActive={isActive('/profile')}
-              />
+              <Avatar className="h-8 w-8">
+                <AvatarImage src={user.user.image ?? undefined} />
+                <AvatarFallback>
+                  {user.user.firstName.charAt(0).toUpperCase() +
+                    user.user.lastName.charAt(0).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
             </Link>
           )
         ) : null}

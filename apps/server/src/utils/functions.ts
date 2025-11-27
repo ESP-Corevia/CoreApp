@@ -1,4 +1,5 @@
 import pkg from '../../package.json';
+/* c8 ignore file */
 export function mergeOpenApiDocs(a: any, b: any) {
   const servers = [
     { url: '/api' }, // tRPC

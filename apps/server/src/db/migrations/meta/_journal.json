@@ -29,6 +29,27 @@
       "when": 1759350259636,
       "tag": "0003_jittery_cable",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1762649931938,
+      "tag": "0004_green_valkyrie",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1762652012724,
+      "tag": "0005_bumpy_magik",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1762652096037,
+      "tag": "0006_slim_blink",
+      "breakpoints": true
     }
   ]
 }

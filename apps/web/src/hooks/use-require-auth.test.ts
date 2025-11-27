@@ -4,7 +4,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useRequireAuth, useGuestOnly } from './use-require-auth';
 
 const mockNavigate = vi.fn();
-const mockLocation = { pathname: '/dashboard' };
+const mockLocation = { pathname: '/dashboard', search: '' };
 
 vi.mock('react-router', () => ({
   useNavigate: () => mockNavigate,
@@ -12,10 +12,13 @@ vi.mock('react-router', () => ({
 }));
 
 const mockUseSession = vi.fn();
-
+const mockAdminHasPermission = vi.fn();
 vi.mock('@/lib/auth-client', () => ({
   authClient: {
     useSession: () => mockUseSession(),
+    admin: {
+      hasPermission: () => mockAdminHasPermission(),
+    },
   },
 }));
 
@@ -53,6 +56,7 @@ describe('useRequireAuth', () => {
   });
 
   it('should not redirect when authenticated', async () => {
+    mockAdminHasPermission.mockReturnValue({ data: { success: true, error: null } });
     mockUseSession.mockReturnValue({
       data: {
         isAuthenticated: true,
@@ -70,7 +74,7 @@ describe('useRequireAuth', () => {
     });
   });
 
-  it('should return session data when authenticated', () => {
+  it('should return session data when authenticated', async () => {
     const mockSession = {
       isAuthenticated: true,
       user: { id: '1', name: 'John', email: 'john@example.com' },
@@ -80,11 +84,12 @@ describe('useRequireAuth', () => {
       data: mockSession,
       isPending: false,
     });
-
+    mockAdminHasPermission.mockReturnValue({ data: { success: true } });
     const { result } = renderHook(() => useRequireAuth());
-
-    expect(result.current.session).toEqual(mockSession);
-    expect(result.current.isLoading).toBe(false);
+    await waitFor(() => {
+      expect(result.current.session).toEqual(mockSession);
+      expect(result.current.isLoading).toBe(false);
+    });
   });
 
   it('should redirect when session becomes null', async () => {
@@ -107,6 +112,25 @@ describe('useRequireAuth', () => {
     await waitFor(() => {
       expect(mockNavigate).toHaveBeenCalledWith('/login?redirectTo=%2Fdashboard', {
         replace: true,
+      });
+    });
+  });
+  it('should redirect to 403 when permission is denied', async () => {
+    mockUseSession.mockReturnValue({
+      data: {
+        isAuthenticated: true,
+        user: { id: '1', name: 'John' },
+      },
+      isPending: false,
+    });
+    mockAdminHasPermission.mockReturnValue({ data: { success: false } });
+
+    renderHook(() => useRequireAuth());
+
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith('/403', {
+        replace: true,
+        state: { from: '/dashboard' },
       });
     });
   });

@@ -1,16 +1,20 @@
 import { z } from 'zod';
 
+import { users } from '../schema';
+
 import type { Repositories } from '../repositories';
 
+import { buildQueryOptions, type QueryParams } from '@/utils/db';
+
 export const UserOutputSchema = z.object({
-  id: z.uuid(),
+  id: z.string(),
   name: z.string().nullable(),
   email: z.email(),
   createdAt: z.date(),
   updatedAt: z.date().nullable(),
   firstName: z.string(),
   lastName: z.string(),
-  image: z.url().nullable(),
+  image: z.string().nullable(),
   lastLoginMethod: z.string().nullable(),
   emailVerified: z.boolean().nullable(),
   role: z.string().nullable(),
@@ -58,5 +62,18 @@ export const createUsersService = (repo: Repositories['usersRepo']) => ({
       emailVerified: user.emailVerified,
       role: user.role,
     };
+  },
+  /**
+   * Gets a paginated list of users based on the provided query parameters.
+   * @param params - The query parameters for filtering, sorting, and pagination.
+   * @param userId - The UUID of the requesting user.
+   * @returns A paginated list of users.
+   */
+  listUsers: ({ params, userId }: { params: QueryParams<typeof users>; userId: string }) => {
+    return repo.listUsers({
+      options: buildQueryOptions(users, params),
+      userId,
+      pageParams: { page: params.page, perPage: params.perPage },
+    });
   },
 });

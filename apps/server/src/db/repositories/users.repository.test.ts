@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 
+import { eq } from 'drizzle-orm';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { applyMigration, db, resetDb } from '../../../test/db';
@@ -11,7 +12,7 @@ import { createUsersRepo } from './users.repository';
 const usersRepo = createUsersRepo(db as any);
 
 let user1: typeof usersTable.$inferSelect;
-// eslint-disable-next-line ts/no-unused-vars
+
 let user2: typeof usersTable.$inferSelect;
 
 beforeEach(async () => {
@@ -82,6 +83,95 @@ describe('findByEmail', () => {
   it('is case sensitive for email search', async () => {
     const found = await usersRepo.findByEmail('JOHN.DOE@EXAMPLE.COM');
     expect(found).toBeUndefined();
+  });
+});
+describe('listUsers', () => {
+  it('returns all users except the requesting user', async () => {
+    const result = await usersRepo.listUsers({
+      userId: user1.id,
+      options: {},
+      pageParams: {},
+    });
+
+    expect(result.users.length).toBe(1);
+    expect(result.users[0].id).toBe(user2.id);
+
+    expect(result.totalItems).toBe(1);
+    expect(result.totalPages).toBe(1);
+    expect(result.page).toBe(1);
+    expect(result.perPage).toBe(10);
+  });
+
+  it('applies pagination correctly', async () => {
+    await db.insert(usersTable).values([
+      { firstName: 'A', lastName: 'A', email: 'a@example.com' },
+      { firstName: 'B', lastName: 'B', email: 'b@example.com' },
+    ]);
+
+    const result = await usersRepo.listUsers({
+      userId: user1.id,
+      options: { limit: 1, offset: 0 },
+      pageParams: { page: 1, perPage: 1 },
+    });
+
+    expect(result.users.length).toBe(1);
+    expect(result.totalItems).toBe(3);
+    expect(result.totalPages).toBe(3);
+    expect(result.page).toBe(1);
+  });
+
+  it('applies ordering via options.orderBy', async () => {
+    const result = await usersRepo.listUsers({
+      userId: user1.id,
+      options: {
+        orderBy: (table, { asc }) => asc(table.email),
+      },
+      pageParams: {},
+    });
+
+    expect(result.users.length).toBe(1);
+    expect(result.users[0].email).toBe('jane.smith@example.com');
+  });
+
+  it('respects additional where conditions', async () => {
+    const result = await usersRepo.listUsers({
+      userId: user1.id,
+      options: {
+        where: eq(usersTable.emailVerified, false),
+      },
+      pageParams: {},
+    });
+
+    expect(result.users.length).toBe(1);
+    expect(result.users[0].id).toBe(user2.id);
+  });
+
+  it('combines existing where with exclusion of userId', async () => {
+    const result = await usersRepo.listUsers({
+      userId: user1.id,
+      options: {
+        where: eq(usersTable.emailVerified, true),
+      },
+      pageParams: {},
+    });
+
+    expect(result.users.length).toBe(0);
+    expect(result.totalItems).toBe(0);
+    expect(result.totalPages).toBe(0);
+  });
+
+  it('returns empty results when no users match', async () => {
+    const result = await usersRepo.listUsers({
+      userId: user1.id,
+      options: {
+        where: eq(usersTable.email, 'does.not.exist@example.com'),
+      },
+      pageParams: {},
+    });
+
+    expect(result.users.length).toBe(0);
+    expect(result.totalItems).toBe(0);
+    expect(result.totalPages).toBe(0);
   });
 });
 

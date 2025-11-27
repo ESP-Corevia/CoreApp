@@ -5,10 +5,5 @@
     "allowImportingTsExtensions": true,
     "noEmit": true
   },
-  "include": [
-    "src/**/*",
-    "*.config.ts",
-    "vite.config.ts",
-    "react-router.config.ts"
-  ]
+  "include": ["src/**/*", "*.config.ts", "vite.config.ts", "react-router.config.ts"]
 }

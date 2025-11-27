@@ -21,5 +21,5 @@ export const db = drizzle(pool, {
   schema,
   logger: true,
 });
-
+export { schema };
 export { pool };

@@ -59,3 +59,6 @@ dev-dist
 .dev.vars*
 
 .open-next
+
+# Size Limit
+size-limit-report.json
