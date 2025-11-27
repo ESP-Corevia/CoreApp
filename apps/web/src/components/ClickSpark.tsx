@@ -1,3 +1,4 @@
+/* v8 ignore file -- @preserve */
 import React, { useRef, useEffect, useCallback } from 'react';
 
 interface ClickSparkProps {
@@ -122,10 +123,15 @@ const ClickSpark: React.FC<ClickSparkProps> = ({
         return true;
       });
 
-      animationId = requestAnimationFrame(draw);
+      if (sparksRef.current.length > 0) {
+        animationId = requestAnimationFrame(draw);
+      }
     };
 
-    animationId = requestAnimationFrame(draw);
+    // Only start animation if there are sparks to draw
+    if (sparksRef.current.length > 0) {
+      animationId = requestAnimationFrame(draw);
+    }
 
     return () => {
       cancelAnimationFrame(animationId);

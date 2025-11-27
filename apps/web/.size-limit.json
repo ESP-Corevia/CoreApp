@@ -10,5 +10,23 @@
     "path": "build/client/assets/**.css",
     "limit": "300 KB",
     "gzip": true
+  },
+  {
+    "name": "Login page",
+    "path": "build/client/assets/login-*.js",
+    "limit": "200 KB",
+    "gzip": true
+  },
+  {
+    "name": "Dashboard page",
+    "path": "build/client/assets/dashboard-*.js",
+    "limit": "300 KB",
+    "gzip": true
+  },
+  {
+    "name": "Index page",
+    "path": "build/client/assets/_index-*.js",
+    "limit": "200 KB",
+    "gzip": true
   }
 ]

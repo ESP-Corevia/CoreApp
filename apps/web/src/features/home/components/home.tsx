@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Trans, useTranslation } from 'react-i18next';
 
 import Shuffle from '@/components/Shuffle';
+import StatusServer from '@/components/status';
 import { useTrpc } from '@/providers/trpc';
 
 export default function Home({
@@ -45,19 +46,16 @@ export default function Home({
           <h2 className="mb-2 text-base font-medium sm:text-lg">
             <Trans i18nKey="_index.apiStatus">API Status</Trans>
           </h2>
-
-          <div className="flex items-center gap-2">
-            <div
-              className={`h-2 w-2 rounded-full ${healthCheck.data ? 'bg-green-500' : 'bg-red-500'}`}
-            />
-            <span className="text-muted-foreground text-sm sm:text-base">
-              {healthCheck.isLoading
+          <StatusServer
+            label={
+              healthCheck.isLoading
                 ? t('_index.checking', 'Checking...')
                 : healthCheck.data
                   ? t('_index.connected', 'Connected')
-                  : t('_index.disconnected', 'Disconnected')}
-            </span>
-          </div>
+                  : t('_index.disconnected', 'Disconnected')
+            }
+            status={healthCheck.isLoading ? 'degraded' : healthCheck.data ? 'online' : 'offline'}
+          />
         </section>
       </div>
     </div>
