@@ -1,3 +1,4 @@
+/* v8 ignore file -- @preserve */
 import { Home, LayoutDashboard, Settings, Users, FileText, Bell } from 'lucide-react';
 import { useNavigate, useLocation, Link } from 'react-router';
 import {

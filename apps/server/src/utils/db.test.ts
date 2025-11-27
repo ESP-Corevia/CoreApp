@@ -5,14 +5,16 @@ import {
   operatorHandlers,
   buildWhereConditions,
   buildQueryOptions,
+  buildOrderBy,
+  coerceValueForColumn,
   type TableFilter,
 } from './db';
 
-// Fake drizzle table
 const users = {
   id: { name: 'id', columnType: 'text' },
   createdAt: { name: 'createdAt', columnType: 'date' },
   email: { name: 'email', columnType: 'text' },
+  banned: { name: 'banned', columnType: 'boolean' },
 } as any;
 describe('toDate()', () => {
   it('converts timestamp number', () => {
@@ -156,10 +158,44 @@ describe('buildQueryOptions()', () => {
     expect(opts.limit).toBe(10);
     expect(opts.offset).toBe(10); // (page - 1) * perPage
 
-    // where should be a combined drizzle expression
     expect(opts.where).toBeDefined();
 
-    // orderBy is undefined because we didn't pass sorting
     expect(opts.orderBy).toBeUndefined();
+  });
+});
+describe('coerceValueForColumn()', () => {
+  it('coerces boolean values', () => {
+    expect(coerceValueForColumn(users.banned, 'true')).toBe(true);
+    expect(coerceValueForColumn(users.banned, 'false')).toBe(false);
+    expect(coerceValueForColumn(users.banned, true)).toBe(true);
+    expect(coerceValueForColumn(users.banned, false)).toBe(false);
+    expect(coerceValueForColumn(users.banned, [true])).toBe(true);
+    expect(coerceValueForColumn(users.banned, ['false'])).toBe(false);
+  });
+
+  it('coerces number values', () => {
+    expect(coerceValueForColumn({ columnType: 'number' }, '42')).toBe(42);
+    expect(coerceValueForColumn({ columnType: 'number' }, 3.14)).toBe(3.14);
+    expect(coerceValueForColumn({ columnType: 'number' }, ['7'])).toBe(7);
+  });
+
+  it('coerces date values', () => {
+    const date1 = coerceValueForColumn(users.createdAt, '1700000000000');
+    expect(date1).toBeInstanceOf(Date);
+
+    const date2 = coerceValueForColumn(users.createdAt, 1700000000000);
+    expect(date2).toBeInstanceOf(Date);
+  });
+});
+describe('buildOrderBy()', () => {
+  it('builds orderBy function', () => {
+    const sortRule = { id: 'createdAt', desc: true };
+    const orderByFn = buildOrderBy<any>(sortRule);
+    expect(orderByFn).toBeInstanceOf(Function);
+  });
+
+  it('returns undefined when no sort rule is provided', () => {
+    const orderByFn = buildOrderBy<any>(undefined);
+    expect(orderByFn).toBeUndefined();
   });
 });

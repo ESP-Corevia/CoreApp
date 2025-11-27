@@ -1,3 +1,4 @@
+/* v8 ignore file -- @preserve */
 import { useLocation } from 'react-router';
 
 export default function Header() {

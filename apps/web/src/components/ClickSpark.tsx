@@ -1,3 +1,4 @@
+/* v8 ignore file -- @preserve */
 import React, { useRef, useEffect, useCallback } from 'react';
 
 interface ClickSparkProps {

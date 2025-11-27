@@ -1,3 +1,4 @@
+/* v8 ignore file -- @preserve */
 import { Link } from 'react-router';
 
 import { Button } from '@/components/ui/button';

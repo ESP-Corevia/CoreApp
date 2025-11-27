@@ -5,7 +5,7 @@ import { useEffect, useMemo } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
 
 import { SiGithub, SiGoogle } from '@icons-pack/react-simple-icons';
-import { CalendarClock, Mail, Shield, Text, User as UserIcon, History } from 'lucide-react';
+import { CalendarClock, Mail, Shield, Text, User as UserIcon, History, Ban } from 'lucide-react';
 
 import { DataTable } from '@/components/data-table/data-table';
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
@@ -248,8 +248,13 @@ export default function DataTableUsers({
         },
         meta: {
           label: 'Banned',
-          variant: 'boolean',
-          icon: Shield,
+          variant: 'select',
+          icon: Ban,
+          options: [
+            { label: 'Yes', value: 'true', icon: Ban },
+            { label: 'No', value: 'false', icon: Ban },
+          ],
+          operator: 'eq',
         },
         enableColumnFilter: true,
         enableHiding: true,
@@ -328,12 +333,11 @@ export default function DataTableUsers({
     pageCount,
     initialState: {
       sorting: [{ id: 'createdAt', desc: true }],
-      columnPinning: { right: ['actions'], left: ['select'] },
+      columnPinning: { right: ['actions'] /*left: ['select']*/ },
       pagination: { pageIndex: 0, pageSize: 10 },
       globalFilter: search,
       columnVisibility: {
         lastLoginMethod: false,
-        banned: false,
         banReason: false,
         banExpires: false,
         updatedAt: false,

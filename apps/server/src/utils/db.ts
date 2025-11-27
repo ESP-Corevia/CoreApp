@@ -21,6 +21,7 @@ import {
   type SQL,
 } from 'drizzle-orm';
 import { z } from 'zod';
+
 export function toDate(value: any): Date {
   if (value instanceof Date) return value;
 
@@ -37,15 +38,30 @@ export function toDate(value: any): Date {
 
   throw new Error(`Cannot convert ${typeof value} to Date`);
 }
+export function coerceValueForColumn(column: any, value: any) {
+  switch (column.columnType) {
+    case 'boolean':
+      return value[0] === true || value[0] === 'true' || value === true || value === 'true';
+    case 'number':
+      return Number(value);
+    case 'date':
+    case 'timestamp':
+      return toDate(value);
+    default:
+      return value;
+  }
+}
+
 export const operatorHandlers = {
   iLike: (column: any, value: string) => ilike(column, '%' + value + '%'),
   notILike: (column: any, value: string) => notIlike(column, '%' + value + '%'),
-  eq: (column: any, value: any) => eq(column, toDate(value)),
-  ne: (column: any, value: any) => ne(column, toDate(value)),
-  lt: (column: any, value: any) => lt(column, toDate(value)),
-  lte: (column: any, value: any) => lte(column, toDate(value)),
-  gt: (column: any, value: any) => gt(column, toDate(value)),
-  gte: (column: any, value: any) => gte(column, toDate(value)),
+
+  eq: (column: any, value: any) => eq(column, coerceValueForColumn(column, value)),
+  ne: (column: any, value: any) => ne(column, coerceValueForColumn(column, value)),
+  lt: (column: any, value: any) => lt(column, coerceValueForColumn(column, value)),
+  lte: (column: any, value: any) => lte(column, coerceValueForColumn(column, value)),
+  gt: (column: any, value: any) => gt(column, coerceValueForColumn(column, value)),
+  gte: (column: any, value: any) => gte(column, coerceValueForColumn(column, value)),
 
   // array operators
   inArray: (column: any, value: any[]) => inArray(column, value),
