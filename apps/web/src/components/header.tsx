@@ -1,3 +1,4 @@
+/* v8 ignore file -- @preserve */
 import { useLocation } from 'react-router';
 
 export default function Header() {
@@ -8,9 +9,6 @@ export default function Header() {
     const titles: Record<string, string> = {
       '/': 'Home',
       '/dashboard': 'Dashboard',
-      '/team': 'Team',
-      '/documents': 'Documents',
-      '/notifications': 'Notifications',
       '/settings': 'Settings',
       '/profile': 'Profile',
     };

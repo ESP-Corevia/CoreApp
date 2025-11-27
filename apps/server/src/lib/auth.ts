@@ -87,6 +87,7 @@ export const auth = betterAuth({
     customSession(async ({ session }) => ({
       isAuthenticated: !!session,
       userId: session?.userId,
+      impersonatedBy: (session as any).impersonatedBy ?? null,
     })),
     admin({
       ac,
@@ -98,3 +99,4 @@ export const auth = betterAuth({
   ],
 });
 export type Auth = typeof auth;
+export type { ac, adminRole, userRole };
