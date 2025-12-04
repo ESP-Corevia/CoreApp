@@ -1,4 +1,5 @@
 import Shuffle from '@/components/Shuffle';
+import { Link } from 'react-router';
 import Footer from './footer';
 import Header from './header';
 
@@ -9,10 +10,10 @@ export default function Landing({
 }) {
   const brandColor = '#008000';
   const stats = [
+    { label: 'Patient satisfaction score', value: '96%' },
     { label: 'Patients monitored daily', value: '2.4k' },
-    { label: 'Medication adherence lift', value: '38%' },
-    { label: 'Critical alerts resolved <5m', value: '96%' },
-    { label: 'Clinician hours saved / wk', value: '120' },
+    { label: 'Daily reminders sent', value: '3.6k' },
+    { label: 'Downloads per week', value: '420' },
   ];
 
   return (
@@ -102,8 +103,8 @@ export default function Landing({
                 justifyContent: 'center',
               }}
             >
-              <a
-                href="/signup"
+              <Link
+                to="/login"
                 style={{
                   backgroundColor: brandColor,
                   color: '#ffffff',
@@ -114,20 +115,7 @@ export default function Landing({
                 }}
               >
                 Get started
-              </a>
-              <a
-                href="#features"
-                style={{
-                  border: `2px solid ${brandColor}`,
-                  color: brandColor,
-                  borderRadius: '9999px',
-                  padding: '0.75rem 1.6rem',
-                  fontWeight: 600,
-                  textDecoration: 'none',
-                }}
-              >
-                See it in action
-              </a>
+              </Link>
             </div>
           </div>
         </div>

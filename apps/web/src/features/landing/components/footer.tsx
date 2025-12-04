@@ -1,8 +1,10 @@
+import { Link } from 'react-router';
+
 const quickLinks = [
-  { label: 'Home', href: '#home' },
-  { label: 'Download', href: '#download' },
-  { label: 'Login', href: '#login' },
-  { label: 'Contact', href: '#contact' },
+  { label: 'Home', href: '/' },
+  { label: 'Download', href: 'https://play.google.com/' },
+  { label: 'Login', href: '/login' },
+  { label: 'Contact', href: '/' },
 ];
 
 export default function Footer() {
@@ -27,9 +29,9 @@ export default function Footer() {
 
         <nav className="flex flex-col justify-center gap-6 text-sm font-semibold" aria-label="Quick navigation">
           {quickLinks.map(({ label, href }) => (
-            <a key={href} href={href} className="hover:opacity-80" style={{ color: brandColor }}>
+            <Link key={href} to={href} className="hover:opacity-80" style={{ color: brandColor }}>
               {label}
-            </a>
+            </Link>
           ))}
         </nav>
 
