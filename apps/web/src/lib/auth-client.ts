@@ -1,3 +1,4 @@
+// import { type Auth /*ac, adminRole, userRole*/ } from '@server/lib/auth';
 import {
   customSessionClient,
   lastLoginMethodClient,
@@ -15,5 +16,6 @@ export const authClient = createAuthClient({
     customSessionClient<Auth>(),
     lastLoginMethodClient(),
     adminClient(),
+    // adminClient(),
   ],
 });

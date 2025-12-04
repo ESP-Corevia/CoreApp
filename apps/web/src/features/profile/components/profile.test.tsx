@@ -163,12 +163,13 @@ describe('Profile', () => {
 
     const firstNameInput = getByLabelText('First Name') as HTMLInputElement;
     const lastNameInput = getByLabelText('Last Name') as HTMLInputElement;
-
+    const nameInput = getByLabelText('Name') as HTMLInputElement;
     await user.clear(firstNameInput);
     await user.type(firstNameInput, 'Jane');
     await user.clear(lastNameInput);
     await user.type(lastNameInput, 'Smith');
-
+    await user.clear(nameInput);
+    await user.type(nameInput, 'Jane Smith');
     const submitButton = getByRole('button', { name: 'Save' });
     await user.click(submitButton);
 
@@ -176,6 +177,7 @@ describe('Profile', () => {
       expect(mockUpdateUser).toHaveBeenCalledWith({
         firstName: 'Jane',
         lastName: 'Smith',
+        name: 'Jane Smith',
       });
     });
   });

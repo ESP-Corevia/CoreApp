@@ -6,14 +6,48 @@
       "connected": "Connected",
       "disconnected": "Disconnected"
     },
-    "dashboard": {
-      "loading": "Loading...",
-      "privateData": "privateData: {{message}}",
-      "title": "Dashboard",
-      "welcome": "Welcome {{userId}}"
+    "banUserDialog": {
+      "banning": "Banning...",
+      "banUser": "Ban User",
+      "description": "Ban {{ name }} from accessing the application.",
+      "durationLabel": "Ban Duration",
+      "durations": {
+        "1Day": "1 Day",
+        "1Hour": "1 Hour",
+        "30Days": "30 Days",
+        "7Days": "7 Days",
+        "Permanent": "Permanent"
+      },
+      "error": "Failed to ban user: {{message}}",
+      "errors": {
+        "reasonTooShort": "Reason must be at least 3 characters"
+      },
+      "reasonLabel": "Reason for ban",
+      "reasonPlaceholder": "Enter reason for ban...",
+      "success": "{{name}} has been banned",
+      "title": "Ban User"
     },
+    "dashboard": {
+      "loadUsersError": "Failed to load users: {{message}}",
+      "userManagement": "Users Management"
+    },
+    "dataTable": {
+      "noResults": "No results."
+    },
+    "errorScreen": {
+      "permissionDenied": "You do not have permission to access that resource."
+    },
+    "forbidden": {
+      "description": "Access to this resource is forbidden. You don't have the necessary permissions to view this page.",
+      "goBackHome": "Go Back Home"
+    },
+    "Go Back Home": "Go Back Home",
     "HydrateFallback": {
       "loading": "Loading…"
+    },
+    "impersonationBanner": {
+      "exit": "Exit impersonation",
+      "title": "You are currently impersonating a user."
     },
     "modeToggle": {
       "dark": "Dark",
@@ -21,10 +55,15 @@
       "system": "System",
       "toggleTheme": "Toggle theme"
     },
+    "notFound": {
+      "title": "Page Not Found"
+    },
     "profile": {
       "accountStatus": "Account Status",
       "accountStatusSubtitle": "Your account status and verification",
       "cancel": "Cancel",
+      "confirmPasswordMax": "Confirm password must be at most 100 characters",
+      "confirmPasswordMin": "Confirm password must be at least 8 characters",
       "createdDate": "Created Date",
       "editProfile": "Edit Profile",
       "email": "Email",
@@ -47,6 +86,9 @@
       "lastName": "Last Name",
       "lastNameLabel": "Enter your last name",
       "lastNameMin": "Last name must be at least 3 characters",
+      "name": "Name",
+      "nameLabel": "Enter your name",
+      "nameMin": "Name must be at least 3 characters",
       "notVerified": "Not Verified",
       "passwordMax": "Password must be at most 100 characters",
       "passwordMin": "Password must be at least 8 characters",
@@ -74,7 +116,7 @@
       "success": "Profile updated successfully",
       "updatedDate": "Updated Date",
       "updateEmail": "Change Email",
-      "updatePassword": "Update Password",
+      "updatePassword": "Change Password",
       "userId": "User ID",
       "verificationStatus": "Verification Status",
       "verified": "Verified"
@@ -82,7 +124,7 @@
     "settings": {
       "appearance": "Appearance",
       "appearanceSubtitle": "Customize how Corevia looks",
-      "currentLanguage": "Current: {{language}}",
+      "currentLanguage": "settings.currentLanguage",
       "dark": "Dark",
       "language": "Language",
       "languageSubtitle": "Choose your preferred language",
@@ -134,9 +176,90 @@
       "switchToSignIn": "Already have an account? Sign In",
       "title": "Create Account"
     },
+    "The requested page could not be found": {
+      "": "The requested page could not be found."
+    },
+    "useImpersonateUser": {
+      "failedToImpersonate": "Failed to impersonate user: {{message}}",
+      "popupBlocked": "Popup blocked — allow popups to impersonate users."
+    },
+    "UserActionsMenu": {
+      "banUser": "Ban User",
+      "deleteUser": "Delete User",
+      "editUser": "Edit User",
+      "impersonate": "Impersonate",
+      "openUserMenu": "Open user menu",
+      "revokeSessions": "Revoke all Sessions",
+      "setPassword": "Set Password",
+      "unbanUser": "Unban User"
+    },
+    "userCreateModal": {
+      "cancel": "Cancel",
+      "createNewUser": "Create New User",
+      "createUser": "Create User",
+      "creating": "Creating...",
+      "email": "Email",
+      "emailLabel": "Enter your email",
+      "hidePassword": "Hide password",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "role": "Role",
+      "showPassword": "Show password",
+      "userCreated": "User created successfully",
+      "userCreateError": "Failed to create user: {{message}}"
+    },
+    "userDeletedQuery": {
+      "error": "Failed to delete user: {{message}}",
+      "success": "User deleted successfully"
+    },
+    "userDeleteModal": {
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "deleting": "Deleting...",
+      "description": "Are you sure you want to delete <strong>{{name}}</strong> ? This action cannot be undone and will permanently remove the user and all their data.",
+      "title": "Delete User"
+    },
+    "userEditModal": {
+      "cancel": "Cancel",
+      "description": "Update user information and role.",
+      "editUser": "Edit User",
+      "emailCannotBeChanged": "Email cannot be changed here",
+      "error": "Failed to update user: {{message}}",
+      "roleLabel": "Role",
+      "saveChanges": "Save Changes",
+      "saving": "Saving...",
+      "success": "User updated successfully"
+    },
+    "useRevokeUserSessions": {
+      "error": "Failed to revoke user sessions: {{message}}",
+      "success": "User sessions revoked successfully"
+    },
     "userMenu": {
       "signIn": "Sign In",
       "signOut": "Sign Out"
+    },
+    "userSetPasswordModal": {
+      "cancel": "Cancel",
+      "confirmPassword": "Confirm Password",
+      "confirmPasswordPlaceholder": "Confirm new password",
+      "description": "Set a new password for <strong>{{user}}</strong>.",
+      "hideConfirmedPassword": "Hide confirmed password",
+      "hidePassword": "Hide password",
+      "newPassword": "New Password",
+      "newPasswordPlaceholder": "Enter new password",
+      "passwordUpdated": {
+        "error": "Failed to update password: {{message}}",
+        "success": "Password updated successfully"
+      },
+      "setPassword": "Set Password",
+      "setting": "Setting...",
+      "showConfirmedPassword": "Show confirmed password",
+      "showPassword": "Show password",
+      "title": "Set Password"
+    },
+    "useUnbanUser": {
+      "error": "Failed to unban user: {{message}}",
+      "success": "User unbanned successfully"
     }
   }
 }

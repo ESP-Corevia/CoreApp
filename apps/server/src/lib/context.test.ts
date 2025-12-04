@@ -6,7 +6,7 @@ import { user } from '../../test/faker';
 import { createContext } from './context';
 describe('createContext', () => {
   it('return a context with the session and relays req/res/auth', async () => {
-    const fakeSession = { isAuthenticated: true, userId: 'u_1' };
+    const fakeSession = { isAuthenticated: true, userId: 'u_1', impersonatedBy: null };
     authMock.api.getSession.mockResolvedValue(fakeSession);
 
     const req = {
