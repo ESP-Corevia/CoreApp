@@ -1,38 +1,108 @@
-FROM node:24.11-bullseye-slim AS builder
+FROM node:22-alpine AS base
 
-ENV NODE_ENV=production
+RUN apk update && apk add --no-cache libc6-compat
+WORKDIR /app
+
+
+# -------------------------
+# Builder (generate pruned monorepo)
+# -------------------------
+FROM base AS builder
+
+# RUN corepack enable
+# RUN corepack prepare yarn@4.9.2 --activate
+
+# Install Turbo globally ONLY in builder
+RUN npm install -g turbo
+
 
 WORKDIR /app
 
-COPY package.json .
-COPY yarn.lock .
-COPY ./apps/server/package.json ./apps/server/
-COPY turbo.json .
-COPY .yarnrc.yml ./.yarnrc.yml
-COPY tsconfig.base.json tsconfig.json ./
+COPY . .
+
+# Prune everything except the server workspace
+RUN turbo prune server --docker
+
+
+# -------------------------
+# Installer (install deps + build)
+# -------------------------
+FROM base AS installer
 
 RUN corepack enable
-RUN yarn install
-
-COPY ./apps/server ./apps/server
-
-RUN yarn build
-
-FROM node:24.11-bullseye-slim
+RUN corepack prepare yarn@4.9.2 --activate
 
 WORKDIR /app
 
-ENV NODE_ENV=production
+# Load pruned package.json + lockfile + yarn metadata
+COPY --from=builder /app/out/json/ ./
 
-COPY --chown=node:node --from=builder /app/apps/server/dist ./dist
+# Install only the pruned dependencies
+RUN yarn install --immutable
 
-COPY --chown=node:node --from=builder /app/apps/server/package*.json ./
-COPY --chown=node:node --from=builder /app/yarn.lock ./
-COPY --chown=node:node --from=builder /app/.yarn ./.yarn
-COPY --chown=node:node --from=builder /app/.yarnrc.yml ./.yarnrc.yml
+# Copy full pruned workspace
+COPY --from=builder /app/out/full/ ./
+
+# Turbo prune strips non-package.json files (tsconfig*, etc.)
+COPY tsconfig.json ./tsconfig.json
+COPY tsconfig.base.json ./tsconfig.base.json
+COPY tsconfig.* ./
+
+# Build the server app with Turbo
+RUN yarn turbo -F server build
+
+
+# -------------------------
+# SERVER RUNTIME IMAGE (separate)
+# -------------------------
+FROM base AS server
 
 RUN corepack enable
-RUN yarn workspaces focus --production
-USER node
+RUN corepack prepare yarn@4.9.2 --activate
 
-CMD ["yarn", "start"]
+# Create non-root user
+RUN addgroup --system --gid 1001 expressjs \
+    && adduser  --system --uid 1001 expressjs
+
+USER expressjs
+
+WORKDIR /app
+
+# Copy compiled & pruned project
+COPY --from=installer /app ./
+
+# Move into server workspace
+WORKDIR /app/apps/server
+
+# Run start
+CMD ["yarn","start"]
+
+# -------------------------
+# SEED RUNTIME IMAGE (separate)
+# -------------------------
+FROM base AS seed
+
+RUN corepack enable
+RUN corepack prepare yarn@4.9.2 --activate 
+
+WORKDIR /app
+
+COPY --from=installer /app ./
+
+WORKDIR /app/apps/server
+CMD ["yarn", "db:seed"]
+
+# -------------------------
+# MIGRATE RUNTIME IMAGE (separate)
+# -------------------------
+FROM base AS migrate
+
+RUN corepack enable
+RUN corepack prepare yarn@4.9.2 --activate 
+
+WORKDIR /app
+
+COPY --from=installer /app ./
+
+WORKDIR /app/apps/server
+CMD ["yarn", "db:migrate"]
