@@ -70,3 +70,6 @@ Corevia/
 - `yarn check-types`: Check TypeScript types across all apps
 - `yarn db:push`: Push schema changes to database
 - `yarn db:studio`: Open database studio UI
+- `docker compose --profile server up -d`: Start the server and its dependencies using Docker Compose
+- `docker compose --profile web up -d`: Start the web app and its dependencies using Docker Compose
+- `docker compose --profile seed up -d`: Seed the database using Docker Compose

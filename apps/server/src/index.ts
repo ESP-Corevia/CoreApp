@@ -14,7 +14,7 @@ import { createContext } from './lib/context';
 import { appRouter, type AppRouter } from './routers/index';
 import { mergeOpenApiDocs } from './utils/functions';
 const baseCorsConfig = {
-  origin: [env.CORS_ORIGIN, 'http://127.0.0.1:3000'],
+  origin: [env.CORS_ORIGIN, 'http://localhost:3000', 'http://127.0.0.1:3000'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'x-api-key', 'x-language'],
@@ -107,7 +107,7 @@ fastify.register(ScalarApiReference, {
     darkMode: true,
   },
 });
-fastify.listen({ port: 3000 }, (err) => {
+fastify.listen({ port: 3000, host: '0.0.0.0' }, (err) => {
   if (err) {
     fastify.log.error(err);
     process.exit(1);
