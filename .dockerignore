@@ -1,0 +1,30 @@
+# Ignore ALL node_modules in monorepo
+**/node_modules/
+
+# Turbo cache
+**/.turbo/
+
+# Vite / Next / build directories
+**/.vite/
+**/.next/
+**/dist/
+**/build/
+
+# Yarn cache (important!)
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# PnP files
+.pnp.*
+
+# Git
+.git
+.gitignore
+
+# Env files
+.env
+.env.*

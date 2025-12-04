@@ -1,0 +1,11 @@
+/node_modules/
+/dist/
+/build/
+/.react-router/
+/.turbo/
+/coverage/
+/playwright-report/
+/test-results/
+/.lighthouseci/
+.env
+*.csv

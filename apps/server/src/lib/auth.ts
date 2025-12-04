@@ -36,7 +36,7 @@ export const auth = betterAuth({
       maxAge: 5 * 60,
     },
   },
-  trustedOrigins: [env.CORS_ORIGIN],
+  trustedOrigins: [env.CORS_ORIGIN, 'http://localhost:3000', 'http://127.0.0.1:3000'],
   emailAndPassword: {
     enabled: true,
     minPasswordLength: 8,
