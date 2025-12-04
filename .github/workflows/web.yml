@@ -93,21 +93,15 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-
-      # Required so Yarn 4 PnP works
-      - uses: ./.github/actions/setup-yarn
-
-      - name: Install deps
-        run: yarn install --immutable
-
-      - name: Build web app
-        run: yarn workspace web build
-
-      - name: 📏 Size Limit
-        uses: andresz1/size-limit-action@v1
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          directory: apps/web/
+          fetch-depth: 1
+      - uses: ./.github/actions/setup-yarn
+      - uses: ./.github/actions/setup-turbo
+        with:
+          token: ${{ secrets.TURBO_TOKEN }}
+          team: ${{ secrets.TURBO_TEAM }}
+      - name: 📏 Size Limit
+        run: yarn turbo run web#check:size --cache="${{env.TURBO_CACHE}}"
 
   audit:
     name: 🛡️ Security Audit
