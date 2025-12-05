@@ -103,7 +103,7 @@ export default function HealthAssistantPage({
                 <img
                   src={profile.avatar}
                   alt={profile.label}
-                  className="h-12 w-12 rounded-2xl border border-white/10 object-cover"
+                  className="h-16 w-16 rounded-2xl border border-white/10 object-cover"
                 />
                 <div>
                   <p className="text-sm font-semibold">{profile.label}</p>
@@ -200,7 +200,7 @@ export default function HealthAssistantPage({
                 <img
                   src={activeProfile?.avatar}
                   alt={activeProfile?.label}
-                  className="h-16 w-16 rounded-2xl border border-white/10 object-cover"
+                  className="h-20 w-20 rounded-3xl border border-white/10 object-cover"
                 />
                 <div>
                   <p className="text-xs uppercase tracking-[0.2em] text-white/50">Profil actif</p>
