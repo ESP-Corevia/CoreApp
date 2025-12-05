@@ -24,14 +24,7 @@ const isLocalhostOrigin = (origin: string): boolean => {
 };
 
 const baseCorsConfig = {
-  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-    // Autoriser tous les localhost (127.0.0.1, localhost et ::1 avec tous les ports)
-    if (!origin || isLocalhostOrigin(origin) || origin === env.CORS_ORIGIN) {
-      callback(null, true);
-    } else {
-      callback(null, false);
-    }
-  },
+  origin: [env.CORS_ORIGIN, 'http://localhost:3000', 'http://127.0.0.1:3000'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'x-api-key', 'x-language'],
@@ -124,7 +117,7 @@ fastify.register(ScalarApiReference, {
     darkMode: true,
   },
 });
-fastify.listen({ port: 3000 }, (err) => {
+fastify.listen({ port: 3000, host: '0.0.0.0' }, (err) => {
   if (err) {
     fastify.log.error(err);
     process.exit(1);
