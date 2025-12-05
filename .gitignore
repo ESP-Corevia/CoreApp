@@ -30,3 +30,5 @@ GEMINI.md.bak
 .yarn/install-state.gz
 .vscode/settings.json
 **/coverage/*
+
+out/
