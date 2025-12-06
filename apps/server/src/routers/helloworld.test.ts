@@ -1,13 +1,13 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { createTestCaller } from '../../test/caller';
+import { createTestCaller, fakeSession } from '../../test/caller';
 
 beforeEach(() => {});
 
 describe('helloWorldRouter', () => {
   it('returns default greeting when name omitted', async () => {
     const caller = createTestCaller({
-      customSession: { isAuthenticated: true, userId: 'test-user-123', impersonatedBy: null },
+      customSession: fakeSession,
     });
     const result = await caller.helloWorld({});
     expect(result).toEqual({ message: 'Hello, Guest from Corevia !' });
@@ -15,7 +15,7 @@ describe('helloWorldRouter', () => {
 
   it('returns personalized greeting when name provided', async () => {
     const caller = createTestCaller({
-      customSession: { isAuthenticated: true, userId: 'test-user-123', impersonatedBy: null },
+      customSession: fakeSession,
     });
     const result = await caller.helloWorld({ name: 'John' });
     expect(result).toEqual({ message: 'Hello, John from Corevia !' });

@@ -45,6 +45,7 @@ export function getFilterOperators(filterVariant: FilterVariant) {
     multiSelect: dataTableConfig.multiSelectOperators,
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   return operatorMap[filterVariant] ?? dataTableConfig.textOperators;
 }
 
@@ -69,7 +70,8 @@ function getValidFilters<TData>(
       filter.operator === 'isNotEmpty' ||
       (Array.isArray(filter.value)
         ? filter.value.length > 0
-        : filter.value !== '' && filter.value !== null && filter.value !== undefined)
+        : // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+          filter.value !== '' && filter.value !== null && filter.value !== undefined)
   );
 }
 export function convertToExtendedFilters<TData>(

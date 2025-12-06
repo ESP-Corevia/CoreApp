@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { createTestCaller } from '../../../test/caller';
+import { createTestCaller, fakeSession } from '../../../test/caller';
 import { mockServices } from '../../../test/services';
 
 beforeEach(() => {});
@@ -25,7 +25,7 @@ describe('userRouter', () => {
       mockServices.usersService.getMe.mockResolvedValue(fakeMe);
 
       const caller = createTestCaller({
-        customSession: { isAuthenticated: true, userId: 'test-user-123', impersonatedBy: null },
+        customSession: { ...fakeSession, userId: 'test-user-123' },
       });
       const res = await caller.user.getMe({});
       expect(res).toEqual({ user: fakeMe });

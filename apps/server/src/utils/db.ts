@@ -39,16 +39,22 @@ export function toDate(value: any): Date {
   throw new Error(`Cannot convert ${typeof value} to Date`);
 }
 export function coerceValueForColumn(column: any, value: any) {
+  const extractedValue = Array.isArray(value) ? value[0] : value;
   switch (column.columnType) {
     case 'boolean':
-      return value[0] === true || value[0] === 'true' || value === true || value === 'true';
+      if (extractedValue === true || extractedValue === 'true') return true;
+      if (extractedValue === false || extractedValue === 'false') return false;
+      return Boolean(extractedValue);
+
     case 'number':
-      return Number(value);
+      return Number(extractedValue);
+
     case 'date':
     case 'timestamp':
-      return toDate(value);
+      return toDate(extractedValue);
+
     default:
-      return value;
+      return extractedValue;
   }
 }
 
@@ -56,7 +62,16 @@ export const operatorHandlers = {
   iLike: (column: any, value: string) => ilike(column, '%' + value + '%'),
   notILike: (column: any, value: string) => notIlike(column, '%' + value + '%'),
 
-  eq: (column: any, value: any) => eq(column, coerceValueForColumn(column, value)),
+  eq: (column: any, value: any) => {
+    const coercedValue = coerceValueForColumn(column, value);
+
+    // For boolean columns, handle NULL values
+    if (column.columnType === 'boolean') {
+      return or(eq(column, coercedValue), coercedValue === false ? isNull(column) : sql`false`);
+    }
+
+    return eq(column, coercedValue);
+  },
   ne: (column: any, value: any) => ne(column, coerceValueForColumn(column, value)),
   lt: (column: any, value: any) => lt(column, coerceValueForColumn(column, value)),
   lte: (column: any, value: any) => lte(column, coerceValueForColumn(column, value)),

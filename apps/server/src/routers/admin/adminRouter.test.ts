@@ -1,7 +1,8 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { createTestCaller, authMock } from '../../../test/caller';
+import { createTestCaller, authMock, fakeSession } from '../../../test/caller';
 import { mockServices } from '../../../test/services';
+
 describe('adminRouter', () => {
   describe('isAdmin', () => {
     it('returns true when user is admin', async () => {
@@ -10,7 +11,7 @@ describe('adminRouter', () => {
         error: null,
       });
       const caller = createTestCaller({
-        customSession: { isAuthenticated: true, userId: 'test-user-123', impersonatedBy: null },
+        customSession: fakeSession,
       });
       const res = await caller.admin.isAdmin({});
       expect(res).toEqual(true);
@@ -27,7 +28,7 @@ describe('adminRouter', () => {
       error: null,
     });
     const caller = createTestCaller({
-      customSession: { isAuthenticated: true, userId: 'test-user-123', impersonatedBy: null },
+      customSession: fakeSession,
     });
     await expect(caller.admin.isAdmin({})).rejects.toThrow(
       'You must be an admin to access this resource',
@@ -43,7 +44,7 @@ describe('adminRouter', () => {
     });
     it('returns paginated users from the service with parsed filters & sorting', async () => {
       const caller = createTestCaller({
-        customSession: { isAuthenticated: true, userId: 'test-user-123', impersonatedBy: null },
+        customSession: { ...fakeSession, userId: 'test-user-123' },
       });
 
       const mockResponse = {
@@ -121,7 +122,7 @@ describe('adminRouter', () => {
 
     it('works with minimal input', async () => {
       const caller = createTestCaller({
-        customSession: { isAuthenticated: true, userId: 'admin-user', impersonatedBy: null },
+        customSession: { ...fakeSession, userId: 'admin-user' },
       });
 
       const emptyResponse = {

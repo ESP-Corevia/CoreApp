@@ -1,12 +1,10 @@
 import { describe, it, expect } from 'vitest';
 
-import { authMock } from '../../test/caller';
-import { user } from '../../test/faker';
+import { authMock, fakeSession } from '../../test/caller';
 
 import { createContext } from './context';
 describe('createContext', () => {
   it('return a context with the session and relays req/res/auth', async () => {
-    const fakeSession = { isAuthenticated: true, userId: 'u_1', impersonatedBy: null };
     authMock.api.getSession.mockResolvedValue(fakeSession);
 
     const req = {

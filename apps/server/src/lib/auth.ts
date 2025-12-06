@@ -86,7 +86,7 @@ export const auth = betterAuth({
     // eslint-disable-next-line require-await
     customSession(async ({ session }) => ({
       isAuthenticated: !!session,
-      userId: session?.userId,
+      ...session,
       impersonatedBy: (session as any).impersonatedBy ?? null,
     })),
     admin({

@@ -6,7 +6,7 @@ import { mockServices } from './services';
 // import { mockLogger } from './setup';
 
 import type { auth as betterAuth } from '../src/lib/auth';
-import type { FastifyReply, FastifyRequest, FastifyInstance } from 'fastify';
+import type { FastifyReply, FastifyRequest } from 'fastify';
 // const fastify = mockDeep<FastifyInstance>();
 const session = mockDeep<Awaited<ReturnType<typeof betterAuth.api.getSession>>>();
 export const authMock = mockDeep<typeof betterAuth>();
@@ -31,3 +31,13 @@ export function createTestCaller({
     // logger: () => mockLogger,
   });
 }
+export const fakeSession = {
+  isAuthenticated: true,
+  userId: 'u_1',
+  impersonatedBy: null,
+  id: 'session_1',
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  expiresAt: new Date(),
+  token: 'token_123',
+};

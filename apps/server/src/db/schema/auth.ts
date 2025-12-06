@@ -14,7 +14,7 @@ export const users = pgTable(
       .notNull(),
     image: t.text('image'),
     role: t.text('role'),
-    banned: t.boolean('banned').default(false),
+    banned: t.boolean('banned').notNull().default(false),
     banReason: t.text('ban_reason'),
     banExpires: t.timestamp('ban_expires'),
     lastLoginMethod: t.text('last_login_method'),

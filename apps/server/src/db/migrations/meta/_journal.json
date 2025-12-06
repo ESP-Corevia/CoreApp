@@ -50,6 +50,13 @@
       "when": 1762652096037,
       "tag": "0006_slim_blink",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1764966684457,
+      "tag": "0007_simple_sumo",
+      "breakpoints": true
     }
   ]
 }

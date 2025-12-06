@@ -3,3 +3,7 @@ export { useUnbanUser } from './useUnbanUser';
 export { useImpersonateUser } from './useImpersonateUser';
 export { useDeleteUser } from './useDeleteUser';
 export { useRevokeUserSessions } from './useRevokeUserSessions';
+export { useListSessions } from './useListSessions';
+export { useRevokeSession } from './useRevokeSession';
+export { useRevokeOtherSessions } from './useRevokeOtherSessions';
+export { useRevokeSessions } from './useRevokeSessions';

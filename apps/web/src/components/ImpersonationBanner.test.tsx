@@ -36,6 +36,13 @@ describe('ImpersonationBanner', () => {
         impersonatedBy: null,
         isAuthenticated: true,
         userId: 'user123',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        id: 'session-123',
+        expiresAt: new Date(),
+        token: 'token-abc',
+        ipAddress: '127.0.0.1',
+        userAgent: 'test-agent',
       },
     });
 
@@ -54,6 +61,13 @@ describe('ImpersonationBanner', () => {
         impersonatedBy: 'admin123',
         isAuthenticated: true,
         userId: 'user123',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        id: 'session-123',
+        expiresAt: new Date(),
+        token: 'token-abc',
+        ipAddress: '127.0.0.1',
+        userAgent: 'test-agent',
       },
     });
 
@@ -73,6 +87,13 @@ describe('ImpersonationBanner', () => {
         impersonatedBy: 'admin123',
         isAuthenticated: true,
         userId: 'user123',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        id: 'session-123',
+        expiresAt: new Date(),
+        token: 'token-abc',
+        ipAddress: '127.0.0.1',
+        userAgent: 'test-agent',
       },
     });
 

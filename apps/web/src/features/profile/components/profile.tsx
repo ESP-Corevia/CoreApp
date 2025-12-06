@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 
 import LoaderDialog from '@/components/loader';
+import SessionsCard from '@/components/sessionsCard';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -43,6 +44,8 @@ export default function Profile({
   const [isEditing, setIsEditing] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
+
+  const { data: currentSession } = authClient.useSession();
 
   const nameSchema = z.object({
     firstName: z
@@ -444,6 +447,11 @@ export default function Profile({
             </div>
           </div>
         </div>
+
+        <Separator />
+
+        {/* Sessions */}
+        <SessionsCard currentSessionToken={currentSession?.token} />
       </div>
 
       {/* Email Change Modal */}

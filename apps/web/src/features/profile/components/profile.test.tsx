@@ -12,6 +12,7 @@ vi.mock('@/lib/auth-client', () => ({
     updateUser: vi.fn(),
     changeEmail: vi.fn(),
     changePassword: vi.fn(),
+    useSession: vi.fn(() => ({ data: { token: 'current-session-token' } })),
   },
 }));
 

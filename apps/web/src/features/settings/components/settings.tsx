@@ -94,7 +94,9 @@ export default function Settings() {
                   <Trans i18nKey="settings.language">Language</Trans>
                 </p>
                 <p className="text-muted-foreground text-sm">
-                  {t('settings.currentLanguage', { language: i18n.language })}
+                  {t('settings.currentLanguage', 'Current language: {{language}}', {
+                    language: i18n.language,
+                  })}
                 </p>
               </div>
               <div className="flex gap-2">
