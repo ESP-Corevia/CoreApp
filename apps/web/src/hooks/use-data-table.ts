@@ -45,7 +45,8 @@ const DEBOUNCE_MS = 300;
 const THROTTLE_MS = 50;
 
 interface UseDataTableProps<TData>
-  extends Omit<
+  extends
+    Omit<
       TableOptions<TData>,
       | 'state'
       | 'pageCount'
