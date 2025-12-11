@@ -88,7 +88,7 @@ export default function Landing() {
             >
               <Link
                 to={"https://play.google.com"}
-                target='about:_blank'
+                target='_blank'
                 style={{
                   backgroundColor: brandColor,
                   color: '#ffffff',

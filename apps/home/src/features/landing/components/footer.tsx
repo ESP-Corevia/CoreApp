@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 const quickLinks = [
   { label: 'Home', href: '/' },
   { label: 'Download', href: 'https://play.google.com/' },
-  { label: 'Login', href: import.meta.env.VITE_BACKOFFICE_DOMAIN + "/login", target: 'about:_blank' },
+  { label: 'Login', href: import.meta.env.VITE_BACKOFFICE_DOMAIN + "/login", target: '_blank' },
   { label: 'Contact', href: '/' },
 ];
 

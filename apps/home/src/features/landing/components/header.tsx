@@ -12,7 +12,7 @@ export default function Header() {
           Corevia
         </Link>
 
-        <Link to={import.meta.env.VITE_BACKOFFICE_DOMAIN + "/login"} target='about:_blank'>
+        <Link to={import.meta.env.VITE_BACKOFFICE_DOMAIN + "/login"} target='_blank'>
           <Button
             className="border-[#008000] cursor-pointer border-2 border-solid bg-white hover:text-gray-600 transition-colors"
           >
