@@ -121,10 +121,27 @@
       "verificationStatus": "Statut de vérification",
       "verified": "Vérifié"
     },
+    "sessionCell": {
+      "createdAt": "Créé :",
+      "currentSession": "Session actuelle",
+      "expiresAt": "Expire : {{date}}",
+      "label": "{{browser}} sur {{os}}",
+      "revokeSession": "Révoquer la session"
+    },
+    "sessionsCard": {
+      "description": "Gérez vos sessions actives sur tous vos appareils",
+      "noSessions": "Aucune session active trouvée",
+      "revokeAll": "Révoquer toutes les sessions",
+      "revokeOther_one": "Révoquer les autres sessions ({{count}})",
+      "revokeOther_other": "Révoquer les autres sessions ({{count}})",
+      "revokingAll": "Révocation de toutes les sessions...",
+      "revokingOther": "Révocation en cours...",
+      "title": "Sessions actives"
+    },
     "settings": {
       "appearance": "Apparence",
       "appearanceSubtitle": "Personnalisez l'apparence de Corevia",
-      "currentLanguage": "Langue actuelle",
+      "currentLanguage": "Langue actuelle : {{language}}",
       "dark": "Sombre",
       "language": "Langue",
       "languageSubtitle": "Choisissez votre langue préférée",
@@ -227,6 +244,18 @@
       "saveChanges": "Enregistrer les modifications",
       "saving": "Enregistrement...",
       "success": "Utilisateur mis à jour avec succès"
+    },
+    "useRevokeOtherSessions": {
+      "error": "Échec de la révocation des autres sessions : {{message}}",
+      "success": "Les autres sessions ont été révoquées avec succès"
+    },
+    "useRevokeSession": {
+      "error": "Échec de la révocation de la session : {{message}}",
+      "success": "La session a été révoquée avec succès"
+    },
+    "useRevokeSessions": {
+      "error": "Échec de la révocation de toutes les sessions : {{message}}",
+      "success": "Toutes les sessions ont été révoquées avec succès"
     },
     "useRevokeUserSessions": {
       "error": "Échec de la révocation des sessions : {{message}}",

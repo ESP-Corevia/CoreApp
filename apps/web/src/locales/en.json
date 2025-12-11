@@ -121,10 +121,27 @@
       "verificationStatus": "Verification Status",
       "verified": "Verified"
     },
+    "sessionCell": {
+      "createdAt": "Created:",
+      "currentSession": "Current",
+      "expiresAt": "Expires: {{date}}",
+      "label": "{{browser}} on {{os}}",
+      "revokeSession": "Revoke session"
+    },
+    "sessionsCard": {
+      "description": "Manage your active sessions across devices",
+      "noSessions": "No active sessions found",
+      "revokeAll": "Revoke All Sessions",
+      "revokeOther_one": "Revoke Other Sessions ({{count}})",
+      "revokeOther_other": "Revoke Other Sessions ({{count}})",
+      "revokingAll": "Revoking all...",
+      "revokingOther": "Revoking...",
+      "title": "Active Sessions"
+    },
     "settings": {
       "appearance": "Appearance",
       "appearanceSubtitle": "Customize how Corevia looks",
-      "currentLanguage": "settings.currentLanguage",
+      "currentLanguage": "Current language: {{language}}",
       "dark": "Dark",
       "language": "Language",
       "languageSubtitle": "Choose your preferred language",
@@ -227,6 +244,18 @@
       "saveChanges": "Save Changes",
       "saving": "Saving...",
       "success": "User updated successfully"
+    },
+    "useRevokeOtherSessions": {
+      "error": "Failed to revoke other sessions: {{message}}",
+      "success": "Other sessions revoked successfully"
+    },
+    "useRevokeSession": {
+      "error": "Failed to revoke session: {{message}}",
+      "success": "Session revoked successfully"
+    },
+    "useRevokeSessions": {
+      "error": "Failed to revoke all sessions: {{message}}",
+      "success": "All sessions revoked successfully"
     },
     "useRevokeUserSessions": {
       "error": "Failed to revoke user sessions: {{message}}",
