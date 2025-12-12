@@ -41,7 +41,9 @@
     "@dnd-kit/modifiers",
     "@dnd-kit/sortable",
     "@radix-ui/react-dropdown-menu",
-    "motion"
+    "motion",
+    "@react-router/serve",
+    "tsx"
   ],
   "ignoreExportsUsedInFile": true,
   "ignoreBinaries": [
@@ -55,6 +57,9 @@
     "playwright",
     "lhci",
     "tsx",
-    "i18next-cli"
+    "i18next-cli",
+    "react-router",
+    "knip",
+    "vitest"
   ]
 }
