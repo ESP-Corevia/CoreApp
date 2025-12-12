@@ -9,8 +9,19 @@ on:
       - ".github/workflows/deployment_server.yml"
 
 jobs:
+  check-all:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: ./.github/actions/setup-yarn
+      - name: Run all checks
+        run: yarn check:all
   get-version:
     runs-on: ubuntu-latest
+    needs: check-all
     outputs:
       SERVER_VERSION: ${{ steps.get_version.outputs.SERVER_VERSION }}
     steps:

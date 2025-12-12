@@ -43,7 +43,8 @@
     "@radix-ui/react-dropdown-menu",
     "motion",
     "@react-router/serve",
-    "tsx"
+    "tsx",
+    "vite-tsconfig-paths"
   ],
   "ignoreExportsUsedInFile": true,
   "ignoreBinaries": [
