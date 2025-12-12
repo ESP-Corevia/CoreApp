@@ -67,6 +67,9 @@ jobs:
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
+      - name: Create kube directory
+        run: mkdir -p ~/.kube
+
       - name: Get kubeconfig
         run: |
           doctl kubernetes cluster kubeconfig show corevia > ~/.kube/config
