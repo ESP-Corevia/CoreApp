@@ -67,13 +67,16 @@ jobs:
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
+      - name: Create kube directory
+        run: mkdir -p ~/.kube
+
       - name: Get kubeconfig
         run: |
           doctl kubernetes cluster kubeconfig show corevia > ~/.kube/config
 
       - name: Update deployment image
         run: |
-          kubectl set image deployment/corevia-web web=${{ secrets.DIGITALOCEAN_REGISTRY_URL }}/corevia:web-${{ env.WEB_VERSION }}
+          kubectl set image deployment/corevia-web corevia-web=${{ secrets.DIGITALOCEAN_REGISTRY_URL }}/corevia:web-${{ env.WEB_VERSION }}
 
       - name: Wait for rollout
         run: |
