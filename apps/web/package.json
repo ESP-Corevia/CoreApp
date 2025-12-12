@@ -2,6 +2,7 @@
   "name": "web",
   "private": true,
   "type": "module",
+  "version": "0.0.0",
   "scripts": {
     "build": "react-router build && echo 🏗️✅ Build passed! || (echo ❌ Build failed 💥 && exit 1)",
     "dev": "react-router dev",
