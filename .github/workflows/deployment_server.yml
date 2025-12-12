@@ -100,9 +100,10 @@ jobs:
           docker push registry.digitalocean.com/corevia/corevia:server-latest
 
       - name: Delete previous version tags
+        continue-on-error: true
         if: success()
         run: |
-          # Get all tags starting with "web-" except current and latest
+          # Get all tags starting with "server-" except current and latest
           old_tags=$(doctl registry repository list-tags corevia \
             --format Tag \
             --no-header | grep '^server-' | grep -v "server-${{ env.SERVER_VERSION }}" | grep -v "server-latest")

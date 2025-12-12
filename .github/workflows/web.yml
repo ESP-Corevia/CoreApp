@@ -5,6 +5,9 @@ on:
     types: [ready_for_review, review_requested, opened, reopened, synchronize]
     paths:
       - "apps/web/**"
+  push:
+    branches:
+      - master
 
 permissions:
   contents: read

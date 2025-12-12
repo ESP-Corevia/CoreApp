@@ -99,6 +99,7 @@ jobs:
           docker push registry.digitalocean.com/corevia/corevia:web-latest
 
       - name: Delete previous version tags
+        continue-on-error: true
         if: success()
         run: |
           # Get all tags starting with "web-" except current and latest
