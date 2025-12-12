@@ -4,6 +4,8 @@ This project was created with [Better-T-Stack](https://github.com/AmanVarshney01
 
 [![🎨 Frontend CI (Web)](https://github.com/ESP-Corevia/CoreApp/actions/workflows/web.yml/badge.svg)](https://github.com/ESP-Corevia/CoreApp/actions/workflows/web.yml)
 [![🧩 Backend CI (Server)](https://github.com/ESP-Corevia/CoreApp/actions/workflows/server.yml/badge.svg)](https://github.com/ESP-Corevia/CoreApp/actions/workflows/server.yml)
+[![Build and Push Web Docker Image to DigitalOcean](https://github.com/ESP-Corevia/CoreApp/actions/workflows/deployment_web.yml/badge.svg)](https://github.com/ESP-Corevia/CoreApp/actions/workflows/deployment_web.yml)
+[![Build and Push Docker Server Image to DigitalOcean](https://github.com/ESP-Corevia/CoreApp/actions/workflows/deployment_server.yml/badge.svg)](https://github.com/ESP-Corevia/CoreApp/actions/workflows/deployment_server.yml)
 
 ## Features
 
