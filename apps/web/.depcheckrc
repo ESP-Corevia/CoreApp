@@ -24,3 +24,4 @@ ignores:
   - 'ogl'
   - '@dnd-kit/utilities'
   - '@size-limit/file'
+  - 'vite-tsconfig-paths'
