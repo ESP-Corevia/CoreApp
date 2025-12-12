@@ -49,6 +49,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           file: ./apps/web/Dockerfile
+          provenance: false
 
   deploy:
     runs-on: ubuntu-latest
@@ -61,6 +62,13 @@ jobs:
 
       - name: Setup kubectl
         uses: azure/setup-kubectl@v4
+
+      - name: Log in to DigitalOcean Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ secrets.DIGITALOCEAN_REGISTRY_URL }}
+          username: ${{ secrets.DIGITALOCEAN_USERNAME }}
+          password: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
@@ -85,19 +93,44 @@ jobs:
       - name: Tag as web-latest (only if rollout succeeded)
         if: success()
         run: |
-          doctl registry tag \
-            ${{ secrets.DIGITALOCEAN_REGISTRY_URL }}/corevia:web-${{ env.WEB_VERSION }} \
-            ${{ secrets.DIGITALOCEAN_REGISTRY_URL }}/corevia:web-latest
+          docker pull registry.digitalocean.com/corevia/corevia:web-${{ env.WEB_VERSION }}
+          docker tag registry.digitalocean.com/corevia/corevia:web-${{ env.WEB_VERSION }} \
+                    registry.digitalocean.com/corevia/corevia:web-latest
+          docker push registry.digitalocean.com/corevia/corevia:web-latest
 
-      - name: Delete previous version tag
+      - name: Delete previous version tags
         if: success()
         run: |
-          # List all web-* images except the current version
+          # Get all tags starting with "web-" except current and latest
           old_tags=$(doctl registry repository list-tags corevia \
             --format Tag \
-            --no-header | grep '^web-' | grep -v "web-${{ env.WEB_VERSION }}")
+            --no-header | grep '^web-' | grep -v "web-${{ env.WEB_VERSION }}" | grep -v "web-latest")
+
+          # Track which digests we've already deleted
+          deleted_digests=""
 
           for tag in $old_tags; do
-            echo "Deleting old tag: $tag"
-            doctl registry repository delete-tag corevia:$tag --force
+            echo "Processing tag: $tag"
+
+            # Get the digest for this tag
+            digest=$(doctl registry repository list-tags corevia \
+              --format Tag,Digest \
+              --no-header | grep "^$tag" | awk '{print $2}')
+
+            if [[ -z "$digest" ]]; then
+              echo "No digest found for tag $tag, skipping."
+              continue
+            fi
+
+            # Check if we already deleted this digest
+            if echo "$deleted_digests" | grep -q "$digest"; then
+              echo "Digest $digest already deleted, skipping."
+              continue
+            fi
+
+            echo "Deleting manifest digest: $digest"
+            doctl registry repository delete-manifest corevia $digest --force
+
+            # Mark digest as deleted
+            deleted_digests="$deleted_digests $digest"
           done
