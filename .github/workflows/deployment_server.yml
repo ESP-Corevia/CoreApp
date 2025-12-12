@@ -19,7 +19,7 @@ jobs:
 
       - name: Get server version
         id: get_version
-        run: echo "SERVER_VERSION=$(jq -r .version apps/server/package.json)" >> $GITHUB_ENV
+        run: echo "SERVER_VERSION=$(jq -r .version apps/server/package.json)" >> $GITHUB_OUTPUT
 
   build-and-push:
     needs: get-version

@@ -19,7 +19,7 @@ jobs:
 
       - name: Get web version
         id: get_version
-        run: echo "WEB_VERSION=$(jq -r .version apps/web/package.json)" >> $GITHUB_ENV
+        run: echo "WEB_VERSION=$(jq -r .version apps/web/package.json)" >> $GITHUB_OUTPUT
 
   build-and-push:
     runs-on: ubuntu-latest
