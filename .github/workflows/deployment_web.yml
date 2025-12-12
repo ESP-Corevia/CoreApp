@@ -45,9 +45,7 @@ jobs:
         with:
           context: ./
           push: true
-          tags: |
-            ${{ secrets.DIGITALOCEAN_REGISTRY_URL }}/corevia:web-latest
-            ${{ secrets.DIGITALOCEAN_REGISTRY_URL }}/corevia:${{ env.WEB_VERSION }}
+          tags: ${{ secrets.DIGITALOCEAN_REGISTRY_URL }}/corevia:web-${{ env.WEB_VERSION }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           file: ./apps/web/Dockerfile
@@ -85,7 +83,7 @@ jobs:
         if: success()
         run: |
           doctl registry tag \
-            ${{ secrets.DIGITALOCEAN_REGISTRY_URL }}/corevia:web-${SERVER_VERSION} \
+            ${{ secrets.DIGITALOCEAN_REGISTRY_URL }}/corevia:web-${{ env.WEB_VERSION }} \
             ${{ secrets.DIGITALOCEAN_REGISTRY_URL }}/corevia:web-latest
 
       - name: Delete previous version tag
@@ -94,7 +92,7 @@ jobs:
           # List all web-* images except the current version
           old_tags=$(doctl registry repository list-tags corevia \
             --format Tag \
-            --no-header | grep '^web-' | grep -v "web-${SERVER_VERSION}")
+            --no-header | grep '^web-' | grep -v "web-${{ env.WEB_VERSION }}")
 
           for tag in $old_tags; do
             echo "Deleting old tag: $tag"

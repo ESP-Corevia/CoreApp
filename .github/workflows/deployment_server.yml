@@ -83,16 +83,16 @@ jobs:
         if: success()
         run: |
           doctl registry tag \
-            ${{ secrets.DIGITALOCEAN_REGISTRY_URL }}/corevia:web-${SERVER_VERSION} \
-            ${{ secrets.DIGITALOCEAN_REGISTRY_URL }}/corevia:web-latest
+            ${{ secrets.DIGITALOCEAN_REGISTRY_URL }}/corevia:server-${{ env.SERVER_VERSION }} \
+            ${{ secrets.DIGITALOCEAN_REGISTRY_URL }}/corevia:server-latest
 
       - name: Delete previous version tag
         if: success()
         run: |
-          # List all web-* images except the current version
+          # List all server-* images except the current version
           old_tags=$(doctl registry repository list-tags corevia \
             --format Tag \
-            --no-header | grep '^web-' | grep -v "web-${SERVER_VERSION}")
+            --no-header | grep '^server-' | grep -v "server-${{ env.SERVER_VERSION }}")
 
           for tag in $old_tags; do
             echo "Deleting old tag: $tag"
