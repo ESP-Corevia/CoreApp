@@ -76,7 +76,7 @@ jobs:
 
       - name: Update deployment image
         run: |
-          kubectl set image deployment/corevia-web web=${{ secrets.DIGITALOCEAN_REGISTRY_URL }}/corevia:web-${{ env.WEB_VERSION }}
+          kubectl set image deployment/corevia-web corevia-web=${{ secrets.DIGITALOCEAN_REGISTRY_URL }}/corevia:web-${{ env.WEB_VERSION }}
 
       - name: Wait for rollout
         run: |
