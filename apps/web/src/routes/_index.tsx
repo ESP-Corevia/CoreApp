@@ -1,4 +1,4 @@
-import HomeRoute from '@/features/home/routes';
+import HomeRoute from '@/features/home/routes/index';
 
 import type { Route } from './+types/_index';
 
