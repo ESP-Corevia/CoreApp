@@ -48,6 +48,7 @@ jobs:
           tags: ${{ secrets.DIGITALOCEAN_REGISTRY_URL }}/corevia:server-${{ env.SERVER_VERSION }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          target: server
           file: ./apps/server/Dockerfile
 
   deploy:
@@ -76,13 +77,13 @@ jobs:
 
       - name: Update deployment image
         run: |
-          kubectl set image deployment/corevia-server server=${{ secrets.DIGITALOCEAN_REGISTRY_URL }}/corevia:server-${{ env.SERVER_VERSION }}
+          kubectl set image deployment/corevia-server corevia-server=${{ secrets.DIGITALOCEAN_REGISTRY_URL }}/corevia:server-${{ env.SERVER_VERSION }}
 
       - name: Wait for rollout
         run: |
           kubectl rollout status deployment/corevia-server --timeout=120s
 
-      - name: Tag as web-latest (only if rollout succeeded)
+      - name: Tag as server-latest (only if rollout succeeded)
         if: success()
         run: |
           doctl registry tag \
