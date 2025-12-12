@@ -67,7 +67,7 @@ jobs:
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
         with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN_KUBE }}
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
       - name: Get kubeconfig
         run: |
@@ -80,3 +80,23 @@ jobs:
       - name: Wait for rollout
         run: |
           kubectl rollout status deployment/corevia-web --timeout=120s
+
+      - name: Tag as web-latest (only if rollout succeeded)
+        if: success()
+        run: |
+          doctl registry tag \
+            ${{ secrets.DIGITALOCEAN_REGISTRY_URL }}/corevia:web-${SERVER_VERSION} \
+            ${{ secrets.DIGITALOCEAN_REGISTRY_URL }}/corevia:web-latest
+
+      - name: Delete previous version tag
+        if: success()
+        run: |
+          # List all web-* images except the current version
+          old_tags=$(doctl registry repository list-tags corevia \
+            --format Tag \
+            --no-header | grep '^web-' | grep -v "web-${SERVER_VERSION}")
+
+          for tag in $old_tags; do
+            echo "Deleting old tag: $tag"
+            doctl registry repository delete-tag corevia:$tag --force
+          done
