@@ -1,5 +1,5 @@
 /* v8 ignore file -- @preserve */
-import { Home, LayoutDashboard, Settings, Users, FileText, Bell } from 'lucide-react';
+import { Home, LayoutDashboard, Settings, Users, FileText, Bell, Stethoscope } from 'lucide-react';
 import { useNavigate, useLocation, Link } from 'react-router';
 import {
   Sidebar,
@@ -38,6 +38,11 @@ const mainItems: NavigationItem[] = [
     title: 'Dashboard',
     url: '/dashboard',
     icon: LayoutDashboard,
+  },
+  {
+    title: 'Assistant Santé',
+    url: '/health-assistant',
+    icon: Stethoscope,
   },
 ];
 

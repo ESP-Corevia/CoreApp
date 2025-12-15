@@ -13,6 +13,16 @@ import printBanner from './lib/banner';
 import { createContext } from './lib/context';
 import { appRouter, type AppRouter } from './routers/index';
 import { mergeOpenApiDocs } from './utils/functions';
+const isLocalhostOrigin = (origin: string): boolean => {
+  try {
+    const url = new URL(origin);
+    const hostname = url.hostname;
+    return hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1';
+  } catch {
+    return false;
+  }
+};
+
 const baseCorsConfig = {
   origin: [env.CORS_ORIGIN, 'http://localhost:3000', 'http://127.0.0.1:3000'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
