@@ -1,0 +1,29 @@
+{
+  "release-type": "node",
+  "include-v-in-tag": true,
+  "pull-request-header": ":robot: Corevia Release",
+  "changelog-sections": [
+    { "type": "feat", "section": "✨ Features", "hidden": false },
+    { "type": "fix", "section": "🐛 Fixes", "hidden": false },
+    { "type": "perf", "section": "⚡ Performance", "hidden": false },
+    { "type": "refactor", "section": "🧹 Refactors", "hidden": false },
+    { "type": "docs", "section": "📝 Docs", "hidden": false },
+    { "type": "chore", "section": "🔧 Chores", "hidden": false },
+    { "type": "ci", "section": "🤖 CI", "hidden": false },
+    { "type": "test", "section": "🧪 Tests", "hidden": false }
+  ],
+  "packages": {
+    "apps/web": {
+      "package-name": "web",
+      "changelog-path": "apps/web/CHANGELOG.md"
+    },
+    "apps/server": {
+      "package-name": "server",
+      "changelog-path": "apps/server/CHANGELOG.md"
+    },
+    "apps/home": {
+      "package-name": "home",
+      "changelog-path": "apps/home/CHANGELOG.md"
+    }
+  }
+}
