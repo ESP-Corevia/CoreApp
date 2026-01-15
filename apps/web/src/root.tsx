@@ -21,14 +21,13 @@ import UserMenu from '@/components/userMenu';
 import { I18nProvider } from '@/providers/i18n';
 import './index.css';
 import { ThemeProvider } from '@/providers/theme';
-import { TrpcProvider, createRuntimeTrpcClient } from '@/providers/trpc';
 
 import ClickSpark from './components/ClickSpark';
 import Header from './components/header';
 import ImpersonationBanner from './components/ImpersonationBanner';
 import { Skeleton } from './components/ui/skeleton';
 import { Toaster } from './components/ui/sonner';
-import { QueryProvider, queryClient } from './providers/query';
+import { QueryProvider } from './providers/query';
 
 import type { Route } from './+types/root';
 
@@ -190,27 +189,23 @@ function PageLoadingSkeleton() {
 }
 
 export default function App() {
-  const trpcClient = createRuntimeTrpcClient();
-
   return (
     <QueryProvider>
-      <TrpcProvider client={trpcClient} queryClient={queryClient}>
-        <I18nProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            disableTransitionOnChange
-            storageKey="corevia-ui-theme"
-          >
-            <ThemedShell />
-            <Toaster richColors position="top-right" />
-          </ThemeProvider>
-        </I18nProvider>
-      </TrpcProvider>
+      <I18nProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          disableTransitionOnChange
+          storageKey="corevia-ui-theme"
+        >
+          <ThemedShell />
+          <Toaster richColors position="top-right" />
+        </ThemeProvider>
+      </I18nProvider>
       <ReactQueryDevtools position="bottom" buttonPosition="bottom-right" />
     </QueryProvider>
   );
-} // adjust the import path as needed
+}
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   let code = 'Oops!';
@@ -243,30 +238,27 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   );
 }
 export function HydrateFallback() {
-  const trpcClient = createRuntimeTrpcClient();
   return (
     <QueryProvider>
-      <TrpcProvider client={trpcClient} queryClient={queryClient}>
-        <I18nProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            disableTransitionOnChange
-            storageKey="corevia-ui-theme"
-          >
-            <div className="flex min-h-screen items-center justify-center">
-              <div className="space-y-4 text-center">
-                <div className="flex justify-center">
-                  <div className="border-primary h-12 w-12 animate-spin rounded-full border-4 border-t-transparent" />
-                </div>
-                <p className="text-muted-foreground">
-                  <Trans i18nKey="HydrateFallback.loading">Loading…</Trans>
-                </p>
+      <I18nProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          disableTransitionOnChange
+          storageKey="corevia-ui-theme"
+        >
+          <div className="flex min-h-screen items-center justify-center">
+            <div className="space-y-4 text-center">
+              <div className="flex justify-center">
+                <div className="border-primary h-12 w-12 animate-spin rounded-full border-4 border-t-transparent" />
               </div>
+              <p className="text-muted-foreground">
+                <Trans i18nKey="HydrateFallback.loading">Loading…</Trans>
+              </p>
             </div>
-          </ThemeProvider>
-        </I18nProvider>
-      </TrpcProvider>
+          </div>
+        </ThemeProvider>
+      </I18nProvider>
     </QueryProvider>
   );
 }

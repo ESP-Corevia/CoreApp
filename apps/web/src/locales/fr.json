@@ -193,7 +193,9 @@
       "switchToSignIn": "Vous avez déjà un compte ? Connectez-vous",
       "title": "Créer un compte"
     },
-    "The requested page could not be found.": "",
+    "The requested page could not be found": {
+      "": ""
+    },
     "useImpersonateUser": {
       "failedToImpersonate": "Échec de l'usurpation de l'utilisateur : {{message}}",
       "popupBlocked": "Popup bloquée — autorisez les popups pour usurper des utilisateurs."

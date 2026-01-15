@@ -1,43 +1,51 @@
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useMemo } from 'react';
 
 import type { QueryClient } from '@tanstack/react-query';
 
 import { createTRPCClient, httpBatchLink, type TRPCClient } from '@trpc/client';
 import { createTRPCOptionsProxy } from '@trpc/tanstack-react-query';
 
+import { queryClient } from './query';
+
 import type { AppRouter } from '@server/routers';
 
 type TrpcProxy = ReturnType<typeof createTRPCOptionsProxy<AppRouter>>;
-const TrpcContext = createContext<TrpcProxy | null>(null);
+
+export const trpcClient = createTRPCClient<AppRouter>({
+  links: [
+    httpBatchLink({
+      url: `${import.meta.env.VITE_SERVER_URL}/trpc`,
+      fetch(url, opts) {
+        return fetch(url, { ...opts, credentials: 'include' });
+      },
+    }),
+  ],
+});
+
+export const trpc = createTRPCOptionsProxy<AppRouter>({
+  client: trpcClient,
+  queryClient,
+});
+
+const TrpcTestContext = createContext<TrpcProxy | null>(null);
+
 export const useTrpc = () => {
-  const v = useContext(TrpcContext);
-  if (!v) throw new Error('TrpcContext missing');
-  return v;
+  const testTrpc = useContext(TrpcTestContext);
+  return testTrpc ?? trpc;
 };
 
-export function TrpcProvider({
+export function TrpcTestProvider({
   client,
-  queryClient,
+  queryClient: testQueryClient,
   children,
 }: {
   client: TRPCClient<AppRouter>;
   queryClient: QueryClient;
   children: React.ReactNode;
 }) {
-  const value = createTRPCOptionsProxy<AppRouter>({ client, queryClient });
-  return <TrpcContext.Provider value={value}>{children}</TrpcContext.Provider>;
-}
-
-// Runtime client factory (used by root)
-export function createRuntimeTrpcClient() {
-  return createTRPCClient<AppRouter>({
-    links: [
-      httpBatchLink({
-        url: `${import.meta.env.VITE_SERVER_URL}/trpc`,
-        fetch(url, opts) {
-          return fetch(url, { ...opts, credentials: 'include' });
-        },
-      }),
-    ],
-  });
+  const value = useMemo(
+    () => createTRPCOptionsProxy<AppRouter>({ client, queryClient: testQueryClient }),
+    [client, testQueryClient]
+  );
+  return <TrpcTestContext.Provider value={value}>{children}</TrpcTestContext.Provider>;
 }

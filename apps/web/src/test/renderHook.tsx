@@ -10,7 +10,7 @@ import { MemoryRouter } from 'react-router';
 
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { ThemeProvider } from '@/providers/theme';
-import { TrpcProvider } from '@/providers/trpc';
+import { TrpcTestProvider } from '@/providers/trpc';
 
 import { createTestI18n } from './i18n';
 
@@ -58,7 +58,7 @@ export function renderHook<TProps, TResult>(hook: (props: TProps) => TResult, op
       <I18nextProvider i18n={i18n}>
         <ThemeProvider attribute="class" defaultTheme="system" storageKey="test-theme">
           <QueryClientProvider client={queryClient}>
-            <TrpcProvider client={trpcClient} queryClient={queryClient}>
+            <TrpcTestProvider client={trpcClient} queryClient={queryClient}>
               <SidebarProvider>
                 <MemoryRouter
                   initialEntries={router?.initialEntries}
@@ -67,7 +67,7 @@ export function renderHook<TProps, TResult>(hook: (props: TProps) => TResult, op
                   <NuqsTestingAdapter>{children}</NuqsTestingAdapter>
                 </MemoryRouter>
               </SidebarProvider>
-            </TrpcProvider>
+            </TrpcTestProvider>
           </QueryClientProvider>
         </ThemeProvider>
       </I18nextProvider>
