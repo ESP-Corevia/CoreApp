@@ -44,7 +44,8 @@
     "motion",
     "@react-router/serve",
     "tsx",
-    "vite-tsconfig-paths"
+    "vite-tsconfig-paths",
+    "@vitest/ui"
   ],
   "ignoreExportsUsedInFile": true,
   "ignoreBinaries": [

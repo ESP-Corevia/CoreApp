@@ -193,7 +193,9 @@
       "switchToSignIn": "Already have an account? Sign In",
       "title": "Create Account"
     },
-    "The requested page could not be found.": "The requested page could not be found.",
+    "The requested page could not be found": {
+      "": "The requested page could not be found."
+    },
     "useImpersonateUser": {
       "failedToImpersonate": "Failed to impersonate user: {{message}}",
       "popupBlocked": "Popup blocked — allow popups to impersonate users."
