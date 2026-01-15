@@ -15,15 +15,15 @@
   "packages": {
     "apps/web": {
       "package-name": "web",
-      "changelog-path": "apps/web/CHANGELOG.md"
+      "changelog-path": "web/CHANGELOG.md"
     },
     "apps/server": {
       "package-name": "server",
-      "changelog-path": "apps/server/CHANGELOG.md"
+      "changelog-path": "server/CHANGELOG.md"
     },
     "apps/home": {
       "package-name": "home",
-      "changelog-path": "apps/home/CHANGELOG.md"
+      "changelog-path": "home/CHANGELOG.md"
     }
   }
 }
