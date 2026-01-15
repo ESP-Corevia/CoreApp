@@ -1,7 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { createTRPCClient, type TRPCClient, type TRPCLink } from '@trpc/client';
-// import { createTRPCOptionsProxy } from '@trpc/tanstack-react-query';
 import { observable } from '@trpc/server/observable';
 
 import { render as rtlRender } from '@testing-library/react';
@@ -11,7 +10,7 @@ import { MemoryRouter } from 'react-router';
 
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { ThemeProvider } from '@/providers/theme';
-import { TrpcProvider } from '@/providers/trpc';
+import { TrpcTestProvider } from '@/providers/trpc';
 
 import { createTestI18n } from './i18n';
 
@@ -58,7 +57,7 @@ export function render(ui: React.ReactElement, opts: Options = {}) {
       <I18nextProvider i18n={i18n}>
         <ThemeProvider attribute="class" defaultTheme="system" storageKey="test-theme">
           <QueryClientProvider client={queryClient}>
-            <TrpcProvider client={trpcClient} queryClient={queryClient}>
+            <TrpcTestProvider client={trpcClient} queryClient={queryClient}>
               <SidebarProvider>
                 <MemoryRouter
                   initialEntries={router?.initialEntries}
@@ -67,7 +66,7 @@ export function render(ui: React.ReactElement, opts: Options = {}) {
                   <NuqsTestingAdapter>{children}</NuqsTestingAdapter>
                 </MemoryRouter>
               </SidebarProvider>
-            </TrpcProvider>
+            </TrpcTestProvider>
           </QueryClientProvider>
         </ThemeProvider>
       </I18nextProvider>

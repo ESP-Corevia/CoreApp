@@ -42,8 +42,24 @@ runs:
           ${{ runner.os }}-node${{ inputs.node-version }}-yarn${{ steps.pm.outputs.pm || '4' }}-
           ${{ runner.os }}-node${{ inputs.node-version }}-
 
-    - name: 🧶 Setup Yarn (Berry) & install
-      uses: threeal/setup-yarn-action@v2.0.0
-      with:
-        cache: false
-        version: ${{ steps.pm.outputs.pm }}
+    - name: 🧶 Enable Corepack and Yarn
+      shell: bash
+      run: |
+        corepack enable
+        corepack prepare "yarn@${{ steps.pm.outputs.pm }}" --activate
+
+    - name: ✅ Verify Yarn version
+      shell: bash
+      run: yarn --version
+
+    - name: activate catalog plugins
+      shell: bash
+      run: |
+        if yarn -v >/dev/null 2>&1; then
+          yarn catalogs apply || echo "catalogs not available; skipping"
+        fi
+
+    - name: 📦 Install dependencies
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: yarn install --immutable
