@@ -175,8 +175,8 @@ export function BanUserDialog({ open, onOpenChange, user }: BanUserDialogProps) 
           </form.Field>
 
           {/* Form Actions */}
-          <form.Subscribe selector={state => [state.canSubmit, state.isSubmitting]}>
-            {([canSubmit, isSubmitting]) => (
+          <form.Subscribe selector={state => [state.canSubmit, state.isSubmitting, state.isDirty]}>
+            {([canSubmit, isSubmitting, isDirty]) => (
               <DialogFooter>
                 <Button
                   type="button"
@@ -189,7 +189,11 @@ export function BanUserDialog({ open, onOpenChange, user }: BanUserDialogProps) 
                 >
                   Cancel
                 </Button>
-                <Button type="submit" variant="destructive" disabled={!canSubmit || isSubmitting}>
+                <Button
+                  type="submit"
+                  variant="destructive"
+                  disabled={!canSubmit || isSubmitting || !isDirty}
+                >
                   {isSubmitting ? (
                     <Trans i18nKey="banUserDialog.banning">Banning...</Trans>
                   ) : (

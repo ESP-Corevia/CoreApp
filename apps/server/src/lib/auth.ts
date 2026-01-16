@@ -28,6 +28,7 @@ export const auth = betterAuth({
     },
     changeEmail: {
       enabled: true,
+      updateEmailWithoutVerification: true,
     },
   },
   session: {
@@ -92,6 +93,7 @@ export const auth = betterAuth({
     admin({
       ac,
       roles: { user: userRole, admin: adminRole },
+      allowImpersonatingAdmins: true,
     }),
     lastLoginMethod({
       storeInDatabase: true,
