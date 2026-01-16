@@ -230,8 +230,8 @@ export function EditUserDialog({ open, onOpenChange, user }: EditUserDialogProps
           </form.Field>
 
           {/* Form Actions */}
-          <form.Subscribe selector={state => [state.canSubmit, state.isSubmitting]}>
-            {([canSubmit, isSubmitting]) => (
+          <form.Subscribe selector={state => [state.canSubmit, state.isSubmitting, state.isDirty]}>
+            {([canSubmit, isSubmitting, isDirty]) => (
               <DialogFooter>
                 <Button
                   type="button"
@@ -241,7 +241,7 @@ export function EditUserDialog({ open, onOpenChange, user }: EditUserDialogProps
                 >
                   <Trans i18nKey="userEditModal.cancel">Cancel</Trans>
                 </Button>
-                <Button type="submit" disabled={!canSubmit || isSubmitting}>
+                <Button type="submit" disabled={!canSubmit || isSubmitting || !isDirty}>
                   {isSubmitting
                     ? t('userEditModal.saving', 'Saving...')
                     : t('userEditModal.saveChanges', 'Save Changes')}
