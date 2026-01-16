@@ -282,10 +282,12 @@ export default function Profile({
                 </profileForm.Field>
 
                 {/* Form Actions */}
-                <profileForm.Subscribe selector={state => [state.canSubmit, state.isSubmitting]}>
-                  {([canSubmit, isSubmitting]) => (
+                <profileForm.Subscribe
+                  selector={state => [state.canSubmit, state.isSubmitting, state.isDirty]}
+                >
+                  {([canSubmit, isSubmitting, isDirty]) => (
                     <div className="grid grid-cols-2 gap-2 pt-4">
-                      <Button type="submit" disabled={!canSubmit || isSubmitting}>
+                      <Button type="submit" disabled={!canSubmit || isSubmitting || !isDirty}>
                         {isSubmitting ? (
                           <Trans i18nKey="profile.savingChanges">Saving changes...</Trans>
                         ) : (
@@ -502,10 +504,12 @@ export default function Profile({
             </emailForm.Field>
 
             {/* Form Actions */}
-            <emailForm.Subscribe selector={state => [state.canSubmit, state.isSubmitting]}>
-              {([canSubmit, isSubmitting]) => (
+            <emailForm.Subscribe
+              selector={state => [state.canSubmit, state.isSubmitting, state.isDirty]}
+            >
+              {([canSubmit, isSubmitting, isDirty]) => (
                 <div className="grid grid-cols-2 gap-2 pt-4">
-                  <Button type="submit" disabled={!canSubmit || isSubmitting}>
+                  <Button type="submit" disabled={!canSubmit || isSubmitting || !isDirty}>
                     {isSubmitting ? (
                       <Trans i18nKey="profile.emailModal.updating">Updating email...</Trans>
                     ) : (
@@ -642,10 +646,12 @@ export default function Profile({
             </passwordForm.Field>
 
             {/* Form Actions */}
-            <passwordForm.Subscribe selector={state => [state.canSubmit, state.isSubmitting]}>
-              {([canSubmit, isSubmitting]) => (
+            <passwordForm.Subscribe
+              selector={state => [state.canSubmit, state.isSubmitting, state.isDirty]}
+            >
+              {([canSubmit, isSubmitting, isDirty]) => (
                 <div className="grid grid-cols-2 gap-2 pt-4">
-                  <Button type="submit" disabled={!canSubmit || isSubmitting}>
+                  <Button type="submit" disabled={!canSubmit || isSubmitting || !isDirty}>
                     {isSubmitting ? (
                       <Trans i18nKey="profile.passwordModal.updating">Updating password...</Trans>
                     ) : (
