@@ -37,12 +37,28 @@ jobs:
           target-branch: master
 
       - name: ✅ Mark release PR as published
-        if: ${{ steps.changes.outputs.changed == 'true' && steps.rp.outputs.release_created }}
+        if: ${{
+          steps.changes.outputs.changed == 'true' && (
+          steps.rp.outputs['apps/web--release_created'] == 'true' ||
+          steps.rp.outputs['apps/server--release_created'] == 'true' ||
+          steps.rp.outputs['apps/home--release_created'] == 'true'
+          )
+          }}
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GH_PAT }}
           script: |
-            const tag = `${{ steps.rp.outputs.tag_name }}`;
+            // pick a tag that exists (example: prefer server, else web, else home)
+            const tag =
+              `${{ steps.rp.outputs['apps/server--tag_name'] }}` ||
+              `${{ steps.rp.outputs['apps/web--tag_name'] }}` ||
+              `${{ steps.rp.outputs['apps/home--tag_name'] }}`;
+
+            console.log("Using tag:", tag);
+            if (!tag) {
+              core.setFailed("No tag_name output found from release-please");
+              return;
+            }
 
             const prs = await github.paginate(github.rest.pulls.list, {
               owner: context.repo.owner,
