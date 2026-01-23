@@ -1,12 +1,5 @@
 # Changelog
 
-## [1.1.1](https://github.com/ESP-Corevia/CoreApp/compare/server-v1.1.0...server-v1.1.1) (2026-01-23)
-
-
-### 🐛 Fixes
-
-* **tsdown:** add outExtensions function to specify output file extensions ([#53](https://github.com/ESP-Corevia/CoreApp/issues/53)) ([b93b109](https://github.com/ESP-Corevia/CoreApp/commit/b93b10981f494b20ef8aa2b582f21b87311b6b81))
-
 ## [1.1.0](https://github.com/ESP-Corevia/CoreApp/compare/server-v1.0.0...server-v1.1.0) (2026-01-16)
 
 
