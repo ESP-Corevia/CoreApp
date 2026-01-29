@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/ESP-Corevia/CoreApp/compare/server-v1.3.0...server-v1.3.1) (2026-01-29)
+
+
+### 🧹 Refactors
+
+* delete fields lastName and firstName ([#73](https://github.com/ESP-Corevia/CoreApp/issues/73)) ([5371359](https://github.com/ESP-Corevia/CoreApp/commit/53713596f0c31bbcf1424cebd531a63d7df20eb4))
+
 ## [1.3.0](https://github.com/ESP-Corevia/CoreApp/compare/server-v1.2.0...server-v1.3.0) (2026-01-29)
 
 ### ✨ Features
