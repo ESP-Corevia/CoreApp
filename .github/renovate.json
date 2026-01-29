@@ -1,23 +1,30 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended"],
-
+  "extends": [
+    "config:recommended"
+  ],
   "prCreation": "approval",
   "dependencyDashboard": true,
   "prConcurrentLimit": 5,
   "prHourlyLimit": 2,
-  "schedule": ["at any time"],
-
-  "labels": ["deps"],
-
+  "schedule": [
+    "at any time"
+  ],
+  "labels": [
+    "deps"
+  ],
   "packageRules": [
     {
-      "matchFileNames": ["catalogs.yml", ".yarnrc.yml"],
+      "matchFileNames": [
+        "catalogs.yml",
+        ".yarnrc.yml"
+      ],
       "groupName": "catalogs & yarn config",
       "groupSlug": "catalogs-yarn",
-      "addLabels": ["scope:catalog"]
+      "addLabels": [
+        "scope:catalog"
+      ]
     },
-
     {
       "matchPackageNames": [
         "yarn",
@@ -28,9 +35,10 @@
       ],
       "groupName": "repo toolchain",
       "groupSlug": "toolchain",
-      "addLabels": ["scope:tooling"]
+      "addLabels": [
+        "scope:tooling"
+      ]
     },
-
     {
       "matchPackageNames": [
         "typescript",
@@ -40,27 +48,35 @@
       ],
       "groupName": "typescript",
       "groupSlug": "typescript",
-      "addLabels": ["scope:shared", "scope:tooling"]
+      "addLabels": [
+        "scope:shared",
+        "scope:tooling"
+      ]
     },
-
     {
-      "matchPackagePatterns": [
-        "^eslint($|-)",
-        "^@eslint/",
-        "^eslint-plugin-",
-        "^eslint-config-"
-      ],
       "groupName": "linting (eslint)",
       "groupSlug": "lint-eslint",
-      "addLabels": ["scope:tooling"]
+      "addLabels": [
+        "scope:tooling"
+      ],
+      "matchPackageNames": [
+        "/^eslint($|-)/",
+        "/^@eslint//",
+        "/^eslint-plugin-/",
+        "/^eslint-config-/"
+      ]
     },
     {
-      "matchPackageNames": ["prettier", "prettier-plugin-tailwindcss"],
+      "matchPackageNames": [
+        "prettier",
+        "prettier-plugin-tailwindcss"
+      ],
       "groupName": "formatting (prettier)",
       "groupSlug": "format-prettier",
-      "addLabels": ["scope:tooling"]
+      "addLabels": [
+        "scope:tooling"
+      ]
     },
-
     {
       "matchPackageNames": [
         "vitest",
@@ -71,7 +87,10 @@
       ],
       "groupName": "testing (vitest)",
       "groupSlug": "test-vitest",
-      "addLabels": ["scope:tooling", "scope:test"]
+      "addLabels": [
+        "scope:tooling",
+        "scope:test"
+      ]
     },
     {
       "matchPackageNames": [
@@ -84,49 +103,74 @@
       ],
       "groupName": "testing (dom & testing-library)",
       "groupSlug": "test-dom",
-      "addLabels": ["scope:tooling", "scope:test"]
+      "addLabels": [
+        "scope:tooling",
+        "scope:test"
+      ]
     },
-
     {
-      "matchPackagePatterns": ["^@react-router/", "^react-router$"],
       "groupName": "routing (react-router)",
       "groupSlug": "react-router",
-      "addLabels": ["scope:web"]
+      "addLabels": [
+        "scope:web"
+      ],
+      "matchPackageNames": [
+        "/^@react-router//",
+        "/^react-router$/"
+      ]
     },
     {
-      "matchPackagePatterns": ["^react$", "^react-dom$"],
       "groupName": "react core",
       "groupSlug": "react-core",
-      "addLabels": ["scope:web"]
+      "addLabels": [
+        "scope:web"
+      ],
+      "matchPackageNames": [
+        "/^react$/",
+        "/^react-dom$/"
+      ]
     },
     {
-      "matchPackagePatterns": ["^@tanstack/"],
       "groupName": "tanstack",
       "groupSlug": "tanstack",
-      "addLabels": ["scope:web"]
+      "addLabels": [
+        "scope:web"
+      ],
+      "matchPackageNames": [
+        "/^@tanstack//"
+      ]
     },
-
     {
-      "matchPackagePatterns": ["^@trpc/"],
       "groupName": "tRPC",
       "groupSlug": "trpc",
-      "addLabels": ["scope:shared"]
+      "addLabels": [
+        "scope:shared"
+      ],
+      "matchPackageNames": [
+        "/^@trpc//"
+      ]
     },
-
     {
-      "matchPackageNames": ["better-auth"],
+      "matchPackageNames": [
+        "better-auth"
+      ],
       "groupName": "auth (better-auth)",
       "groupSlug": "auth",
-      "addLabels": ["scope:auth"]
+      "addLabels": [
+        "scope:auth"
+      ]
     },
-
     {
-      "matchPackageNames": ["zod", "zod-openapi"],
+      "matchPackageNames": [
+        "zod",
+        "zod-openapi"
+      ],
       "groupName": "validation (zod)",
       "groupSlug": "zod",
-      "addLabels": ["scope:shared"]
+      "addLabels": [
+        "scope:shared"
+      ]
     },
-
     {
       "matchPackageNames": [
         "fastify",
@@ -141,13 +185,21 @@
       ],
       "groupName": "server (runtime)",
       "groupSlug": "server-runtime",
-      "addLabels": ["scope:server"]
+      "addLabels": [
+        "scope:server"
+      ]
     },
     {
-      "matchPackageNames": ["pg", "@types/pg"],
+      "matchPackageNames": [
+        "pg",
+        "@types/pg"
+      ],
       "groupName": "server (postgres)",
       "groupSlug": "server-db",
-      "addLabels": ["scope:db", "scope:server"]
+      "addLabels": [
+        "scope:db",
+        "scope:server"
+      ]
     },
     {
       "matchPackageNames": [
@@ -158,9 +210,11 @@
       ],
       "groupName": "server (drizzle)",
       "groupSlug": "server-drizzle",
-      "addLabels": ["scope:db", "scope:server"]
+      "addLabels": [
+        "scope:db",
+        "scope:server"
+      ]
     },
-
     {
       "matchPackageNames": [
         "vite",
@@ -172,7 +226,10 @@
       ],
       "groupName": "web build (vite & tailwind)",
       "groupSlug": "web-build",
-      "addLabels": ["scope:web", "scope:tooling"]
+      "addLabels": [
+        "scope:web",
+        "scope:tooling"
+      ]
     },
     {
       "matchPackageNames": [
@@ -182,9 +239,11 @@
       ],
       "groupName": "css lint (stylelint)",
       "groupSlug": "stylelint",
-      "addLabels": ["scope:web", "scope:tooling"]
+      "addLabels": [
+        "scope:web",
+        "scope:tooling"
+      ]
     },
-
     {
       "matchPackageNames": [
         "@playwright/test",
@@ -194,21 +253,31 @@
       ],
       "groupName": "web quality gates (e2e/lhci/size)",
       "groupSlug": "web-quality",
-      "addLabels": ["scope:web", "scope:tooling"]
+      "addLabels": [
+        "scope:web",
+        "scope:tooling"
+      ]
     },
-
     {
-      "matchPackageNames": ["knip", "depcheck"],
+      "matchPackageNames": [
+        "knip",
+        "depcheck"
+      ],
       "groupName": "repo hygiene (knip/depcheck)",
       "groupSlug": "hygiene",
-      "addLabels": ["scope:tooling"]
+      "addLabels": [
+        "scope:tooling"
+      ]
     },
-
     {
-      "matchUpdateTypes": ["lockFileMaintenance"],
+      "matchUpdateTypes": [
+        "lockFileMaintenance"
+      ],
       "groupName": "lockfile maintenance",
       "groupSlug": "lockfile-maintenance",
-      "addLabels": ["scope:tooling"]
+      "addLabels": [
+        "scope:tooling"
+      ]
     }
   ]
 }
