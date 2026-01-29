@@ -2,7 +2,7 @@
   "name": "web",
   "private": true,
   "type": "module",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "scripts": {
     "build": "react-router build && echo 🏗️✅ Build passed! || (echo ❌ Build failed 💥 && exit 1)",
     "dev": "react-router dev",
