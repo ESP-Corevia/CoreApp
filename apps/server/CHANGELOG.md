@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/ESP-Corevia/CoreApp/compare/server-v1.2.0...server-v1.3.0) (2026-01-29)
+
+
+### ✨ Features
+
+* add migration test in ci and renovate ([#60](https://github.com/ESP-Corevia/CoreApp/issues/60)) ([4645de8](https://github.com/ESP-Corevia/CoreApp/commit/4645de8caa7f1eff2777249c614092873c79bc7d))
+
 ## [1.2.0](https://github.com/ESP-Corevia/CoreApp/compare/server-v1.1.1...server-v1.2.0) (2026-01-23)
 
 
