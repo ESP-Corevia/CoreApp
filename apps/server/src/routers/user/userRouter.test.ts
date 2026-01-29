@@ -11,12 +11,10 @@ describe('userRouter', () => {
     it('returns user information when authenticated', async () => {
       const fakeMe = {
         id: faker.string.uuid(),
-        name: faker.person.firstName(),
+        name: faker.person.fullName(),
         email: faker.internet.email(),
         createdAt: faker.date.past(),
         updatedAt: null,
-        firstName: faker.person.firstName(),
-        lastName: faker.person.lastName(),
         image: null,
         lastLoginMethod: null,
         emailVerified: true,

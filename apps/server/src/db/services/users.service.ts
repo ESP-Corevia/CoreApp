@@ -8,12 +8,10 @@ import { buildQueryOptions, type QueryParams } from '@/utils/db';
 
 export const UserOutputSchema = z.object({
   id: z.string(),
-  name: z.string().nullable(),
+  name: z.string(),
   email: z.email(),
   createdAt: z.date(),
   updatedAt: z.date().nullable(),
-  firstName: z.string(),
-  lastName: z.string(),
   image: z.string().nullable(),
   lastLoginMethod: z.string().nullable(),
   emailVerified: z.boolean().nullable(),
@@ -56,8 +54,6 @@ export const createUsersService = (repo: Repositories['usersRepo']) => ({
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
       lastLoginMethod: user.lastLoginMethod,
-      firstName: user.firstName,
-      lastName: user.lastName,
       image: user.image,
       emailVerified: user.emailVerified,
       role: user.role,

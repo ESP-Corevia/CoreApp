@@ -6,8 +6,6 @@ export const mockUser = {
   email: faker.internet.email(),
   createdAt: String(faker.date.past()),
   updatedAt: null,
-  firstName: faker.person.firstName(),
-  lastName: faker.person.lastName(),
   image: null,
   lastLoginMethod: 'email',
   emailVerified: true,

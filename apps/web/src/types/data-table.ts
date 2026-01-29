@@ -58,9 +58,7 @@ export interface DataTableRowAction<TData> {
 export interface User {
   id: string;
   email: string;
-  name: string | null;
-  firstName: string;
-  lastName: string;
+  name: string;
   role: string | null;
   createdAt: string;
   updatedAt: string | null;
