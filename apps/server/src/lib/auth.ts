@@ -33,7 +33,13 @@ export const auth = betterAuth({
       maxAge: 5 * 60,
     },
   },
-  trustedOrigins: [env.CORS_ORIGIN, 'http://localhost:3000', 'http://127.0.0.1:3000'],
+  trustedOrigins: [
+    'flutter://',
+    env.CORS_ORIGIN,
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    'http://10.0.2.2:3000',
+  ],
   emailAndPassword: {
     enabled: true,
     minPasswordLength: 8,
@@ -46,6 +52,7 @@ export const auth = betterAuth({
     database: {
       generateId: false,
     },
+    disableOriginCheck: true,
     useSecureCookies: env.NODE_ENV !== 'development',
     ipAddress: {
       ipAddressHeaders: ['x-client-ip', 'x-forwarded-for'],
