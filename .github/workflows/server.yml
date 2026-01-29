@@ -145,9 +145,9 @@ jobs:
 
   migrations:
     runs-on: ubuntu-latest
-    name: 🐘 Drizzle Migrations Check & Apply
+    name: 🐘 Drizzle Migrations Check
     needs: lint
-    # if: needs.lint.outputs.migrations_changed == 'true'
+    if: needs.lint.outputs.migrations_changed == 'true'
     services:
       postgres:
         image: postgres:16
