@@ -53,8 +53,6 @@ describe('adminRouter', () => {
             id: 'u1',
             email: 'john@example.com',
             name: 'John Doe',
-            firstName: 'John',
-            lastName: 'Doe',
             role: 'user',
             createdAt: new Date('2024-01-01'),
             updatedAt: null,
@@ -84,7 +82,7 @@ describe('adminRouter', () => {
         page: 1,
         perPage: 10,
         search: 'john',
-        searchInFields: ['email', 'firstName'],
+        searchInFields: ['email', 'name'],
         sorting: JSON.stringify({ id: 'email', desc: true }),
         filters: JSON.stringify([
           {
@@ -104,7 +102,7 @@ describe('adminRouter', () => {
           page: 1,
           perPage: 10,
           search: 'john',
-          searchInFields: ['email', 'firstName'],
+          searchInFields: ['email', 'name'],
           sorting: { id: 'email', desc: true },
           filters: [
             {
@@ -147,7 +145,7 @@ describe('adminRouter', () => {
           page: 1,
           perPage: 10,
           search: undefined,
-          searchInFields: ['email', 'name', 'firstName', 'lastName'], // default
+          searchInFields: ['email', 'name'], // default
           sorting: undefined,
           filters: undefined,
         },

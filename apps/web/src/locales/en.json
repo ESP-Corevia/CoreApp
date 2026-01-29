@@ -80,12 +80,6 @@
       "emailUpdated": "Email updated successfully. Please verify your new email.",
       "emailUpdateError": "Failed to update email",
       "error": "Failed to update profile",
-      "firstName": "First Name",
-      "firstNameLabel": "Enter your first name",
-      "firstNameMin": "First name must be at least 3 characters",
-      "lastName": "Last Name",
-      "lastNameLabel": "Enter your last name",
-      "lastNameMin": "Last name must be at least 3 characters",
       "name": "Name",
       "nameLabel": "Enter your name",
       "nameMin": "Name must be at least 3 characters",
@@ -169,14 +163,6 @@
         "email": {
           "invalid": "Invalid email address",
           "label": "Email"
-        },
-        "firstName": {
-          "label": "First Name",
-          "min": "First name must be at least 2 characters"
-        },
-        "lastName": {
-          "label": "Last Name",
-          "min": "Last name must be at least 2 characters"
         },
         "name": {
           "label": "Name",

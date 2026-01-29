@@ -36,7 +36,7 @@ export const adminRouter = router({
         perPage: z.number().int().positive(),
 
         search: z.string().optional(),
-        searchInFields: z.array(z.string()).default(['email', 'name', 'firstName', 'lastName']),
+        searchInFields: z.array(z.string()).default(['email', 'name']),
 
         sorting: z
           .string()
@@ -54,9 +54,7 @@ export const adminRouter = router({
           z.object({
             id: z.string(),
             email: z.email(),
-            name: z.string().nullable(),
-            firstName: z.string(),
-            lastName: z.string(),
+            name: z.string(),
             role: z.string().nullable(),
             createdAt: z.date(),
             updatedAt: z.date().nullable(),
@@ -80,7 +78,7 @@ export const adminRouter = router({
           page: input.page,
           perPage: input.perPage,
           search: input.search,
-          searchInFields: input.searchInFields as ('email' | 'name' | 'firstName' | 'lastName')[],
+          searchInFields: input.searchInFields as ('email' | 'name')[],
           sorting: input.sorting,
           filters: input.filters,
         },

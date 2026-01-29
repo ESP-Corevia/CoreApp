@@ -15,8 +15,6 @@ describe('findById', () => {
   it('delegates to repo.findById with correct parameters', async () => {
     const mockUser = {
       id: 'user-123',
-      firstName: 'John',
-      lastName: 'Doe',
       email: 'john.doe@example.com',
       name: 'John Doe',
       createdAt: new Date(),
@@ -56,8 +54,6 @@ describe('findByEmail', () => {
   it('delegates to repo.findByEmail with correct parameters', async () => {
     const mockUser = {
       id: 'user-123',
-      firstName: 'John',
-      lastName: 'Doe',
       email: 'john.doe@example.com',
       name: 'John Doe',
       createdAt: new Date(),
@@ -93,8 +89,7 @@ describe('getMe', () => {
   it('returns user profile with existing API key', async () => {
     const mockUser = {
       id: 'user-123',
-      firstName: 'John',
-      lastName: 'Doe',
+
       email: 'john.doe@example.com',
       name: 'John Doe',
       createdAt: new Date('2024-01-01'),
@@ -119,8 +114,6 @@ describe('getMe', () => {
       email: 'john.doe@example.com',
       createdAt: new Date('2024-01-01'),
       updatedAt: new Date('2024-01-02'),
-      firstName: 'John',
-      lastName: 'Doe',
       image: 'https://example.com/avatar.jpg',
       lastLoginMethod: 'google',
       emailVerified: true,
@@ -145,8 +138,6 @@ describe('getMe', () => {
   it('handles user with null image correctly', async () => {
     const mockUser = {
       id: 'user-null-image',
-      firstName: 'Test',
-      lastName: 'User',
       email: 'test@example.com',
       name: 'Test User',
       createdAt: new Date(),
@@ -174,8 +165,6 @@ describe('listUsers', () => {
   it('delegates to repo.listUsers with correctly built query options and pagination', async () => {
     const mockUser = {
       id: 'user-123',
-      firstName: 'John',
-      lastName: 'Doe',
       email: 'john.doe@example.com',
       name: 'John Doe',
       createdAt: new Date('2024-01-01'),
@@ -256,8 +245,6 @@ describe('listUsers', () => {
   it('passes filters and sorting parameters correctly', async () => {
     const mockUser = {
       id: 'user-123',
-      firstName: 'John',
-      lastName: 'Doe',
       email: 'john.doe@example.com',
       name: 'John Doe',
       createdAt: new Date('2024-01-01'),

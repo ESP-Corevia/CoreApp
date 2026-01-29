@@ -68,8 +68,6 @@ describe('EditUserDialog', () => {
 
     expect(getByRole('dialog', { name: 'Edit User' })).toBeInTheDocument();
 
-    expect(getByDisplayValue(mockUser.firstName)).toBeInTheDocument();
-    expect(getByDisplayValue(mockUser.lastName)).toBeInTheDocument();
     expect(getByDisplayValue(mockUser.name)).toBeInTheDocument();
     expect(getByDisplayValue(mockUser.email)).toBeInTheDocument();
 
@@ -125,8 +123,6 @@ describe('EditUserDialog', () => {
       expect(authClient.admin.updateUser).toHaveBeenCalledWith({
         userId: mockUser.id,
         data: {
-          firstName: mockUser.firstName,
-          lastName: mockUser.lastName,
           name: 'Johnny Doe',
         },
       });

@@ -55,8 +55,6 @@ describe('CreateUserDialog', () => {
 
     expect(getByRole('dialog', { name: 'Create New User' })).toBeInTheDocument();
     expect(getByRole('textbox', { name: 'Name' })).toBeInTheDocument();
-    expect(getByRole('textbox', { name: 'First Name' })).toBeInTheDocument();
-    expect(getByRole('textbox', { name: 'Last Name' })).toBeInTheDocument();
     expect(getByRole('textbox', { name: 'Email' })).toBeInTheDocument();
     expect(getByLabelText('Password')).toBeInTheDocument();
     expect(getByRole('combobox', { name: 'Role' })).toBeInTheDocument();
@@ -115,8 +113,6 @@ describe('CreateUserDialog', () => {
     const { getByRole, user, getByLabelText } = await setup();
 
     await user.type(getByRole('textbox', { name: 'Name' }), 'John Doe');
-    await user.type(getByRole('textbox', { name: 'First Name' }), 'John');
-    await user.type(getByRole('textbox', { name: 'Last Name' }), 'Doe');
     await user.type(getByRole('textbox', { name: 'Email' }), 'john@example.com');
     await user.type(getByLabelText('Password'), '12345678');
 
@@ -127,7 +123,6 @@ describe('CreateUserDialog', () => {
         email: 'john@example.com',
         password: '12345678',
         name: 'John Doe',
-        data: { firstName: 'John', lastName: 'Doe' },
         role: 'user',
       });
     });
@@ -142,8 +137,6 @@ describe('CreateUserDialog', () => {
     const { getByRole, user, getByLabelText } = await setup();
 
     await user.type(getByRole('textbox', { name: 'Name' }), 'John Doe');
-    await user.type(getByRole('textbox', { name: 'First Name' }), 'John');
-    await user.type(getByRole('textbox', { name: 'Last Name' }), 'Doe');
     await user.type(getByRole('textbox', { name: 'Email' }), 'john@example.com');
     await user.type(getByLabelText('Password'), '12345678');
 

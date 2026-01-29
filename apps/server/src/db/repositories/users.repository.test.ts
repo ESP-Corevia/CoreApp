@@ -21,8 +21,7 @@ beforeEach(async () => {
   [user1] = await db
     .insert(usersTable)
     .values({
-      firstName: 'John',
-      lastName: 'Doe',
+      name: 'John Doe',
       email: 'john.doe@example.com',
       emailVerified: true,
     })
@@ -31,8 +30,7 @@ beforeEach(async () => {
   [user2] = await db
     .insert(usersTable)
     .values({
-      firstName: 'Jane',
-      lastName: 'Smith',
+      name: 'Jane Smith',
       email: 'jane.smith@example.com',
       emailVerified: false,
       image: 'https://example.com/jane.jpg',
@@ -48,8 +46,7 @@ describe('findById', () => {
 
     expect(found).toMatchObject({
       id: user1.id,
-      firstName: 'John',
-      lastName: 'Doe',
+      name: 'John Doe',
       email: 'john.doe@example.com',
       emailVerified: true,
     });
@@ -69,8 +66,7 @@ describe('findByEmail', () => {
 
     expect(found).toMatchObject({
       id: user1.id,
-      firstName: 'John',
-      lastName: 'Doe',
+      name: 'John Doe',
       email: 'john.doe@example.com',
     });
   });
@@ -104,8 +100,8 @@ describe('listUsers', () => {
 
   it('applies pagination correctly', async () => {
     await db.insert(usersTable).values([
-      { firstName: 'A', lastName: 'A', email: 'a@example.com' },
-      { firstName: 'B', lastName: 'B', email: 'b@example.com' },
+      { name: 'A', email: 'a@example.com' },
+      { name: 'B', email: 'b@example.com' },
     ]);
 
     const result = await usersRepo.listUsers({

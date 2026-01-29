@@ -4,9 +4,7 @@ export const users = pgTable(
   'users',
   (t) => ({
     id: t.uuid('id').defaultRandom().primaryKey(),
-    name: t.text('name'),
-    firstName: t.text('first_name').notNull(),
-    lastName: t.text('last_name').notNull(),
+    name: t.text('name').notNull(),
     email: t.text('email').notNull().unique(),
     emailVerified: t
       .boolean('email_verified')

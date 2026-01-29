@@ -41,12 +41,6 @@ export function EditUserDialog({ open, onOpenChange, user }: EditUserDialogProps
 
   const editUserSchema = z.object({
     email: z.email(t('profile.emailInvalid', 'Invalid email address')),
-    firstName: z
-      .string()
-      .min(3, t('profile.firstNameMin', 'First name must be at least 3 characters')),
-    lastName: z
-      .string()
-      .min(3, t('profile.lastNameMin', 'Last name must be at least 3 characters')),
     name: z.string().min(3, t('profile.nameMin', 'Name must be at least 3 characters')),
     role: z.enum(['admin', 'user']),
   });
@@ -54,9 +48,7 @@ export function EditUserDialog({ open, onOpenChange, user }: EditUserDialogProps
   const trpc = useTrpc();
   const form = useForm({
     defaultValues: {
-      firstName: user.firstName,
-      lastName: user.lastName,
-      name: user.name ?? '',
+      name: user.name,
       email: user.email,
       role: (user.role ?? 'user') as 'admin' | 'user',
     },
@@ -74,7 +66,7 @@ export function EditUserDialog({ open, onOpenChange, user }: EditUserDialogProps
         }
         await authClient.admin.updateUser({
           userId: user.id,
-          data: { firstName: value.firstName, lastName: value.lastName, name: value.name },
+          data: { name: value.name },
         });
         toast.success(t('userEditModal.success', 'User updated successfully'));
         void queryClient.invalidateQueries(trpc.admin.listUsers.queryFilter());
@@ -128,50 +120,6 @@ export function EditUserDialog({ open, onOpenChange, user }: EditUserDialogProps
                   onBlur={field.handleBlur}
                   onChange={e => field.handleChange(e.target.value)}
                   placeholder={t('profile.nameLabel', 'Enter your name')}
-                />
-                {field.state.meta.errors.map(error => (
-                  <p key={error?.message} className="text-red-500">
-                    {error?.message}
-                  </p>
-                ))}
-              </div>
-            )}
-          </form.Field>
-          <form.Field name="firstName">
-            {field => (
-              <div className="space-y-2">
-                <Label htmlFor={field.name}>
-                  <Trans i18nKey="profile.firstName">First Name</Trans>
-                </Label>
-                <Input
-                  id={field.name}
-                  name={field.name}
-                  value={field.state.value}
-                  onBlur={field.handleBlur}
-                  onChange={e => field.handleChange(e.target.value)}
-                  placeholder={t('profile.firstNameLabel', 'Enter your first name')}
-                />
-                {field.state.meta.errors.map(error => (
-                  <p key={error?.message} className="text-red-500">
-                    {error?.message}
-                  </p>
-                ))}
-              </div>
-            )}
-          </form.Field>
-          <form.Field name="lastName">
-            {field => (
-              <div className="space-y-2">
-                <Label htmlFor={field.name}>
-                  <Trans i18nKey="profile.lastName">Last Name</Trans>
-                </Label>
-                <Input
-                  id={field.name}
-                  name={field.name}
-                  value={field.state.value}
-                  onBlur={field.handleBlur}
-                  onChange={e => field.handleChange(e.target.value)}
-                  placeholder={t('profile.lastNameLabel', 'Enter your last name')}
                 />
                 {field.state.meta.errors.map(error => (
                   <p key={error?.message} className="text-red-500">

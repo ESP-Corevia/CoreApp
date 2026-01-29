@@ -44,7 +44,7 @@ export function DeleteUserDialog({ open, onOpenChange, user }: DeleteUserDialogP
             <Trans
               i18nKey="userDeleteModal.description"
               defaults="Are you sure you want to delete <strong>{{name}}</strong> ? This action cannot be undone and will permanently remove the user and all their data."
-              values={{ name: user.name ?? user.email }}
+              values={{ name: user.name }}
               components={{
                 strong: <span className="font-semibold" />,
               }}

@@ -106,7 +106,7 @@ export function SetPasswordDialog({ open, onOpenChange, user }: SetPasswordDialo
           <DialogDescription>
             <Trans
               i18nKey="userSetPasswordModal.description"
-              values={{ user: user.name ?? user.email }}
+              values={{ user: user.name }}
               defaults="Set a new password for <strong>{{user}}</strong>."
               components={{ strong: <span className="font-semibold" /> }}
             />

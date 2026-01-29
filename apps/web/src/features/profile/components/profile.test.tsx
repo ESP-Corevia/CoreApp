@@ -28,8 +28,6 @@ describe('Profile', () => {
   const mockUser = {
     id: '123',
     name: 'John Doe',
-    firstName: 'John',
-    lastName: 'Doe',
     email: 'john@example.com',
     emailVerified: true,
     createdAt: new Date(),
@@ -75,8 +73,6 @@ describe('Profile', () => {
     const preview = await findByLabelText('Preview Profile Information');
     const scope = within(preview);
 
-    expect(scope.getByText('John')).toBeVisible();
-    expect(scope.getByText('Doe')).toBeVisible();
     expect(scope.getByText('john@example.com')).toBeVisible();
   });
 
@@ -88,7 +84,7 @@ describe('Profile', () => {
     });
 
     await waitFor(() => {
-      expect(container.textContent).toContain('JD');
+      expect(container.textContent).toContain('J');
     });
   });
 
@@ -159,16 +155,10 @@ describe('Profile', () => {
     await user.click(editButton);
 
     await waitFor(() => {
-      expect(getByLabelText('First Name')).toBeVisible();
+      expect(getByLabelText('Name')).toBeVisible();
     });
 
-    const firstNameInput = getByLabelText('First Name') as HTMLInputElement;
-    const lastNameInput = getByLabelText('Last Name') as HTMLInputElement;
     const nameInput = getByLabelText('Name') as HTMLInputElement;
-    await user.clear(firstNameInput);
-    await user.type(firstNameInput, 'Jane');
-    await user.clear(lastNameInput);
-    await user.type(lastNameInput, 'Smith');
     await user.clear(nameInput);
     await user.type(nameInput, 'Jane Smith');
     const submitButton = getByRole('button', { name: 'Save' });
@@ -176,8 +166,6 @@ describe('Profile', () => {
 
     await waitFor(() => {
       expect(mockUpdateUser).toHaveBeenCalledWith({
-        firstName: 'Jane',
-        lastName: 'Smith',
         name: 'Jane Smith',
       });
     });
