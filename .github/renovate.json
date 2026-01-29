@@ -1,0 +1,214 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+
+  "prCreation": "approval",
+  "dependencyDashboard": true,
+  "prConcurrentLimit": 5,
+  "prHourlyLimit": 2,
+  "schedule": ["at any time"],
+
+  "labels": ["deps"],
+
+  "packageRules": [
+    {
+      "matchFileNames": ["catalogs.yml", ".yarnrc.yml"],
+      "groupName": "catalogs & yarn config",
+      "groupSlug": "catalogs-yarn",
+      "addLabels": ["scope:catalog"]
+    },
+
+    {
+      "matchPackageNames": [
+        "yarn",
+        "turbo",
+        "husky",
+        "@commitlint/cli",
+        "@commitlint/config-conventional"
+      ],
+      "groupName": "repo toolchain",
+      "groupSlug": "toolchain",
+      "addLabels": ["scope:tooling"]
+    },
+
+    {
+      "matchPackageNames": [
+        "typescript",
+        "typescript-eslint",
+        "@typescript-eslint/parser",
+        "@typescript-eslint/eslint-plugin"
+      ],
+      "groupName": "typescript",
+      "groupSlug": "typescript",
+      "addLabels": ["scope:shared", "scope:tooling"]
+    },
+
+    {
+      "matchPackagePatterns": [
+        "^eslint($|-)",
+        "^@eslint/",
+        "^eslint-plugin-",
+        "^eslint-config-"
+      ],
+      "groupName": "linting (eslint)",
+      "groupSlug": "lint-eslint",
+      "addLabels": ["scope:tooling"]
+    },
+    {
+      "matchPackageNames": ["prettier", "prettier-plugin-tailwindcss"],
+      "groupName": "formatting (prettier)",
+      "groupSlug": "format-prettier",
+      "addLabels": ["scope:tooling"]
+    },
+
+    {
+      "matchPackageNames": [
+        "vitest",
+        "@vitest/ui",
+        "@vitest/coverage-v8",
+        "@vitest/coverage-istanbul",
+        "vitest-mock-extended"
+      ],
+      "groupName": "testing (vitest)",
+      "groupSlug": "test-vitest",
+      "addLabels": ["scope:tooling", "scope:test"]
+    },
+    {
+      "matchPackageNames": [
+        "jsdom",
+        "@types/jsdom",
+        "@testing-library/dom",
+        "@testing-library/jest-dom",
+        "@testing-library/react",
+        "@testing-library/user-event"
+      ],
+      "groupName": "testing (dom & testing-library)",
+      "groupSlug": "test-dom",
+      "addLabels": ["scope:tooling", "scope:test"]
+    },
+
+    {
+      "matchPackagePatterns": ["^@react-router/", "^react-router$"],
+      "groupName": "routing (react-router)",
+      "groupSlug": "react-router",
+      "addLabels": ["scope:web"]
+    },
+    {
+      "matchPackagePatterns": ["^react$", "^react-dom$"],
+      "groupName": "react core",
+      "groupSlug": "react-core",
+      "addLabels": ["scope:web"]
+    },
+    {
+      "matchPackagePatterns": ["^@tanstack/"],
+      "groupName": "tanstack",
+      "groupSlug": "tanstack",
+      "addLabels": ["scope:web"]
+    },
+
+    {
+      "matchPackagePatterns": ["^@trpc/"],
+      "groupName": "tRPC",
+      "groupSlug": "trpc",
+      "addLabels": ["scope:shared"]
+    },
+
+    {
+      "matchPackageNames": ["better-auth"],
+      "groupName": "auth (better-auth)",
+      "groupSlug": "auth",
+      "addLabels": ["scope:auth"]
+    },
+
+    {
+      "matchPackageNames": ["zod", "zod-openapi"],
+      "groupName": "validation (zod)",
+      "groupSlug": "zod",
+      "addLabels": ["scope:shared"]
+    },
+
+    {
+      "matchPackageNames": [
+        "fastify",
+        "@fastify/cors",
+        "@scalar/fastify-api-reference",
+        "pino",
+        "pino-pretty",
+        "dotenv",
+        "chalk",
+        "cfonts",
+        "superjson"
+      ],
+      "groupName": "server (runtime)",
+      "groupSlug": "server-runtime",
+      "addLabels": ["scope:server"]
+    },
+    {
+      "matchPackageNames": ["pg", "@types/pg"],
+      "groupName": "server (postgres)",
+      "groupSlug": "server-db",
+      "addLabels": ["scope:db", "scope:server"]
+    },
+    {
+      "matchPackageNames": [
+        "drizzle-orm",
+        "drizzle-kit",
+        "drizzle-seed",
+        "@electric-sql/pglite"
+      ],
+      "groupName": "server (drizzle)",
+      "groupSlug": "server-drizzle",
+      "addLabels": ["scope:db", "scope:server"]
+    },
+
+    {
+      "matchPackageNames": [
+        "vite",
+        "@vitejs/plugin-react",
+        "@tailwindcss/vite",
+        "tailwindcss",
+        "tw-animate-css",
+        "tailwind-merge"
+      ],
+      "groupName": "web build (vite & tailwind)",
+      "groupSlug": "web-build",
+      "addLabels": ["scope:web", "scope:tooling"]
+    },
+    {
+      "matchPackageNames": [
+        "stylelint",
+        "stylelint-config-standard",
+        "stylelint-config-tailwindcss"
+      ],
+      "groupName": "css lint (stylelint)",
+      "groupSlug": "stylelint",
+      "addLabels": ["scope:web", "scope:tooling"]
+    },
+
+    {
+      "matchPackageNames": [
+        "@playwright/test",
+        "@lhci/cli",
+        "size-limit",
+        "@size-limit/file"
+      ],
+      "groupName": "web quality gates (e2e/lhci/size)",
+      "groupSlug": "web-quality",
+      "addLabels": ["scope:web", "scope:tooling"]
+    },
+
+    {
+      "matchPackageNames": ["knip", "depcheck"],
+      "groupName": "repo hygiene (knip/depcheck)",
+      "groupSlug": "hygiene",
+      "addLabels": ["scope:tooling"]
+    },
+
+    {
+      "matchUpdateTypes": ["lockFileMaintenance"],
+      "groupName": "lockfile maintenance",
+      "groupSlug": "lockfile-maintenance",
+      "addLabels": ["scope:tooling"]
+    }
+  ]
+}
