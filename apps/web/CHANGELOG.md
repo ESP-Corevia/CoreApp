@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/ESP-Corevia/CoreApp/compare/web-v1.1.0...web-v1.1.1) (2026-01-29)
+
+
+### 🧹 Refactors
+
+* delete fields lastName and firstName ([#73](https://github.com/ESP-Corevia/CoreApp/issues/73)) ([5371359](https://github.com/ESP-Corevia/CoreApp/commit/53713596f0c31bbcf1424cebd531a63d7df20eb4))
+
 ## [1.1.0](https://github.com/ESP-Corevia/CoreApp/compare/web-v1.0.0...web-v1.1.0) (2026-01-16)
 
 
