@@ -22,12 +22,19 @@ jobs:
   lint:
     name: 🧼 Lint Code
     runs-on: ubuntu-latest
-
+    outputs:
+      migrations_changed: ${{ steps.migrations.outputs.migrations }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 1
-
+      - name: 🔍 Detect migration changes
+        id: migrations
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            migrations:
+              - 'apps/server/src/db/migrations/**'
       - uses: ./.github/actions/setup-yarn
       - uses: ./.github/actions/setup-turbo
         with:
@@ -79,6 +86,23 @@ jobs:
       - name: 🪓 Run Knip
         run: yarn turbo run server#check:knip --cache="${{env.TURBO_CACHE}}"
 
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: app_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d app_test"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=20
+
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/app_test
   depcheck:
     name: 📦 Check Unused Dependencies
     runs-on: ubuntu-latest
@@ -118,3 +142,42 @@ jobs:
           json-final-path: apps/server/coverage/coverage-final.json
           vite-config-path: apps/server/vitest.config.ts
           github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  migrations:
+    runs-on: ubuntu-latest
+    name: 🐘 Drizzle Migrations Check & Apply
+    needs: lint
+    # if: needs.lint.outputs.migrations_changed == 'true'
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: app_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d app_test"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=20
+
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/app_test
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: ./.github/actions/setup-yarn
+
+      - name: ✅ Drizzle migrations check
+        run: yarn turbo run server#db:check
+      - name: 🧾 Ensure migrations are committed
+        run: |
+          yarn turbo run server#db:generate
+          git diff --exit-code
+
+      - name: 🐘 Apply migrations to fresh Postgres
+        run: yarn turbo run server#db:migrate
