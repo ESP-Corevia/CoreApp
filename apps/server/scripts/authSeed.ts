@@ -8,8 +8,7 @@ const USER_COUNT = 100;
 
 function generateUser() {
   return {
-    firstName: faker.person.firstName(),
-    lastName: faker.person.lastName(),
+    name: faker.person.fullName(),
     email: faker.internet.email().toLowerCase(),
     image: faker.image.avatar(),
     role: faker.helpers.arrayElement(['user', 'admin']),

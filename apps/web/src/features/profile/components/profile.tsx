@@ -48,12 +48,6 @@ export default function Profile({
   const { data: currentSession } = authClient.useSession();
 
   const nameSchema = z.object({
-    firstName: z
-      .string()
-      .min(3, t('profile.firstNameMin', 'First name must be at least 3 characters')),
-    lastName: z
-      .string()
-      .min(3, t('profile.lastNameMin', 'Last name must be at least 3 characters')),
     name: z.string().min(3, t('profile.nameMin', 'Name must be at least 3 characters')),
   });
   const emailSchema = z.object({
@@ -80,8 +74,6 @@ export default function Profile({
     });
   const profileForm = useForm({
     defaultValues: {
-      firstName: user?.firstName ?? '',
-      lastName: user?.lastName ?? '',
       name: user?.name ?? '',
     },
     validators: {
@@ -91,8 +83,6 @@ export default function Profile({
     onSubmit: async ({ value }) => {
       try {
         await authClient.updateUser({
-          firstName: value.firstName,
-          lastName: value.lastName,
           name: value.name,
         });
         setIsEditing(false);
@@ -189,10 +179,7 @@ export default function Profile({
             <div className="flex flex-col gap-4 rounded-lg border p-4 sm:flex-row sm:items-center">
               <Avatar className="h-16 w-16">
                 <AvatarImage src={user?.image ?? undefined} />
-                <AvatarFallback>
-                  {(user?.firstName.charAt(0).toUpperCase() ?? '') +
-                    (user?.lastName.charAt(0).toUpperCase() ?? '')}
-                </AvatarFallback>
+                <AvatarFallback>{user?.name.charAt(0).toUpperCase() ?? ''}</AvatarFallback>
               </Avatar>
               <div className="flex-1">
                 <p className="font-medium">{user?.name}</p>
@@ -224,53 +211,6 @@ export default function Profile({
                         onBlur={field.handleBlur}
                         onChange={e => field.handleChange(e.target.value)}
                         placeholder={t('profile.nameLabel', 'Enter your name')}
-                      />
-                      {field.state.meta.errors.map(error => (
-                        <p key={error?.message} className="text-red-500">
-                          {error?.message}
-                        </p>
-                      ))}
-                    </div>
-                  )}
-                </profileForm.Field>
-                {/* First Name */}
-                <profileForm.Field name="firstName">
-                  {field => (
-                    <div className="space-y-2">
-                      <Label htmlFor={field.name}>
-                        <Trans i18nKey="profile.firstName">First Name</Trans>
-                      </Label>
-                      <Input
-                        id={field.name}
-                        name={field.name}
-                        value={field.state.value}
-                        onBlur={field.handleBlur}
-                        onChange={e => field.handleChange(e.target.value)}
-                        placeholder={t('profile.firstNameLabel', 'Enter your first name')}
-                      />
-                      {field.state.meta.errors.map(error => (
-                        <p key={error?.message} className="text-red-500">
-                          {error?.message}
-                        </p>
-                      ))}
-                    </div>
-                  )}
-                </profileForm.Field>
-
-                {/* Last Name */}
-                <profileForm.Field name="lastName">
-                  {field => (
-                    <div className="space-y-2">
-                      <Label htmlFor={field.name}>
-                        <Trans i18nKey="profile.lastName">Last Name</Trans>
-                      </Label>
-                      <Input
-                        id={field.name}
-                        name={field.name}
-                        value={field.state.value}
-                        onBlur={field.handleBlur}
-                        onChange={e => field.handleChange(e.target.value)}
-                        placeholder={t('profile.lastNameLabel', 'Enter your last name')}
                       />
                       {field.state.meta.errors.map(error => (
                         <p key={error?.message} className="text-red-500">
@@ -314,23 +254,6 @@ export default function Profile({
                 aria-label={t('profile.previewLabel', 'Preview Profile Information')}
                 className="space-y-3"
               >
-                {/* Read-only display */}
-                <div className="flex flex-col gap-4 md:flex-row">
-                  <div className="flex-1 rounded-lg border p-4">
-                    <p className="font-medium">
-                      <Trans i18nKey="profile.firstName">First Name</Trans>
-                    </p>
-                    <p className="text-muted-foreground text-sm">{user?.firstName}</p>
-                  </div>
-
-                  <div className="flex-1 rounded-lg border p-4">
-                    <p className="font-medium">
-                      <Trans i18nKey="profile.lastName">Last Name</Trans>
-                    </p>
-                    <p className="text-muted-foreground text-sm">{user?.lastName}</p>
-                  </div>
-                </div>
-
                 {/* Email (read-only with change button) */}
                 <div className="flex items-center justify-between rounded-lg border p-4">
                   <div className="flex items-center gap-3">

@@ -72,9 +72,7 @@ export function BanUserDialog({ open, onOpenChange, user }: BanUserDialogProps) 
           banExpiresIn: value.duration,
         });
 
-        toast.success(
-          t('banUserDialog.success', '{{name}} has been banned', { name: user.name ?? user.email })
-        );
+        toast.success(t('banUserDialog.success', '{{name}} has been banned', { name: user.name }));
         void queryClient.invalidateQueries(trpc.admin.listUsers.queryFilter());
         onOpenChange(false);
         form.reset();
@@ -104,7 +102,7 @@ export function BanUserDialog({ open, onOpenChange, user }: BanUserDialogProps) 
           <DialogDescription>
             <Trans
               i18nKey="banUserDialog.description"
-              values={{ name: user.name ?? user.email }}
+              values={{ name: user.name }}
               defaults="Ban {{ name }} from accessing the application."
             />
           </DialogDescription>

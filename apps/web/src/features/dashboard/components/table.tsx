@@ -5,7 +5,7 @@ import { useEffect, useMemo } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
 
 import { SiGithub, SiGoogle } from '@icons-pack/react-simple-icons';
-import { CalendarClock, Mail, Shield, Text, User as UserIcon, History, Ban } from 'lucide-react';
+import { CalendarClock, Mail, Shield, Text, History, Ban } from 'lucide-react';
 
 import { DataTable } from '@/components/data-table/data-table';
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
@@ -77,39 +77,16 @@ export default function DataTableUsers({
       //   enableHiding: false,
       // },
       {
-        id: 'fullName',
-        accessorKey: 'fullName',
-        header: ({ column }) => <DataTableColumnHeader column={column} label="Full Name" />,
-        cell: ({ row }) => (
-          <div className="flex items-center gap-2">
-            <Avatar className="h-8 w-8">
-              <AvatarImage src={row.original.image ?? undefined} />
-              <AvatarFallback>
-                {row.original.firstName.charAt(0).toUpperCase() +
-                  row.original.lastName.charAt(0).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-            <span className="font-medium">
-              {row.original.firstName} {row.original.lastName}
-            </span>
-          </div>
-        ),
-        meta: {
-          label: 'Full Name',
-          variant: 'text',
-          icon: Text,
-        },
-        // enableColumnFilter: true,
-        enableSorting: false,
-      },
-      {
         id: 'name',
         accessorKey: 'name',
         header: ({ column }) => <DataTableColumnHeader column={column} label="Name" />,
         cell: ({ row }) => (
-          <div className="inline-flex items-center gap-2">
-            <UserIcon className="h-4 w-4" />
-            <span className="text-muted-foreground text-sm">{row.original.name}</span>
+          <div className="flex items-center gap-2">
+            <Avatar className="h-8 w-8">
+              <AvatarImage src={row.original.image ?? undefined} />
+              <AvatarFallback>{row.original.name.charAt(0).toUpperCase()}</AvatarFallback>
+            </Avatar>
+            <span className="font-medium">{row.original.name}</span>
           </div>
         ),
         meta: {
@@ -118,7 +95,7 @@ export default function DataTableUsers({
           icon: Text,
         },
         // enableColumnFilter: true,
-        enableSorting: false,
+        // enableSorting: false,
       },
       {
         id: 'email',
@@ -341,7 +318,6 @@ export default function DataTableUsers({
         banReason: false,
         banExpires: false,
         updatedAt: false,
-        name: false,
       },
     },
     getRowId: row => row.id,
