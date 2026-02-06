@@ -2,7 +2,7 @@ name: Corevia
 
 services:
   postgres:
-    image: postgres:17
+    image: postgres:18
     container_name: Corevia-postgres
     env_file:
       - ./.env
