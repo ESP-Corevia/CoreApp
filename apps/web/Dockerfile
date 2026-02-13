@@ -1,4 +1,4 @@
-FROM node:20-alpine AS base
+FROM node:24.13.1-alpine AS base
 
 # This Dockerfile is copy-pasted into our main docs at /docs/handbook/deploying-with-docker.
 # Make sure you update both files!
@@ -18,6 +18,8 @@ RUN turbo prune web --docker
 
 # ---
 FROM base AS builder
+
+ARG VITE_SERVER_URL
 
 RUN corepack enable
 RUN corepack prepare yarn@4.9.2 --activate

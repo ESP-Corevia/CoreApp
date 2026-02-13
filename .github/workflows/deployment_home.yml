@@ -1,12 +1,12 @@
-name: Build and Push Web Docker Image to DigitalOcean
+name: Build and Push Home Docker Image to DigitalOcean
 
 on:
   push:
     branches:
       - master
     paths:
-      - "apps/web/**"
-      - ".github/workflows/deployment_web.yml"
+      - "apps/home/**"
+      - ".github/workflows/deployment_home.yml"
 
 jobs:
   check-all:
@@ -24,20 +24,20 @@ jobs:
     runs-on: ubuntu-latest
     needs: check-all
     outputs:
-      WEB_VERSION: ${{ steps.get_version.outputs.WEB_VERSION }}
+      HOME_VERSION: ${{ steps.get_version.outputs.HOME_VERSION }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Get web version
+      - name: Get home version
         id: get_version
-        run: echo "WEB_VERSION=$(jq -r .version apps/web/package.json)" >> $GITHUB_OUTPUT
+        run: echo "HOME_VERSION=$(jq -r .version apps/home/package.json)" >> $GITHUB_OUTPUT
 
   build-and-push:
     runs-on: ubuntu-latest
     needs: get-version
     env:
-      WEB_VERSION: ${{ needs.get-version.outputs.WEB_VERSION }}
+      HOME_VERSION: ${{ needs.get-version.outputs.HOME_VERSION }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -57,19 +57,19 @@ jobs:
         with:
           context: ./
           push: true
-          tags: ${{ secrets.DIGITALOCEAN_REGISTRY_URL }}/corevia:web-${{ env.WEB_VERSION }}
+          tags: ${{ secrets.DIGITALOCEAN_REGISTRY_URL }}/corevia:home-${{ env.HOME_VERSION }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          file: ./apps/web/Dockerfile
+          file: ./apps/home/Dockerfile
           provenance: false
           build-args: |
-            VITE_SERVER_URL=${{ secrets.VITE_SERVER_URL }}
+            VITE_BACKOFFICE_DOMAIN=${{ secrets.VITE_BACKOFFICE_DOMAIN }}
 
   deploy:
     runs-on: ubuntu-latest
     needs: [get-version, build-and-push]
     env:
-      WEB_VERSION: ${{ needs.get-version.outputs.WEB_VERSION }}
+      HOME_VERSION: ${{ needs.get-version.outputs.HOME_VERSION }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -98,28 +98,28 @@ jobs:
 
       - name: Update deployment image
         run: |
-          kubectl set image deployment/corevia-web corevia-web=${{ secrets.DIGITALOCEAN_REGISTRY_URL }}/corevia:web-${{ env.WEB_VERSION }}
+          kubectl set image deployment/corevia-home corevia-home=${{ secrets.DIGITALOCEAN_REGISTRY_URL }}/corevia:home-${{ env.HOME_VERSION }}
 
       - name: Wait for rollout
         run: |
-          kubectl rollout status deployment/corevia-web --timeout=120s
+          kubectl rollout status deployment/corevia-home --timeout=120s
 
-      - name: Tag as web-latest (only if rollout succeeded)
+      - name: Tag as home-latest (only if rollout succeeded)
         if: success()
         run: |
-          docker pull registry.digitalocean.com/corevia/corevia:web-${{ env.WEB_VERSION }}
-          docker tag registry.digitalocean.com/corevia/corevia:web-${{ env.WEB_VERSION }} \
-                    registry.digitalocean.com/corevia/corevia:web-latest
-          docker push registry.digitalocean.com/corevia/corevia:web-latest
+          docker pull registry.digitalocean.com/corevia/corevia:home-${{ env.HOME_VERSION }}
+          docker tag registry.digitalocean.com/corevia/corevia:home-${{ env.HOME_VERSION }} \
+                    registry.digitalocean.com/corevia/corevia:home-latest
+          docker push registry.digitalocean.com/corevia/corevia:home-latest
 
       - name: Delete previous version tags
         continue-on-error: true
         if: success()
         run: |
-          # Get all tags starting with "web-" except current and latest
+          # Get all tags starting with "home-" except current and latest
           old_tags=$(doctl registry repository list-tags corevia \
             --format Tag \
-            --no-header | grep '^web-' | grep -v "web-${{ env.WEB_VERSION }}" | grep -v "web-latest")
+            --no-header | grep '^home-' | grep -v "home-${{ env.HOME_VERSION }}" | grep -v "home-latest")
 
           # Track which digests we've already deleted
           deleted_digests=""
@@ -144,6 +144,30 @@ jobs:
             fi
 
             echo "Deleting manifest digest: $digest"
+            doctl registry repository delete-manifest corevia $digest --force
+
+            # Mark digest as deleted
+            deleted_digests="$deleted_digests $digest"
+          done
+
+          # Delete untagged images (images without tags)
+          echo "Deleting untagged images..."
+          untagged_digests=$(doctl registry repository list-tags corevia \
+            --format Tag,Digest \
+            --no-header | awk '$1 == "" {print $2}' | sort | uniq)
+
+          for digest in $untagged_digests; do
+            if [[ -z "$digest" ]]; then
+              continue
+            fi
+
+            # Check if we already deleted this digest
+            if echo "$deleted_digests" | grep -q "$digest"; then
+              echo "Digest $digest already deleted, skipping."
+              continue
+            fi
+
+            echo "Deleting untagged manifest digest: $digest"
             doctl registry repository delete-manifest corevia $digest --force
 
             # Mark digest as deleted
