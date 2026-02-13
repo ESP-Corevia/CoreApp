@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/ESP-Corevia/CoreApp/compare/home-v1.1.0...home-v1.2.0) (2026-02-13)
+
+
+### ✨ Features
+
+* upgrade Node.js to 24.13.1 and add home deployment workflow ([#79](https://github.com/ESP-Corevia/CoreApp/issues/79)) ([ca5557d](https://github.com/ESP-Corevia/CoreApp/commit/ca5557de54384bd7b5ac2ce50cba946f9474fe61))
+
 ## [1.1.0](https://github.com/ESP-Corevia/CoreApp/compare/home-v1.0.0...home-v1.1.0) (2026-01-16)
 
 
