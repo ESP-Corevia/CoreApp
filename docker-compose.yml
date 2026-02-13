@@ -86,7 +86,7 @@ services:
       context: .
       dockerfile: ./apps/web/Dockerfile
       args:
-        VITE_SERVER_URL: "http://server:3000"
+        VITE_SERVER_URL: "http://localhost:3000"
     container_name: Corevia-web
     environment:
       NODE_ENV: production
