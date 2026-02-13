@@ -19,6 +19,8 @@ RUN turbo prune web --docker
 # ---
 FROM base AS builder
 
+ARG VITE_SERVER_URL
+
 RUN corepack enable
 RUN corepack prepare yarn@4.9.2 --activate
 WORKDIR /app

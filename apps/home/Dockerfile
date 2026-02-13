@@ -19,6 +19,8 @@ RUN turbo prune home --docker
 # ---
 FROM base AS builder
 
+ARG VITE_BACKOFFICE_DOMAIN
+
 RUN corepack enable
 RUN corepack prepare yarn@4.9.2 --activate
 WORKDIR /app
