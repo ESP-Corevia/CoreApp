@@ -671,6 +671,17 @@
           "tokensDesc": "Tokens (decroissant)",
           "conversationsDesc": "Conversations (decroissant)"
         }
+      },
+      "empty": {
+        "trend": "Aucune donnee de tendance pour cette periode.",
+        "byFeature": "Aucune donnee d'usage par fonctionnalite pour cette periode.",
+        "byUser": "Aucune donnee d'usage par utilisateur pour cette periode."
+      },
+      "error": {
+        "title": "Impossible de charger les metriques IA",
+        "description": "Reessayez. Raison : {{message}}",
+        "retry": "Reessayer",
+        "unknown": "Erreur inconnue"
       }
     },
     "navigation": {

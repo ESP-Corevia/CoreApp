@@ -191,6 +191,17 @@
           "tokensDesc": "Tokens (high to low)",
           "conversationsDesc": "Conversations (high to low)"
         }
+      },
+      "empty": {
+        "trend": "No trend data for this period.",
+        "byFeature": "No feature usage data for this period.",
+        "byUser": "No user usage data for this period."
+      },
+      "error": {
+        "title": "Unable to load AI metrics",
+        "description": "Try again. Reason: {{message}}",
+        "retry": "Retry",
+        "unknown": "Unknown error"
       }
     },
     "dataTable": {
