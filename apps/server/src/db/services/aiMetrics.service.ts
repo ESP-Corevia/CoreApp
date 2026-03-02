@@ -1,0 +1,274 @@
+import { z } from 'zod';
+
+export const AiMetricsPresetSchema = z.enum(['7d', '30d', '90d', 'custom']);
+export const AiMetricsGroupBySchema = z.enum(['day', 'week']);
+
+export const AiMetricsInputSchema = z.object({
+  preset: AiMetricsPresetSchema.default('30d'),
+  from: z.coerce.date().optional(),
+  to: z.coerce.date().optional(),
+  groupBy: AiMetricsGroupBySchema.default('day'),
+  limit: z.number().int().positive().max(100).default(10),
+});
+
+export const AiMetricsSummarySchema = z.object({
+  totalCostUsd: z.number(),
+  totalTokens: z.number().int(),
+  totalRequests: z.number().int(),
+  totalConversations: z.number().int(),
+  activeUsers: z.number().int(),
+  errorRate: z.number(),
+});
+
+export const AiMetricsTrendPointSchema = z.object({
+  date: z.date(),
+  costUsd: z.number(),
+  tokens: z.number().int(),
+  requests: z.number().int(),
+  conversations: z.number().int(),
+  errorRate: z.number(),
+});
+
+export const AiMetricsByUserSchema = z.object({
+  userId: z.string(),
+  userName: z.string(),
+  userEmail: z.email(),
+  costUsd: z.number(),
+  tokens: z.number().int(),
+  requests: z.number().int(),
+  conversations: z.number().int(),
+  errorRate: z.number(),
+});
+
+export const AiMetricsByFeatureSchema = z.object({
+  feature: z.string(),
+  costUsd: z.number(),
+  tokens: z.number().int(),
+  requests: z.number().int(),
+  conversations: z.number().int(),
+  errorRate: z.number(),
+  activeUsers: z.number().int(),
+});
+
+export const AiMetricsOutputSchema = z.object({
+  isMock: z.literal(true),
+  generatedAt: z.date(),
+  period: z.object({
+    preset: AiMetricsPresetSchema,
+    from: z.date(),
+    to: z.date(),
+    groupBy: AiMetricsGroupBySchema,
+  }),
+  summary: AiMetricsSummarySchema,
+  trend: z.array(AiMetricsTrendPointSchema),
+  byUser: z.array(AiMetricsByUserSchema),
+  byFeature: z.array(AiMetricsByFeatureSchema),
+});
+
+type AiMetricsInput = z.infer<typeof AiMetricsInputSchema>;
+type AiMetricsOutput = z.infer<typeof AiMetricsOutputSchema>;
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+function round2(value: number) {
+  return Math.round(value * 100) / 100;
+}
+
+function distributeInt(total: number, weights: number[]) {
+  const sumWeights = weights.reduce((acc, w) => acc + w, 0);
+  const raw = weights.map((w) => (total * w) / sumWeights);
+  const floorValues = raw.map((v) => Math.floor(v));
+  let remaining = total - floorValues.reduce((acc, v) => acc + v, 0);
+  const order = raw
+    .map((v, idx) => ({ idx, frac: v - floorValues[idx] }))
+    .sort((a, b) => b.frac - a.frac)
+    .map((x) => x.idx);
+
+  for (let i = 0; i < remaining; i += 1) {
+    floorValues[order[i % order.length]] += 1;
+  }
+  return floorValues;
+}
+
+function distributeFloat(total: number, weights: number[]) {
+  const sumWeights = weights.reduce((acc, w) => acc + w, 0);
+  const values = weights.map((w) => round2((total * w) / sumWeights));
+  const current = round2(values.reduce((acc, v) => acc + v, 0));
+  const delta = round2(total - current);
+  values[values.length - 1] = round2(values[values.length - 1] + delta);
+  return values;
+}
+
+function getPresetDays(preset: z.infer<typeof AiMetricsPresetSchema>) {
+  if (preset === '7d') return 7;
+  if (preset === '90d') return 90;
+  return 30;
+}
+
+function resolvePeriod(params: AiMetricsInput) {
+  if (params.preset === 'custom' && params.from && params.to) {
+    const from = params.from <= params.to ? params.from : params.to;
+    const to = params.to >= params.from ? params.to : params.from;
+    return { from, to };
+  }
+
+  const days = getPresetDays(params.preset);
+  const to = new Date();
+  const from = new Date(to.getTime() - (days - 1) * DAY_MS);
+  return { from, to };
+}
+
+function buildTrend({
+  from,
+  to,
+  groupBy,
+}: {
+  from: Date;
+  to: Date;
+  groupBy: z.infer<typeof AiMetricsGroupBySchema>;
+}) {
+  const stepDays = groupBy === 'week' ? 7 : 1;
+  const totalDays = Math.max(1, Math.floor((to.getTime() - from.getTime()) / DAY_MS) + 1);
+  const points = Math.max(1, Math.ceil(totalDays / stepDays));
+
+  const trend = Array.from({ length: points }, (_, index) => {
+    const currentDate = new Date(from.getTime() + index * stepDays * DAY_MS);
+    const requests = 820 + index * 37 + (index % 4) * 19;
+    const tokens = requests * (540 + (index % 5) * 24);
+    const costUsd = round2((tokens / 1000) * 0.0025);
+    const conversations = Math.round(requests * 0.38);
+    const errorRate = round2(1.2 + (index % 5) * 0.17);
+
+    return {
+      date: currentDate,
+      requests,
+      tokens,
+      costUsd,
+      conversations,
+      errorRate,
+    };
+  });
+
+  return trend;
+}
+
+function buildUsers({
+  limit,
+  totalRequests,
+  totalTokens,
+  totalCostUsd,
+  totalConversations,
+}: {
+  limit: number;
+  totalRequests: number;
+  totalTokens: number;
+  totalCostUsd: number;
+  totalConversations: number;
+}) {
+  const templates = [
+    { userId: 'mobile-u-001', userName: 'Alex Martin', userEmail: 'alex.martin@corevia.app' },
+    { userId: 'mobile-u-002', userName: 'Sarah Kim', userEmail: 'sarah.kim@corevia.app' },
+    { userId: 'mobile-u-003', userName: 'Noah Brown', userEmail: 'noah.brown@corevia.app' },
+    { userId: 'mobile-u-004', userName: 'Emma Rossi', userEmail: 'emma.rossi@corevia.app' },
+    { userId: 'mobile-u-005', userName: 'Liam Garcia', userEmail: 'liam.garcia@corevia.app' },
+    { userId: 'mobile-u-006', userName: 'Maya Lopez', userEmail: 'maya.lopez@corevia.app' },
+    { userId: 'mobile-u-007', userName: 'Jules Bernard', userEmail: 'jules.bernard@corevia.app' },
+    { userId: 'mobile-u-008', userName: 'Chloe Nguyen', userEmail: 'chloe.nguyen@corevia.app' },
+    { userId: 'mobile-u-009', userName: 'Ethan Scott', userEmail: 'ethan.scott@corevia.app' },
+    { userId: 'mobile-u-010', userName: 'Lea Moreau', userEmail: 'lea.moreau@corevia.app' },
+  ];
+
+  const selected = templates.slice(0, limit);
+  const weights = selected.map((_, i) => Math.max(1, 16 - i));
+  const requestsByUser = distributeInt(totalRequests, weights);
+  const tokensByUser = distributeInt(totalTokens, weights);
+  const conversationsByUser = distributeInt(totalConversations, weights);
+  const costByUser = distributeFloat(totalCostUsd, weights);
+
+  return selected.map((user, index) => ({
+    ...user,
+    requests: requestsByUser[index],
+    tokens: tokensByUser[index],
+    costUsd: costByUser[index],
+    conversations: conversationsByUser[index],
+    errorRate: round2(0.9 + index * 0.18),
+  }));
+}
+
+function buildFeatures({
+  totalRequests,
+  totalTokens,
+  totalCostUsd,
+  totalConversations,
+}: {
+  totalRequests: number;
+  totalTokens: number;
+  totalCostUsd: number;
+  totalConversations: number;
+}) {
+  const features = ['chat', 'summary', 'recommendation', 'ocr', 'voice'];
+  const weights = [36, 24, 18, 12, 10];
+
+  const requestsByFeature = distributeInt(totalRequests, weights);
+  const tokensByFeature = distributeInt(totalTokens, weights);
+  const conversationsByFeature = distributeInt(totalConversations, weights);
+  const costByFeature = distributeFloat(totalCostUsd, weights);
+  const activeUsersByFeature = distributeInt(520, [34, 26, 20, 11, 9]);
+
+  return features.map((feature, index) => ({
+    feature,
+    requests: requestsByFeature[index],
+    tokens: tokensByFeature[index],
+    costUsd: costByFeature[index],
+    conversations: conversationsByFeature[index],
+    errorRate: round2(1 + index * 0.28),
+    activeUsers: activeUsersByFeature[index],
+  }));
+}
+
+export const createAiMetricsService = () => ({
+  getMetrics: async ({
+    params,
+  }: {
+    params: AiMetricsInput;
+    requesterUserId: string;
+  }): Promise<AiMetricsOutput> => {
+    const { from, to } = resolvePeriod(params);
+    const trend = buildTrend({ from, to, groupBy: params.groupBy });
+
+    const summary = {
+      totalCostUsd: round2(trend.reduce((acc, point) => acc + point.costUsd, 0)),
+      totalTokens: trend.reduce((acc, point) => acc + point.tokens, 0),
+      totalRequests: trend.reduce((acc, point) => acc + point.requests, 0),
+      totalConversations: trend.reduce((acc, point) => acc + point.conversations, 0),
+      activeUsers: 520,
+      errorRate: round2(trend.reduce((acc, point) => acc + point.errorRate, 0) / trend.length),
+    };
+
+    return {
+      isMock: true,
+      generatedAt: new Date(),
+      period: {
+        preset: params.preset,
+        from,
+        to,
+        groupBy: params.groupBy,
+      },
+      summary,
+      trend,
+      byUser: buildUsers({
+        limit: params.limit,
+        totalRequests: summary.totalRequests,
+        totalTokens: summary.totalTokens,
+        totalCostUsd: summary.totalCostUsd,
+        totalConversations: summary.totalConversations,
+      }),
+      byFeature: buildFeatures({
+        totalRequests: summary.totalRequests,
+        totalTokens: summary.totalTokens,
+        totalCostUsd: summary.totalCostUsd,
+        totalConversations: summary.totalConversations,
+      }),
+    };
+  },
+});
