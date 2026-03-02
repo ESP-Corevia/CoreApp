@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import { AiMetricsInputSchema, AiMetricsOutputSchema } from '../../db/services/aiMetrics.service';
 import { adminProcedure, router } from '../../middlewares';
 import {
   createAppointment,
@@ -102,6 +103,26 @@ export const adminRouter = router({
         userId: ctx.session.userId,
       });
       return res;
+    }),
+  getAiMetrics: adminProcedure
+    .meta({
+      openapi: {
+        method: 'GET',
+        path: '/admin/ai-metrics',
+        summary: 'Get AI usage metrics',
+        description:
+          'Returns AI usage metrics for the mobile app, grouped by user and feature. Mock data for now.',
+        protect: true,
+        tags: ['AdminRouter'],
+      },
+    })
+    .input(AiMetricsInputSchema)
+    .output(AiMetricsOutputSchema)
+    .query(async ({ input, ctx }) => {
+      return await ctx.services.aiMetricsService.getMetrics({
+        params: input,
+        requesterUserId: ctx.session.userId,
+      });
     }),
   listDoctors,
   createDoctor,
