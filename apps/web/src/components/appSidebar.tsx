@@ -136,7 +136,7 @@ export function AppSidebar() {
 
   const renderMenuItems = (items: NavigationItem[]) => {
     return items.map(item => (
-      <SidebarMenuItem key={item.title}>
+      <SidebarMenuItem key={item.url}>
         <SidebarMenuButton asChild isActive={isActive(item.url)} className="group relative">
           <button
             type="button"

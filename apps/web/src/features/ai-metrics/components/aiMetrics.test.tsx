@@ -43,6 +43,16 @@ function buildMockMetrics() {
     ],
     byUser: [
       {
+        userId: 'mobile-u-002',
+        userName: 'Lea Dubois',
+        userEmail: 'lea.dubois@corevia.app',
+        costUsd: 12.8,
+        tokens: 42_000,
+        requests: 610,
+        conversations: 220,
+        errorRate: 0.82,
+      },
+      {
         userId: 'mobile-u-001',
         userName: 'Alex Martin',
         userEmail: 'alex.martin@corevia.app',
@@ -54,6 +64,15 @@ function buildMockMetrics() {
       },
     ],
     byFeature: [
+      {
+        feature: 'summary',
+        costUsd: 18.4,
+        tokens: 56_000,
+        requests: 950,
+        conversations: 350,
+        errorRate: 1.12,
+        activeUsers: 210,
+      },
       {
         feature: 'chat',
         costUsd: 52.2,
@@ -71,17 +90,22 @@ describe('AiMetrics', () => {
   it('renders metrics cards and data sections', async () => {
     const handler = vi.fn().mockResolvedValue(buildMockMetrics());
 
-    const { findByText } = render(<AiMetrics session={{ isAuthenticated: true, userId: '123' }} />, {
-      trpcHandlers: {
-        'admin.getAiMetrics': handler,
-      },
-    });
+    const { findByText } = render(
+      <AiMetrics session={{ isAuthenticated: true, userId: '123' }} />,
+      {
+        trpcHandlers: {
+          'admin.getAiMetrics': handler,
+        },
+      }
+    );
 
     expect(await findByText('AI Metrics')).toBeInTheDocument();
     expect(await findByText('By Mobile Feature')).toBeInTheDocument();
     expect(await findByText('By User')).toBeInTheDocument();
     expect(await findByText('Alex Martin')).toBeInTheDocument();
+    expect(await findByText('Lea Dubois')).toBeInTheDocument();
     expect(await findByText('chat')).toBeInTheDocument();
+    expect(await findByText('summary')).toBeInTheDocument();
 
     expect(handler).toHaveBeenCalledWith({
       preset: '30d',
@@ -90,22 +114,35 @@ describe('AiMetrics', () => {
       from: undefined,
       to: undefined,
     });
+
+    const alexName = await findByText('Alex Martin');
+    const leaName = await findByText('Lea Dubois');
+    expect(
+      alexName.compareDocumentPosition(leaName) & Node.DOCUMENT_POSITION_FOLLOWING
+    ).toBeTruthy();
+
+    const chatFeature = await findByText('chat');
+    const summaryFeature = await findByText('summary');
+    expect(
+      chatFeature.compareDocumentPosition(summaryFeature) & Node.DOCUMENT_POSITION_FOLLOWING
+    ).toBeTruthy();
   });
 
   it('renders period filter controls', async () => {
     const user = userEvent.setup();
     const handler = vi.fn().mockResolvedValue(buildMockMetrics());
-    const { getByRole, findByText } = render(
+    const { getByRole, findByText, findAllByText } = render(
       <AiMetrics session={{ isAuthenticated: true, userId: '123' }} />,
       {
         trpcHandlers: {
           'admin.getAiMetrics': handler,
         },
-      },
+      }
     );
 
     expect(await findByText('Group by')).toBeInTheDocument();
     expect(await findByText('Top users')).toBeInTheDocument();
+    expect((await findAllByText('Sort by')).length).toBe(2);
     await user.click(getByRole('button', { name: 'Custom' }));
     expect(handler).toHaveBeenCalled();
   });

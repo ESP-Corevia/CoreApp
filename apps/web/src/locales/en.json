@@ -137,7 +137,8 @@
         "day": "Day",
         "week": "Week",
         "from": "From",
-        "to": "To"
+        "to": "To",
+        "resetDates": "Reset dates"
       },
       "summary": {
         "totalCost": "Total Cost",
@@ -175,6 +176,21 @@
         "conversations": "Conversations",
         "cost": "Cost",
         "errorRate": "Error Rate"
+      },
+      "sort": {
+        "label": "Sort by",
+        "feature": {
+          "costDesc": "Cost (high to low)",
+          "requestsDesc": "Requests (high to low)",
+          "tokensDesc": "Tokens (high to low)",
+          "activeUsersDesc": "Active users (high to low)"
+        },
+        "user": {
+          "costDesc": "Cost (high to low)",
+          "requestsDesc": "Requests (high to low)",
+          "tokensDesc": "Tokens (high to low)",
+          "conversationsDesc": "Conversations (high to low)"
+        }
       }
     },
     "dataTable": {
@@ -653,6 +669,20 @@
     "useUnbanUser": {
       "error": "Failed to unban user: {{message}}",
       "success": "User unbanned successfully"
+    },
+    "navigation": {
+      "home": "Home",
+      "dashboard": "Dashboard",
+      "aiMetrics": "AI Metrics",
+      "settings": "Settings"
+    },
+    "header": {
+      "home": "Home",
+      "dashboard": "Dashboard",
+      "aiMetrics": "AI Metrics",
+      "settings": "Settings",
+      "profile": "Profile",
+      "page": "Page"
     }
   }
 }
