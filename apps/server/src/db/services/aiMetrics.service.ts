@@ -74,6 +74,30 @@ function round2(value: number) {
   return Math.round(value * 100) / 100;
 }
 
+function startOfUtcDay(input: Date) {
+  return new Date(Date.UTC(input.getUTCFullYear(), input.getUTCMonth(), input.getUTCDate()));
+}
+
+function buildSeed(parts: Array<number | string>) {
+  let hash = 2166136261;
+  const raw = parts.join('|');
+  for (let i = 0; i < raw.length; i += 1) {
+    hash ^= raw.charCodeAt(i);
+    hash = Math.imul(hash, 16777619);
+  }
+  return hash >>> 0;
+}
+
+function createSeededRandom(seed: number) {
+  let value = seed >>> 0;
+  return () => {
+    value = (value + 0x6d2b79f5) >>> 0;
+    let t = Math.imul(value ^ (value >>> 15), 1 | value);
+    t ^= t + Math.imul(t ^ (t >>> 7), 61 | t);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
 function distributeInt(total: number, weights: number[]) {
   const sumWeights = weights.reduce((acc, w) => acc + w, 0);
   const raw = weights.map((w) => (total * w) / sumWeights);
@@ -107,13 +131,13 @@ function getPresetDays(preset: z.infer<typeof AiMetricsPresetSchema>) {
 
 function resolvePeriod(params: AiMetricsInput) {
   if (params.preset === 'custom' && params.from && params.to) {
-    const from = params.from <= params.to ? params.from : params.to;
-    const to = params.to >= params.from ? params.to : params.from;
+    const from = startOfUtcDay(params.from <= params.to ? params.from : params.to);
+    const to = startOfUtcDay(params.to >= params.from ? params.to : params.from);
     return { from, to };
   }
 
   const days = getPresetDays(params.preset);
-  const to = new Date();
+  const to = startOfUtcDay(new Date());
   const from = new Date(to.getTime() - (days - 1) * DAY_MS);
   return { from, to };
 }
@@ -122,22 +146,32 @@ function buildTrend({
   from,
   to,
   groupBy,
+  seed,
 }: {
   from: Date;
   to: Date;
   groupBy: z.infer<typeof AiMetricsGroupBySchema>;
+  seed: number;
 }) {
   const stepDays = groupBy === 'week' ? 7 : 1;
   const totalDays = Math.max(1, Math.floor((to.getTime() - from.getTime()) / DAY_MS) + 1);
   const points = Math.max(1, Math.ceil(totalDays / stepDays));
+  const random = createSeededRandom(seed);
+  const baseRequests = 740 + Math.floor(random() * 220);
+  const requestStep = 28 + Math.floor(random() * 31);
+  const baseTokensPerRequest = 480 + Math.floor(random() * 160);
+  const costPerKToken = 0.0022 + random() * 0.0006;
+  const baseErrorRate = 0.85 + random() * 0.45;
 
   const trend = Array.from({ length: points }, (_, index) => {
     const currentDate = new Date(from.getTime() + index * stepDays * DAY_MS);
-    const requests = 820 + index * 37 + (index % 4) * 19;
-    const tokens = requests * (540 + (index % 5) * 24);
-    const costUsd = round2((tokens / 1000) * 0.0025);
+    const requestsJitter = Math.floor((random() - 0.5) * 90);
+    const requests = Math.max(120, baseRequests + index * requestStep + (index % 4) * 21 + requestsJitter);
+    const tokensPerRequest = baseTokensPerRequest + (index % 5) * 26 + Math.floor(random() * 20);
+    const tokens = requests * tokensPerRequest;
+    const costUsd = round2((tokens / 1000) * costPerKToken);
     const conversations = Math.round(requests * 0.38);
-    const errorRate = round2(1.2 + (index % 5) * 0.17);
+    const errorRate = round2(baseErrorRate + (index % 5) * 0.14);
 
     return {
       date: currentDate,
@@ -234,7 +268,14 @@ export const createAiMetricsService = () => ({
     requesterUserId: string;
   }): Promise<AiMetricsOutput> => {
     const { from, to } = resolvePeriod(params);
-    const trend = buildTrend({ from, to, groupBy: params.groupBy });
+    const seed = buildSeed([
+      from.toISOString(),
+      to.toISOString(),
+      params.groupBy,
+      params.limit,
+      params.preset,
+    ]);
+    const trend = buildTrend({ from, to, groupBy: params.groupBy, seed });
 
     const summary = {
       totalCostUsd: round2(trend.reduce((acc, point) => acc + point.costUsd, 0)),
@@ -247,7 +288,7 @@ export const createAiMetricsService = () => ({
 
     return {
       isMock: true,
-      generatedAt: new Date(),
+      generatedAt: to,
       period: {
         preset: params.preset,
         from,
