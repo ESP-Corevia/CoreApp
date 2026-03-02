@@ -57,7 +57,7 @@ function parseDateInput(value: string) {
   return Number.isNaN(date.getTime()) ? undefined : date;
 }
 
-function formatDateInput(date?: Date) {
+function formatDateInput(date?: Date | string) {
   if (!date) return '';
   return new Date(date).toISOString().slice(0, 10);
 }
@@ -78,7 +78,7 @@ function formatPercent(value: number) {
   return `${value.toFixed(2)}%`;
 }
 
-function formatDayLabel(input: Date) {
+function formatDayLabel(input: Date | string) {
   return new Intl.DateTimeFormat(undefined, { month: 'short', day: '2-digit' }).format(
     new Date(input)
   );
@@ -176,10 +176,6 @@ export default function AiMetrics({
     }
   }, [error, t]);
 
-  if (!session?.isAuthenticated) {
-    return null;
-  }
-
   const maxTrendCost = data?.trend.length
     ? Math.max(...data.trend.map(point => point.costUsd), 1)
     : 1;
@@ -217,6 +213,10 @@ export default function AiMetrics({
     rows.sort(comparator);
     return rows;
   }, [data, featureSort]);
+
+  if (!session?.isAuthenticated) {
+    return null;
+  }
 
   return (
     <div className="space-y-6">
