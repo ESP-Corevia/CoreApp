@@ -275,6 +275,63 @@
     "useUnbanUser": {
       "error": "Échec du débannissement : {{message}}",
       "success": "Utilisateur débanni avec succès"
+    },
+    "aiMetrics": {
+      "title": "Metriques IA",
+      "description": "Mesurer la consommation d'API IA par utilisateur et par fonctionnalite mobile.",
+      "mockedData": "Donnees mockees backend",
+      "refreshing": "Actualisation",
+      "loadError": "Echec du chargement des metriques IA : {{message}}",
+      "generatedAt": "Genere le {{date}} (donnees mockees backend pour cette premiere iteration).",
+      "filters": {
+        "sevenDays": "7 jours",
+        "thirtyDays": "30 jours",
+        "ninetyDays": "90 jours",
+        "custom": "Personnalise",
+        "groupBy": "Grouper par",
+        "topUsers": "Top utilisateurs",
+        "day": "Jour",
+        "week": "Semaine",
+        "from": "Du",
+        "to": "Au"
+      },
+      "summary": {
+        "totalCost": "Cout total",
+        "totalCostDesc": "Depense OpenAI estimee",
+        "totalTokens": "Tokens totaux",
+        "totalTokensDesc": "Tokens prompt + completion",
+        "totalRequests": "Requetes totales",
+        "totalRequestsDesc": "Appels API sur la periode",
+        "totalConversations": "Conversations",
+        "totalConversationsDesc": "Conversations IA mobile",
+        "activeUsers": "Utilisateurs actifs",
+        "activeUsersDesc": "Utilisateurs uniques des fonctions IA",
+        "errorRate": "Taux d'erreur",
+        "errorRateDesc": "Ratio des requetes en erreur"
+      },
+      "trend": {
+        "title": "Tendance d'usage",
+        "description": "Evolution des couts IA dans le temps"
+      },
+      "byFeature": {
+        "title": "Par fonctionnalite mobile",
+        "description": "Usage API et couts par capacite mobile",
+        "feature": "Fonctionnalite",
+        "requests": "Requetes",
+        "tokens": "Tokens",
+        "cost": "Cout",
+        "activeUsers": "Utilisateurs actifs"
+      },
+      "byUser": {
+        "title": "Par utilisateur",
+        "description": "Top utilisateurs qui consomment les API IA mobile",
+        "user": "Utilisateur",
+        "requests": "Requetes",
+        "tokens": "Tokens",
+        "conversations": "Conversations",
+        "cost": "Cout",
+        "errorRate": "Taux d'erreur"
+      }
     }
   }
 }
