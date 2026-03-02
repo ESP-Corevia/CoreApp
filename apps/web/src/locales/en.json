@@ -120,6 +120,63 @@
       "loadUsersError": "Failed to load users: {{message}}",
       "userManagement": "Users Management"
     },
+    "aiMetrics": {
+      "title": "AI Metrics",
+      "description": "Measure AI API consumption by user and by mobile feature.",
+      "mockedData": "Mocked backend data",
+      "refreshing": "Refreshing",
+      "loadError": "Failed to load AI metrics: {{message}}",
+      "generatedAt": "Generated at {{date}} (mock backend data for this first iteration).",
+      "filters": {
+        "sevenDays": "7 Days",
+        "thirtyDays": "30 Days",
+        "ninetyDays": "90 Days",
+        "custom": "Custom",
+        "groupBy": "Group by",
+        "topUsers": "Top users",
+        "day": "Day",
+        "week": "Week",
+        "from": "From",
+        "to": "To"
+      },
+      "summary": {
+        "totalCost": "Total Cost",
+        "totalCostDesc": "Estimated OpenAI spend",
+        "totalTokens": "Total Tokens",
+        "totalTokensDesc": "Prompt + completion tokens",
+        "totalRequests": "Total Requests",
+        "totalRequestsDesc": "API calls on selected period",
+        "totalConversations": "Conversations",
+        "totalConversationsDesc": "Mobile AI conversations",
+        "activeUsers": "Active Users",
+        "activeUsersDesc": "Unique users using AI features",
+        "errorRate": "Error Rate",
+        "errorRateDesc": "Failed requests ratio"
+      },
+      "trend": {
+        "title": "Usage Trend",
+        "description": "Evolution of AI costs over time"
+      },
+      "byFeature": {
+        "title": "By Mobile Feature",
+        "description": "API usage and costs by mobile capability",
+        "feature": "Feature",
+        "requests": "Requests",
+        "tokens": "Tokens",
+        "cost": "Cost",
+        "activeUsers": "Active Users"
+      },
+      "byUser": {
+        "title": "By User",
+        "description": "Top users consuming AI APIs in the mobile app",
+        "user": "User",
+        "requests": "Requests",
+        "tokens": "Tokens",
+        "conversations": "Conversations",
+        "cost": "Cost",
+        "errorRate": "Error Rate"
+      }
+    },
     "dataTable": {
       "hide": "Hide",
       "noColumns": "No columns found.",
