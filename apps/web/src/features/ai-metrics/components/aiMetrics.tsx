@@ -157,7 +157,7 @@ export default function AiMetrics({
   const from = isCustomPreset ? parseDateInput(queryParams.from) : undefined;
   const to = isCustomPreset ? parseDateInput(queryParams.to) : undefined;
 
-  const { data, isLoading, error, isFetching } = useGetAiMetrics({
+  const { data, isLoading, error, isFetching, refetch } = useGetAiMetrics({
     preset,
     groupBy,
     limit,
@@ -217,6 +217,9 @@ export default function AiMetrics({
   if (!session?.isAuthenticated) {
     return null;
   }
+
+  const hasLoadError = !!error && !data;
+  const loadErrorMessage = error instanceof Error ? error.message : t('aiMetrics.error.unknown', 'Unknown error');
 
   return (
     <div className="space-y-6">
@@ -357,7 +360,30 @@ export default function AiMetrics({
         </CardContent>
       </Card>
 
-      {isLoading || !data ? (
+      {isLoading && !data ? (
+        <LoadingState />
+      ) : hasLoadError ? (
+        <Card>
+          <CardHeader>
+            <CardTitle>{t('aiMetrics.error.title', 'Unable to load AI metrics')}</CardTitle>
+            <CardDescription>
+              {t('aiMetrics.error.description', 'Try again. Reason: {{message}}', {
+                message: loadErrorMessage,
+              })}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button
+              variant="outline"
+              onClick={() => {
+                void refetch();
+              }}
+            >
+              {t('aiMetrics.error.retry', 'Retry')}
+            </Button>
+          </CardContent>
+        </Card>
+      ) : !data ? (
         <LoadingState />
       ) : (
         <>
@@ -409,20 +435,26 @@ export default function AiMetrics({
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
-                {data.trend.map(point => {
-                  const width = `${Math.max(4, (point.costUsd / maxTrendCost) * 100)}%`;
-                  return (
-                    <div key={point.date.toString()} className="space-y-1.5">
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="text-muted-foreground">{formatDayLabel(point.date)}</span>
-                        <span className="font-medium">{formatCurrency(point.costUsd)}</span>
+                {data.trend.length ? (
+                  data.trend.map(point => {
+                    const width = `${Math.max(4, (point.costUsd / maxTrendCost) * 100)}%`;
+                    return (
+                      <div key={point.date.toString()} className="space-y-1.5">
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="text-muted-foreground">{formatDayLabel(point.date)}</span>
+                          <span className="font-medium">{formatCurrency(point.costUsd)}</span>
+                        </div>
+                        <div className="bg-muted h-2 rounded-full">
+                          <div className="bg-primary h-2 rounded-full" style={{ width }} />
+                        </div>
                       </div>
-                      <div className="bg-muted h-2 rounded-full">
-                        <div className="bg-primary h-2 rounded-full" style={{ width }} />
-                      </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })
+                ) : (
+                  <p className="text-muted-foreground text-sm">
+                    {t('aiMetrics.empty.trend', 'No trend data for this period.')}
+                  </p>
+                )}
               </CardContent>
             </Card>
 
@@ -480,15 +512,23 @@ export default function AiMetrics({
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {sortedFeatures.map(item => (
-                      <TableRow key={item.feature}>
-                        <TableCell className="font-medium">{item.feature}</TableCell>
-                        <TableCell>{formatNumber(item.requests)}</TableCell>
-                        <TableCell>{formatNumber(item.tokens)}</TableCell>
-                        <TableCell>{formatCurrency(item.costUsd)}</TableCell>
-                        <TableCell>{formatNumber(item.activeUsers)}</TableCell>
+                    {sortedFeatures.length ? (
+                      sortedFeatures.map(item => (
+                        <TableRow key={item.feature}>
+                          <TableCell className="font-medium">{item.feature}</TableCell>
+                          <TableCell>{formatNumber(item.requests)}</TableCell>
+                          <TableCell>{formatNumber(item.tokens)}</TableCell>
+                          <TableCell>{formatCurrency(item.costUsd)}</TableCell>
+                          <TableCell>{formatNumber(item.activeUsers)}</TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={5} className="text-muted-foreground text-center">
+                          {t('aiMetrics.empty.byFeature', 'No feature usage data for this period.')}
+                        </TableCell>
                       </TableRow>
-                    ))}
+                    )}
                   </TableBody>
                 </Table>
               </CardContent>
@@ -550,21 +590,29 @@ export default function AiMetrics({
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {sortedUsers.map(item => (
-                    <TableRow key={item.userId}>
-                      <TableCell>
-                        <div className="flex flex-col">
-                          <span className="font-medium">{item.userName}</span>
-                          <span className="text-muted-foreground text-xs">{item.userEmail}</span>
-                        </div>
+                  {sortedUsers.length ? (
+                    sortedUsers.map(item => (
+                      <TableRow key={item.userId}>
+                        <TableCell>
+                          <div className="flex flex-col">
+                            <span className="font-medium">{item.userName}</span>
+                            <span className="text-muted-foreground text-xs">{item.userEmail}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell>{formatNumber(item.requests)}</TableCell>
+                        <TableCell>{formatNumber(item.tokens)}</TableCell>
+                        <TableCell>{formatNumber(item.conversations)}</TableCell>
+                        <TableCell>{formatCurrency(item.costUsd)}</TableCell>
+                        <TableCell>{formatPercent(item.errorRate)}</TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={6} className="text-muted-foreground text-center">
+                        {t('aiMetrics.empty.byUser', 'No user usage data for this period.')}
                       </TableCell>
-                      <TableCell>{formatNumber(item.requests)}</TableCell>
-                      <TableCell>{formatNumber(item.tokens)}</TableCell>
-                      <TableCell>{formatNumber(item.conversations)}</TableCell>
-                      <TableCell>{formatCurrency(item.costUsd)}</TableCell>
-                      <TableCell>{formatPercent(item.errorRate)}</TableCell>
                     </TableRow>
-                  ))}
+                  )}
                 </TableBody>
               </Table>
             </CardContent>

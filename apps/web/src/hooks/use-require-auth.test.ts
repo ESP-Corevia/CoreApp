@@ -25,6 +25,8 @@ vi.mock('@/lib/auth-client', () => ({
 describe('useRequireAuth', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockLocation.pathname = '/dashboard';
+    mockLocation.search = '';
   });
 
   it('should return loading state when session is pending', () => {
@@ -134,11 +136,35 @@ describe('useRequireAuth', () => {
       });
     });
   });
+
+  it('should redirect to 403 from ai-metrics and preserve query params', async () => {
+    mockLocation.pathname = '/ai-metrics';
+    mockLocation.search = '?preset=90d&groupBy=week';
+    mockUseSession.mockReturnValue({
+      data: {
+        isAuthenticated: true,
+        user: { id: '1', name: 'John' },
+      },
+      isPending: false,
+    });
+    mockAdminHasPermission.mockReturnValue({ data: { success: false } });
+
+    renderHook(() => useRequireAuth());
+
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith('/403', {
+        replace: true,
+        state: { from: '/ai-metrics?preset=90d&groupBy=week' },
+      });
+    });
+  });
 });
 
 describe('useGuestOnly', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockLocation.pathname = '/dashboard';
+    mockLocation.search = '';
   });
 
   it('should return loading state when session is pending', () => {

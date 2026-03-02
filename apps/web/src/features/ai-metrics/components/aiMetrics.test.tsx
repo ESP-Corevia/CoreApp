@@ -147,6 +147,43 @@ describe('AiMetrics', () => {
     expect(handler).toHaveBeenCalled();
   });
 
+  it('renders empty states for trend, user and feature sections', async () => {
+    const handler = vi.fn().mockResolvedValue({
+      ...buildMockMetrics(),
+      trend: [],
+      byUser: [],
+      byFeature: [],
+    });
+    const { findByText } = render(
+      <AiMetrics session={{ isAuthenticated: true, userId: '123' }} />,
+      {
+        trpcHandlers: {
+          'admin.getAiMetrics': handler,
+        },
+      }
+    );
+
+    expect(await findByText('No trend data for this period.')).toBeInTheDocument();
+    expect(await findByText('No feature usage data for this period.')).toBeInTheDocument();
+    expect(await findByText('No user usage data for this period.')).toBeInTheDocument();
+  });
+
+  it('renders error state when metrics query fails', async () => {
+    const handler = vi.fn().mockRejectedValue(new Error('network unavailable'));
+    const { findByText, findByRole } = render(
+      <AiMetrics session={{ isAuthenticated: true, userId: '123' }} />,
+      {
+        trpcHandlers: {
+          'admin.getAiMetrics': handler,
+        },
+      }
+    );
+
+    expect(await findByText('Unable to load AI metrics')).toBeInTheDocument();
+    expect(await findByText('Try again. Reason: network unavailable')).toBeInTheDocument();
+    expect(await findByRole('button', { name: 'Retry' })).toBeInTheDocument();
+  });
+
   it('returns null when session is not authenticated', () => {
     const handler = vi.fn();
     const { queryByText } = render(<AiMetrics session={null} />, {
