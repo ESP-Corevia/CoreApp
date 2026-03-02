@@ -11,6 +11,7 @@ export default function Header() {
     const titles: Record<string, string> = {
       '/': t('nav.home', 'Home'),
       '/dashboard': t('nav.dashboard', 'Dashboard'),
+      '/ai-metrics': t('nav.aiMetrics', 'AI Metrics'),
       '/settings': t('nav.settings', 'Settings'),
       '/profile': t('nav.profile', 'Profile'),
       '/medications': t('nav.medications', 'Medications'),

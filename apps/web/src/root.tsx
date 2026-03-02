@@ -92,6 +92,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 const ROUTES_WITH_LAYOUT = [
   '/',
   '/dashboard',
+  '/ai-metrics',
   '/doctors',
   '/patients',
   '/appointments',
