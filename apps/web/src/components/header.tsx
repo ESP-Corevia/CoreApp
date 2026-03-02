@@ -9,6 +9,7 @@ export default function Header() {
     const titles: Record<string, string> = {
       '/': 'Home',
       '/dashboard': 'Dashboard',
+      '/ai-metrics': 'AI Metrics',
       '/settings': 'Settings',
       '/profile': 'Profile',
     };
