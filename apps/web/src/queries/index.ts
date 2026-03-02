@@ -3,6 +3,7 @@ export { useCreateDoctor } from './useCreateDoctor';
 export { useCreatePatient } from './useCreatePatient';
 export { useDeleteAppointment } from './useDeleteAppointment';
 export { useDeletePatient } from './useDeletePatient';
+export { useGetAiMetrics } from './useGetAiMetrics';
 export { useDeleteUser } from './useDeleteUser';
 export { useImpersonateUser } from './useImpersonateUser';
 export { useListAppointments } from './useListAppointments';
