@@ -293,7 +293,8 @@
         "day": "Jour",
         "week": "Semaine",
         "from": "Du",
-        "to": "Au"
+        "to": "Au",
+        "resetDates": "Reinitialiser les dates"
       },
       "summary": {
         "totalCost": "Cout total",
@@ -331,7 +332,36 @@
         "conversations": "Conversations",
         "cost": "Cout",
         "errorRate": "Taux d'erreur"
+      },
+      "sort": {
+        "label": "Trier par",
+        "feature": {
+          "costDesc": "Cout (decroissant)",
+          "requestsDesc": "Requetes (decroissant)",
+          "tokensDesc": "Tokens (decroissant)",
+          "activeUsersDesc": "Utilisateurs actifs (decroissant)"
+        },
+        "user": {
+          "costDesc": "Cout (decroissant)",
+          "requestsDesc": "Requetes (decroissant)",
+          "tokensDesc": "Tokens (decroissant)",
+          "conversationsDesc": "Conversations (decroissant)"
+        }
       }
+    },
+    "navigation": {
+      "home": "Accueil",
+      "dashboard": "Dashboard",
+      "aiMetrics": "Metriques IA",
+      "settings": "Parametres"
+    },
+    "header": {
+      "home": "Accueil",
+      "dashboard": "Dashboard",
+      "aiMetrics": "Metriques IA",
+      "settings": "Parametres",
+      "profile": "Profil",
+      "page": "Page"
     }
   }
 }

@@ -22,7 +22,8 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 interface NavigationItem {
-  title: string;
+  titleKey: string;
+  titleFallback: string;
   url: string;
   icon: typeof Home;
   badge?: string;
@@ -30,17 +31,20 @@ interface NavigationItem {
 
 const mainItems: NavigationItem[] = [
   {
-    title: 'Home',
+    titleKey: 'navigation.home',
+    titleFallback: 'Home',
     url: '/',
     icon: Home,
   },
   {
-    title: 'Dashboard',
+    titleKey: 'navigation.dashboard',
+    titleFallback: 'Dashboard',
     url: '/dashboard',
     icon: LayoutDashboard,
   },
   {
-    title: 'AI Metrics',
+    titleKey: 'navigation.aiMetrics',
+    titleFallback: 'AI Metrics',
     url: '/ai-metrics',
     icon: Bot,
   },
@@ -67,7 +71,8 @@ const secondaryItems: NavigationItem[] = [
 
 const settingsItems: NavigationItem[] = [
   {
-    title: 'Settings',
+    titleKey: 'navigation.settings',
+    titleFallback: 'Settings',
     url: '/settings',
     icon: Settings,
   },
@@ -112,6 +117,7 @@ export default function FooterDateTime({ onlyYear = false }: { onlyYear?: boolea
 export function AppSidebar() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useTranslation();
   const { data: session } = authClient.useSession();
   const trpc = useTrpc();
   const { data: user, isLoading } = useQuery({
@@ -125,7 +131,7 @@ export function AppSidebar() {
 
   const renderMenuItems = (items: NavigationItem[]) => {
     return items.map(item => (
-      <SidebarMenuItem key={item.title}>
+      <SidebarMenuItem key={item.url}>
         <SidebarMenuButton asChild isActive={isActive(item.url)} className="group relative">
           <button
             onClick={() => {
@@ -134,7 +140,7 @@ export function AppSidebar() {
             className="transition-all duration-200"
           >
             <item.icon className="mr-2 h-4 w-4" />
-            <span className="flex-1 text-left">{item.title}</span>
+            <span className="flex-1 text-left">{t(item.titleKey, item.titleFallback)}</span>
             {item.badge && (
               <div className="ml-2 inline-flex items-center justify-center rounded-full bg-red-600 px-2 py-0 text-xs font-medium text-white">
                 {item.badge}

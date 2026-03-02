@@ -1,4 +1,4 @@
-import { type ComponentType, useEffect } from 'react';
+import { type ComponentType, useEffect, useMemo } from 'react';
 
 import { Brain, Coins, MessageSquare, Users, Waypoints, AlertTriangle } from 'lucide-react';
 import { parseAsInteger, parseAsString, useQueryStates } from 'nuqs';
@@ -9,14 +9,31 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { useGetAiMetrics } from '@/queries';
 import type { AiMetricsGroupBy, AiMetricsPreset } from '@/queries/useGetAiMetrics';
 
 const PRESETS: AiMetricsPreset[] = ['7d', '30d', '90d', 'custom'];
 const GROUP_BY_VALUES: AiMetricsGroupBy[] = ['day', 'week'];
+const USER_SORTS = ['costDesc', 'requestsDesc', 'tokensDesc', 'conversationsDesc'] as const;
+const FEATURE_SORTS = ['costDesc', 'requestsDesc', 'tokensDesc', 'activeUsersDesc'] as const;
+type UserSort = (typeof USER_SORTS)[number];
+type FeatureSort = (typeof FEATURE_SORTS)[number];
 
 function isPreset(value: string): value is AiMetricsPreset {
   return PRESETS.includes(value as AiMetricsPreset);
@@ -24,6 +41,14 @@ function isPreset(value: string): value is AiMetricsPreset {
 
 function isGroupBy(value: string): value is AiMetricsGroupBy {
   return GROUP_BY_VALUES.includes(value as AiMetricsGroupBy);
+}
+
+function isUserSort(value: string): value is UserSort {
+  return USER_SORTS.includes(value as UserSort);
+}
+
+function isFeatureSort(value: string): value is FeatureSort {
+  return FEATURE_SORTS.includes(value as FeatureSort);
 }
 
 function parseDateInput(value: string) {
@@ -54,7 +79,9 @@ function formatPercent(value: number) {
 }
 
 function formatDayLabel(input: Date) {
-  return new Intl.DateTimeFormat(undefined, { month: 'short', day: '2-digit' }).format(new Date(input));
+  return new Intl.DateTimeFormat(undefined, { month: 'short', day: '2-digit' }).format(
+    new Date(input)
+  );
 }
 
 function MetricCard({
@@ -116,11 +143,15 @@ export default function AiMetrics({
     from: parseAsString.withDefault(''),
     to: parseAsString.withDefault(''),
     limit: parseAsInteger.withDefault(10),
+    userSort: parseAsString.withDefault('costDesc'),
+    featureSort: parseAsString.withDefault('costDesc'),
   });
 
   const preset = isPreset(queryParams.preset) ? queryParams.preset : '30d';
   const groupBy = isGroupBy(queryParams.groupBy) ? queryParams.groupBy : 'day';
   const limit = [5, 10, 20].includes(queryParams.limit) ? queryParams.limit : 10;
+  const userSort = isUserSort(queryParams.userSort) ? queryParams.userSort : 'costDesc';
+  const featureSort = isFeatureSort(queryParams.featureSort) ? queryParams.featureSort : 'costDesc';
   const isCustomPreset = preset === 'custom';
 
   const from = isCustomPreset ? parseDateInput(queryParams.from) : undefined;
@@ -140,7 +171,7 @@ export default function AiMetrics({
       toast.error(
         t('aiMetrics.loadError', 'Failed to load AI metrics: {{message}}', {
           message: error instanceof Error ? error.message : 'Unknown error',
-        }),
+        })
       );
     }
   }, [error, t]);
@@ -152,6 +183,40 @@ export default function AiMetrics({
   const maxTrendCost = data?.trend.length
     ? Math.max(...data.trend.map(point => point.costUsd), 1)
     : 1;
+  const sortedUsers = useMemo(() => {
+    if (!data) return [];
+    const rows = [...data.byUser];
+    const comparator = (() => {
+      if (userSort === 'requestsDesc')
+        return (a: (typeof rows)[number], b: (typeof rows)[number]) => b.requests - a.requests;
+      if (userSort === 'tokensDesc')
+        return (a: (typeof rows)[number], b: (typeof rows)[number]) => b.tokens - a.tokens;
+      if (userSort === 'conversationsDesc') {
+        return (a: (typeof rows)[number], b: (typeof rows)[number]) =>
+          b.conversations - a.conversations;
+      }
+      return (a: (typeof rows)[number], b: (typeof rows)[number]) => b.costUsd - a.costUsd;
+    })();
+    rows.sort(comparator);
+    return rows;
+  }, [data, userSort]);
+  const sortedFeatures = useMemo(() => {
+    if (!data) return [];
+    const rows = [...data.byFeature];
+    const comparator = (() => {
+      if (featureSort === 'requestsDesc')
+        return (a: (typeof rows)[number], b: (typeof rows)[number]) => b.requests - a.requests;
+      if (featureSort === 'tokensDesc')
+        return (a: (typeof rows)[number], b: (typeof rows)[number]) => b.tokens - a.tokens;
+      if (featureSort === 'activeUsersDesc') {
+        return (a: (typeof rows)[number], b: (typeof rows)[number]) =>
+          b.activeUsers - a.activeUsers;
+      }
+      return (a: (typeof rows)[number], b: (typeof rows)[number]) => b.costUsd - a.costUsd;
+    })();
+    rows.sort(comparator);
+    return rows;
+  }, [data, featureSort]);
 
   return (
     <div className="space-y-6">
@@ -162,7 +227,7 @@ export default function AiMetrics({
             <CardDescription>
               {t(
                 'aiMetrics.description',
-                'Measure AI API consumption by user and by mobile feature.',
+                'Measure AI API consumption by user and by mobile feature.'
               )}
             </CardDescription>
           </div>
@@ -182,9 +247,7 @@ export default function AiMetrics({
                 size="sm"
                 onClick={() => {
                   void setQueryParams(
-                    value === 'custom'
-                      ? { preset: value }
-                      : { preset: value, from: '', to: '' },
+                    value === 'custom' ? { preset: value } : { preset: value, from: '', to: '' }
                   );
                 }}
               >
@@ -246,34 +309,50 @@ export default function AiMetrics({
           </div>
 
           {isCustomPreset ? (
-            <div className="grid gap-3 md:grid-cols-2">
-              <div className="space-y-2">
-                <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
-                  {t('aiMetrics.filters.from', 'From')}
-                </p>
-                <Input
-                  type="date"
-                  aria-label={t('aiMetrics.filters.from', 'From')}
-                  value={queryParams.from}
-                  onChange={event => {
-                    void setQueryParams({ preset: 'custom', from: event.target.value });
-                  }}
-                />
+            <>
+              <div className="grid gap-3 md:grid-cols-2">
+                <div className="space-y-2">
+                  <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+                    {t('aiMetrics.filters.from', 'From')}
+                  </p>
+                  <Input
+                    type="date"
+                    aria-label={t('aiMetrics.filters.from', 'From')}
+                    value={queryParams.from}
+                    max={queryParams.to || undefined}
+                    onChange={event => {
+                      void setQueryParams({ preset: 'custom', from: event.target.value });
+                    }}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+                    {t('aiMetrics.filters.to', 'To')}
+                  </p>
+                  <Input
+                    type="date"
+                    aria-label={t('aiMetrics.filters.to', 'To')}
+                    value={queryParams.to}
+                    min={queryParams.from || undefined}
+                    onChange={event => {
+                      void setQueryParams({ preset: 'custom', to: event.target.value });
+                    }}
+                  />
+                </div>
               </div>
-              <div className="space-y-2">
-                <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
-                  {t('aiMetrics.filters.to', 'To')}
-                </p>
-                <Input
-                  type="date"
-                  aria-label={t('aiMetrics.filters.to', 'To')}
-                  value={queryParams.to}
-                  onChange={event => {
-                    void setQueryParams({ preset: 'custom', to: event.target.value });
+              <div className="flex justify-end">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  disabled={!queryParams.from && !queryParams.to}
+                  onClick={() => {
+                    void setQueryParams({ preset: 'custom', from: '', to: '' });
                   }}
-                />
+                >
+                  {t('aiMetrics.filters.resetDates', 'Reset dates')}
+                </Button>
               </div>
-            </div>
+            </>
           ) : null}
         </CardContent>
       </Card>
@@ -348,11 +427,46 @@ export default function AiMetrics({
             </Card>
 
             <Card>
-              <CardHeader>
-                <CardTitle>{t('aiMetrics.byFeature.title', 'By Mobile Feature')}</CardTitle>
-                <CardDescription>
-                  {t('aiMetrics.byFeature.description', 'API usage and costs by mobile capability')}
-                </CardDescription>
+              <CardHeader className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                <div className="space-y-1">
+                  <CardTitle>{t('aiMetrics.byFeature.title', 'By Mobile Feature')}</CardTitle>
+                  <CardDescription>
+                    {t(
+                      'aiMetrics.byFeature.description',
+                      'API usage and costs by mobile capability'
+                    )}
+                  </CardDescription>
+                </div>
+                <div className="w-full max-w-52 space-y-2">
+                  <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+                    {t('aiMetrics.sort.label', 'Sort by')}
+                  </p>
+                  <Select
+                    value={featureSort}
+                    onValueChange={value => {
+                      if (!isFeatureSort(value)) return;
+                      void setQueryParams({ featureSort: value });
+                    }}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="costDesc">
+                        {t('aiMetrics.sort.feature.costDesc', 'Cost (high to low)')}
+                      </SelectItem>
+                      <SelectItem value="requestsDesc">
+                        {t('aiMetrics.sort.feature.requestsDesc', 'Requests (high to low)')}
+                      </SelectItem>
+                      <SelectItem value="tokensDesc">
+                        {t('aiMetrics.sort.feature.tokensDesc', 'Tokens (high to low)')}
+                      </SelectItem>
+                      <SelectItem value="activeUsersDesc">
+                        {t('aiMetrics.sort.feature.activeUsersDesc', 'Active users (high to low)')}
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </CardHeader>
               <CardContent>
                 <Table>
@@ -366,7 +480,7 @@ export default function AiMetrics({
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {data.byFeature.map(item => (
+                    {sortedFeatures.map(item => (
                       <TableRow key={item.feature}>
                         <TableCell className="font-medium">{item.feature}</TableCell>
                         <TableCell>{formatNumber(item.requests)}</TableCell>
@@ -382,11 +496,46 @@ export default function AiMetrics({
           </div>
 
           <Card>
-            <CardHeader>
-              <CardTitle>{t('aiMetrics.byUser.title', 'By User')}</CardTitle>
-              <CardDescription>
-                {t('aiMetrics.byUser.description', 'Top users consuming AI APIs in the mobile app')}
-              </CardDescription>
+            <CardHeader className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+              <div className="space-y-1">
+                <CardTitle>{t('aiMetrics.byUser.title', 'By User')}</CardTitle>
+                <CardDescription>
+                  {t(
+                    'aiMetrics.byUser.description',
+                    'Top users consuming AI APIs in the mobile app'
+                  )}
+                </CardDescription>
+              </div>
+              <div className="w-full max-w-52 space-y-2">
+                <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+                  {t('aiMetrics.sort.label', 'Sort by')}
+                </p>
+                <Select
+                  value={userSort}
+                  onValueChange={value => {
+                    if (!isUserSort(value)) return;
+                    void setQueryParams({ userSort: value });
+                  }}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="costDesc">
+                      {t('aiMetrics.sort.user.costDesc', 'Cost (high to low)')}
+                    </SelectItem>
+                    <SelectItem value="requestsDesc">
+                      {t('aiMetrics.sort.user.requestsDesc', 'Requests (high to low)')}
+                    </SelectItem>
+                    <SelectItem value="tokensDesc">
+                      {t('aiMetrics.sort.user.tokensDesc', 'Tokens (high to low)')}
+                    </SelectItem>
+                    <SelectItem value="conversationsDesc">
+                      {t('aiMetrics.sort.user.conversationsDesc', 'Conversations (high to low)')}
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </CardHeader>
             <CardContent>
               <Table>
@@ -401,7 +550,7 @@ export default function AiMetrics({
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {data.byUser.map(item => (
+                  {sortedUsers.map(item => (
                     <TableRow key={item.userId}>
                       <TableCell>
                         <div className="flex flex-col">
@@ -429,7 +578,7 @@ export default function AiMetrics({
                   'Generated at {{date}} (mock backend data for this first iteration).',
                   {
                     date: formatDateInput(data.generatedAt),
-                  },
+                  }
                 )}
               </p>
             </CardContent>
