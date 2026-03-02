@@ -112,6 +112,27 @@ describe('aiMetrics.service', () => {
     expect(Math.abs(sumCostByUser - result90d.summary.totalCostUsd)).toBeLessThanOrEqual(0.01);
   });
 
+  it('returns deterministic mock data for the same period filters', async () => {
+    const params = {
+      preset: 'custom' as const,
+      from: new Date('2026-02-01T00:00:00.000Z'),
+      to: new Date('2026-02-28T00:00:00.000Z'),
+      groupBy: 'day' as const,
+      limit: 8,
+    };
+
+    const first = await service.getMetrics({
+      params,
+      requesterUserId: 'admin-user',
+    });
+    const second = await service.getMetrics({
+      params,
+      requesterUserId: 'admin-user',
+    });
+
+    expect(second).toEqual(first);
+  });
+
   it('falls back to preset period when custom dates are missing', async () => {
     const result = await service.getMetrics({
       params: {
