@@ -1,4 +1,5 @@
 export { useListUsers } from './useListUsers';
+export { useGetAiMetrics } from './useGetAiMetrics';
 export { useUnbanUser } from './useUnbanUser';
 export { useImpersonateUser } from './useImpersonateUser';
 export { useDeleteUser } from './useDeleteUser';
