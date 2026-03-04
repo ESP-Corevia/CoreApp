@@ -10,5 +10,10 @@ export default function AiMetricsRoute() {
     return <Loader open />;
   }
 
-  return <AiMetrics session={session} />;
+  const normalizedSession =
+    session?.isAuthenticated && session.userId
+      ? { isAuthenticated: session.isAuthenticated, userId: session.userId }
+      : null;
+
+  return <AiMetrics session={normalizedSession} />;
 }
