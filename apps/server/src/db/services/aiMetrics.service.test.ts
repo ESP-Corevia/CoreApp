@@ -103,7 +103,10 @@ describe('aiMetrics.service', () => {
 
     const sumRequestsByUser = result90d.byUser.reduce((acc, item) => acc + item.requests, 0);
     const sumTokensByUser = result90d.byUser.reduce((acc, item) => acc + item.tokens, 0);
-    const sumConversationsByUser = result90d.byUser.reduce((acc, item) => acc + item.conversations, 0);
+    const sumConversationsByUser = result90d.byUser.reduce(
+      (acc, item) => acc + item.conversations,
+      0,
+    );
     const sumCostByUser = result90d.byUser.reduce((acc, item) => acc + item.costUsd, 0);
 
     expect(sumRequestsByUser).toBe(result90d.summary.totalRequests);
