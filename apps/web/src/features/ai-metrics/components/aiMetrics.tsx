@@ -131,6 +131,11 @@ function LoadingState() {
   );
 }
 
+/**
+ * Admin dashboard page showing mocked AI usage metrics for the mobile application.
+ *
+ * @param props - Authenticated session context required to fetch protected admin metrics.
+ */
 export default function AiMetrics({
   session,
 }: {

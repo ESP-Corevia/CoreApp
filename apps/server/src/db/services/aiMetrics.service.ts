@@ -71,14 +71,17 @@ type AiMetricsOutput = z.infer<typeof AiMetricsOutputSchema>;
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
+/** Rounds a number to 2 decimal places. */
 function round2(value: number) {
   return Math.round(value * 100) / 100;
 }
 
+/** Normalizes a date to UTC midnight to keep generated periods stable. */
 function startOfUtcDay(input: Date) {
   return new Date(Date.UTC(input.getUTCFullYear(), input.getUTCMonth(), input.getUTCDate()));
 }
 
+/** Builds a deterministic numeric seed from a set of period-related parts. */
 function buildSeed(parts: Array<number | string>) {
   let hash = 2166136261;
   const raw = parts.join('|');
@@ -89,6 +92,7 @@ function buildSeed(parts: Array<number | string>) {
   return hash >>> 0;
 }
 
+/** Returns a deterministic pseudo-random generator based on the provided seed. */
 function createSeededRandom(seed: number) {
   let value = seed >>> 0;
   return () => {
@@ -99,6 +103,7 @@ function createSeededRandom(seed: number) {
   };
 }
 
+/** Distributes an integer total across buckets while preserving the exact sum. */
 function distributeInt(total: number, weights: number[]) {
   const sumWeights = weights.reduce((acc, w) => acc + w, 0);
   const raw = weights.map((w) => (total * w) / sumWeights);
@@ -115,6 +120,7 @@ function distributeInt(total: number, weights: number[]) {
   return floorValues;
 }
 
+/** Distributes a float total across buckets while preserving a 2-decimal total. */
 function distributeFloat(total: number, weights: number[]) {
   const sumWeights = weights.reduce((acc, w) => acc + w, 0);
   const values = weights.map((w) => round2((total * w) / sumWeights));
@@ -124,12 +130,14 @@ function distributeFloat(total: number, weights: number[]) {
   return values;
 }
 
+/** Maps preset labels to day counts used for default period resolution. */
 function getPresetDays(preset: z.infer<typeof AiMetricsPresetSchema>) {
   if (preset === '7d') return 7;
   if (preset === '90d') return 90;
   return 30;
 }
 
+/** Resolves and normalizes the effective period for the requested filters. */
 function resolvePeriod(params: AiMetricsInput) {
   if (params.preset === 'custom' && params.from && params.to) {
     const from = startOfUtcDay(params.from <= params.to ? params.from : params.to);
@@ -143,6 +151,7 @@ function resolvePeriod(params: AiMetricsInput) {
   return { from, to };
 }
 
+/** Builds deterministic trend points (day/week) for the selected period. */
 function buildTrend({
   from,
   to,
@@ -190,6 +199,7 @@ function buildTrend({
   return trend;
 }
 
+/** Builds deterministic per-user aggregates honoring the requested limit. */
 function buildUsers({
   limit,
   totalRequests,
@@ -243,6 +253,7 @@ function buildUsers({
   }));
 }
 
+/** Builds deterministic per-feature aggregates for the selected period. */
 function buildFeatures({
   totalRequests,
   totalTokens,
@@ -274,7 +285,9 @@ function buildFeatures({
   }));
 }
 
+/** AI metrics service returning deterministic mock usage data for admin analytics pages. */
 export const createAiMetricsService = () => ({
+  /** Returns mock AI usage metrics with stable output for identical filter inputs. */
   getMetrics: ({
     params,
   }: {

@@ -3,6 +3,7 @@ import { useRequireAuth } from '@/hooks/use-require-auth';
 
 import AiMetrics from '../components/aiMetrics';
 
+/** Route entrypoint for the admin AI metrics dashboard page. */
 export default function AiMetricsRoute() {
   const { session, isLoading } = useRequireAuth();
 
