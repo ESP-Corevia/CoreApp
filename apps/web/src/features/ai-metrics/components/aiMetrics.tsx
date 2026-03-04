@@ -167,14 +167,14 @@ export default function AiMetrics({
   });
 
   useEffect(() => {
-    if (error) {
+    if (error && data) {
       toast.error(
         t('aiMetrics.loadError', 'Failed to load AI metrics: {{message}}', {
           message: error instanceof Error ? error.message : 'Unknown error',
         })
       );
     }
-  }, [error, t]);
+  }, [data, error, t]);
 
   const maxTrendCost = data?.trend.length
     ? Math.max(...data.trend.map(point => point.costUsd), 1)
@@ -219,7 +219,8 @@ export default function AiMetrics({
   }
 
   const hasLoadError = !!error && !data;
-  const loadErrorMessage = error instanceof Error ? error.message : t('aiMetrics.error.unknown', 'Unknown error');
+  const loadErrorMessage =
+    error instanceof Error ? error.message : t('aiMetrics.error.unknown', 'Unknown error');
 
   return (
     <div className="space-y-6">
@@ -441,7 +442,9 @@ export default function AiMetrics({
                     return (
                       <div key={point.date.toString()} className="space-y-1.5">
                         <div className="flex items-center justify-between text-xs">
-                          <span className="text-muted-foreground">{formatDayLabel(point.date)}</span>
+                          <span className="text-muted-foreground">
+                            {formatDayLabel(point.date)}
+                          </span>
                           <span className="font-medium">{formatCurrency(point.costUsd)}</span>
                         </div>
                         <div className="bg-muted h-2 rounded-full">
