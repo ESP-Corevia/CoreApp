@@ -79,9 +79,14 @@ function formatPercent(value: number) {
 }
 
 function formatDayLabel(input: Date | string) {
-  return new Intl.DateTimeFormat(undefined, { month: 'short', day: '2-digit' }).format(
-    new Date(input)
-  );
+  const date = input instanceof Date ? input : new Date(input);
+  if (Number.isNaN(date.getTime())) return '';
+
+  return new Intl.DateTimeFormat(undefined, {
+    month: 'short',
+    day: '2-digit',
+    timeZone: 'UTC',
+  }).format(date);
 }
 
 function MetricCard({
