@@ -275,7 +275,7 @@ function buildFeatures({
 }
 
 export const createAiMetricsService = () => ({
-  getMetrics: async ({
+  getMetrics: ({
     params,
   }: {
     params: AiMetricsInput;
@@ -300,7 +300,7 @@ export const createAiMetricsService = () => ({
       errorRate: round2(trend.reduce((acc, point) => acc + point.errorRate, 0) / trend.length),
     };
 
-    return {
+    return Promise.resolve({
       isMock: true,
       generatedAt: to,
       period: {
@@ -324,6 +324,6 @@ export const createAiMetricsService = () => ({
         totalCostUsd: summary.totalCostUsd,
         totalConversations: summary.totalConversations,
       }),
-    };
+    });
   },
 });
