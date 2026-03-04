@@ -91,7 +91,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-const ROUTES_WITH_LAYOUT = ['/', '/dashboard', '/profile', '/settings'];
+const ROUTES_WITH_LAYOUT = ['/', '/dashboard', '/ai-metrics', '/profile', '/settings'];
 
 function ThemedShell() {
   const { resolvedTheme } = useTheme();
