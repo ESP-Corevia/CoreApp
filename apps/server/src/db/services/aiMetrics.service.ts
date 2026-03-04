@@ -2,13 +2,14 @@ import { z } from 'zod';
 
 export const AiMetricsPresetSchema = z.enum(['7d', '30d', '90d', 'custom']);
 export const AiMetricsGroupBySchema = z.enum(['day', 'week']);
+const MAX_MOCK_USERS = 100;
 
 export const AiMetricsInputSchema = z.object({
   preset: AiMetricsPresetSchema.default('30d'),
   from: z.coerce.date().optional(),
   to: z.coerce.date().optional(),
   groupBy: AiMetricsGroupBySchema.default('day'),
-  limit: z.number().int().positive().max(100).default(10),
+  limit: z.number().int().positive().max(MAX_MOCK_USERS).default(10),
 });
 
 export const AiMetricsSummarySchema = z.object({
@@ -166,7 +167,10 @@ function buildTrend({
   const trend = Array.from({ length: points }, (_, index) => {
     const currentDate = new Date(from.getTime() + index * stepDays * DAY_MS);
     const requestsJitter = Math.floor((random() - 0.5) * 90);
-    const requests = Math.max(120, baseRequests + index * requestStep + (index % 4) * 21 + requestsJitter);
+    const requests = Math.max(
+      120,
+      baseRequests + index * requestStep + (index % 4) * 21 + requestsJitter,
+    );
     const tokensPerRequest = baseTokensPerRequest + (index % 5) * 26 + Math.floor(random() * 20);
     const tokens = requests * tokensPerRequest;
     const costUsd = round2((tokens / 1000) * costPerKToken);
@@ -212,7 +216,17 @@ function buildUsers({
     { userId: 'mobile-u-010', userName: 'Lea Moreau', userEmail: 'lea.moreau@corevia.app' },
   ];
 
-  const selected = templates.slice(0, limit);
+  const selected = Array.from({ length: limit }, (_, index) => {
+    const existing = templates[index];
+    if (existing) return existing;
+    const userIndex = index + 1;
+    const suffix = String(userIndex).padStart(3, '0');
+    return {
+      userId: `mobile-u-${suffix}`,
+      userName: `Mobile User ${userIndex}`,
+      userEmail: `mobile.user.${userIndex}@corevia.app`,
+    };
+  });
   const weights = selected.map((_, i) => Math.max(1, 16 - i));
   const requestsByUser = distributeInt(totalRequests, weights);
   const tokensByUser = distributeInt(totalTokens, weights);

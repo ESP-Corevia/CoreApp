@@ -152,4 +152,20 @@ describe('aiMetrics.service', () => {
     expect(result.trend.length).toBe(30);
     expect(result.byUser).toHaveLength(2);
   });
+
+  it('supports top users limits above 10', async () => {
+    const result = await service.getMetrics({
+      params: {
+        preset: '30d',
+        from: undefined,
+        to: undefined,
+        groupBy: 'day',
+        limit: 20,
+      },
+      requesterUserId: 'admin-user',
+    });
+
+    expect(result.byUser).toHaveLength(20);
+    expect(result.byUser[19]?.userId).toBe('mobile-u-020');
+  });
 });
