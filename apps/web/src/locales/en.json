@@ -6,6 +6,90 @@
       "connected": "Connected",
       "disconnected": "Disconnected"
     },
+    "aiMetrics": {
+      "byFeature": {
+        "activeUsers": "Active Users",
+        "cost": "Cost",
+        "description": "API usage and costs by mobile capability",
+        "feature": "Feature",
+        "requests": "Requests",
+        "title": "By Mobile Feature",
+        "tokens": "Tokens"
+      },
+      "byUser": {
+        "conversations": "Conversations",
+        "cost": "Cost",
+        "description": "Top users consuming AI APIs in the mobile app",
+        "errorRate": "Error Rate",
+        "requests": "Requests",
+        "title": "By User",
+        "tokens": "Tokens",
+        "user": "User"
+      },
+      "description": "Measure AI API consumption by user and by mobile feature.",
+      "empty": {
+        "byFeature": "No feature usage data for this period.",
+        "byUser": "No user usage data for this period.",
+        "trend": "No trend data for this period."
+      },
+      "error": {
+        "description": "Try again. Reason: {{message}}",
+        "retry": "Retry",
+        "title": "Unable to load AI metrics",
+        "unknown": "Unknown error"
+      },
+      "filters": {
+        "custom": "Custom",
+        "day": "Day",
+        "from": "From",
+        "groupBy": "Group by",
+        "ninetyDays": "90 Days",
+        "resetDates": "Reset dates",
+        "sevenDays": "7 Days",
+        "thirtyDays": "30 Days",
+        "to": "To",
+        "topUsers": "Top users",
+        "week": "Week"
+      },
+      "generatedAt": "Generated at {{date}} (mock backend data for this first iteration).",
+      "loadError": "Failed to load AI metrics: {{message}}",
+      "mockedData": "Mocked backend data",
+      "refreshing": "Refreshing",
+      "sort": {
+        "feature": {
+          "activeUsersDesc": "Active users (high to low)",
+          "costDesc": "Cost (high to low)",
+          "requestsDesc": "Requests (high to low)",
+          "tokensDesc": "Tokens (high to low)"
+        },
+        "label": "Sort by",
+        "user": {
+          "conversationsDesc": "Conversations (high to low)",
+          "costDesc": "Cost (high to low)",
+          "requestsDesc": "Requests (high to low)",
+          "tokensDesc": "Tokens (high to low)"
+        }
+      },
+      "summary": {
+        "activeUsers": "Active Users",
+        "activeUsersDesc": "Unique users using AI features",
+        "errorRate": "Error Rate",
+        "errorRateDesc": "Failed requests ratio",
+        "totalConversations": "Conversations",
+        "totalConversationsDesc": "Mobile AI conversations",
+        "totalCost": "Total Cost",
+        "totalCostDesc": "Estimated OpenAI spend",
+        "totalRequests": "Total Requests",
+        "totalRequestsDesc": "API calls on selected period",
+        "totalTokens": "Total Tokens",
+        "totalTokensDesc": "Prompt + completion tokens"
+      },
+      "title": "AI Metrics",
+      "trend": {
+        "description": "Evolution of AI costs over time",
+        "title": "Usage Trend"
+      }
+    },
     "banUserDialog": {
       "banning": "Banning...",
       "banUser": "Ban User",
@@ -31,90 +115,6 @@
       "loadUsersError": "Failed to load users: {{message}}",
       "userManagement": "Users Management"
     },
-    "aiMetrics": {
-      "title": "AI Metrics",
-      "description": "Measure AI API consumption by user and by mobile feature.",
-      "mockedData": "Mocked backend data",
-      "refreshing": "Refreshing",
-      "loadError": "Failed to load AI metrics: {{message}}",
-      "generatedAt": "Generated at {{date}} (mock backend data for this first iteration).",
-      "filters": {
-        "sevenDays": "7 Days",
-        "thirtyDays": "30 Days",
-        "ninetyDays": "90 Days",
-        "custom": "Custom",
-        "groupBy": "Group by",
-        "topUsers": "Top users",
-        "day": "Day",
-        "week": "Week",
-        "from": "From",
-        "to": "To",
-        "resetDates": "Reset dates"
-      },
-      "summary": {
-        "totalCost": "Total Cost",
-        "totalCostDesc": "Estimated OpenAI spend",
-        "totalTokens": "Total Tokens",
-        "totalTokensDesc": "Prompt + completion tokens",
-        "totalRequests": "Total Requests",
-        "totalRequestsDesc": "API calls on selected period",
-        "totalConversations": "Conversations",
-        "totalConversationsDesc": "Mobile AI conversations",
-        "activeUsers": "Active Users",
-        "activeUsersDesc": "Unique users using AI features",
-        "errorRate": "Error Rate",
-        "errorRateDesc": "Failed requests ratio"
-      },
-      "trend": {
-        "title": "Usage Trend",
-        "description": "Evolution of AI costs over time"
-      },
-      "byFeature": {
-        "title": "By Mobile Feature",
-        "description": "API usage and costs by mobile capability",
-        "feature": "Feature",
-        "requests": "Requests",
-        "tokens": "Tokens",
-        "cost": "Cost",
-        "activeUsers": "Active Users"
-      },
-      "byUser": {
-        "title": "By User",
-        "description": "Top users consuming AI APIs in the mobile app",
-        "user": "User",
-        "requests": "Requests",
-        "tokens": "Tokens",
-        "conversations": "Conversations",
-        "cost": "Cost",
-        "errorRate": "Error Rate"
-      },
-      "sort": {
-        "label": "Sort by",
-        "feature": {
-          "costDesc": "Cost (high to low)",
-          "requestsDesc": "Requests (high to low)",
-          "tokensDesc": "Tokens (high to low)",
-          "activeUsersDesc": "Active users (high to low)"
-        },
-        "user": {
-          "costDesc": "Cost (high to low)",
-          "requestsDesc": "Requests (high to low)",
-          "tokensDesc": "Tokens (high to low)",
-          "conversationsDesc": "Conversations (high to low)"
-        }
-      },
-      "empty": {
-        "trend": "No trend data for this period.",
-        "byFeature": "No feature usage data for this period.",
-        "byUser": "No user usage data for this period."
-      },
-      "error": {
-        "title": "Unable to load AI metrics",
-        "description": "Try again. Reason: {{message}}",
-        "retry": "Retry",
-        "unknown": "Unknown error"
-      }
-    },
     "dataTable": {
       "noResults": "No results."
     },
@@ -126,6 +126,9 @@
       "goBackHome": "Go Back Home"
     },
     "Go Back Home": "Go Back Home",
+    "header": {
+      "page": "Page"
+    },
     "HydrateFallback": {
       "loading": "Loading…"
     },
@@ -359,20 +362,6 @@
     "useUnbanUser": {
       "error": "Failed to unban user: {{message}}",
       "success": "User unbanned successfully"
-    },
-    "navigation": {
-      "home": "Home",
-      "dashboard": "Dashboard",
-      "aiMetrics": "AI Metrics",
-      "settings": "Settings"
-    },
-    "header": {
-      "home": "Home",
-      "dashboard": "Dashboard",
-      "aiMetrics": "AI Metrics",
-      "settings": "Settings",
-      "profile": "Profile",
-      "page": "Page"
     }
   }
 }
