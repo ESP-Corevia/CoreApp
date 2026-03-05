@@ -46,6 +46,17 @@ const AppointmentWithDoctorSchema = AppointmentOutputSchema.extend({
   doctor: DoctorSummarySchema,
 });
 
+export const AppointmentDetailOutputSchema = AppointmentOutputSchema.extend({
+  reason: z.string().nullable(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date().nullable(),
+  doctor: DoctorSummarySchema,
+});
+
+export const AppointmentDetailInputSchema = z.object({
+  id: z.uuid(),
+});
+
 export const ListAppointmentsInputSchema = z.object({
   status: z.enum(['PENDING', 'CONFIRMED', 'CANCELLED', 'COMPLETED']).optional(),
   from: z
@@ -69,6 +80,26 @@ export const ListAppointmentsOutputSchema = z.object({
 });
 
 export const createAppointmentsService = (repo: ReturnType<typeof createAppointmentsRepo>) => ({
+  getAppointmentDetail: async (userId: string, appointmentId: string, isAdmin: boolean) => {
+    const appointment = await repo.getByIdWithDoctor(appointmentId);
+
+    if (!appointment) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'Appointment not found',
+      });
+    }
+
+    if (appointment.patientId !== userId && !isAdmin) {
+      throw new TRPCError({
+        code: 'FORBIDDEN',
+        message: 'You do not have access to this appointment',
+      });
+    }
+
+    return appointment;
+  },
+
   createAppointment: async (
     patientId: string,
     input: z.infer<typeof CreateAppointmentInputSchema>,

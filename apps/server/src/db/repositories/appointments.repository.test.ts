@@ -129,6 +129,38 @@ describe('appointments.repository', () => {
     });
   });
 
+  describe('getByIdWithDoctor', () => {
+    it('returns the appointment with doctor info', async () => {
+      const created = await repo.createAppointmentAtomic({
+        doctorId,
+        patientId,
+        date: TEST_DATE,
+        time: '10:00',
+        reason: 'Checkup',
+      });
+      const apptId = ('appointment' in created && created.appointment?.id) as string;
+
+      const result = await repo.getByIdWithDoctor(apptId);
+
+      expect(result).not.toBeNull();
+      expect(result!.id).toBe(apptId);
+      expect(result!.doctorId).toBe(doctorId);
+      expect(result!.patientId).toBe(patientId);
+      expect(result!.date).toBe(TEST_DATE);
+      expect(result!.time).toBe('10:00');
+      expect(result!.status).toBe('PENDING');
+      expect(result!.reason).toBe('Checkup');
+      expect(result!.createdAt).toBeInstanceOf(Date);
+      expect(result!.doctor.name).toBe('Dr. Test');
+      expect(result!.doctor.specialty).toBe('Cardiology');
+    });
+
+    it('returns null for non-existing id', async () => {
+      const result = await repo.getByIdWithDoctor('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a99');
+      expect(result).toBeNull();
+    });
+  });
+
   describe('listByPatient', () => {
     beforeEach(async () => {
       // Seed 3 appointments for patient on different dates/statuses

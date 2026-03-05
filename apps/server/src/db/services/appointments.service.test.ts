@@ -123,6 +123,57 @@ describe('appointmentsService', () => {
     });
   });
 
+  describe('getAppointmentDetail', () => {
+    const APPT_ID = 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a22';
+    const fakeDetail = {
+      ...fakeAppointment,
+      id: APPT_ID,
+      reason: null,
+      createdAt: new Date('2099-06-15T08:00:00Z'),
+      updatedAt: null,
+      doctor: {
+        id: DOCTOR_ID,
+        name: 'Dr. Test',
+        specialty: 'Cardiology',
+        address: '1 Rue Test',
+        imageUrl: null,
+      },
+    };
+
+    it('returns appointment for the owner', async () => {
+      mockAppointmentsRepo.getByIdWithDoctor.mockResolvedValue(fakeDetail);
+
+      const result = await service.getAppointmentDetail(PATIENT_ID, APPT_ID, false);
+
+      expect(result).toEqual(fakeDetail);
+      expect(mockAppointmentsRepo.getByIdWithDoctor).toHaveBeenCalledWith(APPT_ID);
+    });
+
+    it('returns appointment for an admin (not owner)', async () => {
+      mockAppointmentsRepo.getByIdWithDoctor.mockResolvedValue(fakeDetail);
+
+      const result = await service.getAppointmentDetail('other-user-id', APPT_ID, true);
+
+      expect(result).toEqual(fakeDetail);
+    });
+
+    it('throws NOT_FOUND when appointment does not exist', async () => {
+      mockAppointmentsRepo.getByIdWithDoctor.mockResolvedValue(null as any);
+
+      await expect(service.getAppointmentDetail(PATIENT_ID, APPT_ID, false)).rejects.toThrow(
+        expect.objectContaining({ code: 'NOT_FOUND' }),
+      );
+    });
+
+    it('throws FORBIDDEN when user is not the owner and not admin', async () => {
+      mockAppointmentsRepo.getByIdWithDoctor.mockResolvedValue(fakeDetail);
+
+      await expect(service.getAppointmentDetail('other-user-id', APPT_ID, false)).rejects.toThrow(
+        expect.objectContaining({ code: 'FORBIDDEN' }),
+      );
+    });
+  });
+
   describe('listMyAppointments', () => {
     const fakeItems = [
       {

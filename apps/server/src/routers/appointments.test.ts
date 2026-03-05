@@ -1,12 +1,14 @@
 import { TRPCError } from '@trpc/server';
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { createTestCaller, fakeSession } from '../../test/caller';
+import { authMock, createTestCaller, fakeSession } from '../../test/caller';
 import { mockServices } from '../../test/services';
 
 beforeEach(() => {
   mockServices.appointmentsService.createAppointment.mockReset();
   mockServices.appointmentsService.listMyAppointments.mockReset();
+  mockServices.appointmentsService.getAppointmentDetail.mockReset();
+  (authMock.api.userHasPermission as any).mockResolvedValue({ success: false });
 });
 
 const DOCTOR_ID = 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11';
@@ -28,6 +30,84 @@ describe('appointmentsRouter', () => {
     await expect(
       caller.appointments.create({ doctorId: DOCTOR_ID, date: DATE, time: TIME }),
     ).rejects.toThrow('Authentication required');
+  });
+
+  describe('detail', () => {
+    const APPT_ID = 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a33';
+    const fakeDetail = {
+      ...fakeAppointment,
+      id: APPT_ID,
+      reason: null,
+      createdAt: new Date('2099-06-15T08:00:00Z'),
+      updatedAt: null,
+      doctor: {
+        id: DOCTOR_ID,
+        name: 'Dr. Test',
+        specialty: 'Cardiology',
+        address: '1 Rue Test',
+        imageUrl: null,
+      },
+    };
+
+    it('returns appointment detail for the owner', async () => {
+      mockServices.appointmentsService.getAppointmentDetail.mockResolvedValue(fakeDetail);
+
+      const caller = createTestCaller({ customSession: fakeSession });
+      const result = await caller.appointments.detail({ id: APPT_ID });
+
+      expect(result).toEqual(fakeDetail);
+      expect(mockServices.appointmentsService.getAppointmentDetail).toHaveBeenCalledWith(
+        fakeSession.userId,
+        APPT_ID,
+        false,
+      );
+    });
+
+    it('rejects invalid UUID for id', async () => {
+      const caller = createTestCaller({ customSession: fakeSession });
+      await expect(caller.appointments.detail({ id: 'bad-id' })).rejects.toThrow();
+    });
+
+    it('rejects unauthenticated requests', async () => {
+      const caller = createTestCaller({ customSession: null });
+      await expect(caller.appointments.detail({ id: APPT_ID })).rejects.toThrow(
+        'Authentication required',
+      );
+    });
+
+    it('propagates NOT_FOUND from the service', async () => {
+      mockServices.appointmentsService.getAppointmentDetail.mockRejectedValue(
+        new TRPCError({ code: 'NOT_FOUND', message: 'Appointment not found' }),
+      );
+
+      const caller = createTestCaller({ customSession: fakeSession });
+      await expect(caller.appointments.detail({ id: APPT_ID })).rejects.toThrow('not found');
+    });
+
+    it('propagates FORBIDDEN from the service', async () => {
+      mockServices.appointmentsService.getAppointmentDetail.mockRejectedValue(
+        new TRPCError({ code: 'FORBIDDEN', message: 'You do not have access' }),
+      );
+
+      const caller = createTestCaller({ customSession: fakeSession });
+      await expect(caller.appointments.detail({ id: APPT_ID })).rejects.toThrow(
+        'do not have access',
+      );
+    });
+
+    it('passes isAdmin=true when user has admin permission', async () => {
+      (authMock.api.userHasPermission as any).mockResolvedValue({ success: true });
+      mockServices.appointmentsService.getAppointmentDetail.mockResolvedValue(fakeDetail);
+
+      const caller = createTestCaller({ customSession: fakeSession });
+      await caller.appointments.detail({ id: APPT_ID });
+
+      expect(mockServices.appointmentsService.getAppointmentDetail).toHaveBeenCalledWith(
+        fakeSession.userId,
+        APPT_ID,
+        true,
+      );
+    });
   });
 
   describe('create', () => {

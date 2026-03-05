@@ -53,6 +53,34 @@ function buildOrderBy(sort: ListByPatientParams['sort']) {
 }
 
 export const createAppointmentsRepo = (db: DrizzleDB) => ({
+  getByIdWithDoctor: async (id: string) => {
+    const [row] = await db
+      .select({
+        id: appointments.id,
+        doctorId: appointments.doctorId,
+        patientId: appointments.patientId,
+        date: appointments.date,
+        time: appointments.time,
+        status: appointments.status,
+        reason: appointments.reason,
+        createdAt: appointments.createdAt,
+        updatedAt: appointments.updatedAt,
+        doctor: {
+          id: doctors.id,
+          name: doctors.name,
+          specialty: doctors.specialty,
+          address: doctors.address,
+          imageUrl: doctors.imageUrl,
+        },
+      })
+      .from(appointments)
+      .innerJoin(doctors, eq(appointments.doctorId, doctors.id))
+      .where(eq(appointments.id, id))
+      .limit(1);
+
+    return row ?? null;
+  },
+
   listByPatient: async (params: ListByPatientParams) => {
     const where = buildPatientFilters(params);
     const order = buildOrderBy(params.sort);
