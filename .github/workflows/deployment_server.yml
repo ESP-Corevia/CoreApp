@@ -56,7 +56,9 @@ jobs:
         with:
           context: ./
           push: true
-          tags: ${{ secrets.DIGITALOCEAN_REGISTRY_URL }}/corevia:server-${{ env.SERVER_VERSION }}
+          tags: |
+            ${{ secrets.DIGITALOCEAN_REGISTRY_URL }}/corevia:server-${{ env.SERVER_VERSION }}
+            ${{ secrets.DIGITALOCEAN_REGISTRY_URL }}/corevia:server-latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
           target: server
@@ -97,18 +99,6 @@ jobs:
       - name: Update deployment image
         run: |
           kubectl set image deployment/corevia-server corevia-server=${{ secrets.DIGITALOCEAN_REGISTRY_URL }}/corevia:server-${{ env.SERVER_VERSION }}
-
-      - name: Wait for rollout
-        run: |
-          kubectl rollout status deployment/corevia-server --timeout=120s
-
-      - name: Tag as server-latest (only if rollout succeeded)
-        if: success()
-        run: |
-          docker pull registry.digitalocean.com/corevia/corevia:server-${{ env.SERVER_VERSION }}
-          docker tag registry.digitalocean.com/corevia/corevia:server-${{ env.SERVER_VERSION }} \
-                    registry.digitalocean.com/corevia/corevia:server-latest
-          docker push registry.digitalocean.com/corevia/corevia:server-latest
 
       - name: Delete previous version tags
         continue-on-error: true

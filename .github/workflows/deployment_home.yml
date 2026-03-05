@@ -57,7 +57,9 @@ jobs:
         with:
           context: ./
           push: true
-          tags: ${{ secrets.DIGITALOCEAN_REGISTRY_URL }}/corevia:home-${{ env.HOME_VERSION }}
+          tags: |
+            ${{ secrets.DIGITALOCEAN_REGISTRY_URL }}/corevia:home-${{ env.HOME_VERSION }}
+            ${{ secrets.DIGITALOCEAN_REGISTRY_URL }}/corevia:home-latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
           file: ./apps/home/Dockerfile
@@ -99,18 +101,6 @@ jobs:
       - name: Update deployment image
         run: |
           kubectl set image deployment/corevia-home corevia-home=${{ secrets.DIGITALOCEAN_REGISTRY_URL }}/corevia:home-${{ env.HOME_VERSION }}
-
-      - name: Wait for rollout
-        run: |
-          kubectl rollout status deployment/corevia-home --timeout=120s
-
-      - name: Tag as home-latest (only if rollout succeeded)
-        if: success()
-        run: |
-          docker pull registry.digitalocean.com/corevia/corevia:home-${{ env.HOME_VERSION }}
-          docker tag registry.digitalocean.com/corevia/corevia:home-${{ env.HOME_VERSION }} \
-                    registry.digitalocean.com/corevia/corevia:home-latest
-          docker push registry.digitalocean.com/corevia/corevia:home-latest
 
       - name: Delete previous version tags
         continue-on-error: true
