@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 import { AvailableSlotsOutputSchema } from '../db/services/availability.service';
 import { DoctorsListOutputSchema } from '../db/services/doctors.service';
-import { protectedProcedure, router } from '../middlewares';
+import { patientProcedure, router } from '../middlewares';
 
 const DoctorsListInputSchema = z.object({
   specialty: z.string().optional(),
@@ -18,7 +18,7 @@ const AvailableSlotsInputSchema = z.object({
 });
 
 export const doctorsRouter = router({
-  list: protectedProcedure
+  list: patientProcedure
     .meta({
       openapi: {
         method: 'GET',
@@ -41,7 +41,7 @@ export const doctorsRouter = router({
       });
     }),
 
-  availableSlots: protectedProcedure
+  availableSlots: patientProcedure
     .meta({
       openapi: {
         method: 'GET',

@@ -1,10 +1,13 @@
 import { faker } from '@faker-js/faker';
+import { eq } from 'drizzle-orm';
 
 import { db } from '../src/db';
 import { users, doctors } from '../src/db/schema';
+import { env } from '../src/env';
+import { auth } from '../src/lib/auth';
 import logger from '../src/lib/logger';
 
-const USER_COUNT = 100;
+const PATIENT_COUNT = 80;
 const DOCTOR_COUNT = 50;
 
 const SPECIALTIES = [
@@ -33,38 +36,88 @@ const CITIES = [
   'Lille',
 ];
 
-function generateUser() {
+function generateUser(role: 'patient' | 'doctor', email: string) {
   return {
     name: faker.person.fullName(),
-    email: faker.internet.email().toLowerCase(),
+    email,
     image: faker.image.avatar(),
-    role: faker.helpers.arrayElement(['user', 'admin']),
-    banned: faker.datatype.boolean(),
-    banReason: faker.lorem.sentence(),
+    role,
+    banned: false,
     createdAt: faker.date.past(),
     updatedAt: faker.date.recent(),
     seeded: true,
-    lastLoginMethod: faker.helpers.arrayElement(['google', 'github', 'email']),
-    banExpires: faker.date.future(),
-    emailVerified: faker.datatype.boolean(),
+    lastLoginMethod: faker.helpers.arrayElement(['google', 'github', 'email'] as const),
+    emailVerified: true,
   };
+}
+
+async function seedAdmin() {
+  const email = env.SEED_ADMIN_EMAIL;
+  const password = env.SEED_ADMIN_PASSWORD;
+
+  const existing = await auth.api.signInEmail({ body: { email, password } }).catch(() => null);
+
+  if (existing) {
+    logger.info('✔ Admin account already exists, skipping');
+    return;
+  }
+
+  await auth.api.signUpEmail({
+    body: { email, password, name: 'Admin' },
+  });
+
+  const [adminUser] = await db
+    .select({ id: users.id })
+    .from(users)
+    .where(eq(users.email, email))
+    .limit(1);
+
+  if (adminUser) {
+    await db.update(users).set({ role: 'admin' }).where(eq(users.email, email));
+    logger.info(`✔ Admin account created (${email})`);
+  }
 }
 
 async function main() {
   logger.info('🌱 Seeding database...\n');
 
-  const userRows = Array.from({ length: USER_COUNT }, generateUser);
+  await seedAdmin();
 
-  const insertedUsers = await db
+  const patientRows = Array.from({ length: PATIENT_COUNT }, (_, i) =>
+    generateUser('patient', `seed.patient.${i}.${faker.string.uuid()}@example.com`),
+  );
+
+  const insertedPatients = await db
     .insert(users)
-    .values(userRows)
+    .values(patientRows)
     .onConflictDoNothing()
     .returning({ id: users.id });
-  logger.info(`✔ Inserted ${insertedUsers.length} users`);
 
-  const doctorRows = Array.from({ length: DOCTOR_COUNT }, () => {
+  logger.info(`✔ Inserted ${insertedPatients.length} patients`);
+
+  const doctorUserRows = Array.from({ length: DOCTOR_COUNT }, (_, i) =>
+    generateUser('doctor', `seed.doctor.${i}.${faker.string.uuid()}@example.com`),
+  );
+
+  const insertedDoctorUsers = await db
+    .insert(users)
+    .values(doctorUserRows)
+    .onConflictDoNothing()
+    .returning({ id: users.id });
+
+  if (insertedDoctorUsers.length !== DOCTOR_COUNT) {
+    throw new Error(
+      `Expected ${DOCTOR_COUNT} doctor users, but inserted ${insertedDoctorUsers.length}. ` +
+        `Check unique constraints / conflicts.`,
+    );
+  }
+
+  logger.info(`✔ Inserted ${insertedDoctorUsers.length} doctor users`);
+
+  const doctorRows = insertedDoctorUsers.map(({ id: userId }) => {
     const city = faker.helpers.arrayElement(CITIES);
     return {
+      userId,
       name: `Dr. ${faker.person.fullName()}`,
       specialty: faker.helpers.arrayElement(SPECIALTIES),
       address: `${faker.location.streetAddress()}, ${city}`,
@@ -79,7 +132,15 @@ async function main() {
     .values(doctorRows)
     .onConflictDoNothing()
     .returning({ id: doctors.id });
-  logger.info(`✔ Inserted ${insertedDoctors.length} doctors`);
+
+  if (insertedDoctors.length !== DOCTOR_COUNT) {
+    throw new Error(
+      `Expected ${DOCTOR_COUNT} doctors, but inserted ${insertedDoctors.length}. ` +
+        `Check doctors.userId unique/FK constraints or conflicts.`,
+    );
+  }
+
+  logger.info(`✔ Inserted ${insertedDoctors.length} doctors (all linked to doctor users)`);
 
   logger.info('\n🌳 Seeding completed.');
 }

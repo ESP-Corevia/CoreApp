@@ -1,14 +1,18 @@
 import { TRPCError } from '@trpc/server';
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { authMock, createTestCaller, fakeSession } from '../../test/caller';
+import {
+  createTestCaller,
+  fakeAdminSession,
+  fakeDoctorSession,
+  fakeSession,
+} from '../../test/caller';
 import { mockServices } from '../../test/services';
 
 beforeEach(() => {
   mockServices.appointmentsService.createAppointment.mockReset();
   mockServices.appointmentsService.listMyAppointments.mockReset();
   mockServices.appointmentsService.getAppointmentDetail.mockReset();
-  (authMock.api.userHasPermission as any).mockResolvedValue({ success: false });
 });
 
 const DOCTOR_ID = 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11';
@@ -30,6 +34,13 @@ describe('appointmentsRouter', () => {
     await expect(
       caller.appointments.create({ doctorId: DOCTOR_ID, date: DATE, time: TIME }),
     ).rejects.toThrow('Authentication required');
+  });
+
+  it('rejects non-patient roles', async () => {
+    const caller = createTestCaller({ customSession: fakeDoctorSession });
+    await expect(
+      caller.appointments.create({ doctorId: DOCTOR_ID, date: DATE, time: TIME }),
+    ).rejects.toThrow('Patient access required');
   });
 
   describe('detail', () => {
@@ -95,17 +106,23 @@ describe('appointmentsRouter', () => {
       );
     });
 
-    it('passes isAdmin=true when user has admin permission', async () => {
-      (authMock.api.userHasPermission as any).mockResolvedValue({ success: true });
+    it('passes isAdmin=true when session role is admin', async () => {
       mockServices.appointmentsService.getAppointmentDetail.mockResolvedValue(fakeDetail);
 
-      const caller = createTestCaller({ customSession: fakeSession });
+      const caller = createTestCaller({ customSession: fakeAdminSession });
       await caller.appointments.detail({ id: APPT_ID });
 
       expect(mockServices.appointmentsService.getAppointmentDetail).toHaveBeenCalledWith(
-        fakeSession.userId,
+        fakeAdminSession.userId,
         APPT_ID,
         true,
+      );
+    });
+
+    it('rejects doctor role', async () => {
+      const caller = createTestCaller({ customSession: fakeDoctorSession });
+      await expect(caller.appointments.detail({ id: APPT_ID })).rejects.toThrow(
+        'Patient access required',
       );
     });
   });

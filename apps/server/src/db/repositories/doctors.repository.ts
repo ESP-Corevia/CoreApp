@@ -44,6 +44,7 @@ export const createDoctorsRepo = (db: DrizzleDB = DB) => ({
     return await db
       .select({
         id: doctors.id,
+        userId: doctors.userId,
         name: doctors.name,
         specialty: doctors.specialty,
         address: doctors.address,
@@ -55,6 +56,24 @@ export const createDoctorsRepo = (db: DrizzleDB = DB) => ({
       .orderBy(asc(doctors.name))
       .limit(params.limit)
       .offset(params.offset);
+  },
+
+  getByUserId: async (userId: string) => {
+    const [row] = await db
+      .select({
+        id: doctors.id,
+        userId: doctors.userId,
+        name: doctors.name,
+        specialty: doctors.specialty,
+        address: doctors.address,
+        city: doctors.city,
+        imageUrl: doctors.imageUrl,
+      })
+      .from(doctors)
+      .where(eq(doctors.userId, userId))
+      .limit(1);
+
+    return row ?? null;
   },
 
   countBookable: async (params: Omit<ListBookableParams, 'offset' | 'limit'>) => {

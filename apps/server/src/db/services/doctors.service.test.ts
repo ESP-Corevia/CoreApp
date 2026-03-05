@@ -12,6 +12,7 @@ afterEach(() => vi.restoreAllMocks());
 
 const fakeDoctor = {
   id: 'doc-1',
+  userId: null,
   name: 'Dr. Alice Martin',
   specialty: 'Cardiology',
   address: '10 Rue de Rivoli, Paris',

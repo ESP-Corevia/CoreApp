@@ -31,7 +31,7 @@ export function createTestCaller({
     // logger: () => mockLogger,
   });
 }
-export const fakeSession = {
+const baseFakeSession = {
   isAuthenticated: true,
   userId: 'u_1',
   impersonatedBy: null,
@@ -41,3 +41,7 @@ export const fakeSession = {
   expiresAt: new Date(),
   token: 'token_123',
 };
+
+export const fakeSession = { ...baseFakeSession, role: 'patient' };
+export const fakeDoctorSession = { ...baseFakeSession, userId: 'doc_1', role: 'doctor' };
+export const fakeAdminSession = { ...baseFakeSession, userId: 'admin_1', role: 'admin' };

@@ -4,6 +4,7 @@ import type { createDoctorsRepo } from '../repositories/doctors.repository';
 
 export const DoctorOutputSchema = z.object({
   id: z.string(),
+  userId: z.string().nullable(),
   name: z.string(),
   specialty: z.string(),
   address: z.string(),

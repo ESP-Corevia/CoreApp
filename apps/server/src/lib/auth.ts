@@ -6,7 +6,7 @@ import { db } from '../db';
 import * as schemas from '../db/schema/auth';
 import { env } from '../env';
 
-import { ac, adminRole, userRole } from './permissions';
+import { ac, adminRole, doctorRole, patientRole } from './permissions';
 
 const isDev = env.NODE_ENV === 'development';
 
@@ -91,14 +91,15 @@ export const auth = betterAuth({
   plugins: [
     openAPI(),
     // eslint-disable-next-line require-await
-    customSession(async ({ session }) => ({
+    customSession(async ({ session, user }) => ({
       isAuthenticated: !!session,
       ...session,
+      role: (user as any).role ?? 'patient',
       impersonatedBy: (session as any).impersonatedBy ?? null,
     })),
     admin({
       ac,
-      roles: { user: userRole, admin: adminRole },
+      roles: { patient: patientRole, doctor: doctorRole, admin: adminRole },
       allowImpersonatingAdmins: true,
     }),
     lastLoginMethod({
@@ -107,4 +108,4 @@ export const auth = betterAuth({
   ],
 });
 export type Auth = typeof auth;
-export type { ac, adminRole, userRole };
+export type { ac, adminRole, doctorRole, patientRole };
