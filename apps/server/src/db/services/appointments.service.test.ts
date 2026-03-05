@@ -122,4 +122,104 @@ describe('appointmentsService', () => {
       ).rejects.toThrow('blocked by the doctor');
     });
   });
+
+  describe('listMyAppointments', () => {
+    const fakeItems = [
+      {
+        ...fakeAppointment,
+        reason: null,
+        doctor: {
+          id: DOCTOR_ID,
+          name: 'Dr. Test',
+          specialty: 'Cardiology',
+          address: '1 Rue Test',
+          imageUrl: null,
+        },
+      },
+    ];
+
+    beforeEach(() => {
+      mockAppointmentsRepo.listByPatient.mockResolvedValue(fakeItems);
+      mockAppointmentsRepo.countByPatient.mockResolvedValue(1);
+    });
+
+    it('returns paginated results with defaults', async () => {
+      const result = await service.listMyAppointments(PATIENT_ID, {
+        page: 1,
+        limit: 20,
+        sort: 'dateDesc',
+      });
+
+      expect(result).toEqual({
+        items: fakeItems,
+        page: 1,
+        limit: 20,
+        total: 1,
+      });
+      expect(mockAppointmentsRepo.listByPatient).toHaveBeenCalledWith({
+        patientId: PATIENT_ID,
+        status: undefined,
+        from: undefined,
+        to: undefined,
+        offset: 0,
+        limit: 20,
+        sort: 'dateDesc',
+      });
+    });
+
+    it('computes offset from page', async () => {
+      await service.listMyAppointments(PATIENT_ID, {
+        page: 3,
+        limit: 10,
+        sort: 'dateDesc',
+      });
+
+      expect(mockAppointmentsRepo.listByPatient).toHaveBeenCalledWith(
+        expect.objectContaining({ offset: 20, limit: 10 }),
+      );
+    });
+
+    it('passes filters to the repo', async () => {
+      await service.listMyAppointments(PATIENT_ID, {
+        status: 'PENDING',
+        from: '2099-01-01',
+        to: '2099-12-31',
+        page: 1,
+        limit: 20,
+        sort: 'dateAsc',
+      });
+
+      expect(mockAppointmentsRepo.listByPatient).toHaveBeenCalledWith(
+        expect.objectContaining({
+          status: 'PENDING',
+          from: '2099-01-01',
+          to: '2099-12-31',
+          sort: 'dateAsc',
+        }),
+      );
+    });
+
+    it('throws BAD_REQUEST when from > to', async () => {
+      await expect(
+        service.listMyAppointments(PATIENT_ID, {
+          from: '2099-12-31',
+          to: '2099-01-01',
+          page: 1,
+          limit: 20,
+          sort: 'dateDesc',
+        }),
+      ).rejects.toThrow(expect.objectContaining({ code: 'BAD_REQUEST' }));
+    });
+
+    it('fetches items and count in parallel', async () => {
+      await service.listMyAppointments(PATIENT_ID, {
+        page: 1,
+        limit: 20,
+        sort: 'dateDesc',
+      });
+
+      expect(mockAppointmentsRepo.listByPatient).toHaveBeenCalledTimes(1);
+      expect(mockAppointmentsRepo.countByPatient).toHaveBeenCalledTimes(1);
+    });
+  });
 });

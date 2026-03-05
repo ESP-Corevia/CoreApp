@@ -1,7 +1,7 @@
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
 
 import { applyMigration, db, resetDb } from '../../../test/db';
-import { doctorBlocks, doctors, users } from '../schema';
+import { appointments, doctorBlocks, doctors, users } from '../schema';
 
 import { createAppointmentsRepo } from './appointments.repository';
 
@@ -126,6 +126,151 @@ describe('appointments.repository', () => {
       });
 
       expect(result).toHaveProperty('appointment');
+    });
+  });
+
+  describe('listByPatient', () => {
+    beforeEach(async () => {
+      // Seed 3 appointments for patient on different dates/statuses
+      await db.insert(appointments).values([
+        {
+          doctorId,
+          patientId,
+          date: '2099-06-10',
+          time: '10:00',
+          status: 'PENDING',
+          reason: 'Checkup',
+        },
+        {
+          doctorId,
+          patientId,
+          date: '2099-06-15',
+          time: '14:00',
+          status: 'CONFIRMED',
+        },
+        {
+          doctorId,
+          patientId,
+          date: '2099-06-20',
+          time: '09:00',
+          status: 'CANCELLED',
+        },
+      ]);
+    });
+
+    it('returns all appointments for a patient with doctor info', async () => {
+      const items = await repo.listByPatient({
+        patientId,
+        offset: 0,
+        limit: 10,
+        sort: 'dateAsc',
+      });
+
+      expect(items).toHaveLength(3);
+      expect(items[0].date).toBe('2099-06-10');
+      expect(items[0].doctor.name).toBe('Dr. Test');
+      expect(items[0].doctor.specialty).toBe('Cardiology');
+    });
+
+    it('filters by status', async () => {
+      const items = await repo.listByPatient({
+        patientId,
+        status: 'PENDING',
+        offset: 0,
+        limit: 10,
+        sort: 'dateAsc',
+      });
+
+      expect(items).toHaveLength(1);
+      expect(items[0].status).toBe('PENDING');
+    });
+
+    it('filters by date range', async () => {
+      const items = await repo.listByPatient({
+        patientId,
+        from: '2099-06-12',
+        to: '2099-06-18',
+        offset: 0,
+        limit: 10,
+        sort: 'dateAsc',
+      });
+
+      expect(items).toHaveLength(1);
+      expect(items[0].date).toBe('2099-06-15');
+    });
+
+    it('sorts dateDesc', async () => {
+      const items = await repo.listByPatient({
+        patientId,
+        offset: 0,
+        limit: 10,
+        sort: 'dateDesc',
+      });
+
+      expect(items[0].date).toBe('2099-06-20');
+      expect(items[2].date).toBe('2099-06-10');
+    });
+
+    it('paginates with offset/limit', async () => {
+      const items = await repo.listByPatient({
+        patientId,
+        offset: 1,
+        limit: 1,
+        sort: 'dateAsc',
+      });
+
+      expect(items).toHaveLength(1);
+      expect(items[0].date).toBe('2099-06-15');
+    });
+
+    it('isolates by patient - other user sees nothing', async () => {
+      const [otherUser] = await db
+        .insert(users)
+        .values({
+          name: 'Other Patient',
+          email: 'other@test.com',
+          emailVerified: true,
+          createdAt: new Date(),
+        })
+        .returning({ id: users.id });
+
+      const items = await repo.listByPatient({
+        patientId: otherUser.id,
+        offset: 0,
+        limit: 10,
+        sort: 'dateAsc',
+      });
+
+      expect(items).toHaveLength(0);
+    });
+  });
+
+  describe('countByPatient', () => {
+    beforeEach(async () => {
+      await db.insert(appointments).values([
+        { doctorId, patientId, date: '2099-06-10', time: '10:00', status: 'PENDING' },
+        { doctorId, patientId, date: '2099-06-15', time: '14:00', status: 'CONFIRMED' },
+        { doctorId, patientId, date: '2099-06-20', time: '09:00', status: 'CANCELLED' },
+      ]);
+    });
+
+    it('counts all appointments for a patient', async () => {
+      const count = await repo.countByPatient({ patientId });
+      expect(count).toBe(3);
+    });
+
+    it('counts with status filter', async () => {
+      const count = await repo.countByPatient({ patientId, status: 'PENDING' });
+      expect(count).toBe(1);
+    });
+
+    it('counts with date range', async () => {
+      const count = await repo.countByPatient({
+        patientId,
+        from: '2099-06-12',
+        to: '2099-06-18',
+      });
+      expect(count).toBe(1);
     });
   });
 });

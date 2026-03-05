@@ -6,6 +6,7 @@ import { mockServices } from '../../test/services';
 
 beforeEach(() => {
   mockServices.appointmentsService.createAppointment.mockReset();
+  mockServices.appointmentsService.listMyAppointments.mockReset();
 });
 
 const DOCTOR_ID = 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11';
@@ -15,7 +16,7 @@ const TIME = '10:00';
 const fakeAppointment = {
   id: 'appt-uuid-1',
   doctorId: DOCTOR_ID,
-  patientId: 'u_1',
+  patientId: 'b0eebc99-9c0b-4ef8-bb6d-6bb9bd380a22',
   date: DATE,
   time: TIME,
   status: 'PENDING' as const,
@@ -92,6 +93,89 @@ describe('appointmentsRouter', () => {
       await expect(
         caller.appointments.create({ doctorId: DOCTOR_ID, date: DATE, time: TIME }),
       ).rejects.toThrow('in the past');
+    });
+  });
+
+  describe('listMine', () => {
+    const fakeListResult = {
+      items: [
+        {
+          ...fakeAppointment,
+          reason: null,
+          doctor: {
+            id: DOCTOR_ID,
+            name: 'Dr. Test',
+            specialty: 'Cardiology',
+            address: '1 Rue Test',
+            imageUrl: null,
+          },
+        },
+      ],
+      page: 1,
+      limit: 20,
+      total: 1,
+    };
+
+    it('returns paginated appointments', async () => {
+      mockServices.appointmentsService.listMyAppointments.mockResolvedValue(fakeListResult);
+
+      const caller = createTestCaller({ customSession: fakeSession });
+      const result = await caller.appointments.listMine({});
+
+      expect(result).toEqual(fakeListResult);
+      expect(mockServices.appointmentsService.listMyAppointments).toHaveBeenCalledWith(
+        fakeSession.userId,
+        expect.objectContaining({ page: 1, limit: 20, sort: 'dateDesc' }),
+      );
+    });
+
+    it('passes filters to the service', async () => {
+      mockServices.appointmentsService.listMyAppointments.mockResolvedValue({
+        ...fakeListResult,
+        items: [],
+        total: 0,
+      });
+
+      const caller = createTestCaller({ customSession: fakeSession });
+      await caller.appointments.listMine({
+        status: 'PENDING',
+        from: '2099-01-01',
+        to: '2099-12-31',
+        page: 2,
+        limit: 10,
+        sort: 'dateAsc',
+      });
+
+      expect(mockServices.appointmentsService.listMyAppointments).toHaveBeenCalledWith(
+        fakeSession.userId,
+        {
+          status: 'PENDING',
+          from: '2099-01-01',
+          to: '2099-12-31',
+          page: 2,
+          limit: 10,
+          sort: 'dateAsc',
+        },
+      );
+    });
+
+    it('rejects invalid status', async () => {
+      const caller = createTestCaller({ customSession: fakeSession });
+      await expect(caller.appointments.listMine({ status: 'INVALID' as any })).rejects.toThrow();
+    });
+
+    it('rejects unauthenticated requests', async () => {
+      const caller = createTestCaller({ customSession: null });
+      await expect(caller.appointments.listMine({})).rejects.toThrow('Authentication required');
+    });
+
+    it('propagates BAD_REQUEST from the service', async () => {
+      mockServices.appointmentsService.listMyAppointments.mockRejectedValue(
+        new TRPCError({ code: 'BAD_REQUEST', message: '"from" must be before or equal to "to"' }),
+      );
+
+      const caller = createTestCaller({ customSession: fakeSession });
+      await expect(caller.appointments.listMine({})).rejects.toThrow('before or equal');
     });
   });
 });

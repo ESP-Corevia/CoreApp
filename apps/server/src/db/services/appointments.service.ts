@@ -33,6 +33,41 @@ export const AppointmentOutputSchema = z.object({
   status: z.string(),
 });
 
+const DoctorSummarySchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  specialty: z.string(),
+  address: z.string(),
+  imageUrl: z.string().nullable(),
+});
+
+const AppointmentWithDoctorSchema = AppointmentOutputSchema.extend({
+  reason: z.string().nullable(),
+  doctor: DoctorSummarySchema,
+});
+
+export const ListAppointmentsInputSchema = z.object({
+  status: z.enum(['PENDING', 'CONFIRMED', 'CANCELLED', 'COMPLETED']).optional(),
+  from: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, 'from must be YYYY-MM-DD')
+    .optional(),
+  to: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, 'to must be YYYY-MM-DD')
+    .optional(),
+  page: z.number().int().min(1).default(1),
+  limit: z.number().int().min(1).max(100).default(20),
+  sort: z.enum(['dateAsc', 'dateDesc', 'createdAtDesc']).default('dateDesc'),
+});
+
+export const ListAppointmentsOutputSchema = z.object({
+  items: z.array(AppointmentWithDoctorSchema),
+  page: z.number(),
+  limit: z.number(),
+  total: z.number(),
+});
+
 export const createAppointmentsService = (repo: ReturnType<typeof createAppointmentsRepo>) => ({
   createAppointment: async (
     patientId: string,
@@ -78,5 +113,39 @@ export const createAppointmentsService = (repo: ReturnType<typeof createAppointm
     }
 
     return result.appointment;
+  },
+
+  listMyAppointments: async (
+    patientId: string,
+    query: z.infer<typeof ListAppointmentsInputSchema>,
+  ) => {
+    if (query.from && query.to && query.from > query.to) {
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message: '"from" must be before or equal to "to"',
+      });
+    }
+
+    const offset = (query.page - 1) * query.limit;
+
+    const [items, total] = await Promise.all([
+      repo.listByPatient({
+        patientId,
+        status: query.status,
+        from: query.from,
+        to: query.to,
+        offset,
+        limit: query.limit,
+        sort: query.sort,
+      }),
+      repo.countByPatient({
+        patientId,
+        status: query.status,
+        from: query.from,
+        to: query.to,
+      }),
+    ]);
+
+    return { items, page: query.page, limit: query.limit, total };
   },
 });

@@ -5,7 +5,8 @@
       "Bash(yarn workspace server test)",
       "Bash(grep -l \"appointments\\\\|doctor_blocks\" c:/Users/miche/Desktop/Projects/CoreApp/apps/server/src/db/migrations/*.sql)",
       "Bash(yarn workspace server test src/routers/doctors.test.ts)",
-      "Bash(yarn workspace server test -- --reporter=verbose)"
+      "Bash(yarn workspace server test -- --reporter=verbose)",
+      "Bash(yarn workspace server test -- src/routers/appointments.test.ts)"
     ]
   }
 }
