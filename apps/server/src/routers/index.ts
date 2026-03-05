@@ -1,6 +1,7 @@
 import { protectedProcedure, publicProcedure, router } from '../middlewares';
 
 import { adminRouter } from './admin/adminRouter';
+import { appointmentsRouter } from './appointments';
 import { doctorsRouter } from './doctors';
 import { helloWorldRouter } from './helloworld';
 import { userRouter } from './user/userRouter';
@@ -18,5 +19,6 @@ export const appRouter = router({
   user: userRouter,
   admin: adminRouter,
   doctors: doctorsRouter,
+  appointments: appointmentsRouter,
 });
 export type AppRouter = typeof appRouter;
