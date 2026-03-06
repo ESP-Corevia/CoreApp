@@ -7,6 +7,9 @@ import * as schemas from '../db/schema/auth';
 import { env } from '../env';
 
 import { ac, adminRole, userRole } from './permissions';
+
+const isDev = env.NODE_ENV === 'development';
+
 export const auth = betterAuth({
   appName: 'Corevia',
   // basePath: '/api/auth',
@@ -63,24 +66,24 @@ export const auth = betterAuth({
         attributes: {
           path: '/',
           httpOnly: true,
-          sameSite: 'none',
-          secure: true,
+          sameSite: isDev ? 'lax' : 'none',
+          secure: !isDev,
         },
       },
       session_data: {
         attributes: {
           path: '/',
           httpOnly: true,
-          sameSite: 'none',
-          secure: true,
+          sameSite: isDev ? 'lax' : 'none',
+          secure: !isDev,
         },
       },
       dont_remember: {
         attributes: {
           path: '/',
           httpOnly: true,
-          sameSite: 'none',
-          secure: true,
+          sameSite: isDev ? 'lax' : 'none',
+          secure: !isDev,
         },
       },
     },

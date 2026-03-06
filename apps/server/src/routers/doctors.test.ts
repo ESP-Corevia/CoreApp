@@ -1,9 +1,13 @@
+import { TRPCError } from '@trpc/server';
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { createTestCaller } from '../../test/caller';
+import { createTestCaller, fakeSession } from '../../test/caller';
 import { mockServices } from '../../test/services';
 
-beforeEach(() => {});
+beforeEach(() => {
+  mockServices.doctorsService.listBookable.mockReset();
+  mockServices.availabilityService.getAvailableSlots.mockReset();
+});
 
 const fakeDoctors = [
   {
@@ -25,6 +29,11 @@ const fakeDoctors = [
 ];
 
 describe('doctorsRouter', () => {
+  it('rejects unauthenticated requests', async () => {
+    const caller = createTestCaller({ customSession: null });
+    await expect(caller.doctors.list({})).rejects.toThrow('Authentication required');
+  });
+
   describe('list', () => {
     it('returns paginated doctors with default params', async () => {
       mockServices.doctorsService.listBookable.mockResolvedValue({
@@ -34,7 +43,7 @@ describe('doctorsRouter', () => {
         total: 2,
       });
 
-      const caller = createTestCaller({ customSession: null });
+      const caller = createTestCaller({ customSession: fakeSession });
       const result = await caller.doctors.list({});
 
       expect(result).toEqual({
@@ -60,7 +69,7 @@ describe('doctorsRouter', () => {
         total: 1,
       });
 
-      const caller = createTestCaller({ customSession: null });
+      const caller = createTestCaller({ customSession: fakeSession });
       const result = await caller.doctors.list({
         specialty: 'Cardiology',
         city: 'Paris',
@@ -88,7 +97,7 @@ describe('doctorsRouter', () => {
         total: 0,
       });
 
-      const caller = createTestCaller({ customSession: null });
+      const caller = createTestCaller({ customSession: fakeSession });
       const result = await caller.doctors.list({ specialty: 'Unknown' });
 
       expect(result.items).toEqual([]);
@@ -96,13 +105,57 @@ describe('doctorsRouter', () => {
     });
 
     it('rejects invalid page number', async () => {
-      const caller = createTestCaller({ customSession: null });
+      const caller = createTestCaller({ customSession: fakeSession });
       await expect(caller.doctors.list({ page: 0 })).rejects.toThrow();
     });
 
     it('rejects limit over 100', async () => {
-      const caller = createTestCaller({ customSession: null });
+      const caller = createTestCaller({ customSession: fakeSession });
       await expect(caller.doctors.list({ limit: 101 })).rejects.toThrow();
+    });
+  });
+
+  describe('availableSlots', () => {
+    const DOCTOR_ID = 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11';
+    const DATE = '2099-06-15';
+
+    it('returns available slots from the service', async () => {
+      const expected = { doctorId: DOCTOR_ID, date: DATE, slots: ['08:00', '08:30'] };
+      mockServices.availabilityService.getAvailableSlots.mockResolvedValue(expected);
+
+      const caller = createTestCaller({ customSession: fakeSession });
+      const result = await caller.doctors.availableSlots({ doctorId: DOCTOR_ID, date: DATE });
+
+      expect(result).toEqual(expected);
+      expect(mockServices.availabilityService.getAvailableSlots).toHaveBeenCalledWith(
+        DOCTOR_ID,
+        DATE,
+      );
+    });
+
+    it('rejects invalid doctorId (not uuid)', async () => {
+      const caller = createTestCaller({ customSession: fakeSession });
+      await expect(
+        caller.doctors.availableSlots({ doctorId: 'not-a-uuid', date: DATE }),
+      ).rejects.toThrow();
+    });
+
+    it('rejects invalid date format', async () => {
+      const caller = createTestCaller({ customSession: fakeSession });
+      await expect(
+        caller.doctors.availableSlots({ doctorId: DOCTOR_ID, date: '15-06-2099' }),
+      ).rejects.toThrow();
+    });
+
+    it('propagates NOT_FOUND from the service', async () => {
+      mockServices.availabilityService.getAvailableSlots.mockRejectedValue(
+        new TRPCError({ code: 'NOT_FOUND', message: 'Doctor not found' }),
+      );
+
+      const caller = createTestCaller({ customSession: fakeSession });
+      await expect(
+        caller.doctors.availableSlots({ doctorId: DOCTOR_ID, date: DATE }),
+      ).rejects.toThrow('Doctor not found');
     });
   });
 });
