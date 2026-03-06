@@ -83,7 +83,7 @@ fastify.get('/', () => {
 fastify.register(fastifyTRPCOpenApiPlugin, {
   basePath: '/api',
   router: appRouter,
-  createContext: (opts: any) => ({ ...opts, auth, services }),
+  createContext: (opts: any) => createContext({ ...opts, auth, services }),
 });
 fastify.get('/openapi.json', async (_req, reply) => {
   const trpcDoc = generateOpenApiDocument(appRouter, {
