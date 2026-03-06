@@ -1,7 +1,7 @@
 import { TRPCError } from '@trpc/server';
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { createTestCaller, fakeSession } from '../../test/caller';
+import { createTestCaller, fakeDoctorSession, fakeSession } from '../../test/caller';
 import { mockServices } from '../../test/services';
 
 beforeEach(() => {
@@ -12,19 +12,19 @@ beforeEach(() => {
 const fakeDoctors = [
   {
     id: '00000000-0000-0000-0000-000000000001',
+    userId: null,
     name: 'Dr. Alice Martin',
     specialty: 'Cardiology',
     address: '10 Rue de Paris',
     city: 'Paris',
-    imageUrl: null,
   },
   {
     id: '00000000-0000-0000-0000-000000000002',
+    userId: 'u_1',
     name: 'Dr. Bob Dupont',
     specialty: 'Dermatology',
     address: '5 Avenue des Champs',
     city: 'Lyon',
-    imageUrl: 'https://example.com/bob.jpg',
   },
 ];
 
@@ -32,6 +32,11 @@ describe('doctorsRouter', () => {
   it('rejects unauthenticated requests', async () => {
     const caller = createTestCaller({ customSession: null });
     await expect(caller.doctors.list({})).rejects.toThrow('Authentication required');
+  });
+
+  it('rejects non-patient roles', async () => {
+    const caller = createTestCaller({ customSession: fakeDoctorSession });
+    await expect(caller.doctors.list({})).rejects.toThrow('Patient access required');
   });
 
   describe('list', () => {

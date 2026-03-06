@@ -78,6 +78,27 @@
       "when": 1772705938559,
       "tag": "0010_lyrical_diamondback",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1772726759455,
+      "tag": "0011_cooing_rocket_racer",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1772788456796,
+      "tag": "0012_wealthy_zaladane",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1772794037246,
+      "tag": "0013_friendly_the_hand",
+      "breakpoints": true
     }
   ]
 }

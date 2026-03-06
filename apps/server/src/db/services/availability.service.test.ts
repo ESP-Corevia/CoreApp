@@ -1,4 +1,3 @@
-import { TRPCError } from '@trpc/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { mockAvailabilityRepo } from '../../../test/repositories';
