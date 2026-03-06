@@ -1,37 +1,10 @@
 import { faker } from '@faker-js/faker';
 
 import { db } from '../src/db';
-import { users, doctors } from '../src/db/schema';
+import { users } from '../src/db/schema';
 import logger from '../src/lib/logger';
 
 const USER_COUNT = 100;
-const DOCTOR_COUNT = 50;
-
-const SPECIALTIES = [
-  'Cardiology',
-  'Dermatology',
-  'Pediatrics',
-  'Orthopedics',
-  'Neurology',
-  'Ophthalmology',
-  'Gastroenterology',
-  'Psychiatry',
-  'Radiology',
-  'General Practice',
-];
-
-const CITIES = [
-  'Paris',
-  'Lyon',
-  'Marseille',
-  'Toulouse',
-  'Nice',
-  'Nantes',
-  'Strasbourg',
-  'Montpellier',
-  'Bordeaux',
-  'Lille',
-];
 
 function generateUser() {
   return {
@@ -61,25 +34,6 @@ async function main() {
     .onConflictDoNothing()
     .returning({ id: users.id });
   logger.info(`✔ Inserted ${insertedUsers.length} users`);
-
-  const doctorRows = Array.from({ length: DOCTOR_COUNT }, () => {
-    const city = faker.helpers.arrayElement(CITIES);
-    return {
-      name: `Dr. ${faker.person.fullName()}`,
-      specialty: faker.helpers.arrayElement(SPECIALTIES),
-      address: `${faker.location.streetAddress()}, ${city}`,
-      city,
-      imageUrl: faker.helpers.maybe(() => faker.image.avatar(), { probability: 0.7 }) ?? null,
-      createdAt: faker.date.past(),
-    };
-  });
-
-  const insertedDoctors = await db
-    .insert(doctors)
-    .values(doctorRows)
-    .onConflictDoNothing()
-    .returning({ id: doctors.id });
-  logger.info(`✔ Inserted ${insertedDoctors.length} doctors`);
 
   logger.info('\n🌳 Seeding completed.');
 }
