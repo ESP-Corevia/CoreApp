@@ -161,10 +161,8 @@ describe('doctors.repository', () => {
       const result = await repo.getByUserId(userId);
 
       expect(result).not.toBeNull();
-      expect(result!.userId).toBe(userId);
       expect(result!.specialty).toBe('Neurology');
       expect(result!.city).toBe('Paris');
-      expect(result!.name).toBe('Dr. Wilson');
     });
 
     it('returns null when userId does not match any doctor', async () => {

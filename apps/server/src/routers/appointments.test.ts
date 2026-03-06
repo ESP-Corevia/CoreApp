@@ -56,7 +56,6 @@ describe('appointmentsRouter', () => {
         name: 'Dr. Test',
         specialty: 'Cardiology',
         address: '1 Rue Test',
-        imageUrl: null,
       },
     };
 
@@ -204,7 +203,6 @@ describe('appointmentsRouter', () => {
             name: 'Dr. Test',
             specialty: 'Cardiology',
             address: '1 Rue Test',
-            imageUrl: null,
           },
         },
       ],

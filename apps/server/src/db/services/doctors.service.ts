@@ -3,8 +3,6 @@ import { z } from 'zod';
 import type { createDoctorsRepo } from '../repositories/doctors.repository';
 
 export const DoctorProfileSchema = z.object({
-  id: z.string(),
-  userId: z.string().nullable(),
   specialty: z.string(),
   address: z.string(),
   city: z.string(),
@@ -16,6 +14,7 @@ export const DoctorOutputSchema = z.object({
   specialty: z.string(),
   address: z.string(),
   city: z.string(),
+  name: z.string().nullable(),
 });
 
 export const DoctorsListOutputSchema = z.object({

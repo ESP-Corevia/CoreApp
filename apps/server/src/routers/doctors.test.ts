@@ -17,7 +17,6 @@ const fakeDoctors = [
     specialty: 'Cardiology',
     address: '10 Rue de Paris',
     city: 'Paris',
-    imageUrl: null,
   },
   {
     id: '00000000-0000-0000-0000-000000000002',
@@ -26,7 +25,6 @@ const fakeDoctors = [
     specialty: 'Dermatology',
     address: '5 Avenue des Champs',
     city: 'Lyon',
-    imageUrl: 'https://example.com/bob.jpg',
   },
 ];
 

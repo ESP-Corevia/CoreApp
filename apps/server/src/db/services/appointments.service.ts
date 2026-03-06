@@ -38,7 +38,6 @@ const DoctorSummarySchema = z.object({
   name: z.string().nullable(),
   specialty: z.string(),
   address: z.string(),
-  imageUrl: z.string().nullable(),
 });
 
 const AppointmentWithDoctorSchema = AppointmentOutputSchema.extend({

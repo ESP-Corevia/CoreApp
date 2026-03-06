@@ -14,11 +14,9 @@ export type PatientInsert = InferInsertModel<typeof patients>;
 export type PatientUpdate = Omit<PatientInsert, 'id' | 'userId' | 'createdAt' | 'updatedAt'>;
 
 export const createPatientsRepo = (db: DrizzleDB = DB) => ({
-  findByUserId: async (userId: string): Promise<Patient | null> => {
+  findByUserId: async (userId: string): Promise<Omit<Patient, 'id' | 'userId'> | null> => {
     const [row] = await db
       .select({
-        id: patients.id,
-        userId: patients.userId,
         dateOfBirth: patients.dateOfBirth,
         gender: patients.gender,
         phone: patients.phone,

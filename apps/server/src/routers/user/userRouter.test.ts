@@ -26,16 +26,15 @@ const fakeDoctorUser = { ...BASE_USER, role: 'doctor' };
 const fakeAdminUser = { ...BASE_USER, role: 'admin' };
 
 const fakeDoctorProfile = {
-  id: faker.string.uuid(),
-  userId: faker.string.uuid(),
+  // id: faker.string.uuid(),
+  // userId: faker.string.uuid(),
   specialty: 'Cardiology',
   address: '10 Rue de Rivoli',
   city: 'Paris',
-  name: 'Dr. Smith',
 };
 
 const fakePatientProfile = {
-  id: faker.string.uuid(),
+  // id: faker.string.uuid(),
   dateOfBirth: '1990-05-20',
   gender: 'MALE' as const,
   phone: null,
@@ -145,7 +144,11 @@ describe('userRouter', () => {
       mockServices.usersService.getMe
         .mockResolvedValueOnce(fakeDoctorUser)
         .mockResolvedValueOnce(fakeDoctorUser);
-      mockServices.doctorsService.updateProfile.mockResolvedValue(updatedDoctor);
+      mockServices.doctorsService.updateProfile.mockResolvedValue({
+        ...updatedDoctor,
+        userId: fakeDoctorUser.id,
+        id: faker.string.uuid(),
+      });
 
       const caller = createTestCaller({ customSession: fakeDoctorSession });
       const res = await caller.user.updateProfile({ doctorProfile: { city: 'Lyon' } });
@@ -159,7 +162,12 @@ describe('userRouter', () => {
 
     it('upserts patient profile fields when role is patient', async () => {
       const input = { dateOfBirth: '1990-01-01', gender: 'FEMALE' as const };
-      const upserted = { ...fakePatientProfile, ...input };
+      const upserted = {
+        ...fakePatientProfile,
+        ...input,
+        userId: fakePatientUser.id,
+        id: faker.string.uuid(),
+      };
       mockServices.usersService.getMe
         .mockResolvedValueOnce(fakePatientUser)
         .mockResolvedValueOnce(fakePatientUser);
@@ -171,7 +179,9 @@ describe('userRouter', () => {
       const res = await caller.user.updateProfile({ patientProfile: input });
 
       expect(mockServices.patientsService.upsert).toHaveBeenCalledWith(fakePatientUser.id, input);
-      expect(res.user.patientProfile).toEqual(upserted);
+      // eslint-disable-next-line ts/no-unused-vars
+      const { id, userId, ...expected } = upserted;
+      expect(res.user.patientProfile).toEqual(expected);
     });
 
     it('fetches existing doctor profile when no doctor fields provided', async () => {

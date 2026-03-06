@@ -61,8 +61,6 @@ export const createDoctorsRepo = (db: DrizzleDB = DB) => ({
   getByUserId: async (userId: string) => {
     const [row] = await db
       .select({
-        id: doctors.id,
-        userId: doctors.userId,
         specialty: doctors.specialty,
         address: doctors.address,
         city: doctors.city,

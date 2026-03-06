@@ -3,7 +3,6 @@ import { z } from 'zod';
 import type { createPatientsRepo, PatientUpdate } from '../repositories/patients.repository';
 
 export const PatientProfileSchema = z.object({
-  id: z.uuid(),
   dateOfBirth: z.string(),
   gender: z.enum(['MALE', 'FEMALE', 'OTHER']),
   phone: z.string().nullable(),

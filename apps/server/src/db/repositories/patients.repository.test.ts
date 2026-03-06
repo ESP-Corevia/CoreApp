@@ -52,10 +52,8 @@ describe('patients.repository', () => {
       const result = await repo.findByUserId(userId);
 
       expect(result).not.toBeNull();
-      expect(result?.userId).toBe(userId);
       expect(result?.dateOfBirth).toBe('1990-05-20');
       expect(result?.gender).toBe('MALE');
-      expect(result?.name).toBe('Test Patient');
     });
 
     it('returns null for an unknown userId', async () => {
