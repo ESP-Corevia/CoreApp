@@ -32,7 +32,6 @@ beforeEach(async () => {
   const [doctor] = await db
     .insert(doctors)
     .values({
-      name: 'Dr. Test',
       specialty: 'Cardiology',
       address: '1 Rue de Test, Paris',
       city: 'Paris',
@@ -143,16 +142,15 @@ describe('appointments.repository', () => {
       const result = await repo.getByIdWithDoctor(apptId);
 
       expect(result).not.toBeNull();
-      expect(result!.id).toBe(apptId);
-      expect(result!.doctorId).toBe(doctorId);
-      expect(result!.patientId).toBe(patientId);
-      expect(result!.date).toBe(TEST_DATE);
-      expect(result!.time).toBe('10:00');
-      expect(result!.status).toBe('PENDING');
-      expect(result!.reason).toBe('Checkup');
-      expect(result!.createdAt).toBeInstanceOf(Date);
-      expect(result!.doctor.name).toBe('Dr. Test');
-      expect(result!.doctor.specialty).toBe('Cardiology');
+      expect(result.id).toBe(apptId);
+      expect(result.doctorId).toBe(doctorId);
+      expect(result.patientId).toBe(patientId);
+      expect(result.date).toBe(TEST_DATE);
+      expect(result.time).toBe('10:00');
+      expect(result.status).toBe('PENDING');
+      expect(result.reason).toBe('Checkup');
+      expect(result.createdAt).toBeInstanceOf(Date);
+      expect(result.doctor.specialty).toBe('Cardiology');
     });
 
     it('returns null for non-existing id', async () => {
@@ -200,7 +198,6 @@ describe('appointments.repository', () => {
 
       expect(items).toHaveLength(3);
       expect(items[0].date).toBe('2099-06-10');
-      expect(items[0].doctor.name).toBe('Dr. Test');
       expect(items[0].doctor.specialty).toBe('Cardiology');
     });
 

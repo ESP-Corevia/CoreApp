@@ -12,12 +12,12 @@ afterEach(() => vi.restoreAllMocks());
 
 const fakeDoctor = {
   id: 'doc-1',
-  userId: null,
-  name: 'Dr. Alice Martin',
+  userId: 'user-1',
   specialty: 'Cardiology',
   address: '10 Rue de Rivoli, Paris',
   city: 'Paris',
   imageUrl: null,
+  name: 'Dr. John Doe',
 };
 
 describe('listBookable', () => {
@@ -39,12 +39,7 @@ describe('listBookable', () => {
     expect(mockRepositories.doctorsRepo.countBookable).toHaveBeenCalledWith({
       specialty: 'Cardiology',
     });
-    expect(result).toEqual({
-      items: [fakeDoctor],
-      page: 2,
-      limit: 10,
-      total: 1,
-    });
+    expect(result).toEqual({ items: [fakeDoctor], page: 2, limit: 10, total: 1 });
   });
 
   it('passes all filters to repo', async () => {
@@ -56,20 +51,20 @@ describe('listBookable', () => {
       limit: 20,
       specialty: 'Dermatology',
       city: 'Lyon',
-      search: 'dupont',
+      search: 'cardio',
     });
 
     expect(mockRepositories.doctorsRepo.listBookable).toHaveBeenCalledWith({
       specialty: 'Dermatology',
       city: 'Lyon',
-      search: 'dupont',
+      search: 'cardio',
       offset: 0,
       limit: 20,
     });
     expect(mockRepositories.doctorsRepo.countBookable).toHaveBeenCalledWith({
       specialty: 'Dermatology',
       city: 'Lyon',
-      search: 'dupont',
+      search: 'cardio',
     });
   });
 
@@ -104,10 +99,56 @@ describe('listBookable', () => {
   });
 });
 
+describe('getByUserId', () => {
+  it('returns the doctor profile for the given userId', async () => {
+    mockRepositories.doctorsRepo.getByUserId.mockResolvedValue(fakeDoctor);
+
+    const result = await doctorsService.getByUserId('user-1');
+
+    expect(result).toEqual(fakeDoctor);
+    expect(mockRepositories.doctorsRepo.getByUserId).toHaveBeenCalledWith('user-1');
+  });
+
+  it('returns null when no doctor found', async () => {
+    mockRepositories.doctorsRepo.getByUserId.mockResolvedValue(null as any);
+
+    const result = await doctorsService.getByUserId('unknown-user');
+
+    expect(result).toBeNull();
+  });
+});
+
+describe('updateProfile', () => {
+  it('updates and returns the doctor profile', async () => {
+    const updated = { ...fakeDoctor, specialty: 'Dermatology' };
+    mockRepositories.doctorsRepo.getByUserId.mockResolvedValue(fakeDoctor);
+    mockRepositories.doctorsRepo.updateByUserId.mockResolvedValue(updated);
+
+    const result = await doctorsService.updateProfile('user-1', { specialty: 'Dermatology' });
+
+    expect(mockRepositories.doctorsRepo.updateByUserId).toHaveBeenCalledWith('user-1', {
+      specialty: 'Dermatology',
+    });
+    expect(result).toEqual(updated);
+  });
+
+  it('throws when the doctor profile does not exist', async () => {
+    mockRepositories.doctorsRepo.getByUserId.mockResolvedValue(null as any);
+
+    await expect(
+      doctorsService.updateProfile('no-such-user', { specialty: 'Cardiology' }),
+    ).rejects.toThrow('Doctor profile not found');
+
+    expect(mockRepositories.doctorsRepo.updateByUserId).not.toHaveBeenCalled();
+  });
+});
+
 describe('service creation', () => {
   it('can be created with required dependencies', () => {
     const service = createDoctorsService(mockRepositories.doctorsRepo);
     expect(service).toBeDefined();
     expect(typeof service.listBookable).toBe('function');
+    expect(typeof service.getByUserId).toBe('function');
+    expect(typeof service.updateProfile).toBe('function');
   });
 });

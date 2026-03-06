@@ -35,7 +35,7 @@ export const AppointmentOutputSchema = z.object({
 
 const DoctorSummarySchema = z.object({
   id: z.string(),
-  name: z.string(),
+  name: z.string().nullable(),
   specialty: z.string(),
   address: z.string(),
   imageUrl: z.string().nullable(),

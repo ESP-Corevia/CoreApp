@@ -37,6 +37,11 @@ export const createUsersRepo = (db: DrizzleDB = DB) => ({
    * @param userId - The UUID of the user to exclude from the results.
    * @returns A paginated list of users.
    */
+  updateById: async (id: string, data: Partial<Pick<User, 'name' | 'image'>>) => {
+    const [row] = await db.update(users).set(data).where(eq(users.id, id)).returning();
+    return row ?? null;
+  },
+
   listUsers: async ({
     options,
     pageParams,

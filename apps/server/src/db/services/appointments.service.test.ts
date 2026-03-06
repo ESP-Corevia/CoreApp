@@ -133,7 +133,7 @@ describe('appointmentsService', () => {
       updatedAt: null,
       doctor: {
         id: DOCTOR_ID,
-        name: 'Dr. Test',
+        name: null,
         specialty: 'Cardiology',
         address: '1 Rue Test',
         imageUrl: null,
@@ -181,7 +181,7 @@ describe('appointmentsService', () => {
         reason: null,
         doctor: {
           id: DOCTOR_ID,
-          name: 'Dr. Test',
+          name: null,
           specialty: 'Cardiology',
           address: '1 Rue Test',
           imageUrl: null,

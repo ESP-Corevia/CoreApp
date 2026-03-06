@@ -1,6 +1,6 @@
 import { and, asc, desc, eq, gte, inArray, lte, sql } from 'drizzle-orm';
 
-import { appointments, doctorBlocks, doctors } from '../schema';
+import { appointments, doctorBlocks, doctors, users } from '../schema';
 
 import type * as schema from '../schema';
 import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
@@ -67,14 +67,14 @@ export const createAppointmentsRepo = (db: DrizzleDB) => ({
         updatedAt: appointments.updatedAt,
         doctor: {
           id: doctors.id,
-          name: doctors.name,
+          name: users.name,
           specialty: doctors.specialty,
           address: doctors.address,
-          imageUrl: doctors.imageUrl,
         },
       })
       .from(appointments)
       .innerJoin(doctors, eq(appointments.doctorId, doctors.id))
+      .leftJoin(users, eq(doctors.userId, users.id))
       .where(eq(appointments.id, id))
       .limit(1);
 
@@ -96,14 +96,14 @@ export const createAppointmentsRepo = (db: DrizzleDB) => ({
         reason: appointments.reason,
         doctor: {
           id: doctors.id,
-          name: doctors.name,
+          name: users.name,
           specialty: doctors.specialty,
           address: doctors.address,
-          imageUrl: doctors.imageUrl,
         },
       })
       .from(appointments)
       .innerJoin(doctors, eq(appointments.doctorId, doctors.id))
+      .leftJoin(users, eq(doctors.userId, users.id))
       .where(where)
       .orderBy(...order)
       .limit(params.limit)

@@ -325,6 +325,53 @@ describe('listUsers', () => {
   });
 });
 
+describe('updateMe', () => {
+  const mockUser = {
+    id: 'user-123',
+    email: 'john.doe@example.com',
+    name: 'John Doe',
+    createdAt: new Date('2024-01-01'),
+    updatedAt: null,
+    image: null,
+    emailVerified: true,
+    role: 'user',
+    banned: false,
+    banReason: '',
+    banExpires: null,
+    lastLoginMethod: null,
+    seeded: false,
+  };
+
+  it('updates name and returns updated user', async () => {
+    const updated = { ...mockUser, name: 'Jane Doe' };
+    mockRepositories.usersRepo.updateById.mockResolvedValue(updated);
+
+    const result = await userService.updateMe('user-123', { name: 'Jane Doe' });
+
+    expect(result).toEqual(updated);
+    expect(mockRepositories.usersRepo.updateById).toHaveBeenCalledWith('user-123', {
+      name: 'Jane Doe',
+    });
+  });
+
+  it('updates image and returns updated user', async () => {
+    const updated = { ...mockUser, image: 'https://example.com/new.jpg' };
+    mockRepositories.usersRepo.updateById.mockResolvedValue(updated);
+
+    const result = await userService.updateMe('user-123', { image: 'https://example.com/new.jpg' });
+
+    expect(result).toEqual(updated);
+  });
+
+  it('throws when user is not found', async () => {
+    mockRepositories.usersRepo.updateById.mockResolvedValue(null as any);
+
+    await expect(userService.updateMe('non-existent', { name: 'Test' })).rejects.toThrow(
+      'User not found',
+    );
+  });
+});
+
 describe('service creation', () => {
   it('can be created with required dependencies', () => {
     const customService = createUsersService(mockRepositories.usersRepo);

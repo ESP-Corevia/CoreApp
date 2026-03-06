@@ -59,6 +59,13 @@ export const createUsersService = (repo: Repositories['usersRepo']) => ({
       role: user.role,
     };
   },
+  updateMe: async (userId: string, data: Partial<Pick<UserOutput, 'name' | 'image'>>) => {
+    const updated = await repo.updateById(userId, data);
+    if (!updated) {
+      throw new Error('User not found');
+    }
+    return updated;
+  },
   /**
    * Gets a paginated list of users based on the provided query parameters.
    * @param params - The query parameters for filtering, sorting, and pagination.

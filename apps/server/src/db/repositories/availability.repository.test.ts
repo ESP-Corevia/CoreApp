@@ -27,12 +27,20 @@ beforeEach(async () => {
       createdAt: new Date(),
     })
     .returning({ id: users.id });
-
+  const [userDoctor] = await db
+    .insert(users)
+    .values({
+      name: 'Dr. Test',
+      email: 'doctor@test.com',
+      emailVerified: true,
+      createdAt: new Date(),
+    })
+    .returning({ id: users.id });
   // Seed a doctor
   const [doctor] = await db
     .insert(doctors)
     .values({
-      name: 'Dr. Test',
+      userId: userDoctor.id,
       specialty: 'Cardiology',
       address: '1 Rue de Test, Paris',
       city: 'Paris',

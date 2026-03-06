@@ -2,14 +2,20 @@ import { z } from 'zod';
 
 import type { createDoctorsRepo } from '../repositories/doctors.repository';
 
-export const DoctorOutputSchema = z.object({
+export const DoctorProfileSchema = z.object({
   id: z.string(),
   userId: z.string().nullable(),
-  name: z.string(),
   specialty: z.string(),
   address: z.string(),
   city: z.string(),
-  imageUrl: z.string().nullable(),
+});
+
+export const DoctorOutputSchema = z.object({
+  id: z.string(),
+  userId: z.string().nullable(),
+  specialty: z.string(),
+  address: z.string(),
+  city: z.string(),
 });
 
 export const DoctorsListOutputSchema = z.object({
@@ -18,6 +24,14 @@ export const DoctorsListOutputSchema = z.object({
   limit: z.number().int(),
   total: z.number().int(),
 });
+
+export const UpdateDoctorProfileSchema = z.object({
+  specialty: z.string().optional(),
+  address: z.string().optional(),
+  city: z.string().optional(),
+});
+
+export type UpdateDoctorProfileInput = z.infer<typeof UpdateDoctorProfileSchema>;
 
 export interface ListBookableQuery {
   specialty?: string;
@@ -38,5 +52,17 @@ export const createDoctorsService = (repo: ReturnType<typeof createDoctorsRepo>)
     ]);
 
     return { items, page, limit, total };
+  },
+
+  getByUserId: (userId: string) => {
+    return repo.getByUserId(userId);
+  },
+
+  updateProfile: async (userId: string, data: UpdateDoctorProfileInput) => {
+    const doctor = await repo.getByUserId(userId);
+    if (!doctor) {
+      throw new Error('Doctor profile not found');
+    }
+    return repo.updateByUserId(userId, data);
   },
 });
