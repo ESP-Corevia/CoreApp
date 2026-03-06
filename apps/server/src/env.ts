@@ -11,6 +11,8 @@ const envSchema = z.object({
   BETTER_AUTH_SECRET: z.string(),
   BETTER_AUTH_URL: z.url().default('http://localhost:3000'),
   LOG_LEVEL: z.enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal']).default('info'),
+  SEED_ADMIN_EMAIL: z.email().default('admin@admin.com'),
+  SEED_ADMIN_PASSWORD: z.string().min(8).default('azertyuiop'),
 });
 
 const parsed = envSchema.safeParse(process.env);
