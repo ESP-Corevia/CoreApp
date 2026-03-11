@@ -1,6 +1,6 @@
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
-import { openAPI, customSession, admin, lastLoginMethod } from 'better-auth/plugins';
+import { openAPI, customSession, admin, lastLoginMethod, bearer } from 'better-auth/plugins';
 
 import { db } from '../db';
 import * as schemas from '../db/schema/auth';
@@ -89,6 +89,7 @@ export const auth = betterAuth({
     },
   },
   plugins: [
+    bearer(),
     openAPI(),
     // eslint-disable-next-line require-await
     customSession(async ({ session, user }) => ({
