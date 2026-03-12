@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.5.0](https://github.com/ESP-Corevia/CoreApp/compare/server-v1.4.0...server-v1.5.0) (2026-03-12)
+
+
+### ✨ Features
+
+* update user roles to include 'patient' and adjust related components ([#98](https://github.com/ESP-Corevia/CoreApp/issues/98)) ([a5a653a](https://github.com/ESP-Corevia/CoreApp/commit/a5a653a90a6e1f12030d188100beaca44087b60b))
+
+
+### 🔧 Chores
+
+* **deps:** update dependency better-auth to v1.5.5 ([#96](https://github.com/ESP-Corevia/CoreApp/issues/96)) ([f31dcda](https://github.com/ESP-Corevia/CoreApp/commit/f31dcdac3530573ff24bca546a099d83f34bbd95))
+* **deps:** update tanstack ([#95](https://github.com/ESP-Corevia/CoreApp/issues/95)) ([bf89dbe](https://github.com/ESP-Corevia/CoreApp/commit/bf89dbef8e4c7fe3c05e19197fd5e431f75a7478))
+
 ## [1.4.0](https://github.com/ESP-Corevia/CoreApp/compare/server-v1.3.1...server-v1.4.0) (2026-03-11)
 
 
