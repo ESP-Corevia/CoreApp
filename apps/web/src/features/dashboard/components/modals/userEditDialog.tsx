@@ -36,13 +36,23 @@ interface EditUserDialogProps {
   user: User;
 }
 
+type EditableRole = 'admin' | 'patient' | 'doctor';
+
+const toEditableRole = (role: string | null | undefined): EditableRole => {
+  if (role === 'admin' || role === 'patient' || role === 'doctor') {
+    return role;
+  }
+  return 'patient';
+};
+
 export function EditUserDialog({ open, onOpenChange, user }: EditUserDialogProps) {
   const { t } = useTranslation();
+  const normalizedUserRole = toEditableRole(user.role);
 
   const editUserSchema = z.object({
     email: z.email(t('profile.emailInvalid', 'Invalid email address')),
     name: z.string().min(3, t('profile.nameMin', 'Name must be at least 3 characters')),
-    role: z.enum(['admin', 'user']),
+    role: z.enum(['admin', 'patient', 'doctor']),
   });
   const queryClient = useQueryClient();
   const trpc = useTrpc();
@@ -50,7 +60,7 @@ export function EditUserDialog({ open, onOpenChange, user }: EditUserDialogProps
     defaultValues: {
       name: user.name,
       email: user.email,
-      role: (user.role ?? 'user') as 'admin' | 'user',
+      role: normalizedUserRole,
     },
     validators: {
       onChange: editUserSchema,
@@ -58,10 +68,11 @@ export function EditUserDialog({ open, onOpenChange, user }: EditUserDialogProps
     },
     onSubmit: async ({ value }) => {
       try {
-        if (value.role !== user.role) {
+        if (value.role !== normalizedUserRole) {
           await authClient.admin.setRole({
             userId: user.id,
-            role: value.role,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            role: value.role as any,
           });
         }
         await authClient.admin.updateUser({
@@ -158,13 +169,16 @@ export function EditUserDialog({ open, onOpenChange, user }: EditUserDialogProps
                 </Label>
                 <Select
                   value={field.state.value}
-                  onValueChange={value => field.handleChange(value as 'admin' | 'user')}
+                  onValueChange={value =>
+                    field.handleChange(value as 'admin' | 'patient' | 'doctor')
+                  }
                 >
                   <SelectTrigger id={field.name}>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="user">User</SelectItem>
+                    <SelectItem value="patient">Patient</SelectItem>
+                    <SelectItem value="doctor">Doctor</SelectItem>
                     <SelectItem value="admin">Admin</SelectItem>
                   </SelectContent>
                 </Select>

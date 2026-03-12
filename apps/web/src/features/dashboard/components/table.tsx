@@ -121,7 +121,7 @@ export default function DataTableUsers({
         accessorKey: 'role',
         header: ({ column }) => <DataTableColumnHeader column={column} label="Role" />,
         cell: ({ cell }) => {
-          const role = cell.getValue<User['role']>() ?? 'user';
+          const role = cell.getValue<User['role']>() ?? 'patient';
           return (
             <Badge variant="outline" className="inline-flex items-center gap-1 capitalize">
               <Shield className="h-3.5 w-3.5" />
@@ -133,8 +133,9 @@ export default function DataTableUsers({
           label: 'Role',
           variant: 'multiSelect',
           options: [
+            { label: 'Patient', value: 'patient', icon: Shield },
+            { label: 'Doctor', value: 'doctor', icon: Shield },
             { label: 'Admin', value: 'admin', icon: Shield },
-            { label: 'User', value: 'user', icon: Shield },
           ],
           operator: 'inArray',
         },

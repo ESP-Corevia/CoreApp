@@ -71,7 +71,7 @@ describe('EditUserDialog', () => {
     expect(getByDisplayValue(mockUser.name)).toBeInTheDocument();
     expect(getByDisplayValue(mockUser.email)).toBeInTheDocument();
 
-    expect(getByRole('combobox', { name: 'Role' })).toHaveTextContent('User');
+    expect(getByRole('combobox', { name: 'Role' })).toHaveTextContent('Patient');
   });
 
   it('shows validation errors', async () => {
