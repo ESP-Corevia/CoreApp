@@ -1,3 +1,4 @@
+import { eq } from 'drizzle-orm';
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
 
 import { applyMigration, db, resetDb } from '../../../test/db';
@@ -300,6 +301,195 @@ describe('appointments.repository', () => {
         to: '2099-06-18',
       });
       expect(count).toBe(1);
+    });
+  });
+
+  describe('listAll', () => {
+    let doctor2Id: string;
+    let patient2Id: string;
+
+    beforeEach(async () => {
+      const [patient2] = await db
+        .insert(users)
+        .values({
+          name: 'Jane Smith',
+          email: 'jane@test.com',
+          emailVerified: true,
+          createdAt: new Date(),
+        })
+        .returning({ id: users.id });
+      patient2Id = patient2.id;
+
+      const [doctorUser] = await db
+        .insert(users)
+        .values({
+          name: 'Dr. Watson',
+          email: 'watson@test.com',
+          emailVerified: true,
+          createdAt: new Date(),
+        })
+        .returning({ id: users.id });
+
+      const [doc2] = await db
+        .insert(doctors)
+        .values({
+          userId: doctorUser.id,
+          specialty: 'Dermatology',
+          address: '5 Rue Test, Lyon',
+          city: 'Lyon',
+        })
+        .returning({ id: doctors.id });
+      doctor2Id = doc2.id;
+
+      await db.insert(appointments).values([
+        {
+          doctorId,
+          patientId,
+          date: '2099-06-10',
+          time: '10:00',
+          status: 'PENDING',
+          reason: 'Checkup',
+        },
+        {
+          doctorId,
+          patientId: patient2Id,
+          date: '2099-06-15',
+          time: '14:00',
+          status: 'CONFIRMED',
+        },
+        {
+          doctorId: doctor2Id,
+          patientId,
+          date: '2099-06-20',
+          time: '09:00',
+          status: 'CANCELLED',
+        },
+      ]);
+    });
+
+    it('returns all appointments with doctor and patient names', async () => {
+      const items = await repo.listAll({ offset: 0, limit: 10, sort: 'dateAsc' });
+
+      expect(items).toHaveLength(3);
+      expect(items[0].date).toBe('2099-06-10');
+      expect(items[0].patientName).toBe('Patient Test');
+      expect(items[2].doctorName).toBe('Dr. Watson');
+    });
+
+    it('filters by status', async () => {
+      const items = await repo.listAll({
+        status: 'PENDING',
+        offset: 0,
+        limit: 10,
+        sort: 'dateAsc',
+      });
+
+      expect(items).toHaveLength(1);
+      expect(items[0].status).toBe('PENDING');
+    });
+
+    it('filters by date range', async () => {
+      const items = await repo.listAll({
+        from: '2099-06-12',
+        to: '2099-06-18',
+        offset: 0,
+        limit: 10,
+        sort: 'dateAsc',
+      });
+
+      expect(items).toHaveLength(1);
+      expect(items[0].date).toBe('2099-06-15');
+    });
+
+    it('filters by doctorId', async () => {
+      const items = await repo.listAll({
+        doctorId: doctor2Id,
+        offset: 0,
+        limit: 10,
+        sort: 'dateAsc',
+      });
+
+      expect(items).toHaveLength(1);
+      expect(items[0].doctorId).toBe(doctor2Id);
+    });
+
+    it('filters by search on patient name', async () => {
+      const items = await repo.listAll({
+        search: 'Jane',
+        offset: 0,
+        limit: 10,
+        sort: 'dateAsc',
+      });
+
+      expect(items).toHaveLength(1);
+      expect(items[0].patientName).toBe('Jane Smith');
+    });
+
+    it('sorts dateDesc', async () => {
+      const items = await repo.listAll({ offset: 0, limit: 10, sort: 'dateDesc' });
+
+      expect(items[0].date).toBe('2099-06-20');
+      expect(items[2].date).toBe('2099-06-10');
+    });
+
+    it('sorts createdAtDesc', async () => {
+      const items = await repo.listAll({ offset: 0, limit: 10, sort: 'createdAtDesc' });
+      expect(items).toHaveLength(3);
+    });
+
+    it('paginates with offset/limit', async () => {
+      const items = await repo.listAll({ offset: 1, limit: 1, sort: 'dateAsc' });
+
+      expect(items).toHaveLength(1);
+      expect(items[0].date).toBe('2099-06-15');
+    });
+  });
+
+  describe('countAll', () => {
+    beforeEach(async () => {
+      await db.insert(appointments).values([
+        { doctorId, patientId, date: '2099-06-10', time: '10:00', status: 'PENDING' },
+        { doctorId, patientId, date: '2099-06-15', time: '14:00', status: 'CONFIRMED' },
+        { doctorId, patientId, date: '2099-06-20', time: '09:00', status: 'CANCELLED' },
+      ]);
+    });
+
+    it('counts all appointments', async () => {
+      const count = await repo.countAll({});
+      expect(count).toBe(3);
+    });
+
+    it('counts with status filter', async () => {
+      const count = await repo.countAll({ status: 'PENDING' });
+      expect(count).toBe(1);
+    });
+
+    it('counts with date range', async () => {
+      const count = await repo.countAll({ from: '2099-06-12', to: '2099-06-18' });
+      expect(count).toBe(1);
+    });
+  });
+
+  describe('updateStatus', () => {
+    it('updates the status and returns the row', async () => {
+      const created = await repo.createAppointmentAtomic({
+        doctorId,
+        patientId,
+        date: TEST_DATE,
+        time: '10:00',
+      });
+      const apptId = ('appointment' in created && created.appointment?.id) as string;
+
+      const result = await repo.updateStatus(apptId, 'CONFIRMED');
+
+      expect(result).not.toBeNull();
+      expect(result!.id).toBe(apptId);
+      expect(result!.status).toBe('CONFIRMED');
+    });
+
+    it('returns null for non-existing id', async () => {
+      const result = await repo.updateStatus('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a99', 'CONFIRMED');
+      expect(result).toBeNull();
     });
   });
 });

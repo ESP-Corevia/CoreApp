@@ -230,4 +230,86 @@ describe('doctors.repository', () => {
       expect(result).toBeNull();
     });
   });
+
+  describe('listAllAdmin', () => {
+    let linkedUserId: string;
+
+    beforeEach(async () => {
+      // Link one doctor to a user so we get name/email in results
+      const [user] = await db
+        .insert(users)
+        .values({
+          name: 'Dr. Alice',
+          email: 'alice@example.com',
+          emailVerified: true,
+          createdAt: new Date(),
+        })
+        .returning({ id: users.id });
+      linkedUserId = user.id;
+
+      // Update the first seeded doctor to link to this user
+      const [firstDoc] = await db.select({ id: doctors.id }).from(doctors).limit(1);
+      await db.update(doctors).set({ userId: linkedUserId }).where(eq(doctors.id, firstDoc.id));
+    });
+
+    it('returns all doctors with user info', async () => {
+      const items = await repo.listAllAdmin({ offset: 0, limit: 10 });
+
+      expect(items).toHaveLength(5);
+      const linked = items.find((d) => d.userId === linkedUserId);
+      expect(linked).toBeDefined();
+      expect(linked!.name).toBe('Dr. Alice');
+      expect(linked!.email).toBe('alice@example.com');
+    });
+
+    it('filters by specialty', async () => {
+      const items = await repo.listAllAdmin({ specialty: 'Cardiology', offset: 0, limit: 10 });
+
+      expect(items).toHaveLength(2);
+      expect(items.every((d) => d.specialty === 'Cardiology')).toBe(true);
+    });
+
+    it('filters by city', async () => {
+      const items = await repo.listAllAdmin({ city: 'paris', offset: 0, limit: 10 });
+
+      expect(items).toHaveLength(3);
+    });
+
+    it('filters by search on user name', async () => {
+      const items = await repo.listAllAdmin({ search: 'Alice', offset: 0, limit: 10 });
+
+      expect(items).toHaveLength(1);
+      expect(items[0].name).toBe('Dr. Alice');
+    });
+
+    it('paginates correctly', async () => {
+      const page1 = await repo.listAllAdmin({ offset: 0, limit: 2 });
+      const page2 = await repo.listAllAdmin({ offset: 2, limit: 2 });
+
+      expect(page1).toHaveLength(2);
+      expect(page2).toHaveLength(2);
+    });
+  });
+
+  describe('countAllAdmin', () => {
+    it('counts all doctors', async () => {
+      const count = await repo.countAllAdmin({});
+      expect(count).toBe(5);
+    });
+
+    it('counts with specialty filter', async () => {
+      const count = await repo.countAllAdmin({ specialty: 'Cardiology' });
+      expect(count).toBe(2);
+    });
+
+    it('counts with city filter', async () => {
+      const count = await repo.countAllAdmin({ city: 'paris' });
+      expect(count).toBe(3);
+    });
+
+    it('returns 0 when no match', async () => {
+      const count = await repo.countAllAdmin({ specialty: 'Oncology' });
+      expect(count).toBe(0);
+    });
+  });
 });

@@ -6,6 +6,21 @@
       "connected": "Connected",
       "disconnected": "Disconnected"
     },
+    "appointments": {
+      "cancel": "Cancel",
+      "complete": "Complete",
+      "confirm": "Confirm",
+      "loadError": "Failed to load appointments: {{message}}",
+      "openMenu": "Open appointment menu",
+      "statusDialog": {
+        "confirm": "{{action}}",
+        "description": "Are you sure you want to {{action}}? Patient: {{patient}}, Doctor: {{doctor}}, Date: {{date}} at {{time}}.",
+        "title": "{{action}} Appointment"
+      },
+      "statusUpdated": "Appointment status updated successfully",
+      "statusUpdateError": "Failed to update status: {{message}}",
+      "title": "Appointments Management"
+    },
     "banUserDialog": {
       "banning": "Banning...",
       "banUser": "Ban User",
@@ -27,12 +42,20 @@
       "success": "{{name}} has been banned",
       "title": "Ban User"
     },
+    "common": {
+      "cancel": "Cancel",
+      "processing": "Processing..."
+    },
     "dashboard": {
       "loadUsersError": "Failed to load users: {{message}}",
       "userManagement": "Users Management"
     },
     "dataTable": {
       "noResults": "No results."
+    },
+    "doctors": {
+      "loadError": "Failed to load doctors: {{message}}",
+      "title": "Doctors Management"
     },
     "errorScreen": {
       "permissionDenied": "You do not have permission to access that resource."

@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, gte, inArray, lte, sql } from 'drizzle-orm';
+import { and, asc, desc, eq, gte, ilike, inArray, lte, or, sql } from 'drizzle-orm';
 
 import { appointments, doctorBlocks, doctors, users } from '../schema';
 
@@ -23,6 +23,42 @@ export interface ListByPatientParams {
   offset: number;
   limit: number;
   sort: 'dateAsc' | 'dateDesc' | 'createdAtDesc';
+}
+
+export interface ListAllParams {
+  status?: string;
+  from?: string;
+  to?: string;
+  doctorId?: string;
+  search?: string;
+  offset: number;
+  limit: number;
+  sort: 'dateAsc' | 'dateDesc' | 'createdAtDesc';
+}
+
+function buildAllFilters(params: ListAllParams) {
+  const conditions = [];
+
+  if (params.status) {
+    conditions.push(eq(appointments.status, params.status as any));
+  }
+  if (params.from) {
+    conditions.push(gte(appointments.date, params.from));
+  }
+  if (params.to) {
+    conditions.push(lte(appointments.date, params.to));
+  }
+  if (params.doctorId) {
+    conditions.push(eq(appointments.doctorId, params.doctorId));
+  }
+  if (params.search) {
+    const pattern = `%${params.search}%`;
+    conditions.push(
+      or(ilike(sql`doctor_user.name`, pattern), ilike(sql`patient_user.name`, pattern)),
+    );
+  }
+
+  return conditions.length > 0 ? and(...conditions) : undefined;
 }
 
 function buildPatientFilters(params: ListByPatientParams) {
@@ -119,6 +155,76 @@ export const createAppointmentsRepo = (db: DrizzleDB) => ({
       .where(where);
 
     return Number(row.count);
+  },
+
+  listAll: async (params: ListAllParams) => {
+    const doctorUser = db.select({ id: users.id, name: users.name }).from(users).as('doctor_user');
+    const patientUser = db
+      .select({ id: users.id, name: users.name })
+      .from(users)
+      .as('patient_user');
+
+    const where = buildAllFilters(params);
+    const order = buildOrderBy(params.sort);
+
+    return await db
+      .select({
+        id: appointments.id,
+        doctorId: appointments.doctorId,
+        patientId: appointments.patientId,
+        date: appointments.date,
+        time: appointments.time,
+        status: appointments.status,
+        reason: appointments.reason,
+        createdAt: appointments.createdAt,
+        doctorName: doctorUser.name,
+        patientName: patientUser.name,
+      })
+      .from(appointments)
+      .innerJoin(doctors, eq(appointments.doctorId, doctors.id))
+      .leftJoin(doctorUser, eq(doctors.userId, doctorUser.id))
+      .leftJoin(patientUser, eq(appointments.patientId, patientUser.id))
+      .where(where)
+      .orderBy(...order)
+      .limit(params.limit)
+      .offset(params.offset);
+  },
+
+  countAll: async (params: Omit<ListAllParams, 'offset' | 'limit' | 'sort'>) => {
+    const doctorUser = db.select({ id: users.id, name: users.name }).from(users).as('doctor_user');
+    const patientUser = db
+      .select({ id: users.id, name: users.name })
+      .from(users)
+      .as('patient_user');
+
+    const where = buildAllFilters({ ...params, offset: 0, limit: 0, sort: 'dateDesc' });
+
+    const [row] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(appointments)
+      .innerJoin(doctors, eq(appointments.doctorId, doctors.id))
+      .leftJoin(doctorUser, eq(doctors.userId, doctorUser.id))
+      .leftJoin(patientUser, eq(appointments.patientId, patientUser.id))
+      .where(where);
+
+    return Number(row.count);
+  },
+
+  updateStatus: async (id: string, status: string) => {
+    const [row] = await db
+      .update(appointments)
+      .set({ status: status as any, updatedAt: new Date() })
+      .where(eq(appointments.id, id))
+      .returning({
+        id: appointments.id,
+        doctorId: appointments.doctorId,
+        patientId: appointments.patientId,
+        date: appointments.date,
+        time: appointments.time,
+        status: appointments.status,
+      });
+
+    return row ?? null;
   },
 
   createAppointmentAtomic: async (input: CreateAppointmentInput) => {

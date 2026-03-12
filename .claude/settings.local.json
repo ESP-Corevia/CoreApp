@@ -10,7 +10,11 @@
       "mcp__plugin_context7_context7__resolve-library-id",
       "Bash(yarn test)",
       "Bash(xargs grep:*)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(grep -r import.*from.*@corevia /c/Users/miche/Desktop/Projects/CoreApp/apps/server/src)",
+      "Bash(npx tsc:*)",
+      "Bash(ls c:/Users/miche/Desktop/Projects/CoreApp/apps/web/src/queries*)",
+      "Bash(npx vitest:*)"
     ]
   }
 }
