@@ -34,6 +34,7 @@ describe('ImpersonationBanner', () => {
       isAuthorized: true,
       session: {
         impersonatedBy: null,
+        role: 'patient',
         isAuthenticated: true,
         userId: 'user123',
         createdAt: new Date(),
@@ -59,6 +60,7 @@ describe('ImpersonationBanner', () => {
       isAuthorized: true,
       session: {
         impersonatedBy: 'admin123',
+        role: 'patient',
         isAuthenticated: true,
         userId: 'user123',
         createdAt: new Date(),
@@ -85,6 +87,7 @@ describe('ImpersonationBanner', () => {
       isAuthorized: true,
       session: {
         impersonatedBy: 'admin123',
+        role: 'patient',
         isAuthenticated: true,
         userId: 'user123',
         createdAt: new Date(),

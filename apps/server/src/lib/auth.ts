@@ -100,6 +100,7 @@ export const auth = betterAuth({
     })),
     admin({
       ac,
+      defaultRole: 'patient',
       roles: { patient: patientRole, doctor: doctorRole, admin: adminRole },
       allowImpersonatingAdmins: true,
     }),

@@ -123,7 +123,7 @@ describe('CreateUserDialog', () => {
         email: 'john@example.com',
         password: '12345678',
         name: 'John Doe',
-        role: 'user',
+        role: 'patient',
       });
     });
 
