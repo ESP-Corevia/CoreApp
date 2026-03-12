@@ -34,6 +34,225 @@ describe('adminRouter', () => {
       'You must be an admin to access this resource',
     );
   });
+  describe('listDoctors', () => {
+    beforeEach(() => {
+      mockServices.doctorsService.listAllAdmin.mockReset();
+      authMock.api.userHasPermission.mockResolvedValue({
+        success: true,
+        error: null,
+      });
+    });
+
+    it('returns paginated doctors from the service', async () => {
+      const caller = createTestCaller({ customSession: fakeSession });
+
+      const mockResponse = {
+        doctors: [
+          {
+            id: 'doc-1',
+            userId: 'user-1',
+            specialty: 'Cardiology',
+            address: '10 Rue de Rivoli',
+            city: 'Paris',
+            name: 'Dr. Smith',
+            email: 'smith@example.com',
+            image: null,
+          },
+        ],
+        totalItems: 1,
+        totalPages: 1,
+        page: 1,
+        perPage: 10,
+      };
+
+      mockServices.doctorsService.listAllAdmin.mockResolvedValue(mockResponse);
+
+      const result = await caller.admin.listDoctors({
+        page: 1,
+        perPage: 10,
+        search: 'smith',
+        specialty: 'Cardiology',
+        city: 'Paris',
+      });
+
+      expect(result).toEqual(mockResponse);
+      expect(mockServices.doctorsService.listAllAdmin).toHaveBeenCalledWith({
+        page: 1,
+        perPage: 10,
+        search: 'smith',
+        specialty: 'Cardiology',
+        city: 'Paris',
+      });
+    });
+
+    it('works with minimal input', async () => {
+      const caller = createTestCaller({ customSession: fakeSession });
+
+      const emptyResponse = {
+        doctors: [],
+        totalItems: 0,
+        totalPages: 0,
+        page: 1,
+        perPage: 10,
+      };
+
+      mockServices.doctorsService.listAllAdmin.mockResolvedValue(emptyResponse);
+
+      const result = await caller.admin.listDoctors({ page: 1, perPage: 10 });
+
+      expect(result).toEqual(emptyResponse);
+    });
+  });
+
+  describe('listAppointments', () => {
+    beforeEach(() => {
+      mockServices.appointmentsService.listAllAppointments.mockReset();
+      authMock.api.userHasPermission.mockResolvedValue({
+        success: true,
+        error: null,
+      });
+    });
+
+    it('returns paginated appointments from the service', async () => {
+      const caller = createTestCaller({ customSession: fakeSession });
+
+      const mockResponse = {
+        appointments: [
+          {
+            id: 'appt-1',
+            doctorId: 'doc-1',
+            patientId: 'pat-1',
+            date: '2099-06-15',
+            time: '10:00',
+            status: 'PENDING' as const,
+            reason: 'Checkup',
+            createdAt: new Date('2099-06-01'),
+            doctorName: 'Dr. Smith',
+            patientName: 'John Doe',
+          },
+        ],
+        totalItems: 1,
+        totalPages: 1,
+        page: 1,
+        perPage: 10,
+      };
+
+      mockServices.appointmentsService.listAllAppointments.mockResolvedValue(mockResponse);
+
+      const result = await caller.admin.listAppointments({
+        page: 1,
+        perPage: 10,
+        status: 'PENDING',
+        from: '2099-01-01',
+        to: '2099-12-31',
+        sort: 'dateDesc',
+      });
+
+      expect(result).toEqual(mockResponse);
+      expect(mockServices.appointmentsService.listAllAppointments).toHaveBeenCalledWith({
+        page: 1,
+        perPage: 10,
+        search: undefined,
+        status: 'PENDING',
+        from: '2099-01-01',
+        to: '2099-12-31',
+        doctorId: undefined,
+        sort: 'dateDesc',
+      });
+    });
+
+    it('works with minimal input', async () => {
+      const caller = createTestCaller({ customSession: fakeSession });
+
+      const emptyResponse = {
+        appointments: [],
+        totalItems: 0,
+        totalPages: 0,
+        page: 1,
+        perPage: 10,
+      };
+
+      mockServices.appointmentsService.listAllAppointments.mockResolvedValue(emptyResponse);
+
+      const result = await caller.admin.listAppointments({ page: 1, perPage: 10 });
+
+      expect(result).toEqual(emptyResponse);
+    });
+  });
+
+  describe('updateAppointmentStatus', () => {
+    beforeEach(() => {
+      mockServices.appointmentsService.updateAppointmentStatus.mockReset();
+      authMock.api.userHasPermission.mockResolvedValue({
+        success: true,
+        error: null,
+      });
+    });
+
+    it('updates appointment status successfully', async () => {
+      const caller = createTestCaller({ customSession: fakeSession });
+
+      const mockUpdated = {
+        id: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+        doctorId: 'doc-1',
+        patientId: 'pat-1',
+        date: '2099-06-15',
+        time: '10:00',
+        status: 'CONFIRMED' as const,
+      };
+
+      mockServices.appointmentsService.updateAppointmentStatus.mockResolvedValue(mockUpdated);
+
+      const result = await caller.admin.updateAppointmentStatus({
+        id: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+        status: 'CONFIRMED',
+      });
+
+      expect(result).toEqual(mockUpdated);
+      expect(mockServices.appointmentsService.updateAppointmentStatus).toHaveBeenCalledWith(
+        'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+        'CONFIRMED',
+      );
+    });
+
+    it('propagates service errors', async () => {
+      const caller = createTestCaller({ customSession: fakeSession });
+
+      mockServices.appointmentsService.updateAppointmentStatus.mockRejectedValue(
+        new Error('Cannot transition from COMPLETED to CONFIRMED'),
+      );
+
+      await expect(
+        caller.admin.updateAppointmentStatus({
+          id: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+          status: 'CONFIRMED',
+        }),
+      ).rejects.toThrow('Cannot transition from COMPLETED to CONFIRMED');
+    });
+
+    it('rejects invalid status values', async () => {
+      const caller = createTestCaller({ customSession: fakeSession });
+
+      await expect(
+        caller.admin.updateAppointmentStatus({
+          id: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+          status: 'INVALID' as any,
+        }),
+      ).rejects.toThrow();
+    });
+
+    it('rejects non-uuid id', async () => {
+      const caller = createTestCaller({ customSession: fakeSession });
+
+      await expect(
+        caller.admin.updateAppointmentStatus({
+          id: 'not-a-uuid',
+          status: 'CONFIRMED',
+        }),
+      ).rejects.toThrow();
+    });
+  });
+
   describe('listUsers', () => {
     beforeEach(() => {
       mockServices.usersService.listUsers.mockReset();

@@ -2,6 +2,9 @@ import { z } from 'zod';
 
 import { adminProcedure, router } from '../../middlewares';
 
+import { listAppointments, updateAppointmentStatus } from './adminAppointmentsRouter';
+import { listDoctors } from './adminDoctorsRouter';
+
 export const adminRouter = router({
   isAdmin: adminProcedure
     .meta({
@@ -86,4 +89,7 @@ export const adminRouter = router({
       });
       return res;
     }),
+  listDoctors,
+  listAppointments,
+  updateAppointmentStatus,
 });

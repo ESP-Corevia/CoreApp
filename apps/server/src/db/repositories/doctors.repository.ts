@@ -1,4 +1,4 @@
-import { and, ilike, eq, sql, asc } from 'drizzle-orm';
+import { and, ilike, eq, or, sql, asc } from 'drizzle-orm';
 
 import { db as DB } from '../index';
 import { doctors, users } from '../schema';
@@ -14,6 +14,40 @@ export interface ListBookableParams {
   search?: string;
   offset: number;
   limit: number;
+}
+
+export interface ListAllAdminParams {
+  specialty?: string;
+  city?: string;
+  search?: string;
+  offset: number;
+  limit: number;
+}
+
+function buildAdminFilters(params: ListAllAdminParams) {
+  const conditions = [];
+
+  if (params.specialty) {
+    conditions.push(eq(doctors.specialty, params.specialty));
+  }
+
+  if (params.city) {
+    conditions.push(ilike(doctors.city, params.city));
+  }
+
+  if (params.search) {
+    const pattern = `%${params.search}%`;
+    conditions.push(
+      or(
+        ilike(users.name, pattern),
+        ilike(users.email, pattern),
+        ilike(doctors.specialty, pattern),
+        ilike(doctors.city, pattern),
+      ),
+    );
+  }
+
+  return conditions.length > 0 ? and(...conditions) : undefined;
 }
 
 function buildFilters(params: ListBookableParams) {
@@ -100,6 +134,40 @@ export const createDoctorsRepo = (db: DrizzleDB = DB) => ({
     const [row] = await db
       .select({ count: sql<number>`count(*)` })
       .from(doctors)
+      .where(where);
+
+    return Number(row.count);
+  },
+
+  listAllAdmin: async (params: ListAllAdminParams) => {
+    const where = buildAdminFilters(params);
+
+    return await db
+      .select({
+        id: doctors.id,
+        userId: doctors.userId,
+        specialty: doctors.specialty,
+        address: doctors.address,
+        city: doctors.city,
+        name: users.name,
+        email: users.email,
+        image: users.image,
+      })
+      .from(doctors)
+      .leftJoin(users, eq(doctors.userId, users.id))
+      .where(where)
+      .orderBy(asc(users.name))
+      .limit(params.limit)
+      .offset(params.offset);
+  },
+
+  countAllAdmin: async (params: Omit<ListAllAdminParams, 'offset' | 'limit'>) => {
+    const where = buildAdminFilters({ ...params, offset: 0, limit: 0 });
+
+    const [row] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(doctors)
+      .leftJoin(users, eq(doctors.userId, users.id))
       .where(where);
 
     return Number(row.count);

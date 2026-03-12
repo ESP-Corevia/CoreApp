@@ -7,3 +7,6 @@ export { useListSessions } from './useListSessions';
 export { useRevokeSession } from './useRevokeSession';
 export { useRevokeOtherSessions } from './useRevokeOtherSessions';
 export { useRevokeSessions } from './useRevokeSessions';
+export { useListDoctors } from './useListDoctors';
+export { useListAppointments } from './useListAppointments';
+export { useUpdateAppointmentStatus } from './useUpdateAppointmentStatus';

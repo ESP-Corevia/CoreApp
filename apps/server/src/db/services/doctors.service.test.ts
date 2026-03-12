@@ -143,6 +143,96 @@ describe('updateProfile', () => {
   });
 });
 
+describe('listAllAdmin', () => {
+  const fakeAdminDoctor = {
+    id: 'doc-1',
+    userId: 'user-1',
+    specialty: 'Cardiology',
+    address: '10 Rue de Rivoli, Paris',
+    city: 'Paris',
+    name: 'Dr. John Doe',
+    email: 'john@example.com',
+    image: null,
+  };
+
+  beforeEach(() => {
+    mockRepositories.doctorsRepo.listAllAdmin.mockResolvedValue([fakeAdminDoctor]);
+    mockRepositories.doctorsRepo.countAllAdmin.mockResolvedValue(1);
+  });
+
+  it('computes offset and delegates to repo', async () => {
+    const result = await doctorsService.listAllAdmin({
+      page: 2,
+      perPage: 10,
+      specialty: 'Cardiology',
+    });
+
+    expect(mockRepositories.doctorsRepo.listAllAdmin).toHaveBeenCalledWith({
+      specialty: 'Cardiology',
+      search: undefined,
+      city: undefined,
+      offset: 10,
+      limit: 10,
+    });
+    expect(result).toEqual({
+      doctors: [fakeAdminDoctor],
+      totalItems: 1,
+      totalPages: 1,
+      page: 2,
+      perPage: 10,
+    });
+  });
+
+  it('passes all filters to repo', async () => {
+    mockRepositories.doctorsRepo.listAllAdmin.mockResolvedValue([]);
+    mockRepositories.doctorsRepo.countAllAdmin.mockResolvedValue(0);
+
+    await doctorsService.listAllAdmin({
+      page: 1,
+      perPage: 20,
+      specialty: 'Dermatology',
+      city: 'Lyon',
+      search: 'smith',
+    });
+
+    expect(mockRepositories.doctorsRepo.listAllAdmin).toHaveBeenCalledWith({
+      specialty: 'Dermatology',
+      city: 'Lyon',
+      search: 'smith',
+      offset: 0,
+      limit: 20,
+    });
+    expect(mockRepositories.doctorsRepo.countAllAdmin).toHaveBeenCalledWith({
+      specialty: 'Dermatology',
+      city: 'Lyon',
+      search: 'smith',
+    });
+  });
+
+  it('computes totalPages correctly', async () => {
+    mockRepositories.doctorsRepo.countAllAdmin.mockResolvedValue(25);
+
+    const result = await doctorsService.listAllAdmin({ page: 1, perPage: 10 });
+
+    expect(result.totalPages).toBe(3);
+  });
+
+  it('returns empty results with total 0', async () => {
+    mockRepositories.doctorsRepo.listAllAdmin.mockResolvedValue([]);
+    mockRepositories.doctorsRepo.countAllAdmin.mockResolvedValue(0);
+
+    const result = await doctorsService.listAllAdmin({ page: 1, perPage: 10 });
+
+    expect(result).toEqual({
+      doctors: [],
+      totalItems: 0,
+      totalPages: 0,
+      page: 1,
+      perPage: 10,
+    });
+  });
+});
+
 describe('service creation', () => {
   it('can be created with required dependencies', () => {
     const service = createDoctorsService(mockRepositories.doctorsRepo);
