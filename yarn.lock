@@ -881,10 +881,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@electric-sql/pglite@npm:0.3.10":
-  version: 0.3.10
-  resolution: "@electric-sql/pglite@npm:0.3.10"
-  checksum: 10c0/59f82e6bb83ab6d9558cffcc04120ee9b7bada0158a4fdaba7b959f2f16e8373ea86fe1856e37c7623353197f836a8ccfbfb0740ef6e40d6b2a3b36e569cf955
+"@electric-sql/pglite@npm:0.3.16":
+  version: 0.3.16
+  resolution: "@electric-sql/pglite@npm:0.3.16"
+  checksum: 10c0/fba05c2f8d225dc19b6582005b06ba1ae806549fea6b88404b0cbc6ee776ae9976f323130f03c5e74baeedf58d3566fd97a521cd7ed26a9f5c524c86c3123e1f
   languageName: node
   linkType: hard
 
@@ -9345,9 +9345,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"drizzle-kit@npm:0.31.5":
-  version: 0.31.5
-  resolution: "drizzle-kit@npm:0.31.5"
+"drizzle-kit@npm:0.31.9":
+  version: 0.31.9
+  resolution: "drizzle-kit@npm:0.31.9"
   dependencies:
     "@drizzle-team/brocli": "npm:^0.10.2"
     "@esbuild-kit/esm-loader": "npm:^2.5.5"
@@ -9355,13 +9355,13 @@ __metadata:
     esbuild-register: "npm:^3.5.0"
   bin:
     drizzle-kit: bin.cjs
-  checksum: 10c0/7f172b1ba8cecf85b32e85621043d4ada867080e9ea2767c60b20ef2adb0292ff16832d8c8eae5d1bc9504d8165a58c449c9a25ab56c8ec30f1c3c8cb12ef6ad
+  checksum: 10c0/96f670c7781ff4b867ed6ddd04a7be07e587a37c6a9f7bb8a3b755487113421ee609334ff069e66eb541b6f9d4b4a1595f3cdfabdcc7354579215b18ad059177
   languageName: node
   linkType: hard
 
-"drizzle-orm@npm:0.45.0":
-  version: 0.45.0
-  resolution: "drizzle-orm@npm:0.45.0"
+"drizzle-orm@npm:0.45.1":
+  version: 0.45.1
+  resolution: "drizzle-orm@npm:0.45.1"
   peerDependencies:
     "@aws-sdk/client-rds-data": ">=3"
     "@cloudflare/workers-types": ">=4"
@@ -9450,7 +9450,7 @@ __metadata:
       optional: true
     sqlite3:
       optional: true
-  checksum: 10c0/3fb56fa227f8d794ca46e4f3f27b964709a96f7b3e21d9313700f29a7b26f1261e95d662123e9cbc54d4365da412efa3b7756bad4353d6adfd87bacde9b9a123
+  checksum: 10c0/64c28bdcebd075c6fe9759075168872a34c2cb8f04d7e4f94fc24bb29499b021f6da8096ecd4d5619ab97890577bc9df5a3dac1666aafacc4818c9dee39fb27e
   languageName: node
   linkType: hard
 
@@ -17183,7 +17183,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "server@workspace:apps/server"
   dependencies:
-    "@electric-sql/pglite": "npm:0.3.10"
+    "@electric-sql/pglite": "npm:0.3.16"
     "@eslint/js": "npm:9.35.0"
     "@eslint/json": "npm:0.13.2"
     "@faker-js/faker": "catalog:"
@@ -17202,8 +17202,8 @@ __metadata:
     chalk: "npm:5.6.2"
     depcheck: "catalog:"
     dotenv: "npm:17.2.1"
-    drizzle-kit: "npm:0.31.5"
-    drizzle-orm: "npm:0.45.0"
+    drizzle-kit: "npm:0.31.9"
+    drizzle-orm: "npm:0.45.1"
     drizzle-seed: "npm:0.3.1"
     eslint: "catalog:"
     eslint-import-resolver-typescript: "npm:4.4.4"
