@@ -6,6 +6,21 @@
       "connected": "Connecté",
       "disconnected": "Déconnecté"
     },
+    "appointments": {
+      "cancel": "Annuler",
+      "complete": "Terminer",
+      "confirm": "Confirmer",
+      "loadError": "Échec du chargement des rendez-vous : {{message}}",
+      "openMenu": "Ouvrir le menu du rendez-vous",
+      "statusDialog": {
+        "confirm": "{{action}}",
+        "description": "Êtes-vous sûr de vouloir {{action}} ? Patient : {{patient}}, Médecin : {{doctor}}, Date : {{date}} à {{time}}.",
+        "title": "{{action}} le rendez-vous"
+      },
+      "statusUpdated": "Statut du rendez-vous mis à jour avec succès",
+      "statusUpdateError": "Échec de la mise à jour du statut : {{message}}",
+      "title": "Gestion des Rendez-vous"
+    },
     "banUserDialog": {
       "banning": "Bannissement...",
       "banUser": "Bannir l'utilisateur",
@@ -27,12 +42,20 @@
       "success": "{{name}} a été banni",
       "title": "Bannir l'utilisateur"
     },
+    "common": {
+      "cancel": "Annuler",
+      "processing": "Traitement..."
+    },
     "dashboard": {
       "loadUsersError": "Échec du chargement des utilisateurs : {{message}}",
       "userManagement": "Gestion des utilisateurs"
     },
     "dataTable": {
       "noResults": "Aucun résultat."
+    },
+    "doctors": {
+      "loadError": "Échec du chargement des médecins : {{message}}",
+      "title": "Gestion des Médecins"
     },
     "errorScreen": {
       "permissionDenied": "Vous n'avez pas l'autorisation d'accéder à cette ressource."
