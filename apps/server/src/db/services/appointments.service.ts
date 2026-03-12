@@ -178,4 +178,85 @@ export const createAppointmentsService = (repo: ReturnType<typeof createAppointm
 
     return { items, page: query.page, limit: query.limit, total };
   },
+
+  listAllAppointments: async (query: {
+    page: number;
+    perPage: number;
+    search?: string;
+    status?: string;
+    from?: string;
+    to?: string;
+    doctorId?: string;
+    sort?: 'dateAsc' | 'dateDesc' | 'createdAtDesc';
+  }) => {
+    const offset = (query.page - 1) * query.perPage;
+
+    const [items, total] = await Promise.all([
+      repo.listAll({
+        status: query.status,
+        from: query.from,
+        to: query.to,
+        doctorId: query.doctorId,
+        search: query.search,
+        offset,
+        limit: query.perPage,
+        sort: query.sort ?? 'dateDesc',
+      }),
+      repo.countAll({
+        status: query.status,
+        from: query.from,
+        to: query.to,
+        doctorId: query.doctorId,
+        search: query.search,
+      }),
+    ]);
+
+    const totalPages = Math.ceil(total / query.perPage);
+
+    return {
+      appointments: items,
+      totalItems: total,
+      totalPages,
+      page: query.page,
+      perPage: query.perPage,
+    };
+  },
+
+  updateAppointmentStatus: async (appointmentId: string, newStatus: string) => {
+    const appointment = await repo.getByIdWithDoctor(appointmentId);
+
+    if (!appointment) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'Appointment not found',
+      });
+    }
+
+    const currentStatus = appointment.status;
+
+    const validTransitions: Record<string, string[]> = {
+      PENDING: ['CONFIRMED', 'CANCELLED'],
+      CONFIRMED: ['COMPLETED', 'CANCELLED'],
+      CANCELLED: [],
+      COMPLETED: [],
+    };
+
+    if (!validTransitions[currentStatus]?.includes(newStatus)) {
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message: `Cannot transition from ${currentStatus} to ${newStatus}`,
+      });
+    }
+
+    const updated = await repo.updateStatus(appointmentId, newStatus);
+
+    if (!updated) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Failed to update appointment status',
+      });
+    }
+
+    return updated;
+  },
 });

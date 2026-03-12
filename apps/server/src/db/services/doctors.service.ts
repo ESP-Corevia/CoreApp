@@ -64,4 +64,39 @@ export const createDoctorsService = (repo: ReturnType<typeof createDoctorsRepo>)
     }
     return repo.updateByUserId(userId, data);
   },
+
+  listAllAdmin: async (query: {
+    page: number;
+    perPage: number;
+    search?: string;
+    specialty?: string;
+    city?: string;
+  }) => {
+    const offset = (query.page - 1) * query.perPage;
+
+    const [items, total] = await Promise.all([
+      repo.listAllAdmin({
+        search: query.search,
+        specialty: query.specialty,
+        city: query.city,
+        offset,
+        limit: query.perPage,
+      }),
+      repo.countAllAdmin({
+        search: query.search,
+        specialty: query.specialty,
+        city: query.city,
+      }),
+    ]);
+
+    const totalPages = Math.ceil(total / query.perPage);
+
+    return {
+      doctors: items,
+      totalItems: total,
+      totalPages,
+      page: query.page,
+      perPage: query.perPage,
+    };
+  },
 });
