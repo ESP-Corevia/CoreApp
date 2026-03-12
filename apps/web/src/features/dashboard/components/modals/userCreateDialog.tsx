@@ -41,7 +41,7 @@ export function CreateUserDialog() {
       .string()
       .min(8, t('profile.passwordMin', 'Password must be at least 8 characters'))
       .max(100, t('profile.passwordMax', 'Password must be at most 100 characters')),
-    role: z.enum(['admin', 'user']),
+    role: z.enum(['admin', 'patient', 'doctor']),
   });
   const queryClient = useQueryClient();
 
@@ -50,7 +50,7 @@ export function CreateUserDialog() {
       name: '',
       email: '',
       password: '',
-      role: 'user' as 'admin' | 'user',
+      role: 'patient' as 'admin' | 'patient' | 'doctor',
     },
     validators: {
       onChange: createUserSchema,
@@ -62,7 +62,8 @@ export function CreateUserDialog() {
           email: value.email,
           password: value.password,
           name: value.name,
-          role: value.role,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          role: value.role as any,
         });
 
         toast.success(t('userCreateModal.userCreated', 'User created successfully'));
@@ -197,13 +198,16 @@ export function CreateUserDialog() {
                 </Label>
                 <Select
                   value={field.state.value}
-                  onValueChange={value => field.handleChange(value as 'admin' | 'user')}
+                  onValueChange={value =>
+                    field.handleChange(value as 'patient' | 'doctor' | 'admin')
+                  }
                 >
                   <SelectTrigger id={field.name}>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="user">User</SelectItem>
+                    <SelectItem value="patient">Patient</SelectItem>
+                    <SelectItem value="doctor">Doctor</SelectItem>
                     <SelectItem value="admin">Admin</SelectItem>
                   </SelectContent>
                 </Select>
