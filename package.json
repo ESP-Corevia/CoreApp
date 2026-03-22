@@ -20,7 +20,8 @@
     "db:migrate": "turbo -F server db:migrate",
     "db:seed": "turbo -F server db:seed",
     "db:check": "turbo -F server db:check",
-    "prepare": "husky || true"
+    "prepare": "husky || true",
+    "format": "turbo format"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",

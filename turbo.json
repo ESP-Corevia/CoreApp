@@ -12,8 +12,8 @@
       "outputs": ["types/**", "dist/**/*.d.ts"],
       "cache": false
     },
-    "lint": {
-      "dependsOn": ["^lint"]
+    "format": {
+      "dependsOn": ["^format"]
     },
     "check-types": {
       "dependsOn": ["^build:types", "^check-types"]
