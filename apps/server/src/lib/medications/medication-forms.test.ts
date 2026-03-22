@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 
-import { normalizeForm, getEmoji } from './medication-forms';
+import { normalizeForm } from './medication-forms';
 
 describe('normalizeForm', () => {
   it('normalizes tablet/capsule forms', () => {
@@ -50,15 +50,5 @@ describe('normalizeForm', () => {
     expect(normalizeForm('COMPRIMÉ')).toBe('TABLET_CAPSULE');
     expect(normalizeForm('Sirop')).toBe('SYRUP_LIQUID');
     expect(normalizeForm('INJECTABLE')).toBe('INJECTABLE');
-  });
-});
-
-describe('getEmoji', () => {
-  it('returns correct emoji for each form', () => {
-    expect(getEmoji('TABLET_CAPSULE')).toBe('💊');
-    expect(getEmoji('SYRUP_LIQUID')).toBe('🧴');
-    expect(getEmoji('INJECTABLE')).toBe('💉');
-    expect(getEmoji('DROPS')).toBe('🧪');
-    expect(getEmoji('UNKNOWN')).toBe('💊');
   });
 });

@@ -127,8 +127,13 @@ export const PatientMedicationDetailOutputSchema = PatientMedicationOutputSchema
   ),
 });
 
+const coerceBoolean = z
+  .union([z.boolean(), z.string()])
+  .transform((val) => (typeof val === 'string' ? val === 'true' : val))
+  .optional();
+
 export const ListPillboxInputSchema = z.object({
-  isActive: z.boolean().optional(),
+  isActive: coerceBoolean,
   page: z.number().int().min(1).default(1),
   limit: z.number().int().min(1).max(50).default(20),
 });
@@ -227,7 +232,7 @@ export const IntakeOutputSchema = z.object({
 export const AdminListPillboxInputSchema = z.object({
   patientId: z.uuid().optional(),
   search: z.string().optional(),
-  isActive: z.boolean().optional(),
+  isActive: coerceBoolean,
   page: z.number().int().min(1).default(1),
   limit: z.number().int().min(1).max(50).default(20),
 });

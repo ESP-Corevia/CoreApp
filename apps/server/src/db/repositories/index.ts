@@ -1,9 +1,9 @@
-import { createMedicationsRepo } from '../../modules/medications/medications.repository';
 import { db } from '../index';
 
 import { createAppointmentsRepo } from './appointments.repository';
 import { createAvailabilityRepo } from './availability.repository';
 import { createDoctorsRepo } from './doctors.repository';
+import { createMedicationsRepo } from './medications.repository';
 import { createPatientsRepo } from './patients.repository';
 import { createUsersRepo } from './users.repository';
 

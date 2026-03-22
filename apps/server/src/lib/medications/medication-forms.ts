@@ -15,14 +15,6 @@ export const MEDICATION_FORMS = [
 
 export type MedicationForm = (typeof MEDICATION_FORMS)[number];
 
-export const FORM_EMOJI: Record<MedicationForm, string> = {
-  TABLET_CAPSULE: '💊',
-  SYRUP_LIQUID: '🧴',
-  INJECTABLE: '💉',
-  DROPS: '🧪',
-  UNKNOWN: '💊',
-};
-
 // Order matters: specific categories first, broad fallback last.
 const NORMALIZATION_RULES: readonly [readonly string[], MedicationForm][] = [
   // Syrups and oral liquids (before TABLET_CAPSULE to catch "poudre pour suspension buvable")
@@ -127,10 +119,6 @@ export function normalizeForm(rawForm: string | null | undefined): MedicationFor
   }
 
   return 'UNKNOWN';
-}
-
-export function getEmoji(form: MedicationForm): string {
-  return FORM_EMOJI[form] ?? FORM_EMOJI.UNKNOWN;
 }
 
 export function getIconKey(form: MedicationForm): string {

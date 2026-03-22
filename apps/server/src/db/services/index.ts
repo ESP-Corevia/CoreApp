@@ -1,5 +1,4 @@
-import { createMedicationsService } from '../../modules/medications/medications.service';
-import { createMedicationsProvider } from '../../modules/medications/providers/api-medicaments-fr.client';
+import { createMedicationsProvider } from '../../lib/medications/api-medicaments-fr.client';
 import {
   appointmentsRepo,
   availabilityRepo,
@@ -12,6 +11,7 @@ import {
 import { createAppointmentsService } from './appointments.service';
 import { createAvailabilityService } from './availability.service';
 import { createDoctorsService } from './doctors.service';
+import { createMedicationsService } from './medications.service';
 import { createPatientsService } from './patients.service';
 import { createUsersService } from './users.service';
 

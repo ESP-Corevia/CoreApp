@@ -7,6 +7,7 @@ export const statements = {
   panel: ['access'] as const,
   appointment: ['create', 'list', 'view'] as const,
   doctorPanel: ['access', 'manage-blocks'] as const,
+  pillbox: ['view', 'manage'] as const,
 } as const;
 
 export const ac = createAccessControl(statements);
@@ -14,6 +15,7 @@ export const ac = createAccessControl(statements);
 export const patientRole = ac.newRole({
   account: ['create', 'update'],
   appointment: ['create', 'list', 'view'],
+  pillbox: ['view', 'manage'],
 });
 
 export const doctorRole = ac.newRole({
@@ -27,6 +29,7 @@ export const adminRole = ac.newRole({
   panel: ['access'],
   appointment: ['create', 'list', 'view'],
   doctorPanel: ['access', 'manage-blocks'],
+  pillbox: ['view', 'manage'],
 });
 
 export type Permissions = {
@@ -34,6 +37,7 @@ export type Permissions = {
   panel?: 'access'[];
   appointment?: ('create' | 'list' | 'view')[];
   doctorPanel?: ('access' | 'manage-blocks')[];
+  pillbox?: ('view' | 'manage')[];
   user?: (
     | 'create'
     | 'update'
@@ -53,6 +57,7 @@ export const ALL_PERMISSIONS: Permissions = {
   panel: ['access'],
   appointment: ['create', 'list', 'view'],
   doctorPanel: ['access', 'manage-blocks'],
+  pillbox: ['view', 'manage'],
   user: [
     'create',
     'update',
