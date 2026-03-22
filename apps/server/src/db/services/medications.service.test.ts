@@ -304,12 +304,16 @@ describe('addSchedule', () => {
     repo.getById.mockResolvedValue({ id: 'med_1', patientId: 'u_1' } as any);
     repo.createSchedule.mockResolvedValue({ id: 'sched_1' } as any);
 
-    const result = await service.addSchedule('u_1', {
-      patientMedicationId: 'med_1',
-      intakeTime: '08:00',
-      intakeMoment: 'MORNING',
-      quantity: '1',
-    });
+    const result = await service.addSchedule(
+      'u_1',
+      {
+        patientMedicationId: 'med_1',
+        intakeTime: '08:00',
+        intakeMoment: 'MORNING',
+        quantity: '1',
+      },
+      false,
+    );
 
     expect(result.id).toBe('sched_1');
   });
@@ -318,25 +322,51 @@ describe('addSchedule', () => {
     repo.getById.mockResolvedValue({ id: 'med_1', patientId: 'u_other' } as any);
 
     await expect(
-      service.addSchedule('u_1', {
+      service.addSchedule(
+        'u_1',
+        {
+          patientMedicationId: 'med_1',
+          intakeTime: '08:00',
+          intakeMoment: 'MORNING',
+          quantity: '1',
+        },
+        false,
+      ),
+    ).rejects.toMatchObject({ code: 'FORBIDDEN' });
+  });
+
+  it('allows admin to add schedule to any medication', async () => {
+    repo.getById.mockResolvedValue({ id: 'med_1', patientId: 'u_other' } as any);
+    repo.createSchedule.mockResolvedValue({ id: 'sched_1' } as any);
+
+    const result = await service.addSchedule(
+      'admin_1',
+      {
         patientMedicationId: 'med_1',
         intakeTime: '08:00',
         intakeMoment: 'MORNING',
         quantity: '1',
-      }),
-    ).rejects.toMatchObject({ code: 'FORBIDDEN' });
+      },
+      true,
+    );
+
+    expect(result.id).toBe('sched_1');
   });
 
   it('throws NOT_FOUND if medication does not exist', async () => {
     repo.getById.mockResolvedValue(null);
 
     await expect(
-      service.addSchedule('u_1', {
-        patientMedicationId: 'med_1',
-        intakeTime: '08:00',
-        intakeMoment: 'MORNING',
-        quantity: '1',
-      }),
+      service.addSchedule(
+        'u_1',
+        {
+          patientMedicationId: 'med_1',
+          intakeTime: '08:00',
+          intakeMoment: 'MORNING',
+          quantity: '1',
+        },
+        false,
+      ),
     ).rejects.toMatchObject({ code: 'NOT_FOUND' });
   });
 });
@@ -347,7 +377,25 @@ describe('updateSchedule', () => {
     repo.getById.mockResolvedValue({ id: 'med_1', patientId: 'u_1' } as any);
     repo.updateSchedule.mockResolvedValue({ id: 'sched_1', intakeTime: '09:00' } as any);
 
-    const result = await service.updateSchedule('u_1', { id: 'sched_1', intakeTime: '09:00' });
+    const result = await service.updateSchedule(
+      'u_1',
+      { id: 'sched_1', intakeTime: '09:00' },
+      false,
+    );
+
+    expect(result.intakeTime).toBe('09:00');
+  });
+
+  it('allows admin to update any schedule', async () => {
+    repo.getScheduleById.mockResolvedValue({ id: 'sched_1', patientMedicationId: 'med_1' } as any);
+    repo.getById.mockResolvedValue({ id: 'med_1', patientId: 'u_other' } as any);
+    repo.updateSchedule.mockResolvedValue({ id: 'sched_1', intakeTime: '09:00' } as any);
+
+    const result = await service.updateSchedule(
+      'admin_1',
+      { id: 'sched_1', intakeTime: '09:00' },
+      true,
+    );
 
     expect(result.intakeTime).toBe('09:00');
   });
@@ -356,7 +404,7 @@ describe('updateSchedule', () => {
     repo.getScheduleById.mockResolvedValue(null);
 
     await expect(
-      service.updateSchedule('u_1', { id: 'sched_1', intakeTime: '09:00' }),
+      service.updateSchedule('u_1', { id: 'sched_1', intakeTime: '09:00' }, false),
     ).rejects.toMatchObject({ code: 'NOT_FOUND' });
   });
 
@@ -365,7 +413,7 @@ describe('updateSchedule', () => {
     repo.getById.mockResolvedValue({ id: 'med_1', patientId: 'u_other' } as any);
 
     await expect(
-      service.updateSchedule('u_1', { id: 'sched_1', intakeTime: '09:00' }),
+      service.updateSchedule('u_1', { id: 'sched_1', intakeTime: '09:00' }, false),
     ).rejects.toMatchObject({ code: 'FORBIDDEN' });
   });
 });
@@ -376,7 +424,7 @@ describe('deleteSchedule', () => {
     repo.getById.mockResolvedValue({ id: 'med_1', patientId: 'u_1' } as any);
     repo.deleteSchedule.mockResolvedValue({ id: 'sched_1' } as any);
 
-    await service.deleteSchedule('u_1', 'sched_1');
+    await service.deleteSchedule('u_1', 'sched_1', false);
 
     expect(repo.deleteSchedule).toHaveBeenCalledWith('sched_1');
   });
@@ -384,7 +432,7 @@ describe('deleteSchedule', () => {
   it('throws NOT_FOUND if schedule does not exist', async () => {
     repo.getScheduleById.mockResolvedValue(null);
 
-    await expect(service.deleteSchedule('u_1', 'sched_1')).rejects.toMatchObject({
+    await expect(service.deleteSchedule('u_1', 'sched_1', false)).rejects.toMatchObject({
       code: 'NOT_FOUND',
     });
   });
@@ -393,7 +441,7 @@ describe('deleteSchedule', () => {
     repo.getScheduleById.mockResolvedValue({ id: 'sched_1', patientMedicationId: 'med_1' } as any);
     repo.getById.mockResolvedValue({ id: 'med_1', patientId: 'u_other' } as any);
 
-    await expect(service.deleteSchedule('u_1', 'sched_1')).rejects.toMatchObject({
+    await expect(service.deleteSchedule('u_1', 'sched_1', false)).rejects.toMatchObject({
       code: 'FORBIDDEN',
     });
   });
@@ -541,12 +589,9 @@ describe('today', () => {
         dosageLabel: '500mg',
       },
     ] as any);
-    repo.getScheduleById.mockResolvedValue({
-      id: 'sched_1',
-      intakeMoment: 'MORNING',
-      quantity: '1',
-      unit: null,
-    } as any);
+    repo.getSchedulesByIds.mockResolvedValue([
+      { id: 'sched_1', intakeMoment: 'MORNING', quantity: '1', unit: null },
+    ] as any);
 
     const result = await service.today('u_1');
 
@@ -637,7 +682,7 @@ describe('today', () => {
         dosageLabel: null,
       },
     ] as any);
-    repo.getScheduleById.mockResolvedValue(null);
+    repo.getSchedulesByIds.mockResolvedValue([]);
 
     const result = await service.today('u_1');
 
@@ -824,12 +869,9 @@ describe('adminTodayByPatient', () => {
         dosageLabel: null,
       },
     ] as any);
-    repo.getScheduleById.mockResolvedValue({
-      id: 'sched_1',
-      intakeMoment: 'EVENING',
-      quantity: '2',
-      unit: 'ml',
-    } as any);
+    repo.getSchedulesByIds.mockResolvedValue([
+      { id: 'sched_1', intakeMoment: 'EVENING', quantity: '2', unit: 'ml' },
+    ] as any);
 
     const result = await service.adminTodayByPatient('u_1');
 
@@ -907,7 +949,7 @@ describe('adminTodayByPatient', () => {
         dosageLabel: null,
       },
     ] as any);
-    repo.getScheduleById.mockResolvedValue(null);
+    repo.getSchedulesByIds.mockResolvedValue([]);
 
     const result = await service.adminTodayByPatient('u_1');
 
@@ -919,7 +961,7 @@ describe('adminTodayByPatient', () => {
     repo.listByPatient.mockResolvedValue([med] as any);
     repo.intakesExistForDate.mockResolvedValue(false);
     repo.listSchedulesByMedication.mockResolvedValue([
-      { id: 'sched_1', weekday: 99, intakeTime: '08:00' }, // impossible weekday
+      { id: 'sched_1', weekday: 99, intakeTime: '08:00' },
     ] as any);
     repo.listIntakesByDate.mockResolvedValue([]);
 

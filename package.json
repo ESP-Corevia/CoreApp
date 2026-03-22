@@ -9,6 +9,8 @@
     "ruler:apply": "npx @intellectronica/ruler@latest apply --local-only",
     "check:all": "turbo check:all",
     "dev": "turbo dev",
+    "dev:backoffice": "turbo -F web -F server dev",
+    "dev:home": "turbo -F home dev",
     "build": "turbo build",
     "check-types": "turbo check-types",
     "dev:native": "turbo -F native dev",

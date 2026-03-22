@@ -1,4 +1,4 @@
-import { and, eq, sql, desc, asc, ilike } from 'drizzle-orm';
+import { and, eq, sql, desc, asc, ilike, inArray, or } from 'drizzle-orm';
 
 import {
   patientMedications,
@@ -166,6 +166,14 @@ export const createMedicationsRepo = (db: DrizzleDB) => ({
     );
   },
 
+  getSchedulesByIds: async (ids: string[]) => {
+    if (ids.length === 0) return [];
+    return await db
+      .select()
+      .from(patientMedicationSchedules)
+      .where(inArray(patientMedicationSchedules.id, ids));
+  },
+
   updateSchedule: async (
     id: string,
     data: Partial<{
@@ -326,7 +334,12 @@ export const createMedicationsRepo = (db: DrizzleDB) => ({
       conditions.push(eq(patientMedications.isActive, params.isActive));
     }
     if (params.search) {
-      conditions.push(ilike(patientMedications.medicationName, `%${params.search}%`));
+      conditions.push(
+        or(
+          ilike(patientMedications.medicationName, `%${params.search}%`),
+          ilike(users.name, `%${params.search}%`),
+        ),
+      );
     }
 
     return await db
@@ -371,12 +384,18 @@ export const createMedicationsRepo = (db: DrizzleDB) => ({
       conditions.push(eq(patientMedications.isActive, params.isActive));
     }
     if (params.search) {
-      conditions.push(ilike(patientMedications.medicationName, `%${params.search}%`));
+      conditions.push(
+        or(
+          ilike(patientMedications.medicationName, `%${params.search}%`),
+          ilike(users.name, `%${params.search}%`),
+        ),
+      );
     }
 
     const [row] = await db
       .select({ count: sql<number>`count(*)` })
       .from(patientMedications)
+      .leftJoin(users, eq(patientMedications.patientId, users.id))
       .where(conditions.length > 0 ? and(...conditions) : undefined);
 
     return Number(row.count);

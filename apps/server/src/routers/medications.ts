@@ -177,7 +177,11 @@ export const pillboxRouter = router({
     .input(AddScheduleInputSchema)
     .output(ScheduleOutputSchema)
     .mutation(async ({ input, ctx: { session, services } }) => {
-      return await services.medicationsService.addSchedule(session.userId, input);
+      return await services.medicationsService.addSchedule(
+        session.userId,
+        input,
+        session.role === 'admin',
+      );
     }),
 
   updateSchedule: patientProcedure
@@ -193,7 +197,11 @@ export const pillboxRouter = router({
     .input(UpdateScheduleInputSchema)
     .output(ScheduleOutputSchema)
     .mutation(async ({ input, ctx: { session, services } }) => {
-      return await services.medicationsService.updateSchedule(session.userId, input);
+      return await services.medicationsService.updateSchedule(
+        session.userId,
+        input,
+        session.role === 'admin',
+      );
     }),
 
   deleteSchedule: patientProcedure
@@ -209,7 +217,11 @@ export const pillboxRouter = router({
     .input(DeleteScheduleInputSchema)
     .output(z.object({ id: z.uuid() }))
     .mutation(async ({ input, ctx: { session, services } }) => {
-      return await services.medicationsService.deleteSchedule(session.userId, input.id);
+      return await services.medicationsService.deleteSchedule(
+        session.userId,
+        input.id,
+        session.role === 'admin',
+      );
     }),
 
   markIntakeTaken: patientProcedure
@@ -313,8 +325,8 @@ export const pillboxRouter = router({
         tags: ['Pillbox Admin'],
       },
     })
-    .input(z.object({ id: z.string().uuid() }))
-    .output(z.object({ id: z.string() }))
+    .input(z.object({ id: z.uuid() }))
+    .output(z.object({ id: z.uuid() }))
     .mutation(async ({ input, ctx: { services } }) => {
       return await services.medicationsService.adminDeleteMedication(input.id);
     }),

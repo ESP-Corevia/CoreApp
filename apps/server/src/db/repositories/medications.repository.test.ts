@@ -323,6 +323,35 @@ describe('medications.repository', () => {
       expect(await repo.getScheduleById('00000000-0000-0000-0000-000000000000')).toBeNull();
     });
   });
+  describe('getSchedulesByIds', () => {
+    it('returns multiple schedules by ids', async () => {
+      const med = await seedMedication();
+      const sched1 = await seedSchedule(med.id, { intakeTime: '08:00' });
+      const sched2 = await seedSchedule(med.id, { intakeTime: '20:00' });
+
+      const found = await repo.getSchedulesByIds([sched1.id, sched2.id]);
+      expect(found).toHaveLength(2);
+      expect(found.some((s) => s.intakeTime === '08:00')).toBe(true);
+      expect(found.some((s) => s.intakeTime === '20:00')).toBe(true);
+    });
+
+    it('returns empty array for empty input', async () => {
+      const result = await repo.getSchedulesByIds([]);
+      expect(result).toEqual([]);
+    });
+
+    it('ignores non-existent ids', async () => {
+      const med = await seedMedication();
+      const sched = await seedSchedule(med.id);
+
+      const found = await repo.getSchedulesByIds([
+        sched.id,
+        '00000000-0000-0000-0000-000000000000',
+      ]);
+      expect(found).toHaveLength(1);
+      expect(found[0].id).toBe(sched.id);
+    });
+  });
 
   describe('updateSchedule', () => {
     it('updates and returns schedule', async () => {

@@ -231,7 +231,7 @@ export const IntakeOutputSchema = z.object({
 
 export const AdminListPillboxInputSchema = z.object({
   patientId: z.uuid().optional(),
-  search: z.string().optional(),
+  search: z.string().max(100).optional(),
   isActive: coerceBoolean,
   page: z.number().int().min(1).default(1),
   limit: z.number().int().min(1).max(50).default(20),

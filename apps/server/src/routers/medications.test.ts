@@ -261,6 +261,7 @@ describe('pillbox.addSchedule', () => {
     expect(mockServices.medicationsService.addSchedule).toHaveBeenCalledWith(
       'u_1',
       expect.objectContaining({ patientMedicationId: UUID, intakeTime: '08:00' }),
+      false,
     );
   });
 });
@@ -275,6 +276,7 @@ describe('pillbox.updateSchedule', () => {
     expect(mockServices.medicationsService.updateSchedule).toHaveBeenCalledWith(
       'u_1',
       expect.objectContaining({ id: UUID, intakeTime: '09:00' }),
+      false,
     );
   });
 });
@@ -286,7 +288,7 @@ describe('pillbox.deleteSchedule', () => {
     const caller = createTestCaller({ customSession: fakeSession });
     const result = await caller.pillbox.deleteSchedule({ id: UUID });
 
-    expect(mockServices.medicationsService.deleteSchedule).toHaveBeenCalledWith('u_1', UUID);
+    expect(mockServices.medicationsService.deleteSchedule).toHaveBeenCalledWith('u_1', UUID, false);
     expect(result.id).toBe(UUID);
   });
 });

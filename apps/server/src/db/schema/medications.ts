@@ -42,6 +42,7 @@ export const patientMedications = pgTable(
   (table) => [
     index('patient_medications_patient_idx').on(table.patientId),
     index('patient_medications_active_idx').on(table.patientId, table.isActive),
+    index('patient_medications_name_idx').on(table.medicationName),
   ],
 );
 

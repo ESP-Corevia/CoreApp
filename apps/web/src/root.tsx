@@ -96,6 +96,8 @@ const ROUTES_WITH_LAYOUT = [
   '/dashboard',
   '/doctors',
   '/appointments',
+  '/medications',
+  '/pillbox',
   '/profile',
   '/settings',
 ];
@@ -106,7 +108,8 @@ function ThemedShell() {
   const location = useLocation();
   const isNavigating = state !== 'idle';
 
-  const shouldShowLayout = ROUTES_WITH_LAYOUT.includes(location.pathname);
+  const shouldShowLayout =
+    ROUTES_WITH_LAYOUT.includes(location.pathname) || location.pathname.startsWith('/pillbox/');
 
   function LoadingBar() {
     return (
