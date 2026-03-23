@@ -1,5 +1,33 @@
 # Changelog
 
+## [1.3.0](https://github.com/ESP-Corevia/CoreApp/compare/home-v1.2.1...home-v1.3.0) (2026-03-23)
+
+
+### ✨ Features
+
+* add new app home for the landing page ([#35](https://github.com/ESP-Corevia/CoreApp/issues/35)) ([ac882bc](https://github.com/ESP-Corevia/CoreApp/commit/ac882bcf2ef1e3b1bde76d4dcadccc69235510b3))
+* **apps:** update trpc and react version and add catalog to yarn v4.12 ([#42](https://github.com/ESP-Corevia/CoreApp/issues/42)) ([91c1dde](https://github.com/ESP-Corevia/CoreApp/commit/91c1dde52282da5455d3243495670335330523e8))
+* upgrade Node.js to 24.13.1 and add home deployment workflow ([#79](https://github.com/ESP-Corevia/CoreApp/issues/79)) ([a1a12ab](https://github.com/ESP-Corevia/CoreApp/commit/a1a12abfc31740f4974bae4ab30283ac2880de69))
+
+
+### 🐛 Fixes
+
+* broken build ([#40](https://github.com/ESP-Corevia/CoreApp/issues/40)) ([8e8ba02](https://github.com/ESP-Corevia/CoreApp/commit/8e8ba02b1f3c782d13ff6ba12a1f0321c387e333))
+
+
+### 🔧 Chores
+
+* **deps:** update dependency better-auth to v1.5.5 ([#96](https://github.com/ESP-Corevia/CoreApp/issues/96)) ([fec36ec](https://github.com/ESP-Corevia/CoreApp/commit/fec36ecc7c37efba1f3b15577163a2fd9471c451))
+* **deps:** update tanstack ([#95](https://github.com/ESP-Corevia/CoreApp/issues/95)) ([8275268](https://github.com/ESP-Corevia/CoreApp/commit/82752689b7d03a452b8297cf94051fc08980e159))
+* migrate from yarn to pnpm ([#102](https://github.com/ESP-Corevia/CoreApp/issues/102)) ([2bcad9a](https://github.com/ESP-Corevia/CoreApp/commit/2bcad9a48d517bba661c618d239c0e745bf15d0d))
+* release master ([#46](https://github.com/ESP-Corevia/CoreApp/issues/46)) ([98400bf](https://github.com/ESP-Corevia/CoreApp/commit/98400bf26265769e5e1c1f35dba6117d270a6399))
+* release master ([#47](https://github.com/ESP-Corevia/CoreApp/issues/47)) ([780f0ed](https://github.com/ESP-Corevia/CoreApp/commit/780f0edf3db7ea564a8eaa1d89b6ccd34724a2c0))
+* release master ([#49](https://github.com/ESP-Corevia/CoreApp/issues/49)) ([3b2ae3c](https://github.com/ESP-Corevia/CoreApp/commit/3b2ae3c8c40f43157f19da3af5272edadbf3a827))
+* release master ([#52](https://github.com/ESP-Corevia/CoreApp/issues/52)) ([f0eb134](https://github.com/ESP-Corevia/CoreApp/commit/f0eb134a537d9ef2fba4eca93f25ed1feec835b0))
+* release master ([#93](https://github.com/ESP-Corevia/CoreApp/issues/93)) ([c7c3512](https://github.com/ESP-Corevia/CoreApp/commit/c7c3512ee32f8130b101ec9cf89382742a3093e9))
+* release master ([#99](https://github.com/ESP-Corevia/CoreApp/issues/99)) ([009f964](https://github.com/ESP-Corevia/CoreApp/commit/009f9640979af0c24a9553ac6808f14e639fc2d1))
+* switch to biomejs ([#103](https://github.com/ESP-Corevia/CoreApp/issues/103)) ([54a8089](https://github.com/ESP-Corevia/CoreApp/commit/54a8089c3a6650d108b5bb78b9256c988952f86e))
+
 ## [1.2.1](https://github.com/ESP-Corevia/CoreApp/compare/home-v1.2.0...home-v1.2.1) (2026-03-12)
 
 
