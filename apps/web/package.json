@@ -7,19 +7,19 @@
     "build": "react-router build && echo 🏗️✅ Build passed! || (echo ❌ Build failed 💥 && exit 1)",
     "dev": "react-router dev",
     "start": "react-router-serve ./build/server/index.js",
-    "check:types": "yarn workspace server build:types && react-router typegen && tsc --noEmit && echo 🧠✅ Type check passed! || (echo ❌ Type check failed 💥 && exit 1)",
+    "check:types": "pnpm --filter server run build:types && react-router typegen && tsc --noEmit && echo 🧠✅ Type check passed! || (echo ❌ Type check failed 💥 && exit 1)",
     "check:prettier": "prettier --check \"src/**/*.{ts,tsx,css,json}\" && echo 🧹✅ Prettier check passed! || (echo ❌ Prettier check failed 💥 && exit 1)",
     "check:eslint": "eslint \"src/**/*.{ts,tsx}\" && echo 🚨✅ ESLint passed! || (echo ❌ ESLint failed 💥 && exit 1)",
     "check:stylelint": "stylelint \"src/**/*.css\" && echo 🎨✅ Stylelint passed! || (echo ❌ Stylelint failed 💥 && exit 1)",
     "format:prettier": "prettier --write \"src/**/*.{ts,tsx,css,json}\" && echo 🧹✨ Prettier formatted",
     "format:eslint": "eslint \"src/**/*.{ts,tsx}\" --fix && echo 🚨✨ ESLint fixed",
     "format:stylelint": "stylelint \"src/**/*.css\" --fix && echo 🎨✨ Stylelint fixed",
-    "format": "yarn format:prettier && yarn format:eslint && yarn format:stylelint && echo 🧰✨ Codebase formatted",
-    "check:lint": "yarn check:prettier && yarn check:eslint && yarn check:stylelint && echo 🔎✅ Lint suite passed!",
+    "format": "pnpm run format:prettier && pnpm run format:eslint && pnpm run format:stylelint && echo 🧰✨ Codebase formatted",
+    "check:lint": "pnpm run check:prettier && pnpm run check:eslint && pnpm run check:stylelint && echo 🔎✅ Lint suite passed!",
     "check:knip": "react-router typegen && knip && echo ✂️✅ Unused code check passed! || (echo ❌ Dead code found 💥 && exit 1)",
     "check:dep": "depcheck && echo 📦✅ Dependency check passed! || (echo ❌ Unused/missing deps 💥 && exit 1)",
-    "check:size": "yarn build && size-limit --json > size-limit-report.json && echo 📏✅ Size limits OK! || (echo ❌ Bundle size over budget 💥 && exit 1)",
-    "check:audit": "yarn npm audit --severity=high && echo 🛡️✅ Security audit passed! || (echo ❌ Security audit failed 🔒💥 && exit 1)",
+    "check:size": "pnpm run build && size-limit --json > size-limit-report.json && echo 📏✅ Size limits OK! || (echo ❌ Bundle size over budget 💥 && exit 1)",
+    "check:audit": "pnpm audit --severity=high && echo 🛡️✅ Security audit passed! || (echo ❌ Security audit failed 🔒💥 && exit 1)",
     "test": "vitest run --coverage",
     "test:watch": "vitest watch",
     "test:ui": "vitest --ui",
@@ -33,7 +33,7 @@
     "check:i18n": "i18next-cli extract --ci && echo 🌍✅ i18n check passed! || (echo ❌ i18n check failed 💥 && exit 1)",
     "axe": "playwright test --grep @a11y && echo ♿✅ A11y checks passed! || (echo ❌ A11y violations 💥 && exit 1)",
     "lighthouse": "lhci autorun && echo 🔦✅ Lighthouse passed! || (echo ❌ Lighthouse failed 💥 && exit 1)",
-    "check:all": "yarn check:lint && yarn check:types && yarn check:knip && yarn check:dep && yarn check:size && yarn check:audit && yarn check:i18n && echo 🧰✨ All checks passed! || (echo '❌ Fix the issues above before committing 💡' && exit 1)"
+    "check:all": "pnpm run check:lint && pnpm run check:types && pnpm run check:knip && pnpm run check:dep && pnpm run check:size && pnpm run check:audit && pnpm run check:i18n && echo 🧰✨ All checks passed! || (echo '❌ Fix the issues above before committing 💡' && exit 1)"
   },
   "dependencies": {
     "@dnd-kit/core": "6.3.1",
@@ -125,8 +125,8 @@
     "knip": "catalog:",
     "prettier": "catalog:",
     "prettier-plugin-tailwindcss": "0.6.14",
-    "react-router-devtools": "1.1.0",
-    "size-limit": "11.2.0",
+    "react-router-devtools": "6.2.0",
+    "size-limit": "12.0.0",
     "stylelint": "16.26.1",
     "stylelint-config-standard": "39.0.1",
     "stylelint-config-tailwindcss": "1.0.1",
@@ -139,5 +139,5 @@
     "vite-tsconfig-paths": "catalog:",
     "vitest": "catalog:"
   },
-  "packageManager": "yarn@4.12.0"
+  "packageManager": "pnpm@10.12.1"
 }

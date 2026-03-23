@@ -2,7 +2,7 @@
   "eslint.enable": true,
   "eslint.useFlatConfig": true,
   "eslint.run": "onType",
-  "eslint.nodePath": ".yarn/sdks",
+  "eslint.nodePath": "node_modules",
   "eslint.validate": [
     "javascript",
     "javascriptreact",

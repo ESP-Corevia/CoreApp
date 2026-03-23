@@ -22,12 +22,12 @@ FROM base AS builder
 ARG VITE_SERVER_URL
 
 RUN corepack enable
-RUN corepack prepare yarn@4.9.2 --activate
+RUN corepack prepare pnpm@10.12.1 --activate
 WORKDIR /app
 # First install the dependencies (as they change less often)
 COPY --from=prepare /app/out/json/ .
 
-RUN yarn install
+RUN pnpm install --frozen-lockfile
 # Build the project
 COPY --from=prepare /app/out/full/ .
 COPY apps/server/tsconfig.build.json ./apps/server/tsconfig.build.json
@@ -43,7 +43,7 @@ COPY tsconfig.* ./
 # ARG TURBO_TOKEN
 # ENV TURBO_TOKEN=$TURBO_TOKEN
 
-RUN yarn turbo -F web build
+RUN pnpm turbo -F web build
 
 
 

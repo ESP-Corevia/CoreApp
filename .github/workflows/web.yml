@@ -28,13 +28,13 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 1
-      - uses: ./.github/actions/setup-yarn
+      - uses: ./.github/actions/setup-pnpm
       - uses: ./.github/actions/setup-turbo
         with:
           token: ${{ secrets.TURBO_TOKEN }}
           team: ${{ secrets.TURBO_TEAM }}
       - name: 🧼 Run ESLint & Prettier
-        run: yarn turbo run web#check:lint --cache="${{env.TURBO_CACHE}}"
+        run: pnpm turbo run web#check:lint --cache="${{env.TURBO_CACHE}}"
 
   typecheck:
     name: 🧠 Type Check
@@ -44,13 +44,13 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 1
-      - uses: ./.github/actions/setup-yarn
+      - uses: ./.github/actions/setup-pnpm
       - uses: ./.github/actions/setup-turbo
         with:
           token: ${{ secrets.TURBO_TOKEN }}
           team: ${{ secrets.TURBO_TEAM }}
       - name: 🧠 Run TS Check
-        run: yarn turbo run web#check:types --cache="${{env.TURBO_CACHE}}"
+        run: pnpm turbo run web#check:types --cache="${{env.TURBO_CACHE}}"
 
   knip:
     name: 🪓 Check Unused Code (knip + ts-prune)
@@ -60,13 +60,13 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 1
-      - uses: ./.github/actions/setup-yarn
+      - uses: ./.github/actions/setup-pnpm
       - uses: ./.github/actions/setup-turbo
         with:
           token: ${{ secrets.TURBO_TOKEN }}
           team: ${{ secrets.TURBO_TEAM }}
       - name: 🪓 Run Knip
-        run: yarn turbo run web#check:knip --cache="${{env.TURBO_CACHE}}"
+        run: pnpm turbo run web#check:knip --cache="${{env.TURBO_CACHE}}"
 
   depcheck:
     name: 📦 Check Unused Dependencies
@@ -76,13 +76,13 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 1
-      - uses: ./.github/actions/setup-yarn
+      - uses: ./.github/actions/setup-pnpm
       - uses: ./.github/actions/setup-turbo
         with:
           token: ${{ secrets.TURBO_TOKEN }}
           team: ${{ secrets.TURBO_TEAM }}
       - name: 📦 Run depcheck
-        run: yarn turbo run web#check:dep --cache="${{env.TURBO_CACHE}}"
+        run: pnpm turbo run web#check:dep --cache="${{env.TURBO_CACHE}}"
 
   size:
     name: 📏 Bundle Size Budget
@@ -95,13 +95,13 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 1
-      - uses: ./.github/actions/setup-yarn
+      - uses: ./.github/actions/setup-pnpm
       - uses: ./.github/actions/setup-turbo
         with:
           token: ${{ secrets.TURBO_TOKEN }}
           team: ${{ secrets.TURBO_TEAM }}
       - name: 📏 Size Limit
-        run: yarn turbo run web#check:size --cache="${{env.TURBO_CACHE}}"
+        run: pnpm turbo run web#check:size --cache="${{env.TURBO_CACHE}}"
 
   audit:
     name: 🛡️ Security Audit
@@ -111,13 +111,13 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 1
-      - uses: ./.github/actions/setup-yarn
+      - uses: ./.github/actions/setup-pnpm
       - uses: ./.github/actions/setup-turbo
         with:
           token: ${{ secrets.TURBO_TOKEN }}
           team: ${{ secrets.TURBO_TEAM }}
       - name: 🛡️ Run npm audit
-        run: yarn turbo run web#check:audit --cache="${{env.TURBO_CACHE}}"
+        run: pnpm turbo run web#check:audit --cache="${{env.TURBO_CACHE}}"
 
   i18n:
     name: 🌍 i18n Checks
@@ -127,13 +127,13 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 1
-      - uses: ./.github/actions/setup-yarn
+      - uses: ./.github/actions/setup-pnpm
       - uses: ./.github/actions/setup-turbo
         with:
           token: ${{ secrets.TURBO_TOKEN }}
           team: ${{ secrets.TURBO_TEAM }}
       - name: 🌍 Run i18n CI check
-        run: yarn turbo run web#check:i18n --cache="${{env.TURBO_CACHE}}"
+        run: pnpm turbo run web#check:i18n --cache="${{env.TURBO_CACHE}}"
 
   test:
     name: 🧪 Unit Tests
@@ -143,9 +143,9 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 1
-      - uses: ./.github/actions/setup-yarn
+      - uses: ./.github/actions/setup-pnpm
       - name: 🧪 Run Tests
-        run: yarn turbo run web#check:test
+        run: pnpm turbo run web#check:test
       - name: 📈 Report Coverage
         if: always()
         uses: davelosert/vitest-coverage-report-action@v2
@@ -165,10 +165,10 @@ jobs:
   #     - uses: actions/checkout@v4
   #       with:
   #         fetch-depth: 1
-  #     - uses: ./.github/actions/setup-yarn
+  #     - uses: ./.github/actions/setup-pnpm
   #     - uses: microsoft/playwright-github-action@v1
   #     - name: 🚦 Run Playwright
-  #       run: yarn turbo run web#e2e
+  #       run: pnpm turbo run web#e2e
 
   # axe:
   #   name: ♿ A11y Checks
@@ -178,10 +178,10 @@ jobs:
   #     - uses: actions/checkout@v4
   #       with:
   #         fetch-depth: 1
-  #     - uses: ./.github/actions/setup-yarn
+  #     - uses: ./.github/actions/setup-pnpm
   #     - uses: microsoft/playwright-github-action@v1
   #     - name: ♿ Run axe tests
-  #       run: yarn turbo run web#axe
+  #       run: pnpm turbo run web#axe
 
   # lighthouse:
   #   name: 🔦 Lighthouse
@@ -191,12 +191,12 @@ jobs:
   #     - uses: actions/checkout@v4
   #       with:
   #         fetch-depth: 1
-  #     - uses: ./.github/actions/setup-yarn
+  #     - uses: ./.github/actions/setup-pnpm
   #     - uses: ./.github/actions/setup-turbo
   #       with:
   #         token: ${{ secrets.TURBO_TOKEN }}
   #         team: ${{ secrets.TURBO_TEAM }}
   #     - name: 🏗️ Build
-  #       run: yarn turbo run web#build --cache="${{env.TURBO_CACHE}}"
+  #       run: pnpm turbo run web#build --cache="${{env.TURBO_CACHE}}"
   #     - name: 🔦 Run LHCI
-  #       run: yarn turbo run web#lighthouse --cache="${{env.TURBO_CACHE}}"
+  #       run: pnpm turbo run web#lighthouse --cache="${{env.TURBO_CACHE}}"

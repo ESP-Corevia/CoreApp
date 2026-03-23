@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsdown",
     "check-types": "tsc -b",
-    "compile": "yarn build && node dist/index.js",
+    "compile": "pnpm run build && node dist/index.js",
     "dev": "tsx watch src/index.ts",
     "start": "node dist/index.js",
     "db:push": "drizzle-kit push",
@@ -26,7 +26,7 @@
     "test:watch": "vitest watch",
     "test:ui": "vitest --ui",
     "check:test": "vitest run  && echo 🧪✅ Tests passed! || (echo '❌ Fix the above issues before committing 💡' && exit 1)",
-    "check:all": "yarn check:lint && yarn check:types && yarn check:knip && yarn check:dep && yarn build:types && yarn build && echo 🧰✨ All checks passed! || (echo '❌ Fix the above issues before committing 💡' && exit 1)"
+    "check:all": "pnpm run check:lint && pnpm run check:types && pnpm run check:knip && pnpm run check:dep && pnpm run build:types && pnpm run build && echo 🧰✨ All checks passed! || (echo '❌ Fix the above issues before committing 💡' && exit 1)"
   },
   "dependencies": {
     "@fastify/cors": "11.0.1",
@@ -80,5 +80,5 @@
     "vitest-mock-extended": "3.1.0",
     "zod-openapi": "5.3.1"
   },
-  "packageManager": "yarn@4.12.0"
+  "packageManager": "pnpm@10.12.1"
 }

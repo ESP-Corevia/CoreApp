@@ -10,17 +10,17 @@ This is a monorepo with the following structure:
 
 ## Available Scripts
 
-- `yarn dev` - Start all apps in development mode
-- `yarn dev:server` - Start only the server
+- `pnpm dev` - Start all apps in development mode
+- `pnpm dev:server` - Start only the server
 
 ## Database Commands
 
 All database operations should be run from the server workspace:
 
-- `yarn db:push` - Push schema changes to database
-- `yarn db:studio` - Open database studio
-- `yarn db:generate` - Generate Drizzle files
-- `yarn db:migrate` - Run database migrations
+- `pnpm db:push` - Push schema changes to database
+- `pnpm db:studio` - Open database studio
+- `pnpm db:generate` - Generate Drizzle files
+- `pnpm db:migrate` - Run database migrations
 
 Database schema files are located in `apps/server/src/db/schema/`
 
@@ -66,6 +66,6 @@ This project includes a `bts.jsonc` configuration file that stores your Better-T
 - This is a Turborepo monorepo using npm workspaces
 - Each app has its own `package.json` and dependencies
 - Run commands from the root to execute across all workspaces
-- Run workspace-specific commands with `yarn warkspace <workspace%name> <command-name>`
+- Run workspace-specific commands with `pnpm --filter <workspace-name> <command-name>`
 - Turborepo handles build caching and parallel execution
 - Use `npx create-better-t-stack add` to add more features later

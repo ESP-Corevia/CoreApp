@@ -26,7 +26,7 @@ This project was created with [Better-T-Stack](https://github.com/AmanVarshney01
 First, install the dependencies:
 
 ```bash
-yarn
+pnpm install
 ```
 
 ## Database Setup
@@ -39,13 +39,13 @@ This project uses PostgreSQL with Drizzle ORM.
 3. Apply the schema to your database:
 
 ```bash
-yarn db:migrate
+pnpm db:migrate
 ```
 
 Then, run the development server:
 
 ```bash
-yarn dev
+pnpm dev
 ```
 
 Open [http://localhost:5173](http://localhost:5173) in your browser to see the web application.
@@ -68,13 +68,13 @@ Corevia/
 
 ## Available Scripts
 
-- `yarn dev`: Start all applications in development mode
-- `yarn build`: Build all applications
-- `yarn dev:web`: Start only the web application
-- `yarn dev:server`: Start only the server
-- `yarn check-types`: Check TypeScript types across all apps
-- `yarn db:push`: Push schema changes to database
-- `yarn db:studio`: Open database studio UI
+- `pnpm dev`: Start all applications in development mode
+- `pnpm build`: Build all applications
+- `pnpm dev:web`: Start only the web application
+- `pnpm dev:server`: Start only the server
+- `pnpm check-types`: Check TypeScript types across all apps
+- `pnpm db:push`: Push schema changes to database
+- `pnpm db:studio`: Open database studio UI
 - `docker compose --profile server up -d`: Start the server and its dependencies using Docker Compose
 - `docker compose --profile web up -d`: Start the web app and its dependencies using Docker Compose
 - `docker compose --profile seed up -d`: Seed the database using Docker Compose
