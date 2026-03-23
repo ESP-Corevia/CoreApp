@@ -1,10 +1,9 @@
-import { useState } from 'react';
-
+/** biome-ignore-all lint/suspicious/noExplicitAny: pass */
 import { useForm } from '@tanstack/react-form';
 import { useQueryClient } from '@tanstack/react-query';
-
 import { Eye, EyeOff, Plus } from 'lucide-react';
-import { useTranslation, Trans } from 'react-i18next';
+import { useState } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
@@ -74,7 +73,7 @@ export function CreateUserDialog() {
         toast.error(
           t('userCreateModal.userCreateError', 'Failed to create user: {{message}}', {
             message: error instanceof Error ? error.message : 'Unknown error',
-          })
+          }),
         );
       }
     },

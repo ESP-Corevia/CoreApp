@@ -1,11 +1,12 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: pass */
 /* v8 ignore file -- @preserve */
-import React, { useRef, useEffect, useState } from 'react';
-import type { JSX } from 'react';
 
 import { useGSAP } from '@gsap/react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText as GSAPSplitText } from 'gsap/SplitText';
+import type { JSX } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 gsap.registerPlugin(ScrollTrigger, GSAPSplitText, useGSAP);
 
@@ -80,11 +81,7 @@ const Shuffle: React.FC<ShuffleProps> = ({
   useGSAP(
     () => {
       if (!ref.current || !text || !fontsLoaded) return;
-      if (
-        respectReducedMotion &&
-        window.matchMedia &&
-        window.matchMedia('(prefers-reduced-motion: reduce)').matches
-      ) {
+      if (respectReducedMotion && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
         onShuffleComplete?.();
         return;
       }
@@ -211,7 +208,7 @@ const Shuffle: React.FC<ShuffleProps> = ({
           const kids = Array.from(strip.children) as HTMLElement[];
           for (let i = 1; i < kids.length - 1; i++) {
             kids[i].textContent = scrambleCharset.charAt(
-              Math.floor(Math.random() * scrambleCharset.length)
+              Math.floor(Math.random() * scrambleCharset.length),
             );
           }
         });
@@ -242,7 +239,7 @@ const Shuffle: React.FC<ShuffleProps> = ({
           onRepeat: () => {
             if (scrambleCharset) randomizeScrambles();
             gsap.set(strips, {
-              x: (i, t: HTMLElement) => parseFloat(t.getAttribute('data-start-x') || '0'),
+              x: (_i, t: HTMLElement) => parseFloat(t.getAttribute('data-start-x') || '0'),
             });
             onShuffleComplete?.();
           },
@@ -261,13 +258,13 @@ const Shuffle: React.FC<ShuffleProps> = ({
           tl.to(
             targets,
             {
-              x: (i, t: HTMLElement) => parseFloat(t.getAttribute('data-final-x') || '0'),
+              x: (_i, t: HTMLElement) => parseFloat(t.getAttribute('data-final-x') || '0'),
               duration,
               ease,
               force3D: true,
               stagger: animationMode === 'evenodd' ? stagger : 0,
             },
-            at
+            at,
           );
           if (colorFrom && colorTo) tl.to(targets, { color: colorTo, duration, ease }, at);
         };
@@ -290,7 +287,7 @@ const Shuffle: React.FC<ShuffleProps> = ({
                 ease,
                 force3D: true,
               },
-              d
+              d,
             );
             if (colorFrom && colorTo)
               tl.fromTo(strip, { color: colorFrom }, { color: colorTo, duration, ease }, d);
@@ -358,7 +355,7 @@ const Shuffle: React.FC<ShuffleProps> = ({
         triggerOnHover,
       ],
       scope: ref,
-    }
+    },
   );
 
   const baseTw =
@@ -375,7 +372,7 @@ const Shuffle: React.FC<ShuffleProps> = ({
   return React.createElement(
     Tag,
     { ref: ref as any, className: classes, style: commonStyle },
-    text
+    text,
   );
 };
 

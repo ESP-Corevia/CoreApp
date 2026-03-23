@@ -1,9 +1,8 @@
 import { and, eq, inArray } from 'drizzle-orm';
-
-import { appointments, doctorBlocks, doctors } from '../schema';
+import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 
 import type * as schema from '../schema';
-import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
+import { appointments, doctorBlocks, doctors } from '../schema';
 
 type DrizzleDB = PostgresJsDatabase<typeof schema>;
 
@@ -28,7 +27,7 @@ export const createAvailabilityRepo = (db: DrizzleDB) => ({
           inArray(appointments.status, ['PENDING', 'CONFIRMED']),
         ),
       );
-    return rows.map((r) => r.time);
+    return rows.map(r => r.time);
   },
 
   getBlockedSlots: async (doctorId: string, date: string): Promise<string[]> => {
@@ -36,6 +35,6 @@ export const createAvailabilityRepo = (db: DrizzleDB) => ({
       .select({ time: doctorBlocks.time })
       .from(doctorBlocks)
       .where(and(eq(doctorBlocks.doctorId, doctorId), eq(doctorBlocks.date, date)));
-    return rows.map((r) => r.time);
+    return rows.map(r => r.time);
   },
 });

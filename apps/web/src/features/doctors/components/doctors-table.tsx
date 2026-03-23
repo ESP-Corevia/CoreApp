@@ -1,15 +1,13 @@
 'use client';
 
-import { useMemo } from 'react';
-
 import type { ColumnDef } from '@tanstack/react-table';
-
 import { Mail, MapPin, Stethoscope, Text } from 'lucide-react';
+import { useMemo } from 'react';
 
 import { DataTable } from '@/components/data-table/data-table';
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
 import { DataTableToolbar } from '@/components/data-table/data-table-toolbar';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { useDataTable } from '@/hooks/use-data-table';
 
@@ -109,7 +107,7 @@ export default function DoctorsTable({
         cell: ({ cell }) => {
           const city = cell.getValue<Doctor['city']>();
           return (
-            <div className="text-muted-foreground inline-flex items-center gap-1 text-sm">
+            <div className="inline-flex items-center gap-1 text-muted-foreground text-sm">
               <MapPin className="h-4 w-4" />
               {city}
             </div>
@@ -132,7 +130,7 @@ export default function DoctorsTable({
         enableSorting: false,
       },
     ],
-    []
+    [],
   );
 
   const { table } = useDataTable<Doctor>({
@@ -154,7 +152,7 @@ export default function DoctorsTable({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">{title}</h1>
+        <h1 className="font-bold text-2xl">{title}</h1>
       </div>
       <DataTable table={table}>
         <DataTableToolbar table={table} isLoading={isLoading} />

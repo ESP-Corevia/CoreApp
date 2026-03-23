@@ -1,6 +1,5 @@
+import { Ban, HatGlasses, Key, MoreHorizontal, Power, Trash2, UserCog, UserX } from 'lucide-react';
 import { useState } from 'react';
-
-import { Ban, Key, MoreHorizontal, HatGlasses, Trash2, UserCog, UserX, Power } from 'lucide-react';
 import { Trans } from 'react-i18next';
 
 import { Button } from '@/components/ui/button';
@@ -11,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useImpersonateUser, useUnbanUser, useRevokeUserSessions } from '@/queries';
+import { useImpersonateUser, useRevokeUserSessions, useUnbanUser } from '@/queries';
 import type { User } from '@/types/data-table';
 
 import { BanUserDialog } from './modals/userBanDialog';

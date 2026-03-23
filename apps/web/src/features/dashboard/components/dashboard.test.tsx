@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: pass */
 import { faker } from '@faker-js/faker';
 import { waitFor } from '@testing-library/react';
 import { toast } from 'sonner';
@@ -75,7 +76,7 @@ describe('Dashboard', () => {
           page: 1,
           perPage: 10,
           search: '',
-        })
+        }),
       );
     });
     expect(getByText('Mocked DataTableUsers')).toBeInTheDocument();
@@ -111,7 +112,7 @@ describe('Dashboard', () => {
         expect.objectContaining({
           search: 'john',
           page: 1,
-        })
+        }),
       );
     });
   });
@@ -133,7 +134,7 @@ describe('Dashboard', () => {
       expect(useListUsers).toHaveBeenLastCalledWith(
         expect.objectContaining({
           sorting,
-        })
+        }),
       );
     });
   });
@@ -155,7 +156,7 @@ describe('Dashboard', () => {
       expect(useListUsers).toHaveBeenLastCalledWith(
         expect.objectContaining({
           filters: newFilters,
-        })
+        }),
       );
     });
   });

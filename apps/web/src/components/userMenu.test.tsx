@@ -1,10 +1,11 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: pass */
 import { waitFor } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
-import { authClient } from '@/lib/auth-client';
-import UserMenu from './userMenu';
-import { render } from '@/test/render';
-import { mockUser } from '@/test/faker';
 import userEvent from '@testing-library/user-event';
+import { describe, expect, it, vi } from 'vitest';
+import { authClient } from '@/lib/auth-client';
+import { mockUser } from '@/test/faker';
+import { render } from '@/test/render';
+import UserMenu from './userMenu';
 
 vi.mock('@/lib/auth-client', () => ({
   authClient: {
@@ -16,7 +17,7 @@ vi.mock('@/lib/auth-client', () => ({
 describe('UserMenu', () => {
   it('renders sign in button when there is no session and calls signIn on click', async () => {
     (authClient.useSession as any).mockReturnValue({ data: null, isPending: false });
-    const { getByRole, queryByRole, findByRole } = render(<UserMenu />, {
+    const { queryByRole, findByRole } = render(<UserMenu />, {
       trpcHandlers: {
         'user.getMe': () => ({ user: null }),
       },

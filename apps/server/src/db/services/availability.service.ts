@@ -59,7 +59,7 @@ export const createAvailabilityService = (repo: ReturnType<typeof createAvailabi
     ]);
 
     const unavailable = new Set([...reserved, ...blocked]);
-    const slots = BASE_SLOTS.filter((s) => !unavailable.has(s));
+    const slots = BASE_SLOTS.filter(s => !unavailable.has(s));
 
     return { doctorId, date, slots };
   },

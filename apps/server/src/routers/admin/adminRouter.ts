@@ -43,11 +43,11 @@ export const adminRouter = router({
 
         sorting: z
           .string()
-          .transform((v) => JSON.parse(v))
+          .transform(v => JSON.parse(v))
           .optional(),
         filters: z
           .string()
-          .transform((v) => JSON.parse(v))
+          .transform(v => JSON.parse(v))
           .optional(),
       }),
     )

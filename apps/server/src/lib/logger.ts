@@ -1,6 +1,7 @@
 import pino from 'pino';
 
 import { env } from '../env';
+
 const isProd = env.NODE_ENV === 'production';
 
 export const logger = pino({
@@ -15,5 +16,3 @@ export const logger = pino({
       }
     : undefined,
 });
-
-export default logger;

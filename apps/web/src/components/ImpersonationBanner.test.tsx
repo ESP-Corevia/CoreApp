@@ -1,9 +1,10 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { waitFor } from '@testing-library/react';
-import { render } from '@/test/render';
-import * as useReqAuth from '@/hooks/use-require-auth';
-import ImpersonationBanner from './ImpersonationBanner';
 import userEvent from '@testing-library/user-event';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import * as useReqAuth from '@/hooks/use-require-auth';
+import { render } from '@/test/render';
+import ImpersonationBanner from './ImpersonationBanner';
+
 vi.mock('@/hooks/use-require-auth', () => ({
   useRequireAuth: vi.fn(),
 }));

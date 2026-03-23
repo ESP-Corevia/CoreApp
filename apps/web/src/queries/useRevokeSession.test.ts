@@ -1,6 +1,7 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: pass */
 import { waitFor } from '@testing-library/react';
 import { toast } from 'sonner';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { authClient } from '@/lib/auth-client';
 import { renderHook } from '@/test/renderHook';

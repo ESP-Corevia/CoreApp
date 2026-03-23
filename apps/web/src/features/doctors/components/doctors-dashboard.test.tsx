@@ -1,5 +1,6 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: pass */
 import { waitFor } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import * as queries from '@/queries';
 import { render } from '@/test/render';
@@ -24,7 +25,7 @@ describe('DoctorsDashboard', () => {
 
   it('renders nothing when session is not authenticated', () => {
     const { container } = render(
-      <DoctorsDashboard session={{ isAuthenticated: false, userId: '' }} />
+      <DoctorsDashboard session={{ isAuthenticated: false, userId: '' }} />,
     );
     expect(container.querySelector('.space-y-6')).not.toBeInTheDocument();
   });

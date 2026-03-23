@@ -1,9 +1,7 @@
-import { useState } from 'react';
-
 import { useForm } from '@tanstack/react-form';
 import { useQuery } from '@tanstack/react-query';
-
 import { Calendar, Lock, Mail, Shield, User as UserIcon } from 'lucide-react';
+import { useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -88,8 +86,7 @@ export default function Profile({
         setIsEditing(false);
         await refetch();
         toast.success(t('profile.success', 'Profile updated successfully'));
-      } catch (error) {
-        console.error('Failed to update profile:', error);
+      } catch (_error) {
         toast.error(t('profile.error', 'Failed to update profile'));
       }
     },
@@ -113,10 +110,9 @@ export default function Profile({
         emailForm.reset();
         await refetch();
         toast.success(
-          t('profile.emailUpdated', 'Email updated successfully. Please verify your new email.')
+          t('profile.emailUpdated', 'Email updated successfully. Please verify your new email.'),
         );
-      } catch (error) {
-        console.error('Failed to update email:', error);
+      } catch (_error) {
         toast.error(t('profile.emailUpdateError', 'Failed to update email'));
       }
     },
@@ -143,13 +139,12 @@ export default function Profile({
         setIsPasswordModalOpen(false);
         passwordForm.reset();
         toast.success(t('profile.passwordUpdated', 'Password updated successfully'));
-      } catch (error) {
-        console.error('Failed to update password:', error);
+      } catch (_error) {
         toast.error(
           t(
             'profile.passwordUpdateError',
-            'Failed to update password. Check your current password.'
-          )
+            'Failed to update password. Check your current password.',
+          ),
         );
       }
     },
@@ -160,12 +155,12 @@ export default function Profile({
   }
 
   return (
-    <div className="bg-background min-h-screen p-4 md:p-8">
+    <div className="min-h-screen bg-background p-4 md:p-8">
       <div className="mx-auto max-w-2xl space-y-6">
         {/* Profile Information */}
-        <div className="space-y-4">
+        <section className="space-y-4" aria-label="Preview Profile Information">
           <div>
-            <h2 className="flex items-center gap-2 text-xl font-semibold">
+            <h2 className="flex items-center gap-2 font-semibold text-xl">
               <UserIcon className="h-5 w-5" />
               <Trans i18nKey="profile.profileInformation">Profile Information</Trans>
             </h2>
@@ -250,14 +245,11 @@ export default function Profile({
                 </profileForm.Subscribe>
               </form>
             ) : (
-              <div
-                aria-label={t('profile.previewLabel', 'Preview Profile Information')}
-                className="space-y-3"
-              >
+              <div className="space-y-3">
                 {/* Email (read-only with change button) */}
                 <div className="flex items-center justify-between rounded-lg border p-4">
                   <div className="flex items-center gap-3">
-                    <Mail className="text-muted-foreground h-5 w-5" />
+                    <Mail className="h-5 w-5 text-muted-foreground" />
                     <div>
                       <p className="font-medium">
                         <Trans i18nKey="profile.email">Email</Trans>
@@ -270,12 +262,12 @@ export default function Profile({
                 {/* User ID (read-only) */}
                 <div className="flex items-center justify-between rounded-lg border p-4">
                   <div className="flex items-center gap-3">
-                    <Shield className="text-muted-foreground h-5 w-5" />
+                    <Shield className="h-5 w-5 text-muted-foreground" />
                     <div>
                       <p className="font-medium">
                         <Trans i18nKey="profile.userId">User ID</Trans>
                       </p>
-                      <p className="text-muted-foreground font-mono text-sm">{user?.id}</p>
+                      <p className="font-mono text-muted-foreground text-sm">{user?.id}</p>
                     </div>
                   </div>
                 </div>
@@ -283,7 +275,7 @@ export default function Profile({
                 {/* Created Date (read-only) */}
                 <div className="flex items-center justify-between rounded-lg border p-4">
                   <div className="flex items-center gap-3">
-                    <Calendar className="text-muted-foreground h-5 w-5" />
+                    <Calendar className="h-5 w-5 text-muted-foreground" />
                     <div>
                       <p className="font-medium">
                         <Trans i18nKey="profile.createdDate">Created Date</Trans>
@@ -297,7 +289,7 @@ export default function Profile({
                 {/* Updated Date (read-only) */}
                 <div className="flex items-center justify-between rounded-lg border p-4">
                   <div className="flex items-center gap-3">
-                    <Calendar className="text-muted-foreground h-5 w-5" />
+                    <Calendar className="h-5 w-5 text-muted-foreground" />
                     <div>
                       <p className="font-medium">
                         <Trans i18nKey="profile.updatedDate">Updated Date</Trans>
@@ -311,7 +303,7 @@ export default function Profile({
               </div>
             )}
           </div>
-        </div>
+        </section>
 
         <Separator />
 
@@ -339,7 +331,7 @@ export default function Profile({
         {/* Account Status */}
         <div className="space-y-4">
           <div>
-            <h2 className="flex items-center gap-2 text-xl font-semibold">
+            <h2 className="flex items-center gap-2 font-semibold text-xl">
               <Shield className="h-5 w-5" />
               <Trans i18nKey="profile.accountStatus">Account Status</Trans>
             </h2>
@@ -361,11 +353,11 @@ export default function Profile({
                 </p>
               </div>
               {user?.emailVerified ? (
-                <div className="rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-800">
+                <div className="rounded-full bg-green-100 px-3 py-1 font-medium text-green-800 text-sm">
                   <Trans i18nKey="profile.verified">Verified</Trans>
                 </div>
               ) : (
-                <div className="rounded-full bg-red-100 px-3 py-1 text-sm font-medium text-red-800">
+                <div className="rounded-full bg-red-100 px-3 py-1 font-medium text-red-800 text-sm">
                   <Trans i18nKey="profile.notVerified">Not Verified</Trans>
                 </div>
               )}
@@ -495,7 +487,7 @@ export default function Profile({
                     onChange={e => field.handleChange(e.target.value)}
                     placeholder={t(
                       'profile.passwordModal.oldPasswordLabel',
-                      'Enter your current password'
+                      'Enter your current password',
                     )}
                   />
                   {field.state.meta.errors.map(error => (
@@ -523,7 +515,7 @@ export default function Profile({
                     onChange={e => field.handleChange(e.target.value)}
                     placeholder={t(
                       'profile.passwordModal.newPasswordLabel',
-                      'Enter your new password'
+                      'Enter your new password',
                     )}
                   />
                   {field.state.meta.errors.map(error => (
@@ -556,7 +548,7 @@ export default function Profile({
                     onChange={e => field.handleChange(e.target.value)}
                     placeholder={t(
                       'profile.passwordModal.confirmPasswordLabel',
-                      'Confirm your new password'
+                      'Confirm your new password',
                     )}
                   />
                   {field.state.meta.errors.map(error => (

@@ -87,7 +87,7 @@ export function DataTableFilterMenu<TData>({
         setSelectedColumn(null);
       }
     },
-    [inputValue, selectedColumn]
+    [inputValue, selectedColumn],
   );
 
   const [filters, setFilters] = useQueryState(
@@ -98,7 +98,7 @@ export function DataTableFilterMenu<TData>({
         clearOnDefault: true,
         shallow,
         throttleMs,
-      })
+      }),
   );
   const debouncedSetFilters = useDebouncedCallback(setFilters, debounceMs);
 
@@ -126,7 +126,7 @@ export function DataTableFilterMenu<TData>({
         setInputValue('');
       }, 100);
     },
-    [filters, debouncedSetFilters]
+    [filters, debouncedSetFilters],
   );
 
   const onFilterRemove = React.useCallback(
@@ -137,7 +137,7 @@ export function DataTableFilterMenu<TData>({
         triggerRef.current?.focus();
       });
     },
-    [filters, debouncedSetFilters]
+    [filters, debouncedSetFilters],
   );
 
   const onFilterUpdate = React.useCallback(
@@ -152,7 +152,7 @@ export function DataTableFilterMenu<TData>({
         return updatedFilters;
       });
     },
-    [debouncedSetFilters]
+    [debouncedSetFilters],
   );
 
   const onFiltersReset = React.useCallback(() => {
@@ -190,7 +190,7 @@ export function DataTableFilterMenu<TData>({
         onFilterRemove(filters[filters.length - 1]?.filterId ?? '');
       }
     },
-    [filters, onFilterRemove]
+    [filters, onFilterRemove],
   );
 
   return (
@@ -298,7 +298,7 @@ interface DataTableFilterItemProps<TData> {
   columns: Column<TData>[];
   onFilterUpdate: (
     filterId: string,
-    updates: Partial<Omit<ExtendedColumnFilter<TData>, 'filterId'>>
+    updates: Partial<Omit<ExtendedColumnFilter<TData>, 'filterId'>>,
   ) => void;
   onFilterRemove: (filterId: string) => void;
 }
@@ -324,7 +324,7 @@ function DataTableFilterItem<TData>({
     const filterOperators = getFilterOperators(filter.variant);
 
     const onItemKeyDown = React.useCallback(
-      (event: React.KeyboardEvent<HTMLDivElement>) => {
+      (event: React.KeyboardEvent<HTMLLIElement>) => {
         if (
           event.target instanceof HTMLInputElement ||
           event.target instanceof HTMLTextAreaElement
@@ -341,17 +341,16 @@ function DataTableFilterItem<TData>({
           onFilterRemove(filter.filterId);
         }
       },
-      [filter.filterId, showFieldSelector, showOperatorSelector, showValueSelector, onFilterRemove]
+      [filter.filterId, showFieldSelector, showOperatorSelector, showValueSelector, onFilterRemove],
     );
 
     if (!column) return null;
 
     return (
-      <div
+      <li
         key={filter.filterId}
-        role="listitem"
         id={filterItemId}
-        className="bg-background flex h-8 items-center rounded-md"
+        className="flex h-8 items-center rounded-md bg-background"
         onKeyDown={onItemKeyDown}
       >
         <Popover open={showFieldSelector} onOpenChange={setShowFieldSelector}>
@@ -359,7 +358,7 @@ function DataTableFilterItem<TData>({
             <Button
               variant="ghost"
               size="sm"
-              className="dark:bg-input/30 rounded-none rounded-l-md border border-r-0 font-normal"
+              className="rounded-none rounded-l-md border border-r-0 font-normal dark:bg-input/30"
             >
               {columnMeta?.icon && <columnMeta.icon className="text-muted-foreground" />}
               {columnMeta?.label ?? column.id}
@@ -380,7 +379,7 @@ function DataTableFilterItem<TData>({
                           id: column.id as Extract<keyof TData, string>,
                           variant: column.columnDef.meta?.variant ?? 'text',
                           operator: getDefaultFilterOperator(
-                            column.columnDef.meta?.variant ?? 'text'
+                            column.columnDef.meta?.variant ?? 'text',
                           ),
                           value: '',
                         });
@@ -393,7 +392,7 @@ function DataTableFilterItem<TData>({
                       <Check
                         className={cn(
                           'ml-auto',
-                          column.id === filter.id ? 'opacity-100' : 'opacity-0'
+                          column.id === filter.id ? 'opacity-100' : 'opacity-0',
                         )}
                       />
                     </CommandItem>
@@ -440,12 +439,12 @@ function DataTableFilterItem<TData>({
           aria-controls={filterItemId}
           variant="ghost"
           size="sm"
-          className="dark:bg-input/30 h-full rounded-none rounded-r-md border border-l-0 px-1.5 font-normal"
+          className="h-full rounded-none rounded-r-md border border-l-0 px-1.5 font-normal dark:bg-input/30"
           onClick={() => onFilterRemove(filter.filterId)}
         >
           <X className="size-3.5" />
         </Button>
-      </div>
+      </li>
     );
   }
 }
@@ -539,7 +538,7 @@ function onFilterInputRender<TData>({
   inputId: string;
   onFilterUpdate: (
     filterId: string,
-    updates: Partial<Omit<ExtendedColumnFilter<TData>, 'filterId'>>
+    updates: Partial<Omit<ExtendedColumnFilter<TData>, 'filterId'>>,
   ) => void;
   showValueSelector: boolean;
   setShowValueSelector: (value: boolean) => void;
@@ -553,7 +552,7 @@ function onFilterInputRender<TData>({
           filter.operator === 'isEmpty' ? 'empty' : 'not empty'
         }`}
         aria-live="polite"
-        className="text-muted-foreground dark:bg-input/30 h-full w-16 rounded-none border bg-transparent px-1.5 py-0.5"
+        className="h-full w-16 rounded-none border bg-transparent px-1.5 py-0.5 text-muted-foreground dark:bg-input/30"
       />
     );
   }
@@ -634,7 +633,7 @@ function onFilterInputRender<TData>({
               aria-controls={inputListboxId}
               variant="ghost"
               size="sm"
-              className="dark:bg-input/30 h-full min-w-16 rounded-none border px-1.5 font-normal"
+              className="h-full min-w-16 rounded-none border px-1.5 font-normal dark:bg-input/30"
             >
               {selectedOptions.length === 0 ? (
                 filter.variant === 'multiSelect' ? (
@@ -649,11 +648,11 @@ function onFilterInputRender<TData>({
                       selectedOption.icon ? (
                         <div
                           key={selectedOption.value}
-                          className="bg-background rounded-full border p-0.5"
+                          className="rounded-full border bg-background p-0.5"
                         >
                           <selectedOption.icon className="size-3.5" />
                         </div>
-                      ) : null
+                      ) : null,
                     )}
                   </div>
                   <span className="truncate">
@@ -691,7 +690,7 @@ function onFilterInputRender<TData>({
                         <Check
                           className={cn(
                             'ml-auto',
-                            selectedValues.includes(option.value) ? 'opacity-100' : 'opacity-0'
+                            selectedValues.includes(option.value) ? 'opacity-100' : 'opacity-0',
                           )}
                         />
                       )}
@@ -716,7 +715,7 @@ function onFilterInputRender<TData>({
       const displayValue =
         filter.operator === 'isBetween' && dateValue.length === 2
           ? `${formatDate(new Date(Number(dateValue[0])))} - ${formatDate(
-              new Date(Number(dateValue[1]))
+              new Date(Number(dateValue[1])),
             )}`
           : dateValue[0]
             ? formatDate(new Date(Number(dateValue[0])))
@@ -731,8 +730,8 @@ function onFilterInputRender<TData>({
               variant="ghost"
               size="sm"
               className={cn(
-                'dark:bg-input/30 h-full rounded-none border px-1.5 font-normal',
-                !filter.value && 'text-muted-foreground'
+                'h-full rounded-none border px-1.5 font-normal dark:bg-input/30',
+                !filter.value && 'text-muted-foreground',
               )}
             >
               <CalendarIcon className="size-3.5" />

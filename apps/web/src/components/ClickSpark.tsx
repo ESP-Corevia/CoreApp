@@ -1,5 +1,6 @@
 /* v8 ignore file -- @preserve */
-import React, { useRef, useEffect, useCallback } from 'react';
+import type React from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 interface ClickSparkProps {
   sparkColor?: string;
@@ -79,7 +80,7 @@ const ClickSpark: React.FC<ClickSparkProps> = ({
           return t * (2 - t);
       }
     },
-    [easing]
+    [easing],
   );
 
   useEffect(() => {
@@ -136,7 +137,7 @@ const ClickSpark: React.FC<ClickSparkProps> = ({
     return () => {
       cancelAnimationFrame(animationId);
     };
-  }, [sparkColor, sparkSize, sparkRadius, sparkCount, duration, easeFunc, extraScale]);
+  }, [sparkColor, sparkSize, sparkRadius, duration, easeFunc, extraScale]);
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>): void => {
     const canvas = canvasRef.current;
@@ -157,6 +158,8 @@ const ClickSpark: React.FC<ClickSparkProps> = ({
   };
 
   return (
+    // biome-ignore lint/a11y/useKeyWithClickEvents: decorative click effect
+    // biome-ignore lint/a11y/noStaticElementInteractions: decorative click effect
     <div
       style={{
         width: '100%',

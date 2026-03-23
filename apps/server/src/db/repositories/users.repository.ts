@@ -1,11 +1,9 @@
-import { eq, type InferSelectModel, type InferInsertModel, sql, and, ne } from 'drizzle-orm';
-
-import { db as DB } from '../index';
-import { users } from '../schema';
-
-import type { QueryOptions } from '../../utils/db';
-import type * as schema from '../schema';
+import { and, eq, type InferInsertModel, type InferSelectModel, ne, sql } from 'drizzle-orm';
 import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
+import type { QueryOptions } from '../../utils/db';
+import { db as DB } from '../index';
+import type * as schema from '../schema';
+import { users } from '../schema';
 
 type DrizzleDB = PostgresJsDatabase<typeof schema>;
 

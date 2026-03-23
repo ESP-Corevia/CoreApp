@@ -4,6 +4,7 @@ import {
   StatusLabel,
   type StatusProps,
 } from '@/components/ui/shadcn-io/status';
+
 const StatusServer = ({ label, status }: { label: string; status: StatusProps['status'] }) => (
   <Status status={status}>
     <StatusIndicator />

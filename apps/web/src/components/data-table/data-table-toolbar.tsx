@@ -1,19 +1,19 @@
 'use client';
 
 import type { Column, Table } from '@tanstack/react-table';
+import { useDebounce } from '@uidotdev/usehooks';
 import { X } from 'lucide-react';
 import * as React from 'react';
-
 import { DataTableDateFilter } from '@/components/data-table/data-table-date-filter';
 import { DataTableFacetedFilter } from '@/components/data-table/data-table-faceted-filter';
 import { DataTableSliderFilter } from '@/components/data-table/data-table-slider-filter';
 import { DataTableViewOptions } from '@/components/data-table/data-table-view-options';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { cn } from '@/lib/utils';
-import { useDebounce } from '@uidotdev/usehooks';
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group';
 import { Spinner } from '@/components/ui/spinner';
+import { cn } from '@/lib/utils';
+
 interface DataTableToolbarProps<TData> extends React.ComponentProps<'div'> {
   table: Table<TData>;
   isLoading?: boolean;
@@ -30,7 +30,7 @@ export function DataTableToolbar<TData>({
 
   const columns = React.useMemo(
     () => table.getAllColumns().filter(column => column.getCanFilter()),
-    [table]
+    [table],
   );
   //global search
   const globalFilter = table.getState().globalFilter ?? '';
@@ -44,7 +44,7 @@ export function DataTableToolbar<TData>({
 
   React.useEffect(() => {
     table.setGlobalFilter(debounced || undefined);
-  }, [debounced]);
+  }, [debounced, table.setGlobalFilter]);
 
   const onReset = React.useCallback(() => {
     table.resetColumnFilters();
@@ -130,7 +130,7 @@ function DataTableToolbarFilter<TData>({ column }: DataTableToolbarFilterProps<T
                 className={cn('h-8 w-[120px]', columnMeta.unit && 'pr-8')}
               />
               {columnMeta.unit && (
-                <span className="bg-accent text-muted-foreground absolute top-0 right-0 bottom-0 flex items-center rounded-r-md px-2 text-sm">
+                <span className="absolute top-0 right-0 bottom-0 flex items-center rounded-r-md bg-accent px-2 text-muted-foreground text-sm">
                   {columnMeta.unit}
                 </span>
               )}

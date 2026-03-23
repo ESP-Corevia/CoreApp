@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
-import { useTrpc, trpcClient } from '@/providers/trpc';
+import { trpcClient, useTrpc } from '@/providers/trpc';
 
 export function useUpdateAppointmentStatus() {
   const trpc = useTrpc();
@@ -22,7 +22,7 @@ export function useUpdateAppointmentStatus() {
       toast.error(
         t('appointments.statusUpdateError', 'Failed to update status: {{message}}', {
           message: error instanceof Error ? error.message : 'Unknown error',
-        })
+        }),
       );
     },
   });

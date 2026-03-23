@@ -1,10 +1,9 @@
-import { and, ilike, eq, or, sql, asc } from 'drizzle-orm';
-
+import { and, asc, eq, ilike, or, sql } from 'drizzle-orm';
+import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { db as DB } from '../index';
-import { doctors, users } from '../schema';
 
 import type * as schema from '../schema';
-import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
+import { doctors, users } from '../schema';
 
 type DrizzleDB = PostgresJsDatabase<typeof schema>;
 
@@ -115,7 +114,7 @@ export const createDoctorsRepo = (db: DrizzleDB = DB) => ({
       imageUrl: string | null;
     }>,
   ) => {
-    return db.transaction(async (tx) => {
+    return db.transaction(async tx => {
       const [doctor] = await tx
         .update(doctors)
         .set(data)
@@ -131,10 +130,7 @@ export const createDoctorsRepo = (db: DrizzleDB = DB) => ({
   countBookable: async (params: Omit<ListBookableParams, 'offset' | 'limit'>) => {
     const where = buildFilters({ ...params, offset: 0, limit: 0 });
 
-    const [row] = await db
-      .select({ count: sql<number>`count(*)` })
-      .from(doctors)
-      .where(where);
+    const [row] = await db.select({ count: sql<number>`count(*)` }).from(doctors).where(where);
 
     return Number(row.count);
   },

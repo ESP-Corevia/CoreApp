@@ -10,26 +10,24 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
-  useNavigation,
   useLocation,
+  useNavigation,
 } from 'react-router';
 
 import { AppSidebar } from '@/components/appSidebar';
 import { ErrorScreen } from '@/components/errorScreen';
-import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
+import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import UserMenu from '@/components/userMenu';
 import { I18nProvider } from '@/providers/i18n';
 import './index.css';
 import { ThemeProvider } from '@/providers/theme';
-
+import type { Route } from './+types/root';
 import ClickSpark from './components/ClickSpark';
 import Header from './components/header';
 import ImpersonationBanner from './components/ImpersonationBanner';
 import { Skeleton } from './components/ui/skeleton';
 import { Toaster } from './components/ui/sonner';
 import { QueryProvider } from './providers/query';
-
-import type { Route } from './+types/root';
 
 export const links: Route.LinksFunction = () => [
   {
@@ -82,7 +80,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body className="bg-background text-foreground h-screen min-h-screen font-sans antialiased">
+      <body className="h-screen min-h-screen bg-background font-sans text-foreground antialiased">
         {children}
         <ScrollRestoration />
         <Scripts />
@@ -111,14 +109,14 @@ function ThemedShell() {
   function LoadingBar() {
     return (
       <div className="fixed top-0 right-0 left-0 z-50 h-1 overflow-hidden">
-        {isNavigating && <div className="bg-primary animate-progress-bar h-full" />}
+        {isNavigating && <div className="h-full animate-progress-bar bg-primary" />}
       </div>
     );
   }
 
   if (!shouldShowLayout) {
     return (
-      <div className="bg-background text-foreground flex min-h-screen w-full flex-col">
+      <div className="flex min-h-screen w-full flex-col bg-background text-foreground">
         <LoadingBar />
         <ClickSpark
           sparkColor={resolvedTheme === 'dark' ? '#fff' : '#000000ff'}
@@ -134,11 +132,11 @@ function ThemedShell() {
   }
 
   return (
-    <div className="bg-background text-foreground flex min-h-screen w-full flex-col">
+    <div className="flex min-h-screen w-full flex-col bg-background text-foreground">
       <LoadingBar />
 
       <SidebarProvider>
-        <div className="bg-background flex min-h-screen w-full">
+        <div className="flex min-h-screen w-full bg-background">
           <AppSidebar />
 
           <SidebarInset className="flex flex-1 flex-col">
@@ -146,9 +144,9 @@ function ThemedShell() {
             <div className="relative z-40">
               <ImpersonationBanner />
             </div>
-            <header className="border-border bg-background/95 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-10 flex h-16 shrink-0 items-center gap-2 border-b px-4 backdrop-blur">
+            <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-2 border-border border-b bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/60">
               <SidebarTrigger className="-ml-1" />
-              <div className="bg-border mx-2 h-4 w-px" />
+              <div className="mx-2 h-4 w-px bg-border" />
               <Header />
 
               <div className="flex-1" />
@@ -235,8 +233,8 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
     <ErrorScreen code={code} title={title} description={description}>
       {stack && (
         <details className="text-left">
-          <summary className="mb-2 cursor-pointer text-sm font-medium">Stack trace</summary>
-          <pre className="bg-muted overflow-x-auto rounded-lg p-4 text-xs">
+          <summary className="mb-2 cursor-pointer font-medium text-sm">Stack trace</summary>
+          <pre className="overflow-x-auto rounded-lg bg-muted p-4 text-xs">
             <code>{stack}</code>
           </pre>
         </details>
@@ -257,7 +255,7 @@ export function HydrateFallback() {
           <div className="flex min-h-screen items-center justify-center">
             <div className="space-y-4 text-center">
               <div className="flex justify-center">
-                <div className="border-primary h-12 w-12 animate-spin rounded-full border-4 border-t-transparent" />
+                <div className="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent" />
               </div>
               <p className="text-muted-foreground">
                 <Trans i18nKey="HydrateFallback.loading">Loading…</Trans>

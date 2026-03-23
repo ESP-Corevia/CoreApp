@@ -58,8 +58,8 @@ function DataTableActionBar<TData>({
           exit={{ opacity: 0, y: 20 }}
           transition={{ duration: 0.2, ease: 'easeInOut' }}
           className={cn(
-            'bg-background text-foreground fixed inset-x-0 bottom-6 z-50 mx-auto flex w-fit flex-wrap items-center justify-center gap-2 rounded-md border p-2 shadow-sm',
-            className
+            'fixed inset-x-0 bottom-6 z-50 mx-auto flex w-fit flex-wrap items-center justify-center gap-2 rounded-md border bg-background p-2 text-foreground shadow-sm',
+            className,
           )}
           {...props}
         >
@@ -67,7 +67,7 @@ function DataTableActionBar<TData>({
         </motion.div>
       )}
     </AnimatePresence>,
-    portalContainer
+    portalContainer,
   );
 }
 
@@ -90,9 +90,9 @@ function DataTableActionBarAction({
       variant="secondary"
       size={size}
       className={cn(
-        'border-secondary bg-secondary/50 hover:bg-secondary/70 gap-1.5 border [&>svg]:size-3.5',
+        'gap-1.5 border border-secondary bg-secondary/50 hover:bg-secondary/70 [&>svg]:size-3.5',
         size === 'icon' ? 'size-7' : 'h-7',
-        className
+        className,
       )}
       disabled={disabled || isPending}
       {...props}
@@ -108,7 +108,7 @@ function DataTableActionBarAction({
       <TooltipTrigger asChild>{trigger}</TooltipTrigger>
       <TooltipContent
         sideOffset={6}
-        className="bg-accent text-foreground border font-semibold dark:bg-zinc-900 [&>span]:hidden"
+        className="border bg-accent font-semibold text-foreground dark:bg-zinc-900 [&>span]:hidden"
       >
         <p>{tooltip}</p>
       </TooltipContent>
@@ -127,7 +127,7 @@ function DataTableActionBarSelection<TData>({ table }: DataTableActionBarSelecti
 
   return (
     <div className="flex h-7 items-center rounded-md border pr-1 pl-2.5">
-      <span className="text-xs whitespace-nowrap">
+      <span className="whitespace-nowrap text-xs">
         {table.getFilteredSelectedRowModel().rows.length} selected
       </span>
       <Separator orientation="vertical" className="mr-1 ml-2 data-[orientation=vertical]:h-4" />
@@ -139,10 +139,10 @@ function DataTableActionBarSelection<TData>({ table }: DataTableActionBarSelecti
         </TooltipTrigger>
         <TooltipContent
           sideOffset={10}
-          className="bg-accent text-foreground flex items-center gap-2 border px-2 py-1 font-semibold dark:bg-zinc-900 [&>span]:hidden"
+          className="flex items-center gap-2 border bg-accent px-2 py-1 font-semibold text-foreground dark:bg-zinc-900 [&>span]:hidden"
         >
           <p>Clear selection</p>
-          <kbd className="bg-background text-foreground rounded border px-1.5 py-px font-mono text-[0.7rem] font-normal shadow-xs select-none">
+          <kbd className="select-none rounded border bg-background px-1.5 py-px font-mono font-normal text-[0.7rem] text-foreground shadow-xs">
             <abbr title="Escape" className="no-underline">
               Esc
             </abbr>

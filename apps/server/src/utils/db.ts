@@ -1,24 +1,25 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: pass */
 import {
-  sql,
   and,
-  or,
-  eq,
-  ne,
-  lt,
-  lte,
-  gt,
-  gte,
-  inArray,
-  notInArray,
-  isNull,
-  not,
-  ilike,
-  notIlike,
-  type Table,
-  type InferSelectModel,
   type asc,
   type desc,
+  eq,
+  gt,
+  gte,
+  type InferSelectModel,
+  ilike,
+  inArray,
+  isNull,
+  lt,
+  lte,
+  ne,
+  not,
+  notIlike,
+  notInArray,
+  or,
   type SQL,
+  sql,
+  type Table,
 } from 'drizzle-orm';
 import { z } from 'zod';
 
@@ -59,8 +60,8 @@ export function coerceValueForColumn(column: any, value: any) {
 }
 
 export const operatorHandlers = {
-  iLike: (column: any, value: string) => ilike(column, '%' + value + '%'),
-  notILike: (column: any, value: string) => notIlike(column, '%' + value + '%'),
+  iLike: (column: any, value: string) => ilike(column, `%${value}%`),
+  notILike: (column: any, value: string) => notIlike(column, `%${value}%`),
 
   eq: (column: any, value: any) => {
     const coercedValue = coerceValueForColumn(column, value);
@@ -130,7 +131,7 @@ export function buildWhereConditions<TTable extends Table>(
   table: TTable,
   filters: TableFilter<TTable>[],
 ) {
-  return filters.map((filter) => {
+  return filters.map(filter => {
     const column = table[filter.id as keyof TTable];
 
     if (!column) {
@@ -212,7 +213,7 @@ export function buildQueryOptions<TTable extends Table>(
 
   // ----- Search -----
   if (search && searchInFields && searchInFields.length > 0) {
-    const searchConditions = searchInFields.map((field) =>
+    const searchConditions = searchInFields.map(field =>
       ilike((table as Record<string, any>)[field], `%${search}%`),
     );
 

@@ -20,7 +20,7 @@ export function useUnbanUser() {
     },
     onError: error => {
       toast.error(
-        t('useUnbanUser.error', 'Failed to unban user: {{message}}', { message: error.message })
+        t('useUnbanUser.error', 'Failed to unban user: {{message}}', { message: error.message }),
       );
     },
   });

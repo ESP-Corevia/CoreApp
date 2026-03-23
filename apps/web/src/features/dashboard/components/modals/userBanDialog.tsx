@@ -1,9 +1,8 @@
-import { useEffect } from 'react';
-
 import { useForm } from '@tanstack/react-form';
 import { useQueryClient } from '@tanstack/react-query';
+import { useEffect } from 'react';
 
-import { useTranslation, Trans } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
@@ -80,7 +79,7 @@ export function BanUserDialog({ open, onOpenChange, user }: BanUserDialogProps) 
         toast.error(
           t('banUserDialog.error', 'Failed to ban user: {{message}}', {
             message: error instanceof Error ? error.message : 'Unknown error',
-          })
+          }),
         );
       }
     },

@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: pass */
 import { TRPCError } from '@trpc/server';
 
 import { isAuthed } from './session.middleware';

@@ -61,8 +61,8 @@ export function getDefaultFilterOperator(filterVariant: FilterVariant, operator?
 }
 
 // eslint-disable-next-line no-unused-vars
-function getValidFilters<TData>(
-  filters: ExtendedColumnFilter<TData>[]
+function _getValidFilters<TData>(
+  filters: ExtendedColumnFilter<TData>[],
 ): ExtendedColumnFilter<TData>[] {
   return filters.filter(
     filter =>
@@ -71,12 +71,12 @@ function getValidFilters<TData>(
       (Array.isArray(filter.value)
         ? filter.value.length > 0
         : // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-          filter.value !== '' && filter.value !== null && filter.value !== undefined)
+          filter.value !== '' && filter.value !== null && filter.value !== undefined),
   );
 }
 export function convertToExtendedFilters<TData>(
   columnFilters: ColumnFiltersState,
-  columns: Column<TData>[]
+  columns: Column<TData>[],
 ): ExtendedColumnFilter<TData>[] {
   return columnFilters.map(filter => {
     const column = columns.find(col => col.id === filter.id);

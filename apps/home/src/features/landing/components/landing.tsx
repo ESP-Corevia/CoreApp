@@ -1,8 +1,8 @@
 // import Shuffle from '@/components/Shuffle';
 import { Link } from 'react-router';
+import TextPressure from '@/components/TextPressure';
 import Footer from './footer';
 import Header from './header';
-import TextPressure from '@/components/TextPressure';
 
 export default function Landing() {
   const brandColor = '#008000';
@@ -28,12 +28,9 @@ export default function Landing() {
           padding: '0.5rem 1.5rem',
           textAlign: 'center',
         }}
-      > 
-        <div className='w-full flex flex-row justify-center px-[15%]'>
-          <TextPressure
-            text='Corevia'
-            textColor={brandColor}
-          />
+      >
+        <div className="flex w-full flex-row justify-center px-[15%]">
+          <TextPressure text="Corevia" textColor={brandColor} />
         </div>
         <div>
           <p
@@ -45,8 +42,9 @@ export default function Landing() {
               color: '#222222',
             }}
           >
-            Built for modern care teams, Corevia unifies patient vitals, automates outreach sequences,
-            and surfaces real-time risk signals so clinicians can intervene faster with less effort.
+            Built for modern care teams, Corevia unifies patient vitals, automates outreach
+            sequences, and surfaces real-time risk signals so clinicians can intervene faster with
+            less effort.
           </p>
         </div>
         <div>
@@ -64,8 +62,8 @@ export default function Landing() {
                 margin: 0,
                 color: '#0f172a',
               }}
-              >
-                Deliver proactive care with zero guesswork.
+            >
+              Deliver proactive care with zero guesswork.
             </h2>
             <p
               style={{
@@ -74,9 +72,9 @@ export default function Landing() {
                 fontSize: '1rem',
                 maxWidth: '480px',
               }}
-              >
-                Connect EHR data, automate follow-ups, and keep every patient plan on track without
-                drowning in admin work.
+            >
+              Connect EHR data, automate follow-ups, and keep every patient plan on track without
+              drowning in admin work.
             </p>
             <div
               style={{
@@ -87,8 +85,8 @@ export default function Landing() {
               }}
             >
               <Link
-                to={"https://play.google.com"}
-                target='_blank'
+                to={'https://play.google.com'}
+                target="_blank"
                 style={{
                   backgroundColor: brandColor,
                   color: '#ffffff',
@@ -145,9 +143,7 @@ export default function Landing() {
             ))}
           </div>
         </div>
-        <div>
-          {/* TODO des trucs en plus si on a des idées */}
-        </div>
+        <div>{/* TODO des trucs en plus si on a des idées */}</div>
       </main>
 
       <Footer />

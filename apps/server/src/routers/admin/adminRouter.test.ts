@@ -1,6 +1,7 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: pass */
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { createTestCaller, authMock, fakeSession } from '../../../test/caller';
+import { authMock, createTestCaller, fakeSession } from '../../../test/caller';
 import { mockServices } from '../../../test/services';
 
 describe('adminRouter', () => {
@@ -291,7 +292,7 @@ describe('adminRouter', () => {
 
       mockServices.usersService.listUsers.mockResolvedValue({
         ...mockResponse,
-        users: mockResponse.users.map((u) => ({
+        users: mockResponse.users.map(u => ({
           ...u,
           seeded: false,
         })),

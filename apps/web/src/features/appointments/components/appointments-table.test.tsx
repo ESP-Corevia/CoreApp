@@ -1,10 +1,8 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { render } from '@/test/render';
-
-import AppointmentsTable from './appointments-table';
-
 import type { Appointment } from './appointments-table';
+import AppointmentsTable from './appointments-table';
 
 vi.mock('@/queries', () => ({
   useUpdateAppointmentStatus: vi.fn().mockReturnValue({ mutate: vi.fn(), isPending: false }),
@@ -45,7 +43,7 @@ describe('AppointmentsTable', () => {
         pageCount={0}
         isLoading={false}
         title="Appointments Management"
-      />
+      />,
     );
 
     expect(getByText('Appointments Management')).toBeInTheDocument();
@@ -58,7 +56,7 @@ describe('AppointmentsTable', () => {
         pageCount={1}
         isLoading={false}
         title="Appointments"
-      />
+      />,
     );
 
     expect(getByText('John Doe')).toBeInTheDocument();
@@ -75,7 +73,7 @@ describe('AppointmentsTable', () => {
         pageCount={1}
         isLoading={false}
         title="Appointments"
-      />
+      />,
     );
 
     const dashes = getAllByText('—');
@@ -89,7 +87,7 @@ describe('AppointmentsTable', () => {
         pageCount={1}
         isLoading={false}
         title="Appointments"
-      />
+      />,
     );
 
     expect(getByText('10:00')).toBeInTheDocument();

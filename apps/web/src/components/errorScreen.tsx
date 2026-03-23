@@ -1,8 +1,8 @@
 /* v8 ignore file -- @preserve */
-import { Link } from 'react-router';
 
-import { Button } from '@/components/ui/button';
 import { Trans } from 'react-i18next';
+import { Link } from 'react-router';
+import { Button } from '@/components/ui/button';
 export function ErrorScreen({
   code,
   title,
@@ -19,18 +19,18 @@ export function ErrorScreen({
   children?: React.ReactNode;
 }) {
   return (
-    <div className="bg-background text-foreground mx-auto flex min-h-dvh flex-col items-center justify-center gap-8 p-8 transition-colors duration-200 md:gap-12 md:p-16">
+    <div className="mx-auto flex min-h-dvh flex-col items-center justify-center gap-8 bg-background p-8 text-foreground transition-colors duration-200 md:gap-12 md:p-16">
       <div className="text-center">
         {/* Code */}
-        <h1 className="text-primary mb-4 text-5xl font-extrabold tracking-tight sm:text-6xl">
+        <h1 className="mb-4 font-extrabold text-5xl text-primary tracking-tight sm:text-6xl">
           {code}
         </h1>
 
         {/* Title */}
-        <h2 className="text-foreground mb-3 text-2xl font-semibold">{title}</h2>
+        <h2 className="mb-3 font-semibold text-2xl text-foreground">{title}</h2>
 
         {/* Description */}
-        <p className="text-muted-foreground max-w-prose text-balance">{description}</p>
+        <p className="max-w-prose text-balance text-muted-foreground">{description}</p>
 
         {/* Buttons */}
         <div className="mt-6 flex items-center justify-center gap-4 md:mt-8">
@@ -48,7 +48,7 @@ export function ErrorScreen({
 
         {/* Optional children (stack trace, etc.) */}
         {children ? (
-          <div className="border-border bg-muted mt-8 max-w-3xl overflow-auto rounded-lg border p-4 text-left text-sm">
+          <div className="mt-8 max-w-3xl overflow-auto rounded-lg border border-border bg-muted p-4 text-left text-sm">
             {children}
           </div>
         ) : null}

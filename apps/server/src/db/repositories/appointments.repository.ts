@@ -1,9 +1,9 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: pass */
 import { and, asc, desc, eq, gte, ilike, inArray, lte, or, sql } from 'drizzle-orm';
-
-import { appointments, doctorBlocks, doctors, users } from '../schema';
+import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 
 import type * as schema from '../schema';
-import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
+import { appointments, doctorBlocks, doctors, users } from '../schema';
 
 type DrizzleDB = PostgresJsDatabase<typeof schema>;
 
@@ -149,10 +149,7 @@ export const createAppointmentsRepo = (db: DrizzleDB) => ({
   countByPatient: async (params: Omit<ListByPatientParams, 'offset' | 'limit' | 'sort'>) => {
     const where = buildPatientFilters({ ...params, offset: 0, limit: 0, sort: 'dateDesc' });
 
-    const [row] = await db
-      .select({ count: sql<number>`count(*)` })
-      .from(appointments)
-      .where(where);
+    const [row] = await db.select({ count: sql<number>`count(*)` }).from(appointments).where(where);
 
     return Number(row.count);
   },
@@ -229,7 +226,7 @@ export const createAppointmentsRepo = (db: DrizzleDB) => ({
 
   createAppointmentAtomic: async (input: CreateAppointmentInput) => {
     return await db.transaction(
-      async (tx) => {
+      async tx => {
         // Check for existing appointment (PENDING or CONFIRMED) on same slot
         const [existing] = await tx
           .select({ id: appointments.id })

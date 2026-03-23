@@ -73,7 +73,9 @@ describe('Profile', () => {
     const preview = await findByLabelText('Preview Profile Information');
     const scope = within(preview);
 
-    expect(scope.getByText('john@example.com')).toBeVisible();
+    const emails = scope.getAllByText('john@example.com');
+    expect(emails.length).toBeGreaterThanOrEqual(1);
+    expect(emails[0]).toBeVisible();
   });
 
   it('displays user initials in avatar', async () => {

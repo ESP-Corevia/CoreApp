@@ -1,8 +1,8 @@
 import { relations } from 'drizzle-orm';
-import { pgTable, index } from 'drizzle-orm/pg-core';
+import { index, pgTable } from 'drizzle-orm/pg-core';
 export const users = pgTable(
   'users',
-  (t) => ({
+  t => ({
     id: t.uuid('id').defaultRandom().primaryKey(),
     name: t.text('name').notNull(),
     email: t.text('email').notNull().unique(),
@@ -23,12 +23,12 @@ export const users = pgTable(
     updatedAt: t.timestamp('updated_at').$onUpdateFn(() => new Date()),
     seeded: t.boolean('seeded').default(false),
   }),
-  (table) => [index('email_idx').on(table.email)],
+  table => [index('email_idx').on(table.email)],
 );
 
 export const sessions = pgTable(
   'sessions',
-  (t) => ({
+  t => ({
     id: t.uuid('id').defaultRandom().primaryKey(),
     expiresAt: t.timestamp('expires_at').notNull(),
     token: t.text('token').notNull().unique(),
@@ -42,12 +42,12 @@ export const sessions = pgTable(
       .references(() => users.id, { onDelete: 'cascade' }),
     impersonatedBy: t.text('impersonated_by'),
   }),
-  (table) => [index('session_user_id_idx').on(table.userId), index('token_idx').on(table.token)],
+  table => [index('session_user_id_idx').on(table.userId), index('token_idx').on(table.token)],
 );
 
 export const accounts = pgTable(
   'accounts',
-  (t) => ({
+  t => ({
     id: t.uuid('id').defaultRandom().primaryKey(),
     accountId: t.text('account_id').notNull(),
     providerId: t.text('provider_id').notNull(),
@@ -65,12 +65,12 @@ export const accounts = pgTable(
     createdAt: t.timestamp('created_at').notNull(),
     updatedAt: t.timestamp('updated_at').$onUpdateFn(() => new Date()),
   }),
-  (table) => [index('account_user_id_idx').on(table.userId)],
+  table => [index('account_user_id_idx').on(table.userId)],
 );
 
 export const verifications = pgTable(
   'verifications',
-  (t) => ({
+  t => ({
     id: t.uuid('id').defaultRandom().primaryKey(),
     identifier: t.text('identifier').notNull(),
     value: t.text('value').notNull(),
@@ -78,7 +78,7 @@ export const verifications = pgTable(
     createdAt: t.timestamp('created_at').$defaultFn(() => /* @__PURE__ */ new Date()),
     updatedAt: t.timestamp('updated_at').$onUpdateFn(() => new Date()),
   }),
-  (table) => [index('verification_identifier_idx').on(table.identifier)],
+  table => [index('verification_identifier_idx').on(table.identifier)],
 );
 
 export const usersRelations = relations(users, ({ many }) => ({

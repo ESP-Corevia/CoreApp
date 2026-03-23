@@ -51,7 +51,7 @@ export function AppointmentStatusDialog({
         onSuccess: () => {
           onOpenChange(false);
         },
-      }
+      },
     );
   };
 
@@ -63,7 +63,7 @@ export function AppointmentStatusDialog({
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle className="flex items-center gap-2">
-            <AlertTriangle className="text-destructive h-5 w-5" />
+            <AlertTriangle className="h-5 w-5 text-destructive" />
             {t('appointments.statusDialog.title', '{{action}} Appointment', { action: label })}
           </AlertDialogTitle>
           <AlertDialogDescription>
@@ -76,7 +76,7 @@ export function AppointmentStatusDialog({
                 doctor: appointment.doctorName ?? 'Unknown',
                 date: appointment.date,
                 time: appointment.time,
-              }
+              },
             )}
           </AlertDialogDescription>
         </AlertDialogHeader>

@@ -1,6 +1,6 @@
 ﻿import { Globe, Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
-import { useTranslation, Trans } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -13,12 +13,12 @@ export default function Settings() {
     localStorage.setItem('lang', lng);
   };
   return (
-    <div className="bg-background min-h-screen p-4 md:p-8">
+    <div className="min-h-screen bg-background p-4 md:p-8">
       <div className="mx-auto max-w-2xl space-y-6">
         {/* Theme Settings */}
         <div className="space-y-4">
           <div>
-            <h2 className="flex items-center gap-2 text-xl font-semibold">
+            <h2 className="flex items-center gap-2 font-semibold text-xl">
               <Sun className="h-5 w-5" />
               <Trans i18nKey="settings.appearance">Appearance</Trans>
             </h2>
@@ -78,7 +78,7 @@ export default function Settings() {
         {/* Language Settings */}
         <div className="space-y-4">
           <div>
-            <h2 className="flex items-center gap-2 text-xl font-semibold">
+            <h2 className="flex items-center gap-2 font-semibold text-xl">
               <Globe className="h-5 w-5" />
               <Trans i18nKey="settings.language">Language</Trans>
             </h2>

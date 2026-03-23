@@ -1,5 +1,6 @@
-import { describe, it, expect, vi } from 'vitest';
+/** biome-ignore-all lint/suspicious/noExplicitAny: pass */
 import { userEvent } from '@testing-library/user-event';
+import { describe, expect, it, vi } from 'vitest';
 import { render } from '@/test/render';
 
 import SessionsCard from './sessionsCard';
@@ -36,8 +37,8 @@ vi.mock('@/queries', () => ({
 
 import {
   useListSessions,
-  useRevokeSession,
   useRevokeOtherSessions,
+  useRevokeSession,
   useRevokeSessions,
 } from '@/queries';
 

@@ -18,7 +18,7 @@ export default defineConfig({
     },
     {
       name: 'a11y',
-      testMatch: '**\/*.a11y.spec.ts',
+      testMatch: '**/*.a11y.spec.ts',
       use: { ...devices['Desktop Chrome'] },
     },
   ],

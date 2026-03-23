@@ -1,4 +1,4 @@
-import { pgTable, pgEnum, index } from 'drizzle-orm/pg-core';
+import { index, pgEnum, pgTable } from 'drizzle-orm/pg-core';
 
 import { users } from './auth';
 import { doctors } from './doctors';
@@ -12,7 +12,7 @@ export const appointmentStatusEnum = pgEnum('appointment_status', [
 
 export const appointments = pgTable(
   'appointments',
-  (t) => ({
+  t => ({
     id: t.uuid('id').defaultRandom().primaryKey(),
     doctorId: t
       .uuid('doctor_id')
@@ -32,7 +32,7 @@ export const appointments = pgTable(
       .notNull(),
     updatedAt: t.timestamp('updated_at').$onUpdateFn(() => new Date()),
   }),
-  (table) => [
+  table => [
     index('appointments_doctor_date_idx').on(table.doctorId, table.date),
     index('appointments_patient_idx').on(table.patientId),
     index('appointments_status_idx').on(table.status),
@@ -41,7 +41,7 @@ export const appointments = pgTable(
 
 export const doctorBlocks = pgTable(
   'doctor_blocks',
-  (t) => ({
+  t => ({
     id: t.uuid('id').defaultRandom().primaryKey(),
     doctorId: t
       .uuid('doctor_id')
@@ -51,5 +51,5 @@ export const doctorBlocks = pgTable(
     time: t.varchar('time', { length: 5 }).notNull(),
     reason: t.text('reason'),
   }),
-  (table) => [index('doctor_blocks_doctor_date_idx').on(table.doctorId, table.date)],
+  table => [index('doctor_blocks_doctor_date_idx').on(table.doctorId, table.date)],
 );

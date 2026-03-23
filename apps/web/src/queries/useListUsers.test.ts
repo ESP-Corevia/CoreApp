@@ -1,8 +1,8 @@
 import { waitFor } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { renderHook } from '@/test/renderHook';
-import type { ExtendedColumnFilter, User, ExtendedColumnSort } from '@/types/data-table';
+import type { ExtendedColumnFilter, ExtendedColumnSort, User } from '@/types/data-table';
 
 import { useListUsers } from './useListUsers';
 
@@ -29,7 +29,7 @@ describe('useListUsers', () => {
         trpcHandlers: {
           'admin.listUsers': handler,
         },
-      }
+      },
     );
 
     expect(result.current.isLoading).toBe(true);
@@ -66,7 +66,7 @@ describe('useListUsers', () => {
         trpcHandlers: {
           'admin.listUsers': handler,
         },
-      }
+      },
     );
 
     expect(handler).not.toHaveBeenCalled();
@@ -89,7 +89,7 @@ describe('useListUsers', () => {
         trpcHandlers: {
           'admin.listUsers': handler,
         },
-      }
+      },
     );
 
     await waitFor(() => {

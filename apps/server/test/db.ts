@@ -1,6 +1,5 @@
-import { readdirSync, readFileSync } from 'fs';
-import { join } from 'path';
-
+import { readdirSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { PGlite } from '@electric-sql/pglite';
 import { drizzle } from 'drizzle-orm/pglite';
 import { reset } from 'drizzle-seed';
@@ -22,7 +21,7 @@ export async function applyMigration() {
   if (hasMigrated) return;
 
   for (const file of readdirSync(MIGRATIONS_DIR)
-    .filter((f) => f.endsWith('.sql'))
+    .filter(f => f.endsWith('.sql'))
     .sort()) {
     // eslint-disable-next-line security/detect-non-literal-fs-filename
     const raw = readFileSync(join(MIGRATIONS_DIR, file), 'utf-8');

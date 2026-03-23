@@ -1,7 +1,7 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useLocation } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import { toast } from 'sonner';
 
 import { authClient } from '@/lib/auth-client';
@@ -76,7 +76,7 @@ export function useRequireAuth() {
           state: { from: location.pathname + (location.search || '') },
         });
         toast.error(
-          t('errorScreen.permissionDenied', 'You do not have permission to access that resource.')
+          t('errorScreen.permissionDenied', 'You do not have permission to access that resource.'),
         );
         return;
       }

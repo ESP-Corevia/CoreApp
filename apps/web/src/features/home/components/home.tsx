@@ -43,7 +43,7 @@ export default function Home({
 
       <div className="mt-8 grid w-full gap-6">
         <section className="rounded-lg border p-4 sm:p-6">
-          <h2 className="mb-2 text-base font-medium sm:text-lg">
+          <h2 className="mb-2 font-medium text-base sm:text-lg">
             <Trans i18nKey="_index.apiStatus">API Status</Trans>
           </h2>
           <StatusServer

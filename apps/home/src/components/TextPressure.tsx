@@ -33,7 +33,7 @@ const TextPressure: React.FC<TextPressureProps> = ({
   strokeColor = '#FF0000',
   strokeWidth = 2,
   className = '',
-  minFontSize = 24
+  minFontSize = 24,
 }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const titleRef = useRef<HTMLHeadingElement | null>(null);
@@ -110,7 +110,7 @@ const TextPressure: React.FC<TextPressureProps> = ({
     setSize();
     window.addEventListener('resize', setSize);
     return () => window.removeEventListener('resize', setSize);
-  }, [scale, text]);
+  }, [setSize]);
 
   useEffect(() => {
     let rafId: number;
@@ -128,7 +128,7 @@ const TextPressure: React.FC<TextPressureProps> = ({
           const rect = span.getBoundingClientRect();
           const charCenter = {
             x: rect.x + rect.width / 2,
-            y: rect.y + rect.height / 2
+            y: rect.y + rect.height / 2,
           };
 
           const d = dist(mouseRef.current, charCenter);
@@ -153,10 +153,10 @@ const TextPressure: React.FC<TextPressureProps> = ({
 
     animate();
     return () => cancelAnimationFrame(rafId);
-  }, [width, weight, italic, alpha, chars.length]);
+  }, [width, weight, italic, alpha, dist]);
 
   return (
-    <div ref={containerRef} className="relative w-full h-full overflow-hidden bg-transparent">
+    <div ref={containerRef} className="relative h-full w-full overflow-hidden bg-transparent">
       <style>{`
         @font-face {
           font-family: '${fontFamily}';
@@ -183,7 +183,7 @@ const TextPressure: React.FC<TextPressureProps> = ({
         ref={titleRef}
         className={`text-pressure-title ${className} ${
           flex ? 'flex justify-between' : ''
-        } ${stroke ? 'stroke' : ''} uppercase text-center`}
+        } ${stroke ? 'stroke' : ''} text-center uppercase`}
         style={{
           fontFamily,
           fontSize: fontSize,
@@ -192,7 +192,7 @@ const TextPressure: React.FC<TextPressureProps> = ({
           transformOrigin: 'center top',
           margin: 0,
           fontWeight: 100,
-          color: stroke ? undefined : textColor
+          color: stroke ? undefined : textColor,
         }}
       >
         {chars.map((char, i) => (

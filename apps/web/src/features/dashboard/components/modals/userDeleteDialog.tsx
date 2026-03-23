@@ -37,7 +37,7 @@ export function DeleteUserDialog({ open, onOpenChange, user }: DeleteUserDialogP
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle className="flex items-center gap-2">
-            <AlertTriangle className="text-destructive h-5 w-5" />
+            <AlertTriangle className="h-5 w-5 text-destructive" />
             <Trans i18nKey="userDeleteModal.title">Delete User</Trans>
           </AlertDialogTitle>
           <AlertDialogDescription>

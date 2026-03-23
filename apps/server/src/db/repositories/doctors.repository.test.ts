@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: pass */
 import { eq } from 'drizzle-orm';
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
 
@@ -61,19 +62,19 @@ describe('doctors.repository', () => {
     it('filters by specialty (exact match)', async () => {
       const items = await repo.listBookable({ specialty: 'Cardiology', offset: 0, limit: 10 });
       expect(items).toHaveLength(2);
-      expect(items.every((d) => d.specialty === 'Cardiology')).toBe(true);
+      expect(items.every(d => d.specialty === 'Cardiology')).toBe(true);
     });
 
     it('filters by city (case-insensitive)', async () => {
       const items = await repo.listBookable({ city: 'paris', offset: 0, limit: 10 });
       expect(items).toHaveLength(3);
-      expect(items.every((d) => d.city.toLowerCase() === 'paris')).toBe(true);
+      expect(items.every(d => d.city.toLowerCase() === 'paris')).toBe(true);
     });
 
     it('filters by search across specialty and address', async () => {
       const items = await repo.listBookable({ search: 'derma', offset: 0, limit: 10 });
       expect(items).toHaveLength(2);
-      expect(items.every((d) => d.specialty === 'Dermatology')).toBe(true);
+      expect(items.every(d => d.specialty === 'Dermatology')).toBe(true);
     });
 
     it('search matches on address', async () => {
@@ -161,8 +162,8 @@ describe('doctors.repository', () => {
       const result = await repo.getByUserId(userId);
 
       expect(result).not.toBeNull();
-      expect(result!.specialty).toBe('Neurology');
-      expect(result!.city).toBe('Paris');
+      expect(result?.specialty).toBe('Neurology');
+      expect(result?.city).toBe('Paris');
     });
 
     it('returns null when userId does not match any doctor', async () => {
@@ -203,9 +204,9 @@ describe('doctors.repository', () => {
       });
 
       expect(result).not.toBeNull();
-      expect(result!.specialty).toBe('Oncology');
-      expect(result!.city).toBe('Lyon');
-      expect(result!.address).toBe('1 Rue du Test, Paris');
+      expect(result?.specialty).toBe('Oncology');
+      expect(result?.city).toBe('Lyon');
+      expect(result?.address).toBe('1 Rue du Test, Paris');
     });
 
     it('updates the user updatedAt timestamp', async () => {
@@ -256,17 +257,17 @@ describe('doctors.repository', () => {
       const items = await repo.listAllAdmin({ offset: 0, limit: 10 });
 
       expect(items).toHaveLength(5);
-      const linked = items.find((d) => d.userId === linkedUserId);
+      const linked = items.find(d => d.userId === linkedUserId);
       expect(linked).toBeDefined();
-      expect(linked!.name).toBe('Dr. Alice');
-      expect(linked!.email).toBe('alice@example.com');
+      expect(linked?.name).toBe('Dr. Alice');
+      expect(linked?.email).toBe('alice@example.com');
     });
 
     it('filters by specialty', async () => {
       const items = await repo.listAllAdmin({ specialty: 'Cardiology', offset: 0, limit: 10 });
 
       expect(items).toHaveLength(2);
-      expect(items.every((d) => d.specialty === 'Cardiology')).toBe(true);
+      expect(items.every(d => d.specialty === 'Cardiology')).toBe(true);
     });
 
     it('filters by city', async () => {

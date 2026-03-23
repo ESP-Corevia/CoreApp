@@ -1,10 +1,8 @@
-import { useEffect, useState } from 'react';
-
 import { useForm } from '@tanstack/react-form';
 import { useQueryClient } from '@tanstack/react-query';
-
 import { Eye, EyeOff } from 'lucide-react';
-import { useTranslation, Trans } from 'react-i18next';
+import { useEffect, useState } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
@@ -47,7 +45,7 @@ export function SetPasswordDialog({ open, onOpenChange, user }: SetPasswordDialo
         .min(8, t('profile.confirmPasswordMin', 'Confirm password must be at least 8 characters'))
         .max(
           100,
-          t('profile.confirmPasswordMax', 'Confirm password must be at most 100 characters')
+          t('profile.confirmPasswordMax', 'Confirm password must be at most 100 characters'),
         ),
     })
     .refine(data => data.newPassword === data.confirmPassword, {
@@ -71,7 +69,7 @@ export function SetPasswordDialog({ open, onOpenChange, user }: SetPasswordDialo
         });
 
         toast.success(
-          t('userSetPasswordModal.passwordUpdated.success', 'Password updated successfully')
+          t('userSetPasswordModal.passwordUpdated.success', 'Password updated successfully'),
         );
         void queryClient.invalidateQueries(trpc.admin.listUsers.queryFilter());
         onOpenChange(false);
@@ -83,8 +81,8 @@ export function SetPasswordDialog({ open, onOpenChange, user }: SetPasswordDialo
             'Failed to update password: {{message}}',
             {
               message: error instanceof Error ? error.message : 'Unknown error',
-            }
-          )
+            },
+          ),
         );
       }
     },
@@ -138,7 +136,7 @@ export function SetPasswordDialog({ open, onOpenChange, user }: SetPasswordDialo
                     onChange={e => field.handleChange(e.target.value)}
                     placeholder={t(
                       'userSetPasswordModal.newPasswordPlaceholder',
-                      'Enter new password'
+                      'Enter new password',
                     )}
                   />
                   <Button
@@ -188,7 +186,7 @@ export function SetPasswordDialog({ open, onOpenChange, user }: SetPasswordDialo
                     onChange={e => field.handleChange(e.target.value)}
                     placeholder={t(
                       'userSetPasswordModal.confirmPasswordPlaceholder',
-                      'Confirm new password'
+                      'Confirm new password',
                     )}
                   />
                   <Button

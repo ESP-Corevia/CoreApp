@@ -1,6 +1,6 @@
-import { defineConfig, mergeConfig } from 'vite';
-import react from '@vitejs/plugin-react';
 import path from 'node:path';
+import react from '@vitejs/plugin-react';
+import { defineConfig, mergeConfig } from 'vite';
 import { defineConfig as defineVitestConfig } from 'vitest/config';
 
 export default mergeConfig(
@@ -44,5 +44,5 @@ export default mergeConfig(
         reportOnFailure: true,
       },
     },
-  })
+  }),
 );

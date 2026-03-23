@@ -1,9 +1,9 @@
-import { useEffect } from 'react';
-
+/** biome-ignore-all lint/suspicious/noExplicitAny: pass */
 import { useForm } from '@tanstack/react-form';
 import { useQueryClient } from '@tanstack/react-query';
+import { useEffect } from 'react';
 
-import { useTranslation, Trans } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
@@ -86,7 +86,7 @@ export function EditUserDialog({ open, onOpenChange, user }: EditUserDialogProps
         toast.error(
           t('userEditModal.error', 'Failed to update user: {{message}}', {
             message: error instanceof Error ? error.message : 'Unknown error',
-          })
+          }),
         );
       }
     },

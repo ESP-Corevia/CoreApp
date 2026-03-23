@@ -13,7 +13,10 @@ export function useImpersonateUser() {
 
       if (!popup) {
         toast.error(
-          t('useImpersonateUser.popupBlocked', 'Popup blocked — allow popups to impersonate users.')
+          t(
+            'useImpersonateUser.popupBlocked',
+            'Popup blocked — allow popups to impersonate users.',
+          ),
         );
         throw new Error('Popup blocked');
       }
@@ -41,7 +44,7 @@ export function useImpersonateUser() {
       toast.error(
         t('useImpersonateUser.failedToImpersonate', 'Failed to impersonate user: {{message}}', {
           message: err instanceof Error ? err.message : 'Unknown error',
-        })
+        }),
       );
     },
   });

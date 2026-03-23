@@ -1,5 +1,4 @@
 import { afterAll, afterEach, beforeAll, vi } from 'vitest';
-import { mockDeep, mockReset } from 'vitest-mock-extended';
 
 // import { setLogger } from '../src/lib/logger';
 

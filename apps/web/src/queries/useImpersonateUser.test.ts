@@ -1,6 +1,7 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: pass */
 import { waitFor } from '@testing-library/react';
 import { toast } from 'sonner';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { authClient } from '@/lib/auth-client';
 import { renderHook } from '@/test/renderHook';
@@ -51,7 +52,7 @@ describe('useImpersonateUser', () => {
       expect(window.open).toHaveBeenCalledWith(
         '/',
         'impersonation-window',
-        'popup=yes,width=1400,height=900'
+        'popup=yes,width=1400,height=900',
       );
     });
   });
@@ -122,7 +123,7 @@ describe('useImpersonateUser', () => {
 
     await waitFor(() => {
       expect(toast.error).toHaveBeenCalledWith(
-        expect.stringContaining('Failed to impersonate user')
+        expect.stringContaining('Failed to impersonate user'),
       );
     });
   });

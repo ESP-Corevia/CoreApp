@@ -4,9 +4,9 @@ import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from '@/components/ui/dialog';
 
 type LoaderDialogProps = {
@@ -32,7 +32,7 @@ export default function LoaderDialog({
         onEscapeKeyDown={e => e.preventDefault()}
         onPointerDownOutside={e => e.preventDefault()}
         onInteractOutside={e => e.preventDefault()}
-        className="border-border bg-card text-card-foreground w-[90vw] max-w-sm sm:max-w-md md:max-w-lg"
+        className="w-[90vw] max-w-sm border-border bg-card text-card-foreground sm:max-w-md md:max-w-lg"
       >
         <DialogHeader>
           <VisuallyHidden>
@@ -46,7 +46,7 @@ export default function LoaderDialog({
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 600 200"
-              className="text-foreground h-full w-full"
+              className="h-full w-full text-foreground"
               aria-hidden="true"
             >
               <style>

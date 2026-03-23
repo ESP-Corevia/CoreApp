@@ -1,6 +1,5 @@
-import { useState, useCallback, useEffect } from 'react';
-
 import { parseAsInteger, parseAsString, parseAsStringEnum, useQueryStates } from 'nuqs';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
@@ -48,7 +47,7 @@ export default function AppointmentsDashboard({
       toast.error(
         t('appointments.loadError', 'Failed to load appointments: {{message}}', {
           message: error instanceof Error ? error.message : 'Unknown error',
-        })
+        }),
       );
     }
   }, [error, t]);
@@ -58,7 +57,7 @@ export default function AppointmentsDashboard({
       setSearch(value);
       await setQueryParams({ page: 1, search: value });
     },
-    [setQueryParams]
+    [setQueryParams],
   );
 
   if (!session?.isAuthenticated) {

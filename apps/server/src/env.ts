@@ -1,5 +1,6 @@
 import * as dotenv from 'dotenv';
 import { z } from 'zod';
+
 dotenv.config();
 
 const envSchema = z.object({
@@ -18,8 +19,6 @@ const envSchema = z.object({
 const parsed = envSchema.safeParse(process.env);
 
 if (!parsed.success) {
-  // eslint-disable-next-line no-console
-  console.error('❌ Invalid environment variables:', parsed.error.flatten().fieldErrors);
   process.exit(1);
 }
 // ts-prune-ignore-next

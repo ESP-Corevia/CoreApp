@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { useTrpc } from '@/providers/trpc';
-import type { ExtendedColumnFilter, User, ExtendedColumnSort } from '@/types/data-table';
+import type { ExtendedColumnFilter, ExtendedColumnSort, User } from '@/types/data-table';
 
 interface UseListUsersParams {
   page: number;

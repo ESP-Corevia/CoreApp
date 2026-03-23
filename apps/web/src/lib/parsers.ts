@@ -74,7 +74,7 @@ export const getFiltersStateParser = <TData>(columnIds?: string[] | Set<string>)
           filter.id === b[index]?.id &&
           filter.value === b[index]?.value &&
           filter.variant === b[index]?.variant &&
-          filter.operator === b[index]?.operator
+          filter.operator === b[index]?.operator,
       ),
   });
 };
