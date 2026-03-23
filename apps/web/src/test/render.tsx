@@ -3,7 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createTRPCClient, type TRPCClient, type TRPCLink } from '@trpc/client';
 import { observable } from '@trpc/server/observable';
 
-import { render as rtlRender } from '@testing-library/react';
+import { render as rtlRender, type RenderResult } from '@testing-library/react';
 import { NuqsTestingAdapter } from 'nuqs/adapters/testing';
 import { I18nextProvider } from 'react-i18next';
 import { MemoryRouter } from 'react-router';
@@ -24,7 +24,7 @@ type Options = {
   trpcHandlers?: Record<string, (input: unknown) => unknown | Promise<unknown>>;
 };
 
-export function render(ui: React.ReactElement, opts: Options = {}) {
+export function render(ui: React.ReactElement, opts: Options = {}): RenderResult {
   const {
     router,
     lang = 'en',

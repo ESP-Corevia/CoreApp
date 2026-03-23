@@ -9,9 +9,6 @@ WORKDIR /app
 # -------------------------
 FROM base AS builder
 
-# RUN corepack enable
-# RUN corepack prepare yarn@4.9.2 --activate
-
 # Install Turbo globally ONLY in builder
 RUN npm install -g turbo
 
@@ -30,15 +27,15 @@ RUN turbo prune server --docker
 FROM base AS installer
 
 RUN corepack enable
-RUN corepack prepare yarn@4.9.2 --activate
+RUN corepack prepare pnpm@10.12.1 --activate
 
 WORKDIR /app
 
-# Load pruned package.json + lockfile + yarn metadata
+# Load pruned package.json + lockfile + pnpm metadata
 COPY --from=builder /app/out/json/ ./
 
 # Install only the pruned dependencies
-RUN yarn install --immutable
+RUN pnpm install --frozen-lockfile
 
 # Copy full pruned workspace
 COPY --from=builder /app/out/full/ ./
@@ -49,7 +46,7 @@ COPY tsconfig.base.json ./tsconfig.base.json
 COPY tsconfig.* ./
 
 # Build the server app with Turbo
-RUN yarn turbo -F server build
+RUN pnpm turbo -F server build
 
 
 # -------------------------
@@ -58,7 +55,7 @@ RUN yarn turbo -F server build
 FROM base AS server
 
 RUN corepack enable
-RUN corepack prepare yarn@4.9.2 --activate
+RUN corepack prepare pnpm@10.12.1 --activate
 
 # Create non-root user
 RUN addgroup --system --gid 1001 expressjs \
@@ -75,7 +72,7 @@ COPY --from=installer /app ./
 WORKDIR /app/apps/server
 
 # Run start
-CMD ["yarn","start"]
+CMD ["pnpm","start"]
 
 # -------------------------
 # SEED RUNTIME IMAGE (separate)
@@ -83,14 +80,14 @@ CMD ["yarn","start"]
 FROM base AS seed
 
 RUN corepack enable
-RUN corepack prepare yarn@4.9.2 --activate 
+RUN corepack prepare pnpm@10.12.1 --activate
 
 WORKDIR /app
 
 COPY --from=installer /app ./
 
 WORKDIR /app/apps/server
-CMD ["yarn", "db:seed"]
+CMD ["pnpm", "db:seed"]
 
 # -------------------------
 # MIGRATE RUNTIME IMAGE (separate)
@@ -98,11 +95,11 @@ CMD ["yarn", "db:seed"]
 FROM base AS migrate
 
 RUN corepack enable
-RUN corepack prepare yarn@4.9.2 --activate 
+RUN corepack prepare pnpm@10.12.1 --activate
 
 WORKDIR /app
 
 COPY --from=installer /app ./
 
 WORKDIR /app/apps/server
-CMD ["yarn", "db:migrate"]
+CMD ["pnpm", "db:migrate"]

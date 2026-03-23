@@ -35,13 +35,13 @@ jobs:
           filters: |
             migrations:
               - 'apps/server/src/db/migrations/**'
-      - uses: ./.github/actions/setup-yarn
+      - uses: ./.github/actions/setup-pnpm
       - uses: ./.github/actions/setup-turbo
         with:
           token: ${{ secrets.TURBO_TOKEN }}
           team: ${{ secrets.TURBO_TEAM }}
       - name: 🧼 Run ESLint & Prettier
-        run: yarn turbo run server#check:lint --cache="${{env.TURBO_CACHE}}"
+        run: pnpm turbo run server#check:lint --cache="${{env.TURBO_CACHE}}"
 
   typecheck:
     name: 🧠 Type Check
@@ -53,13 +53,13 @@ jobs:
         with:
           fetch-depth: 1
 
-      - uses: ./.github/actions/setup-yarn
+      - uses: ./.github/actions/setup-pnpm
       - uses: ./.github/actions/setup-turbo
         with:
           token: ${{ secrets.TURBO_TOKEN }}
           team: ${{ secrets.TURBO_TEAM }}
       - name: 🧠 Run TS Check
-        run: yarn turbo run server#check:types --cache="${{env.TURBO_CACHE}}"
+        run: pnpm turbo run server#check:types --cache="${{env.TURBO_CACHE}}"
 
   knip:
     name: 🪓 Check Unused Code (knip + ts-prune)
@@ -71,7 +71,7 @@ jobs:
         with:
           fetch-depth: 1
 
-      - uses: ./.github/actions/setup-yarn
+      - uses: ./.github/actions/setup-pnpm
       - uses: ./.github/actions/setup-turbo
         with:
           token: ${{ secrets.TURBO_TOKEN }}
@@ -84,7 +84,7 @@ jobs:
           BETTER_AUTH_SECRET='test_better_auth_secret'
           EOF
       - name: 🪓 Run Knip
-        run: yarn turbo run server#check:knip --cache="${{env.TURBO_CACHE}}"
+        run: pnpm turbo run server#check:knip --cache="${{env.TURBO_CACHE}}"
 
     services:
       postgres:
@@ -113,13 +113,13 @@ jobs:
         with:
           fetch-depth: 1
 
-      - uses: ./.github/actions/setup-yarn
+      - uses: ./.github/actions/setup-pnpm
       - uses: ./.github/actions/setup-turbo
         with:
           token: ${{ secrets.TURBO_TOKEN }}
           team: ${{ secrets.TURBO_TEAM }}
       - name: 📦 Run depcheck
-        run: yarn turbo run server#check:dep --cache="${{env.TURBO_CACHE}}"
+        run: pnpm turbo run server#check:dep --cache="${{env.TURBO_CACHE}}"
   test:
     name: 🧪 Run Tests
     runs-on: ubuntu-latest
@@ -128,10 +128,10 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 1
-      - uses: ./.github/actions/setup-yarn
+      - uses: ./.github/actions/setup-pnpm
 
       - name: 🧪 Run Tests
-        run: yarn turbo run server#check:test
+        run: pnpm turbo run server#check:test
       - name: 📈 Report Coverage
         if: always()
         uses: davelosert/vitest-coverage-report-action@v2
@@ -170,14 +170,14 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 1
-      - uses: ./.github/actions/setup-yarn
+      - uses: ./.github/actions/setup-pnpm
 
       - name: ✅ Drizzle migrations check
-        run: yarn turbo run server#db:check
+        run: pnpm turbo run server#db:check
       - name: 🧾 Ensure migrations are committed
         run: |
-          yarn turbo run server#db:generate
+          pnpm turbo run server#db:generate
           git diff --exit-code
 
       - name: 🐘 Apply migrations to fresh Postgres
-        run: yarn turbo run server#db:migrate
+        run: pnpm turbo run server#db:migrate

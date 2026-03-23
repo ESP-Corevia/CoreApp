@@ -11,14 +11,14 @@
   "labels": ["deps"],
   "packageRules": [
     {
-      "matchFileNames": ["catalogs.yml", ".yarnrc.yml"],
-      "groupName": "catalogs & yarn config",
-      "groupSlug": "catalogs-yarn",
+      "matchFileNames": ["pnpm-workspace.yaml"],
+      "groupName": "catalogs & pnpm config",
+      "groupSlug": "catalogs-pnpm",
       "addLabels": ["scope:catalog"]
     },
     {
       "matchPackageNames": [
-        "yarn",
+        "pnpm",
         "turbo",
         "husky",
         "@commitlint/cli",

@@ -78,7 +78,7 @@ services:
     depends_on:
       migrate:
         condition: service_completed_successfully
-    command: ["yarn", "db:seed"]
+    command: ["pnpm", "db:seed"]
   web:
     profiles:
       - web
