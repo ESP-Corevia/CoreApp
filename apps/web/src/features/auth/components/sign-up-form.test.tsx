@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: pass */
 import { waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
@@ -46,7 +47,7 @@ describe('SignUpForm', () => {
 
   it('renders the sign-up form correctly', () => {
     const { getByRole, getByLabelText, getByText } = render(
-      <SignUpForm onSwitchToSignIn={mockOnSwitchToSignIn} />
+      <SignUpForm onSwitchToSignIn={mockOnSwitchToSignIn} />,
     );
 
     expect(getByRole('heading', { name: 'Create Account' })).toBeInTheDocument();
@@ -72,7 +73,7 @@ describe('SignUpForm', () => {
   it('displays validation error for empty name', async () => {
     const user = userEvent.setup();
     const { getByLabelText, getByRole, container } = render(
-      <SignUpForm onSwitchToSignIn={mockOnSwitchToSignIn} />
+      <SignUpForm onSwitchToSignIn={mockOnSwitchToSignIn} />,
     );
 
     const emailInput = getByLabelText('Email');
@@ -90,7 +91,7 @@ describe('SignUpForm', () => {
   it('displays validation error for empty email', async () => {
     const user = userEvent.setup();
     const { getByLabelText, getByRole, container } = render(
-      <SignUpForm onSwitchToSignIn={mockOnSwitchToSignIn} />
+      <SignUpForm onSwitchToSignIn={mockOnSwitchToSignIn} />,
     );
 
     const nameInput = getByLabelText('Name');
@@ -108,7 +109,7 @@ describe('SignUpForm', () => {
   it('displays validation error for short password', async () => {
     const user = userEvent.setup();
     const { getByLabelText, getByRole, container } = render(
-      <SignUpForm onSwitchToSignIn={mockOnSwitchToSignIn} />
+      <SignUpForm onSwitchToSignIn={mockOnSwitchToSignIn} />,
     );
 
     const nameInput = getByLabelText('Name');
@@ -129,7 +130,7 @@ describe('SignUpForm', () => {
 
   it('calls sign-up on form submission with valid data', async () => {
     const user = userEvent.setup();
-    vi.mocked(authClient.signUp.email).mockImplementation((credentials, callbacks) => {
+    vi.mocked(authClient.signUp.email).mockImplementation((_credentials, callbacks) => {
       if (callbacks?.onSuccess) {
         void callbacks.onSuccess({} as any);
       }
@@ -137,7 +138,7 @@ describe('SignUpForm', () => {
     });
 
     const { getByLabelText, getByRole } = render(
-      <SignUpForm onSwitchToSignIn={mockOnSwitchToSignIn} />
+      <SignUpForm onSwitchToSignIn={mockOnSwitchToSignIn} />,
     );
 
     const nameInput = getByLabelText('Name');
@@ -157,7 +158,7 @@ describe('SignUpForm', () => {
           password: 'password123',
           name: 'John Doe',
         },
-        expect.any(Object)
+        expect.any(Object),
       );
     });
   });
@@ -174,7 +175,7 @@ describe('SignUpForm', () => {
 
   it('shows submitting state while form is being submitted', async () => {
     const user = userEvent.setup();
-    vi.mocked(authClient.signUp.email).mockImplementation((credentials, callbacks) => {
+    vi.mocked(authClient.signUp.email).mockImplementation((_credentials, callbacks) => {
       return new Promise(resolve => {
         setTimeout(() => {
           if (callbacks?.onSuccess) {
@@ -186,7 +187,7 @@ describe('SignUpForm', () => {
     });
 
     const { getByLabelText, getByRole } = render(
-      <SignUpForm onSwitchToSignIn={mockOnSwitchToSignIn} />
+      <SignUpForm onSwitchToSignIn={mockOnSwitchToSignIn} />,
     );
 
     const nameInput = getByLabelText('Name');

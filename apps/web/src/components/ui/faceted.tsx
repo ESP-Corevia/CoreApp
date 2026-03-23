@@ -64,7 +64,7 @@ function Faceted<Multiple extends boolean = false>(props: FacetedProps<Multiple>
       }
       onOpenChangeProp?.(newOpen);
     },
-    [isControlled, onOpenChangeProp]
+    [isControlled, onOpenChangeProp],
   );
 
   const onItemSelect = React.useCallback(
@@ -87,12 +87,12 @@ function Faceted<Multiple extends boolean = false>(props: FacetedProps<Multiple>
         requestAnimationFrame(() => onOpenChange(false));
       }
     },
-    [multiple, value, onValueChange, onOpenChange]
+    [multiple, value, onValueChange, onOpenChange],
   );
 
   const contextValue = React.useMemo<FacetedContextValue<typeof multiple>>(
     () => ({ value, onItemSelect, multiple }),
-    [value, onItemSelect, multiple]
+    [value, onItemSelect, multiple],
   );
 
   return (
@@ -141,12 +141,12 @@ function FacetedBadgeList(props: FacetedBadgeListProps) {
       const option = options.find(opt => opt.value === value);
       return option?.label ?? value;
     },
-    [options]
+    [options],
   );
 
   if (!values || values.length === 0) {
     return (
-      <div {...badgeListProps} className="text-muted-foreground flex w-full items-center gap-1">
+      <div {...badgeListProps} className="flex w-full items-center gap-1 text-muted-foreground">
         {placeholder}
         <ChevronsUpDown className="ml-auto size-4 shrink-0 opacity-50" />
       </div>
@@ -216,7 +216,7 @@ function FacetedItem(props: FacetedItemProps) {
         context.onItemSelect(currentValue);
       }
     },
-    [onSelect, context]
+    [onSelect, context],
   );
 
   return (
@@ -229,8 +229,8 @@ function FacetedItem(props: FacetedItemProps) {
     >
       <span
         className={cn(
-          'border-primary flex size-4 items-center justify-center rounded-sm border',
-          isSelected ? 'bg-primary text-primary-foreground' : 'opacity-50 [&_svg]:invisible'
+          'flex size-4 items-center justify-center rounded-sm border border-primary',
+          isSelected ? 'bg-primary text-primary-foreground' : 'opacity-50 [&_svg]:invisible',
         )}
       >
         <Check className="size-4" />

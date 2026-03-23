@@ -1,10 +1,8 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { render } from '@/test/render';
-
-import DoctorsTable from './doctors-table';
-
 import type { Doctor } from './doctors-table';
+import DoctorsTable from './doctors-table';
 
 const mockDoctors: Doctor[] = [
   {
@@ -32,7 +30,7 @@ const mockDoctors: Doctor[] = [
 describe('DoctorsTable', () => {
   it('renders the title', () => {
     const { getByText } = render(
-      <DoctorsTable data={[]} pageCount={0} isLoading={false} title="Doctors Management" />
+      <DoctorsTable data={[]} pageCount={0} isLoading={false} title="Doctors Management" />,
     );
 
     expect(getByText('Doctors Management')).toBeInTheDocument();
@@ -40,7 +38,7 @@ describe('DoctorsTable', () => {
 
   it('renders doctor rows with name, email, specialty, and city', () => {
     const { getByText } = render(
-      <DoctorsTable data={mockDoctors} pageCount={1} isLoading={false} title="Doctors" />
+      <DoctorsTable data={mockDoctors} pageCount={1} isLoading={false} title="Doctors" />,
     );
 
     expect(getByText('Dr. Smith')).toBeInTheDocument();
@@ -51,7 +49,7 @@ describe('DoctorsTable', () => {
 
   it('renders fallback for null name and email', () => {
     const { getAllByText } = render(
-      <DoctorsTable data={mockDoctors} pageCount={1} isLoading={false} title="Doctors" />
+      <DoctorsTable data={mockDoctors} pageCount={1} isLoading={false} title="Doctors" />,
     );
 
     const dashes = getAllByText('—');
@@ -69,7 +67,7 @@ describe('DoctorsTable', () => {
         title="Doctors"
         search=""
         onSearchChange={onSearchChange}
-      />
+      />,
     );
 
     expect(getByText('Doctors')).toBeInTheDocument();

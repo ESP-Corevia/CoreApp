@@ -17,7 +17,7 @@ export default function Header() {
 
   return (
     <header className="flex items-center justify-between">
-      <h1 className="text-2xl font-bold tracking-tight">{getPageTitle(location.pathname)}</h1>
+      <h1 className="font-bold text-2xl tracking-tight">{getPageTitle(location.pathname)}</h1>
     </header>
   );
 }

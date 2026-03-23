@@ -1,5 +1,6 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: pass */
 import userEvent from '@testing-library/user-event';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import * as queries from '@/queries';
 import { render } from '@/test/render';
@@ -42,7 +43,7 @@ describe('AppointmentStatusDialog', () => {
         onOpenChange={onOpenChange}
         appointment={baseAppointment}
         targetStatus={targetStatus}
-      />
+      />,
     );
 
   it('renders dialog with correct title for confirm action', () => {

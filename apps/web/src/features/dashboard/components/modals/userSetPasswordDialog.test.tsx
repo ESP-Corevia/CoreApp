@@ -1,9 +1,10 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: pass */
 import * as queryClient from '@tanstack/react-query';
 
 import { waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { toast } from 'sonner';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { authClient } from '@/lib/auth-client';
 import { mockUser } from '@/test/faker';

@@ -18,7 +18,7 @@ describe('Settings', () => {
       getByRole('heading', {
         level: 2,
         name: 'Language',
-      })
+      }),
     ).toBeInTheDocument();
     expect(getByText('Choose your preferred language')).toBeInTheDocument();
   });

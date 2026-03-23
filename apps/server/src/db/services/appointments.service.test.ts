@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: pass */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { mockAppointmentsRepo } from '../../../test/repositories';

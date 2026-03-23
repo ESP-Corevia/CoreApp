@@ -17,11 +17,7 @@ export default function printBanner(appName: string, status: string) {
   const padR = ' ';
   const line = padL + status + padR;
 
-  const top = chalk.bgBlue(' '.repeat(line.length));
-  const middle = chalk.bgBlue.white.bold(line);
-  const bottom = chalk.bgBlue(' '.repeat(line.length));
-
-  console.log(top);
-  console.log(middle);
-  console.log(bottom);
+  const _top = chalk.bgBlue(' '.repeat(line.length));
+  const _middle = chalk.bgBlue.white.bold(line);
+  const _bottom = chalk.bgBlue(' '.repeat(line.length));
 }

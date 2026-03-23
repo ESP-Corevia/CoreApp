@@ -2,10 +2,10 @@ import { faker } from '@faker-js/faker';
 import { eq } from 'drizzle-orm';
 
 import { db } from '../src/db';
-import { users, doctors, patients } from '../src/db/schema';
+import { doctors, patients, users } from '../src/db/schema';
 import { env } from '../src/env';
 import { auth } from '../src/lib/auth';
-import logger from '../src/lib/logger';
+import { logger } from '../src/lib/logger';
 
 const PATIENT_COUNT = 80;
 const DOCTOR_COUNT = 50;
@@ -269,7 +269,7 @@ async function main() {
 
 main()
   .then(() => process.exit(0))
-  .catch((err) => {
+  .catch(err => {
     logger.error('❌ Seed error:', err);
     process.exit(1);
   });

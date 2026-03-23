@@ -1,10 +1,8 @@
 import { z } from 'zod';
-
-import { users } from '../schema';
+import { buildQueryOptions, type QueryParams } from '@/utils/db';
 
 import type { Repositories } from '../repositories';
-
-import { buildQueryOptions, type QueryParams } from '@/utils/db';
+import { users } from '../schema';
 
 export const UserOutputSchema = z.object({
   id: z.string(),

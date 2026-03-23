@@ -120,7 +120,7 @@ export default function SessionsCard({ currentSessionToken }: SessionsCardProps)
             )}
           </>
         ) : (
-          <p className="text-muted-foreground text-center text-sm">
+          <p className="text-center text-muted-foreground text-sm">
             <Trans i18nKey="sessionsCard.noSessions">No active sessions found</Trans>
           </p>
         )}

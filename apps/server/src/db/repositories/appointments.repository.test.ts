@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: pass */
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
 
 import { applyMigration, db, resetDb } from '../../../test/db';
@@ -482,8 +483,8 @@ describe('appointments.repository', () => {
       const result = await repo.updateStatus(apptId, 'CONFIRMED');
 
       expect(result).not.toBeNull();
-      expect(result!.id).toBe(apptId);
-      expect(result!.status).toBe('CONFIRMED');
+      expect(result?.id).toBe(apptId);
+      expect(result?.status).toBe('CONFIRMED');
     });
 
     it('returns null for non-existing id', async () => {

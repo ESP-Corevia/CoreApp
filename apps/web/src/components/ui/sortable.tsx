@@ -131,7 +131,7 @@ function SortableRoot<T>(props: SortableRootProps<T>) {
     useSensor(TouchSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    })
+    }),
   );
   const config = React.useMemo(() => orientationConfig[orientation], [orientation]);
 
@@ -142,7 +142,7 @@ function SortableRoot<T>(props: SortableRootProps<T>) {
       }
       return getItemValueProp ? getItemValueProp(item) : (item as UniqueIdentifier);
     },
-    [getItemValueProp]
+    [getItemValueProp],
   );
 
   const items = React.useMemo(() => {
@@ -157,7 +157,7 @@ function SortableRoot<T>(props: SortableRootProps<T>) {
 
       setActiveId(event.active.id);
     },
-    [onDragStartProp]
+    [onDragStartProp],
   );
 
   const onDragEnd = React.useCallback(
@@ -179,7 +179,7 @@ function SortableRoot<T>(props: SortableRootProps<T>) {
       }
       setActiveId(null);
     },
-    [value, onValueChange, onMove, getItemValue, onDragEndProp]
+    [value, onValueChange, onMove, getItemValue, onDragEndProp],
   );
 
   const onDragCancel = React.useCallback(
@@ -190,7 +190,7 @@ function SortableRoot<T>(props: SortableRootProps<T>) {
 
       setActiveId(null);
     },
-    [onDragCancelProp]
+    [onDragCancelProp],
   );
 
   const announcements: Announcements = React.useMemo(
@@ -233,7 +233,7 @@ function SortableRoot<T>(props: SortableRootProps<T>) {
         return 'Sortable item is no longer over a droppable area. Press escape to cancel.';
       },
     }),
-    [value]
+    [value],
   );
 
   const screenReaderInstructions: ScreenReaderInstructions = React.useMemo(
@@ -244,7 +244,7 @@ function SortableRoot<T>(props: SortableRootProps<T>) {
         Press space or enter again to drop the item in its new position, or press escape to cancel.
       `,
     }),
-    [orientation]
+    [orientation],
   );
 
   const contextValue = React.useMemo(
@@ -268,7 +268,7 @@ function SortableRoot<T>(props: SortableRootProps<T>) {
       activeId,
       getItemValue,
       flatCursor,
-    ]
+    ],
   );
 
   return (
@@ -357,7 +357,7 @@ function SortableItem(props: SortableItemProps) {
 
   if (!inSortableContent && !inSortableOverlay) {
     throw new Error(
-      `\`${ITEM_NAME}\` must be used within \`${CONTENT_NAME}\` or \`${OVERLAY_NAME}\``
+      `\`${ITEM_NAME}\` must be used within \`${CONTENT_NAME}\` or \`${OVERLAY_NAME}\``,
     );
   }
 
@@ -400,7 +400,7 @@ function SortableItem(props: SortableItemProps) {
       isDragging,
       disabled,
     }),
-    [id, attributes, listeners, setActivatorNodeRef, isDragging, disabled]
+    [id, attributes, listeners, setActivatorNodeRef, isDragging, disabled],
   );
 
   const ItemPrimitive = asChild ? Slot : 'div';
@@ -418,7 +418,7 @@ function SortableItem(props: SortableItemProps) {
         ref={composedRef}
         style={composedStyle}
         className={cn(
-          'focus-visible:ring-ring focus-visible:ring-1 focus-visible:ring-offset-1 focus-visible:outline-hidden',
+          'focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1',
           {
             'touch-none select-none': asHandle,
             'cursor-default': context.flatCursor,
@@ -427,7 +427,7 @@ function SortableItem(props: SortableItemProps) {
             'opacity-50': isDragging,
             'pointer-events-none opacity-50': disabled,
           },
-          className
+          className,
         )}
       />
     </SortableItemContext.Provider>
@@ -467,7 +467,7 @@ function SortableItemHandle(props: SortableItemHandleProps) {
       className={cn(
         'select-none disabled:pointer-events-none disabled:opacity-50',
         context.flatCursor ? 'cursor-default' : 'cursor-grab data-dragging:cursor-grabbing',
-        className
+        className,
       )}
       disabled={isDisabled}
     />
@@ -518,20 +518,20 @@ function SortableOverlay(props: SortableOverlayProps) {
           : null}
       </SortableOverlayContext.Provider>
     </DragOverlay>,
-    container
+    container,
   );
 }
 
 export {
-  SortableRoot as Sortable,
   SortableContent,
+  SortableContent as Content,
   SortableItem,
+  SortableItem as Item,
   SortableItemHandle,
+  SortableItemHandle as ItemHandle,
   SortableOverlay,
+  SortableOverlay as Overlay,
+  SortableRoot as Sortable,
   //
   SortableRoot as Root,
-  SortableContent as Content,
-  SortableItem as Item,
-  SortableItemHandle as ItemHandle,
-  SortableOverlay as Overlay,
 };

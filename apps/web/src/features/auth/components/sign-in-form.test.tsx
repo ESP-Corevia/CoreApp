@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: pass */
 import { waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
@@ -46,7 +47,7 @@ describe('SignInForm', () => {
 
   it('renders the sign-in form correctly', () => {
     const { getByRole, getByLabelText, getByText } = render(
-      <SignInForm onSwitchToSignUp={mockOnSwitchToSignUp} />
+      <SignInForm onSwitchToSignUp={mockOnSwitchToSignUp} />,
     );
 
     expect(getByRole('heading', { name: 'Welcome Back' })).toBeInTheDocument();
@@ -71,7 +72,7 @@ describe('SignInForm', () => {
   it('displays validation error for invalid email', async () => {
     const user = userEvent.setup();
     const { getByRole, queryByText } = render(
-      <SignInForm onSwitchToSignUp={mockOnSwitchToSignUp} />
+      <SignInForm onSwitchToSignUp={mockOnSwitchToSignUp} />,
     );
 
     // const emailInput = getByLabelText('Email');
@@ -90,7 +91,7 @@ describe('SignInForm', () => {
   it('displays validation error for short password', async () => {
     const user = userEvent.setup();
     const { getByLabelText, getByRole, queryByText } = render(
-      <SignInForm onSwitchToSignUp={mockOnSwitchToSignUp} />
+      <SignInForm onSwitchToSignUp={mockOnSwitchToSignUp} />,
     );
 
     const emailInput = getByLabelText('Email');
@@ -113,7 +114,7 @@ describe('SignInForm', () => {
     vi.mocked(authClient.signIn.email).mockImplementation(mockSignIn);
 
     const { getByLabelText, getByRole } = render(
-      <SignInForm onSwitchToSignUp={mockOnSwitchToSignUp} />
+      <SignInForm onSwitchToSignUp={mockOnSwitchToSignUp} />,
     );
 
     const emailInput = getByLabelText('Email');
@@ -130,7 +131,7 @@ describe('SignInForm', () => {
           email: 'test@example.com',
           password: 'password123',
         },
-        expect.any(Object)
+        expect.any(Object),
       );
     });
   });

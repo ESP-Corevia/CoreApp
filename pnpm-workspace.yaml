@@ -48,10 +48,8 @@ catalog:
   typescript: 5.9.3
   "@types/node": 24.3.1
 
-  # Linting & Formatting
-  eslint: 9.37.0
+  # Code Quality
   knip: 5.64.1
-  prettier: 3.6.2
   depcheck: 1.4.7
 
   # Testing

@@ -1,13 +1,14 @@
-import { describe, it, expect } from 'vitest';
+/** biome-ignore-all lint/suspicious/noExplicitAny: pass */
+import { describe, expect, it } from 'vitest';
 
 import {
-  toDate,
-  operatorHandlers,
-  buildWhereConditions,
-  buildQueryOptions,
   buildOrderBy,
+  buildQueryOptions,
+  buildWhereConditions,
   coerceValueForColumn,
+  operatorHandlers,
   type TableFilter,
+  toDate,
 } from './db';
 
 const users = {

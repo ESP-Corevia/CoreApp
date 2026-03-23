@@ -1,20 +1,15 @@
+import type { AppRouter } from '@server/routers';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-
+import { type RenderResult, render as rtlRender } from '@testing-library/react';
 import { createTRPCClient, type TRPCClient, type TRPCLink } from '@trpc/client';
 import { observable } from '@trpc/server/observable';
-
-import { render as rtlRender, type RenderResult } from '@testing-library/react';
 import { NuqsTestingAdapter } from 'nuqs/adapters/testing';
 import { I18nextProvider } from 'react-i18next';
 import { MemoryRouter } from 'react-router';
-
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { ThemeProvider } from '@/providers/theme';
 import { TrpcTestProvider } from '@/providers/trpc';
-
 import { createTestI18n } from './i18n';
-
-import type { AppRouter } from '@server/routers';
 
 type Options = {
   router?: React.ComponentProps<typeof MemoryRouter>;

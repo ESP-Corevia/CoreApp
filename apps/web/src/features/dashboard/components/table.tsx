@@ -1,20 +1,19 @@
 'use client';
 
-import { useEffect, useMemo } from 'react';
+import { SiGithub, SiGoogle } from '@icons-pack/react-simple-icons';
 
 import type { ColumnDef } from '@tanstack/react-table';
-
-import { SiGithub, SiGoogle } from '@icons-pack/react-simple-icons';
-import { CalendarClock, Mail, Shield, Text, History, Ban } from 'lucide-react';
+import { Ban, CalendarClock, History, Mail, Shield, Text } from 'lucide-react';
+import { useEffect, useMemo } from 'react';
 
 import { DataTable } from '@/components/data-table/data-table';
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
 import { DataTableToolbar } from '@/components/data-table/data-table-toolbar';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { useDataTable } from '@/hooks/use-data-table';
 import { convertToExtendedFilters } from '@/lib/data-table';
-import type { User, ExtendedColumnFilter, ExtendedColumnSort } from '@/types/data-table';
+import type { ExtendedColumnFilter, ExtendedColumnSort, User } from '@/types/data-table';
 
 import { CreateUserDialog } from './modals/userCreateDialog';
 import { UserActionsMenu } from './userActionsMenu';
@@ -148,7 +147,7 @@ export default function DataTableUsers({
         cell: ({ cell }) => {
           const created = cell.getValue<User['createdAt']>();
           return (
-            <div className="text-muted-foreground inline-flex items-center gap-1 text-sm">
+            <div className="inline-flex items-center gap-1 text-muted-foreground text-sm">
               <CalendarClock className="h-4 w-4" />
               {formatDate(created)}
             </div>
@@ -170,7 +169,7 @@ export default function DataTableUsers({
         cell: ({ cell }) => {
           const updated = cell.getValue<User['updatedAt']>();
           return (
-            <div className="text-muted-foreground inline-flex items-center gap-1 text-sm">
+            <div className="inline-flex items-center gap-1 text-muted-foreground text-sm">
               <CalendarClock className="h-4 w-4" />
               {formatDate(updated ?? undefined)}
             </div>
@@ -192,7 +191,7 @@ export default function DataTableUsers({
         cell: ({ cell }) => {
           const method = cell.getValue<User['lastLoginMethod']>() ?? '—';
           return (
-            <div className="text-muted-foreground inline-flex items-center gap-1 text-sm">
+            <div className="inline-flex items-center gap-1 text-muted-foreground text-sm">
               <History className="h-4 w-4" />
               {method}
             </div>
@@ -301,10 +300,10 @@ export default function DataTableUsers({
         enableHiding: false,
       },
     ],
-    []
+    [],
   );
 
-  const { table, filters, sorting } = useDataTable<User>({
+  const { table, filters } = useDataTable<User>({
     clearOnDefault: false,
     data: users,
     columns,
@@ -337,11 +336,11 @@ export default function DataTableUsers({
     const extendedSorting = sortingState[0] as ExtendedColumnSort<User>;
 
     onSortingChange?.(extendedSorting);
-  }, [table, onSortingChange, sorting]);
+  }, [table, onSortingChange]);
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">{title}</h1>
+        <h1 className="font-bold text-2xl">{title}</h1>
         <CreateUserDialog />
       </div>
       <DataTable table={table}>

@@ -140,12 +140,7 @@
       "addLabels": ["scope:db", "scope:server"]
     },
     {
-      "matchPackageNames": [
-        "drizzle-orm",
-        "drizzle-kit",
-        "drizzle-seed",
-        "@electric-sql/pglite"
-      ],
+      "matchPackageNames": ["drizzle-orm", "drizzle-kit", "drizzle-seed", "@electric-sql/pglite"],
       "groupName": "server (drizzle)",
       "groupSlug": "server-drizzle",
       "addLabels": ["scope:db", "scope:server"]
@@ -174,12 +169,7 @@
       "addLabels": ["scope:web", "scope:tooling"]
     },
     {
-      "matchPackageNames": [
-        "@playwright/test",
-        "@lhci/cli",
-        "size-limit",
-        "@size-limit/file"
-      ],
+      "matchPackageNames": ["@playwright/test", "@lhci/cli", "size-limit", "@size-limit/file"],
       "groupName": "web quality gates (e2e/lhci/size)",
       "groupSlug": "web-quality",
       "addLabels": ["scope:web", "scope:tooling"]

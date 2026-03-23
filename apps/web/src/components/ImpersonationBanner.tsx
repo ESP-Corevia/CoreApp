@@ -1,4 +1,6 @@
+import { CircleAlert } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { Trans } from 'react-i18next';
 import {
   Banner,
   BannerAction,
@@ -6,8 +8,6 @@ import {
   BannerIcon,
   BannerTitle,
 } from '@/components/ui/shadcn-io/banner';
-import { CircleAlert } from 'lucide-react';
-import { Trans } from 'react-i18next';
 import { useRequireAuth } from '@/hooks/use-require-auth';
 export default function ImpersonationBanner() {
   const [isImpersonating, setIsImpersonating] = useState(false);

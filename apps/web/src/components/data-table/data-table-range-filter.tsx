@@ -13,7 +13,7 @@ interface DataTableRangeFilterProps<TData> extends React.ComponentProps<'div'> {
   inputId: string;
   onFilterUpdate: (
     filterId: string,
-    updates: Partial<Omit<ExtendedColumnFilter<TData>, 'filterId'>>
+    updates: Partial<Omit<ExtendedColumnFilter<TData>, 'filterId'>>,
   ) => void;
 }
 
@@ -70,7 +70,7 @@ export function DataTableRangeFilter<TData>({
         });
       }
     },
-    [filter.filterId, filter.value, min, max, onFilterUpdate]
+    [filter.filterId, filter.value, min, max, onFilterUpdate],
   );
 
   return (
@@ -90,7 +90,7 @@ export function DataTableRangeFilter<TData>({
         defaultValue={value[0]}
         onChange={event => onRangeValueChange(event.target.value, true)}
       />
-      <span className="text-muted-foreground sr-only shrink-0">to</span>
+      <span className="sr-only shrink-0 text-muted-foreground">to</span>
       <Input
         id={`${inputId}-max`}
         type="number"

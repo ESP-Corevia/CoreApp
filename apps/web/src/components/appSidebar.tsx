@@ -1,18 +1,15 @@
 /* v8 ignore file -- @preserve */
-import {
-  Home,
-  LayoutDashboard,
-  Settings,
-  Users,
-  FileText,
-  Bell,
-  Stethoscope,
-  Calendar,
-} from 'lucide-react';
-import { useNavigate, useLocation, Link } from 'react-router';
+
+import { useQuery } from '@tanstack/react-query';
+import { Calendar, Home, LayoutDashboard, Settings, Stethoscope } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Link, useLocation, useNavigate } from 'react-router';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -20,16 +17,12 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarSeparator,
-  SidebarFooter,
   useSidebar,
 } from '@/components/ui/sidebar';
 import { Skeleton } from '@/components/ui/skeleton';
 import { authClient } from '@/lib/auth-client';
 import { useTrpc } from '@/providers/trpc';
-import { useQuery } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+
 interface NavigationItem {
   title: string;
   url: string;
@@ -107,13 +100,13 @@ export default function FooterDateTime({ onlyYear = false }: { onlyYear?: boolea
   });
   if (onlyYear) {
     return (
-      <div className="text-muted-foreground px-2 py-1 text-center text-xs">
+      <div className="px-2 py-1 text-center text-muted-foreground text-xs">
         <p>© {year} Corevia</p>
       </div>
     );
   }
   return (
-    <div className="text-muted-foreground px-2 py-1 text-center text-xs">
+    <div className="px-2 py-1 text-center text-muted-foreground text-xs">
       <p>
         {weekday} {day} {year}
         <br />
@@ -142,6 +135,7 @@ export function AppSidebar() {
       <SidebarMenuItem key={item.title}>
         <SidebarMenuButton asChild isActive={isActive(item.url)} className="group relative">
           <button
+            type="button"
             onClick={() => {
               navigate(item.url);
             }}
@@ -150,7 +144,7 @@ export function AppSidebar() {
             <item.icon className="mr-2 h-4 w-4" />
             <span className="flex-1 text-left">{item.title}</span>
             {item.badge && (
-              <div className="ml-2 inline-flex items-center justify-center rounded-full bg-red-600 px-2 py-0 text-xs font-medium text-white">
+              <div className="ml-2 inline-flex items-center justify-center rounded-full bg-red-600 px-2 py-0 font-medium text-white text-xs">
                 {item.badge}
               </div>
             )}
@@ -165,7 +159,7 @@ export function AppSidebar() {
       <SidebarContent className="overflow-hidden">
         {/* Main Navigation */}
         <SidebarGroup>
-          <SidebarGroupLabel className="text-xs font-semibold tracking-wider uppercase">
+          <SidebarGroupLabel className="font-semibold text-xs uppercase tracking-wider">
             Main
           </SidebarGroupLabel>
           <SidebarGroupContent>
@@ -175,7 +169,7 @@ export function AppSidebar() {
 
         {/* Secondary Navigation */}
         <SidebarGroup>
-          <SidebarGroupLabel className="text-xs font-semibold tracking-wider uppercase">
+          <SidebarGroupLabel className="font-semibold text-xs uppercase tracking-wider">
             Workspace
           </SidebarGroupLabel>
           <SidebarGroupContent>
@@ -204,8 +198,8 @@ export function AppSidebar() {
                 to="/profile"
                 className={`flex items-center gap-3 rounded-lg border p-3 transition-colors ${
                   isActive('/profile')
-                    ? 'bg-accent border-accent text-accent-foreground'
-                    : 'bg-card border-border hover:bg-accent'
+                    ? 'border-accent bg-accent text-accent-foreground'
+                    : 'border-border bg-card hover:bg-accent'
                 }`}
               >
                 <Avatar className="h-8 w-8">
@@ -213,8 +207,8 @@ export function AppSidebar() {
                   <AvatarFallback>{user.user.name?.charAt(0).toUpperCase()}</AvatarFallback>
                 </Avatar>
                 <div className="flex-1 overflow-hidden">
-                  <p className="truncate text-sm leading-none font-medium">{user.user.name}</p>
-                  <p className="text-muted-foreground truncate text-xs">{user.user.email}</p>
+                  <p className="truncate font-medium text-sm leading-none">{user.user.name}</p>
+                  <p className="truncate text-muted-foreground text-xs">{user.user.email}</p>
                 </div>
               </Link>
               <FooterDateTime onlyYear />

@@ -32,7 +32,7 @@ export function DataTableSkeleton({
 }: DataTableSkeletonProps) {
   const cozyCellWidths = Array.from(
     { length: columnCount },
-    (_, index) => cellWidths[index % cellWidths.length] ?? 'auto'
+    (_, index) => cellWidths[index % cellWidths.length] ?? 'auto',
   );
 
   return (
@@ -93,7 +93,7 @@ export function DataTableSkeleton({
               <Skeleton className="h-7 w-24" />
               <Skeleton className="h-7 w-18" />
             </div>
-            <div className="flex items-center justify-center text-sm font-medium">
+            <div className="flex items-center justify-center font-medium text-sm">
               <Skeleton className="h-7 w-20" />
             </div>
             <div className="flex items-center gap-2">

@@ -5,12 +5,13 @@ import { env } from '../env';
 import { logger } from '../lib/logger';
 
 import * as schema from './schema';
+
 const { Pool } = pg;
 const pool = new Pool({
   connectionString: env.DATABASE_URL,
 });
 
-pool.on('error', (err) => {
+pool.on('error', err => {
   logger.error({ err }, 'Unexpected idle client error');
 });
 
@@ -22,5 +23,4 @@ export const db = drizzle(pool, {
   schema,
   logger: true,
 });
-export { schema };
-export { pool };
+export { pool, schema };

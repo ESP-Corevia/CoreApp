@@ -74,8 +74,6 @@ function DeviceIcon({ device }: { device: 'desktop' | 'mobile' | 'tablet' | 'unk
   switch (device) {
     case 'mobile':
       return <Smartphone className="h-5 w-5" />;
-    case 'tablet':
-    case 'desktop':
     default:
       return <Monitor className="h-5 w-5" />;
   }
@@ -122,7 +120,7 @@ export function SessionCell({
               </Badge>
             )}
           </div>
-          <div className="text-muted-foreground flex flex-wrap items-center gap-2 text-sm">
+          <div className="flex flex-wrap items-center gap-2 text-muted-foreground text-sm">
             {session.ipAddress && (
               <span className="flex items-center gap-1">
                 <Globe className="h-3 w-3" />
@@ -151,7 +149,7 @@ export function SessionCell({
           disabled={isRevoking}
           title={t('sessionCell.revokeSession', 'Revoke session')}
         >
-          <Trash2 className="text-destructive h-4 w-4" />
+          <Trash2 className="h-4 w-4 text-destructive" />
         </Button>
       )}
     </div>

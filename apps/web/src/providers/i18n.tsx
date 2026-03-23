@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react';
-
 import i18n from 'i18next';
-import { initReactI18next, I18nextProvider } from 'react-i18next';
+import { useEffect, useState } from 'react';
+import { I18nextProvider, initReactI18next } from 'react-i18next';
 
 import en from '@/locales/en.json';
 import fr from '@/locales/fr.json';

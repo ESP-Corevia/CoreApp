@@ -1,11 +1,11 @@
 import { relations } from 'drizzle-orm';
-import { pgTable, index } from 'drizzle-orm/pg-core';
+import { index, pgTable } from 'drizzle-orm/pg-core';
 
 import { users } from './auth';
 
 export const doctors = pgTable(
   'doctors',
-  (t) => ({
+  t => ({
     id: t.uuid('id').defaultRandom().primaryKey(),
     userId: t
       .uuid('user_id')
@@ -15,7 +15,7 @@ export const doctors = pgTable(
     address: t.text('address').notNull(),
     city: t.text('city').notNull(),
   }),
-  (table) => [
+  table => [
     index('doctors_specialty_idx').on(table.specialty),
     index('doctors_city_idx').on(table.city),
     index('doctors_user_id_idx').on(table.userId),

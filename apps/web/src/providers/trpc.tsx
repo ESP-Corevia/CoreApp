@@ -1,13 +1,11 @@
-import { createContext, useContext, useMemo } from 'react';
+import type { AppRouter } from '@server/routers';
 
 import type { QueryClient } from '@tanstack/react-query';
 
 import { createTRPCClient, httpBatchLink, type TRPCClient } from '@trpc/client';
 import { createTRPCOptionsProxy } from '@trpc/tanstack-react-query';
-
+import { createContext, useContext, useMemo } from 'react';
 import { queryClient } from './query';
-
-import type { AppRouter } from '@server/routers';
 
 type TrpcProxy = ReturnType<typeof createTRPCOptionsProxy<AppRouter>>;
 
@@ -45,7 +43,7 @@ export function TrpcTestProvider({
 }) {
   const value = useMemo(
     () => createTRPCOptionsProxy<AppRouter>({ client, queryClient: testQueryClient }),
-    [client, testQueryClient]
+    [client, testQueryClient],
   );
   return <TrpcTestContext.Provider value={value}>{children}</TrpcTestContext.Provider>;
 }

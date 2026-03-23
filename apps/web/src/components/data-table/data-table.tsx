@@ -1,6 +1,6 @@
 import { flexRender, type Table as TanstackTable } from '@tanstack/react-table';
 import type * as React from 'react';
-
+import { Trans } from 'react-i18next';
 import { DataTablePagination } from '@/components/data-table/data-table-pagination';
 import {
   Table,
@@ -12,7 +12,6 @@ import {
 } from '@/components/ui/table';
 import { getCommonPinningStyles } from '@/lib/data-table';
 import { cn } from '@/lib/utils';
-import { Trans } from 'react-i18next';
 
 interface DataTableProps<TData> extends React.ComponentProps<'div'> {
   table: TanstackTable<TData>;

@@ -21,7 +21,7 @@ export function useRevokeOtherSessions() {
       toast.error(
         t('useRevokeOtherSessions.error', 'Failed to revoke other sessions: {{message}}', {
           message: error.message,
-        })
+        }),
       );
     },
   });

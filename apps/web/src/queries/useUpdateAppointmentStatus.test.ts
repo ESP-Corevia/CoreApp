@@ -1,6 +1,6 @@
 import { waitFor } from '@testing-library/react';
 import { toast } from 'sonner';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { renderHook } from '@/test/renderHook';
 

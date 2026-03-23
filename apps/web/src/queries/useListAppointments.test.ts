@@ -1,5 +1,5 @@
 import { waitFor } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { renderHook } from '@/test/renderHook';
 
@@ -44,7 +44,7 @@ describe('useListAppointments', () => {
         trpcHandlers: {
           'admin.listAppointments': handler,
         },
-      }
+      },
     );
 
     expect(result.current.isLoading).toBe(true);
@@ -81,7 +81,7 @@ describe('useListAppointments', () => {
         trpcHandlers: {
           'admin.listAppointments': handler,
         },
-      }
+      },
     );
 
     expect(handler).not.toHaveBeenCalled();
@@ -102,7 +102,7 @@ describe('useListAppointments', () => {
         trpcHandlers: {
           'admin.listAppointments': handler,
         },
-      }
+      },
     );
 
     await waitFor(() => {

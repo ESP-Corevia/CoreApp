@@ -1,13 +1,11 @@
-import { useState, useCallback, useEffect } from 'react';
-
 import { useQuery } from '@tanstack/react-query';
-
 import { parseAsInteger, parseAsString, useQueryStates } from 'nuqs';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 import { useTrpc } from '@/providers/trpc';
-import type { User, ExtendedColumnFilter, ExtendedColumnSort } from '@/types/data-table';
+import type { ExtendedColumnFilter, ExtendedColumnSort, User } from '@/types/data-table';
 
 import { useListUsers } from '../../../queries';
 
@@ -58,7 +56,7 @@ export default function Dashboard({
       toast.error(
         t('dashboard.loadUsersError', 'Failed to load users: {{message}}', {
           message: error instanceof Error ? error.message : 'Unknown error',
-        })
+        }),
       );
     }
   }, [error, t]);
@@ -68,7 +66,7 @@ export default function Dashboard({
       setSearch(value);
       await setQueryParams({ page: 1, search: value });
     },
-    [setQueryParams]
+    [setQueryParams],
   );
 
   const handleFiltersChange = useCallback((value: ExtendedColumnFilter<User>[]) => {

@@ -56,7 +56,7 @@ export function DataTableFacetedFilter<TData, TValue>({
         setOpen(false);
       }
     },
-    [column, multiple, selectedValues]
+    [column, multiple, selectedValues],
   );
 
   const onReset = React.useCallback(
@@ -64,7 +64,7 @@ export function DataTableFacetedFilter<TData, TValue>({
       event?.stopPropagation();
       column?.setFilterValue(undefined);
     },
-    [column]
+    [column],
   );
 
   return (
@@ -72,15 +72,14 @@ export function DataTableFacetedFilter<TData, TValue>({
       <PopoverTrigger asChild>
         <Button variant="outline" size="sm" className="border-dashed font-normal">
           {selectedValues?.size > 0 ? (
-            <div
-              role="button"
+            <button
+              type="button"
               aria-label={`Clear ${title} filter`}
-              tabIndex={0}
-              className="focus-visible:ring-ring rounded-sm opacity-70 transition-opacity hover:opacity-100 focus-visible:ring-1 focus-visible:outline-none"
+              className="rounded-sm opacity-70 transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
               onClick={onReset}
             >
               <XCircle />
-            </div>
+            </button>
           ) : (
             <PlusCircle />
           )}
@@ -122,7 +121,7 @@ export function DataTableFacetedFilter<TData, TValue>({
           <CommandInput placeholder={title} />
           <CommandList className="max-h-full">
             <CommandEmpty>No results found.</CommandEmpty>
-            <CommandGroup className="max-h-[300px] scroll-py-1 overflow-x-hidden overflow-y-auto">
+            <CommandGroup className="max-h-[300px] scroll-py-1 overflow-y-auto overflow-x-hidden">
               {options.map(option => {
                 const isSelected = selectedValues.has(option.value);
 
@@ -130,8 +129,8 @@ export function DataTableFacetedFilter<TData, TValue>({
                   <CommandItem key={option.value} onSelect={() => onItemSelect(option, isSelected)}>
                     <div
                       className={cn(
-                        'border-primary flex size-4 items-center justify-center rounded-sm border',
-                        isSelected ? 'bg-primary' : 'opacity-50 [&_svg]:invisible'
+                        'flex size-4 items-center justify-center rounded-sm border border-primary',
+                        isSelected ? 'bg-primary' : 'opacity-50 [&_svg]:invisible',
                       )}
                     >
                       <Check />

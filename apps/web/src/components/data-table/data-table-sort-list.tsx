@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: pass */
 'use client';
 
 import type { ColumnSort, SortDirection, Table } from '@tanstack/react-table';
@@ -85,19 +86,19 @@ export function DataTableSortList<TData>({ table, ...props }: DataTableSortListP
         return prevSorting.map(sort => (sort.id === sortId ? { ...sort, ...updates } : sort));
       });
     },
-    [onSortingChange]
+    [onSortingChange],
   );
 
   const onSortRemove = React.useCallback(
     (sortId: string) => {
       onSortingChange(prevSorting => prevSorting.filter(item => item.id !== sortId));
     },
-    [onSortingChange]
+    [onSortingChange],
   );
 
   const onSortingReset = React.useCallback(
     () => onSortingChange(table.initialState.sorting),
-    [onSortingChange, table.initialState.sorting]
+    [onSortingChange, table.initialState.sorting],
   );
 
   React.useEffect(() => {
@@ -131,7 +132,7 @@ export function DataTableSortList<TData>({ table, ...props }: DataTableSortListP
         onSortingReset();
       }
     },
-    [sorting.length, onSortingReset]
+    [sorting.length, onSortingReset],
   );
 
   return (
@@ -148,7 +149,7 @@ export function DataTableSortList<TData>({ table, ...props }: DataTableSortListP
             {sorting.length > 0 && (
               <Badge
                 variant="secondary"
-                className="h-[18.24px] rounded-[3.2px] px-[5.12px] font-mono text-[10.4px] font-normal"
+                className="h-[18.24px] rounded-[3.2px] px-[5.12px] font-mono font-normal text-[10.4px]"
               >
                 {sorting.length}
               </Badge>
@@ -162,7 +163,7 @@ export function DataTableSortList<TData>({ table, ...props }: DataTableSortListP
           {...props}
         >
           <div className="flex flex-col gap-1">
-            <h4 id={labelId} className="leading-none font-medium">
+            <h4 id={labelId} className="font-medium leading-none">
               {sorting.length > 0 ? 'Sort by' : 'No sorting applied'}
             </h4>
             <p
@@ -211,10 +212,10 @@ export function DataTableSortList<TData>({ table, ...props }: DataTableSortListP
       </Popover>
       <SortableOverlay>
         <div className="flex items-center gap-2">
-          <div className="bg-primary/10 h-8 w-[180px] rounded-sm" />
-          <div className="bg-primary/10 h-8 w-24 rounded-sm" />
-          <div className="bg-primary/10 size-8 shrink-0 rounded-sm" />
-          <div className="bg-primary/10 size-8 shrink-0 rounded-sm" />
+          <div className="h-8 w-[180px] rounded-sm bg-primary/10" />
+          <div className="h-8 w-24 rounded-sm bg-primary/10" />
+          <div className="size-8 shrink-0 rounded-sm bg-primary/10" />
+          <div className="size-8 shrink-0 rounded-sm bg-primary/10" />
         </div>
       </SortableOverlay>
     </Sortable>
@@ -260,7 +261,7 @@ function DataTableSortItem({
         onSortRemove(sort.id);
       }
     },
-    [sort.id, showFieldSelector, showDirectionSelector, onSortRemove]
+    [sort.id, showFieldSelector, showDirectionSelector, onSortRemove],
   );
 
   return (

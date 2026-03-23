@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: pass */
 import { randomUUID } from 'node:crypto';
 
 import { eq } from 'drizzle-orm';

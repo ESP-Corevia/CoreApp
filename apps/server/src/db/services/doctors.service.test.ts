@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: pass */
 /* eslint-disable require-await */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 

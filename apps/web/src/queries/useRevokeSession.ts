@@ -21,7 +21,7 @@ export function useRevokeSession() {
       toast.error(
         t('useRevokeSession.error', 'Failed to revoke session: {{message}}', {
           message: error.message,
-        })
+        }),
       );
     },
   });

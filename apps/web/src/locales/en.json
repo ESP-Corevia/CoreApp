@@ -126,7 +126,6 @@
       "passwordUpdated": "Password updated successfully",
       "passwordUpdateError": "Failed to update password. Check your current password.",
       "personalDetails": "Your personal details",
-      "previewLabel": "Preview Profile Information",
       "profileInformation": "Profile Information",
       "save": "Save",
       "savingChanges": "Saving changes...",

@@ -1,8 +1,8 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
-import type { ExtendedColumnSort, ExtendedColumnFilter } from '@/types/data-table';
+import type { ExtendedColumnFilter, ExtendedColumnSort } from '@/types/data-table';
 
-import { getSortingStateParser, getFiltersStateParser } from './parsers';
+import { getFiltersStateParser, getSortingStateParser } from './parsers';
 
 describe('getSortingStateParser', () => {
   it('parses valid sorting JSON', () => {

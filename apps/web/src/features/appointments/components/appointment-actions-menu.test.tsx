@@ -1,5 +1,5 @@
 import userEvent from '@testing-library/user-event';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { render } from '@/test/render';
 
@@ -29,21 +29,21 @@ describe('AppointmentActionsMenu', () => {
 
   it('renders no menu button for COMPLETED appointment', () => {
     const { queryByRole } = render(
-      <AppointmentActionsMenu appointment={makeAppointment('COMPLETED')} />
+      <AppointmentActionsMenu appointment={makeAppointment('COMPLETED')} />,
     );
     expect(queryByRole('button')).not.toBeInTheDocument();
   });
 
   it('renders no menu button for CANCELLED appointment', () => {
     const { queryByRole } = render(
-      <AppointmentActionsMenu appointment={makeAppointment('CANCELLED')} />
+      <AppointmentActionsMenu appointment={makeAppointment('CANCELLED')} />,
     );
     expect(queryByRole('button')).not.toBeInTheDocument();
   });
 
   it('shows Confirm and Cancel actions for PENDING appointment', async () => {
     const { getByRole, queryByText } = render(
-      <AppointmentActionsMenu appointment={makeAppointment('PENDING')} />
+      <AppointmentActionsMenu appointment={makeAppointment('PENDING')} />,
     );
     const user = userEvent.setup();
 
@@ -56,7 +56,7 @@ describe('AppointmentActionsMenu', () => {
 
   it('shows Complete and Cancel actions for CONFIRMED appointment', async () => {
     const { getByRole, queryByText } = render(
-      <AppointmentActionsMenu appointment={makeAppointment('CONFIRMED')} />
+      <AppointmentActionsMenu appointment={makeAppointment('CONFIRMED')} />,
     );
     const user = userEvent.setup();
 
@@ -69,11 +69,12 @@ describe('AppointmentActionsMenu', () => {
 
   it('opens status dialog when clicking an action', async () => {
     const { getByRole, queryByText } = render(
-      <AppointmentActionsMenu appointment={makeAppointment('PENDING')} />
+      <AppointmentActionsMenu appointment={makeAppointment('PENDING')} />,
     );
     const user = userEvent.setup();
 
     await user.click(getByRole('button', { name: /open appointment menu/i }));
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     await user.click(queryByText('Confirm')!);
 
     expect(getByRole('alertdialog')).toBeInTheDocument();

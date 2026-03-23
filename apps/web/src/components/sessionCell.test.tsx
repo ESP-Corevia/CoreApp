@@ -1,5 +1,5 @@
-import { describe, it, expect, vi } from 'vitest';
 import { userEvent } from '@testing-library/user-event';
+import { describe, expect, it, vi } from 'vitest';
 import { render } from '@/test/render';
 
 import { SessionCell } from './sessionCell';
@@ -36,7 +36,7 @@ describe('SessionCell', () => {
   it('shows revoke button when not current session and onRevoke provided', () => {
     const onRevoke = vi.fn();
     const { getByRole } = render(
-      <SessionCell session={mockSession} isCurrentSession={false} onRevoke={onRevoke} />
+      <SessionCell session={mockSession} isCurrentSession={false} onRevoke={onRevoke} />,
     );
 
     const revokeButton = getByRole('button', { name: 'Revoke session' });
@@ -46,7 +46,7 @@ describe('SessionCell', () => {
   it('does not show revoke button for current session', () => {
     const onRevoke = vi.fn();
     const { queryByRole } = render(
-      <SessionCell session={mockSession} isCurrentSession={true} onRevoke={onRevoke} />
+      <SessionCell session={mockSession} isCurrentSession={true} onRevoke={onRevoke} />,
     );
 
     expect(queryByRole('button', { name: 'Revoke session' })).not.toBeInTheDocument();
@@ -55,7 +55,7 @@ describe('SessionCell', () => {
   it('calls onRevoke with token when revoke button is clicked', async () => {
     const onRevoke = vi.fn();
     const { getByRole } = render(
-      <SessionCell session={mockSession} isCurrentSession={false} onRevoke={onRevoke} />
+      <SessionCell session={mockSession} isCurrentSession={false} onRevoke={onRevoke} />,
     );
 
     const revokeButton = getByRole('button', { name: 'Revoke session' });
@@ -72,7 +72,7 @@ describe('SessionCell', () => {
         isCurrentSession={false}
         onRevoke={onRevoke}
         isRevoking={true}
-      />
+      />,
     );
 
     const revokeButton = getByRole('button', { name: 'Revoke session' });
@@ -181,8 +181,8 @@ describe('SessionCell', () => {
           day: 'numeric',
           hour: '2-digit',
           minute: '2-digit',
-        })}`
-      )
+        })}`,
+      ),
     ).toBeInTheDocument();
   });
 

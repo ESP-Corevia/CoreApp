@@ -22,7 +22,7 @@ export function useDeleteUser() {
       toast.error(
         t('userDeletedQuery.error', 'Failed to delete user: {{message}}', {
           message: error instanceof Error ? error.message : 'Unknown error',
-        })
+        }),
       );
     },
   });

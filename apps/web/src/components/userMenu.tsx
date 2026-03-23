@@ -1,12 +1,11 @@
-import { Trans } from 'react-i18next';
-import { useNavigate, Link } from 'react-router';
+import { useQuery } from '@tanstack/react-query';
 import { LogOut } from 'lucide-react';
-
+import { Trans } from 'react-i18next';
+import { Link, useNavigate } from 'react-router';
 import { authClient } from '@/lib/auth-client';
 import { useTrpc } from '@/providers/trpc';
 import { Button } from './ui/button';
 import { Skeleton } from './ui/skeleton';
-import { useQuery } from '@tanstack/react-query';
 
 export default function UserMenu() {
   const navigate = useNavigate();

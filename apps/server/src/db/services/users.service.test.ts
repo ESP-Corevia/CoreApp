@@ -1,11 +1,11 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: pass */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { mockRepositories } from '../../../test/repositories';
-
-import { createUsersService } from './users.service';
-
 import type { QueryParams } from '../../utils/db';
 import type { users } from '../schema';
+import { createUsersService } from './users.service';
+
 const userService = createUsersService(mockRepositories.usersRepo);
 
 beforeEach(() => vi.clearAllMocks());

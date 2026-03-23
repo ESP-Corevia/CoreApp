@@ -1,9 +1,7 @@
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
-
-import { BASE_SLOTS } from './availability.service';
-
 import type { createAppointmentsRepo } from '../repositories/appointments.repository';
+import { BASE_SLOTS } from './availability.service';
 
 function getParisNow(): { date: string; time: string } {
   const now = new Date();

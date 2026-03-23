@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: pass */
 import pkg from '../../package.json';
 /* c8 ignore file */
 export function mergeOpenApiDocs(a: any, b: any) {
@@ -13,7 +14,7 @@ export function mergeOpenApiDocs(a: any, b: any) {
       description: 'Schéma OpenAPI fusionné (tRPC + Better Auth).',
     },
     servers,
-    tags: [...new Map([...(a.tags ?? []), ...(b.tags ?? [])].map((t) => [t.name, t])).values()],
+    tags: [...new Map([...(a.tags ?? []), ...(b.tags ?? [])].map(t => [t.name, t])).values()],
     paths: { ...(a.paths ?? {}), ...(b.paths ?? {}) },
     components: {
       schemas: {
@@ -56,12 +57,12 @@ export function mergeOpenApiDocs(a: any, b: any) {
 
   const seen = new Set<string>();
   // eslint-disable-next-line ts/no-unused-vars
-  for (const [p, methods] of Object.entries<any>(merged.paths)) {
+  for (const [_p, methods] of Object.entries<any>(merged.paths)) {
     // eslint-disable-next-line ts/no-unused-vars
-    for (const [m, op] of Object.entries<any>(methods)) {
+    for (const [_m, op] of Object.entries<any>(methods)) {
       if (!op || typeof op !== 'object') continue;
       if (op.operationId) {
-        let id = op.operationId as string;
+        const id = op.operationId as string;
         if (seen.has(id)) {
           op.operationId = `auth:${id}`;
         }

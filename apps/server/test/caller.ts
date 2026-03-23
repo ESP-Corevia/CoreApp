@@ -3,10 +3,12 @@ import { mockDeep } from 'vitest-mock-extended';
 import { appRouter } from '../src/routers';
 
 import { mockServices } from './services';
+
 // import { mockLogger } from './setup';
 
-import type { auth as betterAuth } from '../src/lib/auth';
 import type { FastifyReply, FastifyRequest } from 'fastify';
+import type { auth as betterAuth } from '../src/lib/auth';
+
 // const fastify = mockDeep<FastifyInstance>();
 const session = mockDeep<Awaited<ReturnType<typeof betterAuth.api.getSession>>>();
 export const authMock = mockDeep<typeof betterAuth>();

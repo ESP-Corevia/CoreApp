@@ -1,4 +1,4 @@
-import { mockDeep, type DeepMockProxy } from 'vitest-mock-extended';
+import { type DeepMockProxy, mockDeep } from 'vitest-mock-extended';
 
 import type { createAppointmentsService } from '../src/db/services/appointments.service';
 import type { createAvailabilityService } from '../src/db/services/availability.service';

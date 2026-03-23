@@ -1,6 +1,5 @@
-import { useState, useCallback, useEffect } from 'react';
-
 import { parseAsInteger, parseAsString, useQueryStates } from 'nuqs';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
@@ -39,7 +38,7 @@ export default function DoctorsDashboard({
       toast.error(
         t('doctors.loadError', 'Failed to load doctors: {{message}}', {
           message: error instanceof Error ? error.message : 'Unknown error',
-        })
+        }),
       );
     }
   }, [error, t]);
@@ -49,7 +48,7 @@ export default function DoctorsDashboard({
       setSearch(value);
       await setQueryParams({ page: 1, search: value });
     },
-    [setQueryParams]
+    [setQueryParams],
   );
 
   if (!session?.isAuthenticated) {

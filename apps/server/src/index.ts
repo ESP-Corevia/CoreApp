@@ -1,18 +1,20 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: pass */
 import fastifyCors from '@fastify/cors';
 import ScalarApiReference from '@scalar/fastify-api-reference';
-import { fastifyTRPCPlugin, type FastifyTRPCPluginOptions } from '@trpc/server/adapters/fastify';
+import { type FastifyTRPCPluginOptions, fastifyTRPCPlugin } from '@trpc/server/adapters/fastify';
 import Fastify from 'fastify';
 import { fastifyTRPCOpenApiPlugin, generateOpenApiDocument } from 'trpc-to-openapi';
 
-import pkg from '../package.json' assert { type: 'json' };
+import pkg from '../package.json';
 
 import { services } from './db/services';
 import { env } from './env';
 import { auth } from './lib/auth';
 import printBanner from './lib/banner';
 import { createContext } from './lib/context';
-import { appRouter, type AppRouter } from './routers/index';
+import { type AppRouter, appRouter } from './routers/index';
 import { mergeOpenApiDocs } from './utils/functions';
+
 const baseCorsConfig = {
   origin: [
     env.CORS_ORIGIN,
@@ -59,7 +61,9 @@ fastify.route({
       });
       const response = await auth.handler(req);
       reply.status(response.status);
-      response.headers.forEach((value, key) => reply.header(key, value));
+      response.headers.forEach((value, key) => {
+        reply.header(key, value);
+      });
       reply.send(response.body ? await response.text() : null);
     } catch (error) {
       fastify.log.error({ err: error }, 'Authentication Error:');
@@ -75,7 +79,7 @@ fastify.register(fastifyTRPCPlugin, {
   prefix: '/trpc',
   trpcOptions: {
     router: appRouter,
-    createContext: (opts) => createContext({ ...opts, auth, services }),
+    createContext: opts => createContext({ ...opts, auth, services }),
     onError({ path, error }) {
       fastify.log.error({ path, err: error }, `Error in tRPC handler on path '${path}'`);
     },
@@ -94,7 +98,7 @@ fastify.get('/openapi.json', async (_req, reply) => {
   const trpcDoc = generateOpenApiDocument(appRouter, {
     title: 'Corevia tRPC API',
     version: pkg.version,
-    baseUrl: env.BASE_URL + '/api',
+    baseUrl: `${env.BASE_URL}/api`,
   });
   const authDoc = await auth.api.generateOpenAPISchema();
   const merged = mergeOpenApiDocs(trpcDoc, authDoc);
@@ -112,7 +116,7 @@ fastify.register(ScalarApiReference, {
     darkMode: true,
   },
 });
-fastify.listen({ port: 3000, host: '0.0.0.0' }, (err) => {
+fastify.listen({ port: 3000, host: '0.0.0.0' }, err => {
   if (err) {
     fastify.log.error(err);
     process.exit(1);

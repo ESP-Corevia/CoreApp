@@ -48,7 +48,7 @@ export default function SignUpForm({ onSwitchToSignIn }: { onSwitchToSignIn: () 
           onError: error => {
             toast.error(error.error.message || error.error.statusText);
           },
-        }
+        },
       );
     },
     validators: {
@@ -70,7 +70,7 @@ export default function SignUpForm({ onSwitchToSignIn }: { onSwitchToSignIn: () 
   return (
     <div className="flex min-h-screen w-full items-center justify-center">
       <div className="mx-auto w-full max-w-md p-6">
-        <h1 className="mb-6 text-center text-3xl font-bold">
+        <h1 className="mb-6 text-center font-bold text-3xl">
           <Trans i18nKey="signUp.title">Create Account</Trans>
         </h1>
 

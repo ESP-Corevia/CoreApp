@@ -1,5 +1,5 @@
 import { relations } from 'drizzle-orm';
-import { pgTable, pgEnum, index } from 'drizzle-orm/pg-core';
+import { index, pgEnum, pgTable } from 'drizzle-orm/pg-core';
 
 import { users } from './auth';
 
@@ -18,7 +18,7 @@ export const bloodTypeEnum = pgEnum('blood_type', [
 
 export const patients = pgTable(
   'patients',
-  (t) => ({
+  t => ({
     id: t.uuid('id').defaultRandom().primaryKey(),
     userId: t
       .uuid('user_id')
@@ -34,7 +34,7 @@ export const patients = pgTable(
     emergencyContactName: t.text('emergency_contact_name'),
     emergencyContactPhone: t.text('emergency_contact_phone'),
   }),
-  (table) => [
+  table => [
     index('patients_user_id_idx').on(table.userId),
     index('patients_dob_idx').on(table.dateOfBirth),
   ],

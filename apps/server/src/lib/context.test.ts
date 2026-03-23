@@ -1,8 +1,10 @@
-import { describe, it, expect } from 'vitest';
+/** biome-ignore-all lint/suspicious/noExplicitAny: pass */
+import { describe, expect, it } from 'vitest';
 
 import { authMock, fakeSession } from '../../test/caller';
 
 import { createContext } from './context';
+
 describe('createContext', () => {
   it('return a context with the session and relays req/res/auth', async () => {
     authMock.api.getSession.mockResolvedValue(fakeSession);

@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 const quickLinks = [
   { label: 'Home', href: '/' },
   { label: 'Download', href: 'https://play.google.com/' },
-  { label: 'Login', href: import.meta.env.VITE_BACKOFFICE_DOMAIN + "/login", target: '_blank' },
+  { label: 'Login', href: `${import.meta.env.VITE_BACKOFFICE_DOMAIN}/login`, target: '_blank' },
   { label: 'Contact', href: '/' },
 ];
 
@@ -15,21 +15,27 @@ export default function Footer() {
     <footer className="border-border/60 bg-white px-6 py-10 text-slate-700">
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 md:flex-row md:items-start md:justify-between">
         <div className="max-w-sm space-y-3">
-          <p
-            className="text-4xl font-black uppercase tracking-wide"
-            style={{ color: brandColor }}
-          >
+          <p className="font-black text-4xl uppercase tracking-wide" style={{ color: brandColor }}>
             Corevia
           </p>
-          <p className="text-sm leading-relaxed text-slate-500">
-            A minimalist health companion to follow your vitals, coordinate with clinicians, and stay
-            centered on what matters.
+          <p className="text-slate-500 text-sm leading-relaxed">
+            A minimalist health companion to follow your vitals, coordinate with clinicians, and
+            stay centered on what matters.
           </p>
         </div>
 
-        <nav className="flex flex-col justify-center gap-6 text-sm font-semibold" aria-label="Quick navigation">
+        <nav
+          className="flex flex-col justify-center gap-6 font-semibold text-sm"
+          aria-label="Quick navigation"
+        >
           {quickLinks.map(({ label, href, target }) => (
-            <Link key={label} target={target} to={href} className="hover:opacity-80" style={{ color: brandColor }}>
+            <Link
+              key={label}
+              target={target}
+              to={href}
+              className="hover:opacity-80"
+              style={{ color: brandColor }}
+            >
               {label}
             </Link>
           ))}
@@ -48,7 +54,7 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="mx-auto mt-10 flex w-full max-w-5xl flex-col gap-2 text-xs text-slate-400 md:flex-row md:items-center md:justify-between">
+      <div className="mx-auto mt-10 flex w-full max-w-5xl flex-col gap-2 text-slate-400 text-xs md:flex-row md:items-center md:justify-between">
         <span>© {year} Corevia. All rights reserved.</span>
       </div>
     </footer>

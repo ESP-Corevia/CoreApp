@@ -1,8 +1,7 @@
-import { fromNodeHeaders } from 'better-auth/node';
-
-import type { auth } from './auth';
-import type { Services } from '../db/services';
 import type { CreateFastifyContextOptions } from '@trpc/server/adapters/fastify';
+import { fromNodeHeaders } from 'better-auth/node';
+import type { Services } from '../db/services';
+import type { auth } from './auth';
 export interface CreateContextOptions {
   services: Services;
   // fastify: FastifyInstance;

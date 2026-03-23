@@ -1,6 +1,5 @@
+import { CheckCircle, CircleCheck, MoreHorizontal, XCircle } from 'lucide-react';
 import { useState } from 'react';
-
-import { CheckCircle, MoreHorizontal, XCircle, CircleCheck } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/button';
@@ -10,10 +9,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-
-import { AppointmentStatusDialog } from './modals/appointment-status-dialog';
-
 import type { Appointment } from './appointments-table';
+import { AppointmentStatusDialog } from './modals/appointment-status-dialog';
 
 interface AppointmentActionsMenuProps {
   appointment: Appointment;
@@ -23,7 +20,7 @@ export function AppointmentActionsMenu({ appointment }: AppointmentActionsMenuPr
   const { t } = useTranslation();
   const [statusDialogOpen, setStatusDialogOpen] = useState(false);
   const [targetStatus, setTargetStatus] = useState<'CONFIRMED' | 'COMPLETED' | 'CANCELLED'>(
-    'CONFIRMED'
+    'CONFIRMED',
   );
 
   const canConfirm = appointment.status === 'PENDING';

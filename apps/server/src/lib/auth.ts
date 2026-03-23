@@ -1,6 +1,7 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: pass */
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
-import { openAPI, customSession, admin, lastLoginMethod, bearer } from 'better-auth/plugins';
+import { admin, bearer, customSession, lastLoginMethod, openAPI } from 'better-auth/plugins';
 
 import { db } from '../db';
 import * as schemas from '../db/schema/auth';

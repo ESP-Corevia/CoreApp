@@ -1,11 +1,9 @@
-import { eq } from 'drizzle-orm';
-
-import { db as DB } from '../index';
-import { patients, users } from '../schema';
-
-import type * as schema from '../schema';
 import type { InferInsertModel, InferSelectModel } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
+import { db as DB } from '../index';
+import type * as schema from '../schema';
+import { patients, users } from '../schema';
 
 type DrizzleDB = PostgresJsDatabase<typeof schema>;
 
@@ -33,7 +31,7 @@ export const createPatientsRepo = (db: DrizzleDB = DB) => ({
   },
 
   upsert: async (userId: string, data: PatientUpdate): Promise<Patient> => {
-    return await db.transaction(async (tx) => {
+    return await db.transaction(async tx => {
       const [row] = await tx
         .insert(patients)
         .values({ ...data, userId })
@@ -45,7 +43,7 @@ export const createPatientsRepo = (db: DrizzleDB = DB) => ({
 
       await tx.update(users).set({ updatedAt: new Date() }).where(eq(users.id, userId));
 
-      return row!;
+      return row;
     });
   },
 });

@@ -1,7 +1,7 @@
 import { renderHook, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { useRequireAuth, useGuestOnly } from './use-require-auth';
+import { useGuestOnly, useRequireAuth } from './use-require-auth';
 
 const mockNavigate = vi.fn();
 const mockLocation = { pathname: '/dashboard', search: '' };

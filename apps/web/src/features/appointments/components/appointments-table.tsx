@@ -1,10 +1,8 @@
 'use client';
 
-import { useMemo } from 'react';
-
 import type { ColumnDef } from '@tanstack/react-table';
-
-import { CalendarClock, Clock, Text, User, Stethoscope, CircleDot } from 'lucide-react';
+import { CalendarClock, CircleDot, Clock, Stethoscope, Text, User } from 'lucide-react';
+import { useMemo } from 'react';
 
 import { DataTable } from '@/components/data-table/data-table';
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
@@ -126,7 +124,7 @@ export default function AppointmentsTable({
         cell: ({ cell }) => {
           const date = cell.getValue<Appointment['date']>();
           return (
-            <div className="text-muted-foreground inline-flex items-center gap-1 text-sm">
+            <div className="inline-flex items-center gap-1 text-muted-foreground text-sm">
               <CalendarClock className="h-4 w-4" />
               {formatDate(date)}
             </div>
@@ -147,7 +145,7 @@ export default function AppointmentsTable({
         cell: ({ cell }) => {
           const time = cell.getValue<Appointment['time']>();
           return (
-            <div className="text-muted-foreground inline-flex items-center gap-1 text-sm">
+            <div className="inline-flex items-center gap-1 text-muted-foreground text-sm">
               <Clock className="h-4 w-4" />
               {time}
             </div>
@@ -195,7 +193,7 @@ export default function AppointmentsTable({
         cell: ({ cell }) => {
           const reason = cell.getValue<Appointment['reason']>();
           return (
-            <span className="text-muted-foreground max-w-[200px] truncate text-sm">
+            <span className="max-w-[200px] truncate text-muted-foreground text-sm">
               {reason ?? '—'}
             </span>
           );
@@ -214,7 +212,7 @@ export default function AppointmentsTable({
         cell: ({ cell }) => {
           const created = cell.getValue<Appointment['createdAt']>();
           return (
-            <div className="text-muted-foreground inline-flex items-center gap-1 text-sm">
+            <div className="inline-flex items-center gap-1 text-muted-foreground text-sm">
               <CalendarClock className="h-4 w-4" />
               {formatDateTime(created)}
             </div>
@@ -230,7 +228,7 @@ export default function AppointmentsTable({
         enableHiding: false,
       },
     ],
-    []
+    [],
   );
 
   const { table } = useDataTable<Appointment>({
@@ -256,7 +254,7 @@ export default function AppointmentsTable({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">{title}</h1>
+        <h1 className="font-bold text-2xl">{title}</h1>
       </div>
       <DataTable table={table}>
         <DataTableToolbar table={table} isLoading={isLoading} />

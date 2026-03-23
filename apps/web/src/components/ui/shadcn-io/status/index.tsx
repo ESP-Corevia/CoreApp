@@ -24,7 +24,7 @@ export const StatusIndicator = ({ className, ...props }: StatusIndicatorProps) =
         'group-[.online]:bg-emerald-500',
         'group-[.offline]:bg-red-500',
         'group-[.maintenance]:bg-blue-500',
-        'group-[.degraded]:bg-amber-500'
+        'group-[.degraded]:bg-amber-500',
       )}
     />
     <span
@@ -33,7 +33,7 @@ export const StatusIndicator = ({ className, ...props }: StatusIndicatorProps) =
         'group-[.online]:bg-emerald-500',
         'group-[.offline]:bg-red-500',
         'group-[.maintenance]:bg-blue-500',
-        'group-[.degraded]:bg-amber-500'
+        'group-[.degraded]:bg-amber-500',
       )}
     />
   </span>
