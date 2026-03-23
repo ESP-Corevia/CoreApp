@@ -44,12 +44,12 @@
     },
     "common": {
       "cancel": "Cancel",
-      "next": "Suivant",
-      "pageOf": "Page {{page}} sur {{total}}",
-      "previous": "Précédent",
+      "next": "Next",
+      "pageOf": "Page {{page}} of {{total}}",
+      "previous": "Previous",
       "processing": "Processing...",
-      "retry": "Réessayer",
-      "save": "Enregistrer"
+      "retry": "Retry",
+      "save": "Save"
     },
     "dashboard": {
       "loadUsersError": "Failed to load users: {{message}}",
@@ -125,15 +125,27 @@
       "dosageLabel": "Dosage",
       "edit": "Edit",
       "endDate": "End date",
+      "endDateBeforeStart": "End date must be after start date",
       "inactive": "Inactive",
       "inactiveFilter": "Inactive",
       "instructions": "Instructions",
       "intakeMoment": "Moment",
       "intakeTime": "Time",
+      "moments": {
+        "BEDTIME": "Bedtime",
+        "CUSTOM": "Custom",
+        "EVENING": "Evening",
+        "MORNING": "Morning",
+        "NOON": "Noon"
+      },
       "isActiveHint": "Disable to archive this treatment without deleting it",
       "isActiveLabel": "Active treatment",
       "medicationCreated": "Medication added to pillbox successfully",
       "medicationCreateError": "Error adding medication: {{message}}",
+      "medicationDeleted": "Treatment deleted",
+      "medicationDeleteError": "Error deleting treatment: {{message}}",
+      "medicationUpdated": "Treatment updated",
+      "medicationUpdateError": "Error updating treatment: {{message}}",
       "newSchedule": "New reminder",
       "noSchedules": "No reminders configured",
       "notFound": "Treatment not found",
@@ -156,14 +168,8 @@
       "scheduleUpdateError": "Error updating reminder: {{message}}",
       "searchPlaceholder": "Search a patient or medication...",
       "startDate": "Start date",
-      "unit": "Unit",
-      "moments": {
-        "MORNING": "Morning",
-        "NOON": "Noon",
-        "EVENING": "Evening",
-        "BEDTIME": "Bedtime",
-        "CUSTOM": "Custom"
-      }
+      "startDateRequired": "Start date is required",
+      "unit": "Unit"
     },
     "profile": {
       "accountStatus": "Account Status",

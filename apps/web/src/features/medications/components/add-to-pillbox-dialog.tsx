@@ -24,6 +24,7 @@ import {
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
+import { getIntakeMomentLabel, INTAKE_MOMENT_KEYS } from '@/features/pillbox/lib/moment-label';
 import { useAdminCreateMedication } from '@/queries';
 
 import type { MedicationData } from './medication-card';
@@ -34,8 +35,6 @@ interface AddToPillboxDialogProps {
   onOpenChange: (open: boolean) => void;
   medication: MedicationData;
 }
-
-const INTAKE_MOMENT_KEYS = ['MORNING', 'NOON', 'EVENING', 'BEDTIME', 'CUSTOM'] as const;
 
 const DEFAULT_TIMES: Record<string, string> = {
   MORNING: '08:00',
@@ -345,7 +344,7 @@ export default function AddToPillboxDialog({
                           <SelectContent>
                             {INTAKE_MOMENT_KEYS.map(key => (
                               <SelectItem key={key} value={key}>
-                                {t(`pillbox.moments.${key}`, key)}
+                                {getIntakeMomentLabel(t, key)}
                               </SelectItem>
                             ))}
                           </SelectContent>

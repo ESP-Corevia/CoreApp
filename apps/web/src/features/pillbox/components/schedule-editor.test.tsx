@@ -61,8 +61,8 @@ describe('ScheduleEditor', () => {
     expect(screen.getByText('2')).toBeInTheDocument();
     expect(screen.getByText('08:00')).toBeInTheDocument();
     expect(screen.getByText('20:00')).toBeInTheDocument();
-    expect(screen.getByText('MORNING')).toBeInTheDocument();
-    expect(screen.getByText('EVENING')).toBeInTheDocument();
+    expect(screen.getByText('Morning')).toBeInTheDocument();
+    expect(screen.getByText('Evening')).toBeInTheDocument();
     expect(screen.getByText(/1 comprimé/)).toBeInTheDocument();
     expect(screen.getByText(/2 ml/)).toBeInTheDocument();
   });

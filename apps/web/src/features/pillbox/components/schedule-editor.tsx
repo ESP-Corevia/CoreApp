@@ -26,6 +26,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
+import { getIntakeMomentLabel, INTAKE_MOMENT_KEYS } from '@/features/pillbox/lib/moment-label';
 import { cn } from '@/lib/utils';
 import { useAddSchedule, useUpdateSchedule, useDeleteSchedule } from '@/queries';
 
@@ -43,8 +44,6 @@ interface ScheduleEditorProps {
   medicationId: string;
   schedules: Schedule[];
 }
-
-const INTAKE_MOMENT_KEYS = ['MORNING', 'NOON', 'EVENING', 'BEDTIME', 'CUSTOM'] as const;
 
 const MOMENT_COLORS: Record<string, string> = {
   MORNING: 'bg-amber-100 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300',
@@ -175,7 +174,7 @@ export default function ScheduleEditor({ medicationId, schedules }: ScheduleEdit
           <SelectContent>
             {INTAKE_MOMENT_KEYS.map(key => (
               <SelectItem key={key} value={key}>
-                {t(`pillbox.moments.${key}`, key)}
+                {getIntakeMomentLabel(t, key)}
               </SelectItem>
             ))}
           </SelectContent>
@@ -329,9 +328,7 @@ export default function ScheduleEditor({ medicationId, schedules }: ScheduleEdit
                       MOMENT_COLORS[schedule.intakeMoment] ?? MOMENT_COLORS.CUSTOM
                     )}
                   >
-                    {t(`pillbox.moments.${schedule.intakeMoment}`, {
-                      defaultValue: schedule.intakeMoment,
-                    })}
+                    {getIntakeMomentLabel(t, schedule.intakeMoment)}
                   </span>
 
                   {/* Time */}

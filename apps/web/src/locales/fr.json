@@ -44,12 +44,12 @@
     },
     "common": {
       "cancel": "Annuler",
-      "next": "",
-      "pageOf": "",
-      "previous": "",
+      "next": "Suivant",
+      "pageOf": "Page {{page}} sur {{total}}",
+      "previous": "Précédent",
       "processing": "Traitement...",
-      "retry": "",
-      "save": ""
+      "retry": "Réessayer",
+      "save": "Enregistrer"
     },
     "dashboard": {
       "loadUsersError": "Échec du chargement des utilisateurs : {{message}}",
@@ -125,15 +125,27 @@
       "dosageLabel": "Posologie",
       "edit": "Modifier",
       "endDate": "Date de fin",
+      "endDateBeforeStart": "La date de fin doit être après la date de début",
       "inactive": "Inactif",
       "inactiveFilter": "Inactifs",
       "instructions": "Instructions",
       "intakeMoment": "Moment",
       "intakeTime": "Heure",
+      "moments": {
+        "BEDTIME": "Au coucher",
+        "CUSTOM": "Personnalisé",
+        "EVENING": "Soir",
+        "MORNING": "Matin",
+        "NOON": "Midi"
+      },
       "isActiveHint": "Désactivez pour archiver ce traitement sans le supprimer",
       "isActiveLabel": "Traitement actif",
       "medicationCreated": "Médicament ajouté au pilulier avec succès",
       "medicationCreateError": "Erreur lors de l'ajout : {{message}}",
+      "medicationDeleted": "Traitement supprimé",
+      "medicationDeleteError": "Erreur lors de la suppression du traitement : {{message}}",
+      "medicationUpdated": "Traitement mis à jour",
+      "medicationUpdateError": "Erreur lors de la mise à jour du traitement : {{message}}",
       "newSchedule": "Nouveau rappel",
       "noSchedules": "Aucun rappel configuré",
       "notFound": "Traitement introuvable",
@@ -145,7 +157,7 @@
       "patientIdRequired": "L'identifiant du patient est requis",
       "quantity": "Quantité",
       "resultsCount_one": "{{count}} traitement trouvé",
-      "resultsCount_many": "{{count}} traitements trouvés",
+      "resultsCount_many": "",
       "resultsCount_other": "{{count}} traitements trouvés",
       "scheduleAdded": "Rappel ajouté avec succès",
       "scheduleAddError": "Erreur lors de l'ajout du rappel : {{message}}",
@@ -157,14 +169,8 @@
       "scheduleUpdateError": "Erreur lors de la mise à jour du rappel : {{message}}",
       "searchPlaceholder": "Rechercher un patient ou médicament...",
       "startDate": "Date de début",
-      "unit": "Unité",
-      "moments": {
-        "MORNING": "Matin",
-        "NOON": "Midi",
-        "EVENING": "Soir",
-        "BEDTIME": "Coucher",
-        "CUSTOM": "Personnalisé"
-      }
+      "startDateRequired": "La date de début est requise",
+      "unit": "Unité"
     },
     "profile": {
       "accountStatus": "Statut du compte",
@@ -288,7 +294,7 @@
       "title": "Créer un compte"
     },
     "The requested page could not be found": {
-      "": ""
+      "": "La page demandée est introuvable."
     },
     "useImpersonateUser": {
       "failedToImpersonate": "Échec de l'usurpation de l'utilisateur : {{message}}",
