@@ -40,6 +40,7 @@
     "@dnd-kit/core",
     "@dnd-kit/modifiers",
     "@dnd-kit/sortable",
+    "@dnd-kit/utilities",
     "@radix-ui/react-dropdown-menu",
     "motion",
     "@react-router/serve",

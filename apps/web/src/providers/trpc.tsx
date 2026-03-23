@@ -11,7 +11,7 @@ import type { AppRouter } from '@server/routers';
 
 type TrpcProxy = ReturnType<typeof createTRPCOptionsProxy<AppRouter>>;
 
-export const trpcClient = createTRPCClient<AppRouter>({
+export const trpcClient: TRPCClient<AppRouter> = createTRPCClient<AppRouter>({
   links: [
     httpBatchLink({
       url: `${import.meta.env.VITE_SERVER_URL}/trpc`,
@@ -22,14 +22,14 @@ export const trpcClient = createTRPCClient<AppRouter>({
   ],
 });
 
-export const trpc = createTRPCOptionsProxy<AppRouter>({
+export const trpc: TrpcProxy = createTRPCOptionsProxy<AppRouter>({
   client: trpcClient,
   queryClient,
 });
 
 const TrpcTestContext = createContext<TrpcProxy | null>(null);
 
-export const useTrpc = () => {
+export const useTrpc = (): TrpcProxy => {
   const testTrpc = useContext(TrpcTestContext);
   return testTrpc ?? trpc;
 };
