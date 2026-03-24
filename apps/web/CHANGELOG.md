@@ -1,5 +1,65 @@
 # Changelog
 
+## 1.0.0 (2026-03-24)
+
+
+### ✨ Features
+
+* add appointment ([#100](https://github.com/ESP-Corevia/CoreApp/issues/100)) ([1ca8a15](https://github.com/ESP-Corevia/CoreApp/commit/1ca8a1599f3dd4c46087a42415a6e2689f7072c8))
+* add dashboard admin ([#27](https://github.com/ESP-Corevia/CoreApp/issues/27)) ([6065df3](https://github.com/ESP-Corevia/CoreApp/commit/6065df3bd52912ba8717a3c82a21d80799443dc3))
+* add GitHub workflows for labeling released PRs and updating release configuration ([1b866f9](https://github.com/ESP-Corevia/CoreApp/commit/1b866f9ffb2c0c21ee72c6d882579af4daaa0803))
+* add new app home for the landing page ([#35](https://github.com/ESP-Corevia/CoreApp/issues/35)) ([ac882bc](https://github.com/ESP-Corevia/CoreApp/commit/ac882bcf2ef1e3b1bde76d4dcadccc69235510b3))
+* **admin:** add sessions management ([#34](https://github.com/ESP-Corevia/CoreApp/issues/34)) ([5e71a48](https://github.com/ESP-Corevia/CoreApp/commit/5e71a48f98eb147352821b7f45f6e19b9155959a))
+* **apps:** update trpc and react version and add catalog to yarn v4.12 ([#42](https://github.com/ESP-Corevia/CoreApp/issues/42)) ([91c1dde](https://github.com/ESP-Corevia/CoreApp/commit/91c1dde52282da5455d3243495670335330523e8))
+* Docker and Kubernetes configuration ([#6](https://github.com/ESP-Corevia/CoreApp/issues/6)) ([7d3376b](https://github.com/ESP-Corevia/CoreApp/commit/7d3376bf69b756a4856836399d56b55f0a161200))
+* init front ([#4](https://github.com/ESP-Corevia/CoreApp/issues/4)) ([f0340a3](https://github.com/ESP-Corevia/CoreApp/commit/f0340a315ecee79f135355027f2af46a658897f7))
+* **server:** add banner ([#9](https://github.com/ESP-Corevia/CoreApp/issues/9)) ([908d19a](https://github.com/ESP-Corevia/CoreApp/commit/908d19a482a0a8601db3bc97b25f81241c5a0d3b))
+* **server:** add vitest init ([#13](https://github.com/ESP-Corevia/CoreApp/issues/13)) ([ea1c621](https://github.com/ESP-Corevia/CoreApp/commit/ea1c621b52282df5bccf71bcc842f8bd0664f008))
+* **server:** init repo and services for CRUD users ([#17](https://github.com/ESP-Corevia/CoreApp/issues/17)) ([d7e5db5](https://github.com/ESP-Corevia/CoreApp/commit/d7e5db538d5afc5dba2fc7d64511f48229aa7795))
+* update user roles to include 'patient' and adjust related components ([#98](https://github.com/ESP-Corevia/CoreApp/issues/98)) ([4efb121](https://github.com/ESP-Corevia/CoreApp/commit/4efb12153523e2ce4cd5be70724c3757cf79321c))
+* upgrade Node.js to 24.13.1 and add home deployment workflow ([#79](https://github.com/ESP-Corevia/CoreApp/issues/79)) ([a1a12ab](https://github.com/ESP-Corevia/CoreApp/commit/a1a12abfc31740f4974bae4ab30283ac2880de69))
+* **web:** add tools dev & ci ([#19](https://github.com/ESP-Corevia/CoreApp/issues/19)) ([3d4138b](https://github.com/ESP-Corevia/CoreApp/commit/3d4138b09c7476746edde19997a0764a18ed75b2))
+* **web:** add user profile with settings page ([#25](https://github.com/ESP-Corevia/CoreApp/issues/25)) ([2ef6242](https://github.com/ESP-Corevia/CoreApp/commit/2ef6242c3b8ad3528ead470d56cc1ca70ca04278))
+
+
+### 🐛 Fixes
+
+* broken build ([#40](https://github.com/ESP-Corevia/CoreApp/issues/40)) ([8e8ba02](https://github.com/ESP-Corevia/CoreApp/commit/8e8ba02b1f3c782d13ff6ba12a1f0321c387e333))
+* enhance trusted origins in authentication to include localhost ([7d3376b](https://github.com/ESP-Corevia/CoreApp/commit/7d3376bf69b756a4856836399d56b55f0a161200))
+* **server:** fix the import of pg ([#51](https://github.com/ESP-Corevia/CoreApp/issues/51)) ([e89f0d0](https://github.com/ESP-Corevia/CoreApp/commit/e89f0d03db6ff75ef6ed96dcd9842defff4bdbf5))
+
+
+### 🧹 Refactors
+
+* delete fields lastName and firstName ([#73](https://github.com/ESP-Corevia/CoreApp/issues/73)) ([e55fb26](https://github.com/ESP-Corevia/CoreApp/commit/e55fb26deccf42fb43260c3484bedc3c562fb3dc))
+
+
+### 🔧 Chores
+
+* add .dockerignore files for server and web applications ([7d3376b](https://github.com/ESP-Corevia/CoreApp/commit/7d3376bf69b756a4856836399d56b55f0a161200))
+* create docker-compose.yml for managing multi-container application setup ([7d3376b](https://github.com/ESP-Corevia/CoreApp/commit/7d3376bf69b756a4856836399d56b55f0a161200))
+* **deps:** update css lint (stylelint) ([#77](https://github.com/ESP-Corevia/CoreApp/issues/77)) ([9618891](https://github.com/ESP-Corevia/CoreApp/commit/9618891352c691e2318a2db05b1a5e4b69fb7e4e))
+* **deps:** update dependency better-auth to v1.5.5 ([#96](https://github.com/ESP-Corevia/CoreApp/issues/96)) ([fec36ec](https://github.com/ESP-Corevia/CoreApp/commit/fec36ecc7c37efba1f3b15577163a2fd9471c451))
+* **deps:** update tanstack ([#95](https://github.com/ESP-Corevia/CoreApp/issues/95)) ([8275268](https://github.com/ESP-Corevia/CoreApp/commit/82752689b7d03a452b8297cf94051fc08980e159))
+* migrate from yarn to pnpm ([#102](https://github.com/ESP-Corevia/CoreApp/issues/102)) ([2bcad9a](https://github.com/ESP-Corevia/CoreApp/commit/2bcad9a48d517bba661c618d239c0e745bf15d0d))
+* refactor Dockerfile for web app to improve build process and dependencies ([7d3376b](https://github.com/ESP-Corevia/CoreApp/commit/7d3376bf69b756a4856836399d56b55f0a161200))
+* release master ([#104](https://github.com/ESP-Corevia/CoreApp/issues/104)) ([29f6a40](https://github.com/ESP-Corevia/CoreApp/commit/29f6a4063f300dd94435e575f015af25e572aa1a))
+* release master ([#46](https://github.com/ESP-Corevia/CoreApp/issues/46)) ([98400bf](https://github.com/ESP-Corevia/CoreApp/commit/98400bf26265769e5e1c1f35dba6117d270a6399))
+* release master ([#47](https://github.com/ESP-Corevia/CoreApp/issues/47)) ([780f0ed](https://github.com/ESP-Corevia/CoreApp/commit/780f0edf3db7ea564a8eaa1d89b6ccd34724a2c0))
+* release master ([#49](https://github.com/ESP-Corevia/CoreApp/issues/49)) ([3b2ae3c](https://github.com/ESP-Corevia/CoreApp/commit/3b2ae3c8c40f43157f19da3af5272edadbf3a827))
+* release master ([#52](https://github.com/ESP-Corevia/CoreApp/issues/52)) ([f0eb134](https://github.com/ESP-Corevia/CoreApp/commit/f0eb134a537d9ef2fba4eca93f25ed1feec835b0))
+* release master ([#74](https://github.com/ESP-Corevia/CoreApp/issues/74)) ([45459a1](https://github.com/ESP-Corevia/CoreApp/commit/45459a15b471238fd92663ed87507d82526fb15f))
+* release master ([#93](https://github.com/ESP-Corevia/CoreApp/issues/93)) ([c7c3512](https://github.com/ESP-Corevia/CoreApp/commit/c7c3512ee32f8130b101ec9cf89382742a3093e9))
+* release master ([#99](https://github.com/ESP-Corevia/CoreApp/issues/99)) ([009f964](https://github.com/ESP-Corevia/CoreApp/commit/009f9640979af0c24a9553ac6808f14e639fc2d1))
+* switch to biomejs ([#103](https://github.com/ESP-Corevia/CoreApp/issues/103)) ([54a8089](https://github.com/ESP-Corevia/CoreApp/commit/54a8089c3a6650d108b5bb78b9256c988952f86e))
+* update package.json dependencies for web app to latest versions ([7d3376b](https://github.com/ESP-Corevia/CoreApp/commit/7d3376bf69b756a4856836399d56b55f0a161200))
+* update yarn.lock with new dependency versions and remove unused ones ([7d3376b](https://github.com/ESP-Corevia/CoreApp/commit/7d3376bf69b756a4856836399d56b55f0a161200))
+
+
+### 🤖 CI
+
+* add check:all in ci ([6990504](https://github.com/ESP-Corevia/CoreApp/commit/69905046d74592ea7db7453fb18627c5fd307ac8))
+
 ## [1.4.0](https://github.com/ESP-Corevia/CoreApp/compare/web-v1.3.0...web-v1.4.0) (2026-03-23)
 
 
