@@ -4,6 +4,7 @@ import { adminRouter } from './admin/adminRouter';
 import { appointmentsRouter } from './appointments';
 import { doctorsRouter } from './doctors';
 import { helloWorldRouter } from './helloworld';
+import { medicationsRouter, pillboxRouter } from './medications';
 import { userRouter } from './user/userRouter';
 export const appRouter = router({
   healthCheck: publicProcedure.query(() => {
@@ -20,5 +21,7 @@ export const appRouter = router({
   admin: adminRouter,
   doctors: doctorsRouter,
   appointments: appointmentsRouter,
+  medications: medicationsRouter,
+  pillbox: pillboxRouter,
 });
 export type AppRouter = typeof appRouter;
