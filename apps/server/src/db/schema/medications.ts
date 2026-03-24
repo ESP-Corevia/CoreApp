@@ -1,5 +1,5 @@
 import { relations } from 'drizzle-orm';
-import { index, pgEnum, pgTable } from 'drizzle-orm/pg-core';
+import { foreignKey, index, pgEnum, pgTable, unique } from 'drizzle-orm/pg-core';
 
 import { users } from './auth';
 
@@ -66,7 +66,10 @@ export const patientMedicationSchedules = pgTable(
       .notNull(),
     updatedAt: t.timestamp('updated_at').$onUpdateFn(() => new Date()),
   }),
-  table => [index('patient_medication_schedules_med_idx').on(table.patientMedicationId)],
+  table => [
+    index('patient_medication_schedules_med_idx').on(table.patientMedicationId),
+    unique('patient_medication_schedules_med_id_uniq').on(table.patientMedicationId, table.id),
+  ],
 );
 
 export const patientMedicationIntakes = pgTable(
@@ -77,9 +80,7 @@ export const patientMedicationIntakes = pgTable(
       .uuid('patient_medication_id')
       .notNull()
       .references(() => patientMedications.id, { onDelete: 'cascade' }),
-    scheduleId: t
-      .uuid('schedule_id')
-      .references(() => patientMedicationSchedules.id, { onDelete: 'set null' }),
+    scheduleId: t.uuid('schedule_id'),
     scheduledDate: t.date('scheduled_date', { mode: 'string' }).notNull(),
     scheduledTime: t.varchar('scheduled_time', { length: 5 }).notNull(),
     status: intakeStatusEnum('status').notNull().default('PENDING'),
@@ -96,6 +97,13 @@ export const patientMedicationIntakes = pgTable(
       table.scheduledDate,
     ),
     index('patient_medication_intakes_status_idx').on(table.scheduledDate, table.status),
+    foreignKey({
+      columns: [table.patientMedicationId, table.scheduleId],
+      foreignColumns: [
+        patientMedicationSchedules.patientMedicationId,
+        patientMedicationSchedules.id,
+      ],
+    }).onDelete('set null'),
   ],
 );
 

@@ -35,6 +35,10 @@
       "persistent": true,
       "env": ["DATABASE_URL"]
     },
+    "db:reset": {
+      "cache": false,
+      "persistent": true
+    },
     "db:generate": {
       "cache": false,
       "persistent": true

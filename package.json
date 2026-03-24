@@ -13,6 +13,7 @@
     "db:push": "turbo -F server db:push",
     "db:studio": "turbo -F server db:studio",
     "db:generate": "turbo -F server db:generate",
+    "db:reset": "turbo -F server db:reset",
     "db:migrate": "turbo -F server db:migrate",
     "db:seed": "turbo -F server db:seed",
     "db:check": "turbo -F server db:check",

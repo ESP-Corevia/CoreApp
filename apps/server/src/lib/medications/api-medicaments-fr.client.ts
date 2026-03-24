@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 import { env } from '../../env';
-import logger from '../logger';
+import { logger } from '../logger';
 
 import { getIconKey, normalizeForm } from './medication-forms';
 
@@ -204,7 +204,7 @@ export function createMedicationsProvider() {
 
         return result;
       } catch (error) {
-        if (error instanceof DOMException && error.name === 'AbortError') {
+        if (error instanceof Error && error.name === 'AbortError') {
           logger.error({ url, timeout }, 'External API timeout');
           throw new Error('Medications API timeout');
         }
@@ -266,7 +266,7 @@ export function createMedicationsProvider() {
 
         return result;
       } catch (error) {
-        if (error instanceof DOMException && error.name === 'AbortError') {
+        if (error instanceof Error && error.name === 'AbortError') {
           throw new Error('Medications API timeout');
         }
         throw error;

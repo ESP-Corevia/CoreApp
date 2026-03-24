@@ -14,6 +14,7 @@
     "db:seed": "tsx ./scripts/authSeed.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
+    "db:reset": "tsx ./scripts/dbReset.ts",
     "db:check": "drizzle-kit check",
     "build:types": "echo '📦 Building server types...' && tsc --build tsconfig.build.json --verbose",
     "check:lint": "biome check . && echo 🚨✅ Lint check passed! || (echo ❌ Lint failed 💥 && exit 1)",

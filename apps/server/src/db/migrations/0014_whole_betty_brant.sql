@@ -44,12 +44,14 @@ CREATE TABLE "patient_medications" (
 	"updated_at" timestamp
 );
 --> statement-breakpoint
+ALTER TABLE "patient_medication_schedules" ADD CONSTRAINT "patient_medication_schedules_med_id_uniq" UNIQUE("patient_medication_id","id");--> statement-breakpoint
 ALTER TABLE "patient_medication_intakes" ADD CONSTRAINT "patient_medication_intakes_patient_medication_id_patient_medications_id_fk" FOREIGN KEY ("patient_medication_id") REFERENCES "public"."patient_medications"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "patient_medication_intakes" ADD CONSTRAINT "patient_medication_intakes_schedule_id_patient_medication_schedules_id_fk" FOREIGN KEY ("schedule_id") REFERENCES "public"."patient_medication_schedules"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "patient_medication_intakes" ADD CONSTRAINT "patient_medication_intakes_patient_medication_id_schedule_id_patient_medication_schedules_patient_medication_id_id_fk" FOREIGN KEY ("patient_medication_id","schedule_id") REFERENCES "public"."patient_medication_schedules"("patient_medication_id","id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "patient_medication_schedules" ADD CONSTRAINT "patient_medication_schedules_patient_medication_id_patient_medications_id_fk" FOREIGN KEY ("patient_medication_id") REFERENCES "public"."patient_medications"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "patient_medications" ADD CONSTRAINT "patient_medications_patient_id_users_id_fk" FOREIGN KEY ("patient_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 CREATE INDEX "patient_medication_intakes_med_date_idx" ON "patient_medication_intakes" USING btree ("patient_medication_id","scheduled_date");--> statement-breakpoint
 CREATE INDEX "patient_medication_intakes_status_idx" ON "patient_medication_intakes" USING btree ("scheduled_date","status");--> statement-breakpoint
 CREATE INDEX "patient_medication_schedules_med_idx" ON "patient_medication_schedules" USING btree ("patient_medication_id");--> statement-breakpoint
 CREATE INDEX "patient_medications_patient_idx" ON "patient_medications" USING btree ("patient_id");--> statement-breakpoint
-CREATE INDEX "patient_medications_active_idx" ON "patient_medications" USING btree ("patient_id","is_active");
+CREATE INDEX "patient_medications_active_idx" ON "patient_medications" USING btree ("patient_id","is_active");--> statement-breakpoint
+CREATE INDEX "patient_medications_name_idx" ON "patient_medications" USING btree ("medication_name");

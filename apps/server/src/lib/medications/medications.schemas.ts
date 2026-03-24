@@ -68,7 +68,7 @@ export const CreatePatientMedicationInputSchema = z.object({
     .array(
       z.object({
         weekday: z.number().int().min(0).max(6).nullable().optional(),
-        intakeTime: z.string().regex(/^\d{2}:\d{2}$/, 'Must be HH:mm'),
+        intakeTime: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, 'Must be HH:mm'),
         intakeMoment: z.enum(['MORNING', 'NOON', 'EVENING', 'BEDTIME', 'CUSTOM']).default('CUSTOM'),
         quantity: z.string().default('1'),
         unit: z.string().nullable().optional(),
@@ -150,7 +150,7 @@ export const ListPillboxOutputSchema = z.object({
 export const AddScheduleInputSchema = z.object({
   patientMedicationId: z.uuid(),
   weekday: z.number().int().min(0).max(6).nullable().optional(),
-  intakeTime: z.string().regex(/^\d{2}:\d{2}$/),
+  intakeTime: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/),
   intakeMoment: z.enum(['MORNING', 'NOON', 'EVENING', 'BEDTIME', 'CUSTOM']).default('CUSTOM'),
   quantity: z.string().default('1'),
   unit: z.string().nullable().optional(),
@@ -162,7 +162,7 @@ export const UpdateScheduleInputSchema = z.object({
   weekday: z.number().int().min(0).max(6).nullable().optional(),
   intakeTime: z
     .string()
-    .regex(/^\d{2}:\d{2}$/)
+    .regex(/^([01]\d|2[0-3]):[0-5]\d$/)
     .optional(),
   intakeMoment: z.enum(['MORNING', 'NOON', 'EVENING', 'BEDTIME', 'CUSTOM']).optional(),
   quantity: z.string().optional(),

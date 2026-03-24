@@ -11,7 +11,7 @@ vi.mock('../../env', () => ({
 }));
 
 vi.mock('../logger', () => ({
-  default: {
+  logger: {
     debug: vi.fn(),
     info: vi.fn(),
     warn: vi.fn(),
