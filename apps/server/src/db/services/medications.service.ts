@@ -36,7 +36,7 @@ export const createMedicationsService = (repo: MedicationsRepo, provider: Medica
       });
     }
 
-    const med = await repo.createMedication({
+    const medInput = {
       patientId,
       medicationExternalId: input.medicationExternalId ?? null,
       source: input.source,
@@ -49,39 +49,43 @@ export const createMedicationsService = (repo: MedicationsRepo, provider: Medica
       instructions: input.instructions ?? null,
       startDate: input.startDate,
       endDate: input.endDate ?? null,
-    });
+    };
 
-    const schedules = await Promise.all(
-      input.schedules.map(s =>
-        repo.createSchedule({
-          patientMedicationId: med.id,
-          weekday: s.weekday ?? null,
-          intakeTime: s.intakeTime,
-          intakeMoment: s.intakeMoment,
-          quantity: s.quantity,
-          unit: s.unit ?? null,
-          notes: s.notes ?? null,
-        }),
-      ),
+    const scheduleInputs = input.schedules.map(s => ({
+      patientMedicationId: '', // set by repo inside transaction
+      weekday: s.weekday ?? null,
+      intakeTime: s.intakeTime,
+      intakeMoment: s.intakeMoment,
+      quantity: s.quantity,
+      unit: s.unit ?? null,
+      notes: s.notes ?? null,
+    }));
+
+    // Pre-compute which schedules need intakes for today
+    const { date, weekday } = getParisNow();
+    const isActiveToday = isMedicationActiveOnDate(
+      { startDate: input.startDate, endDate: input.endDate ?? null },
+      date,
     );
 
-    // Generate intakes for today if applicable
-    const { date, weekday } = getParisNow();
-    if (isMedicationActiveOnDate(med, date)) {
-      const todaySchedules = schedules.filter(s => s.weekday === null || s.weekday === weekday);
-      if (todaySchedules.length > 0) {
-        await repo.createManyIntakes(
-          todaySchedules.map(s => ({
-            patientMedicationId: med.id,
-            scheduleId: s.id,
+    const intakeInputs: Array<{
+      scheduleIndex: number;
+      scheduledDate: string;
+      scheduledTime: string;
+    }> = [];
+    if (isActiveToday) {
+      input.schedules.forEach((s, i) => {
+        if (s.weekday === undefined || s.weekday === null || s.weekday === weekday) {
+          intakeInputs.push({
+            scheduleIndex: i,
             scheduledDate: date,
             scheduledTime: s.intakeTime,
-          })),
-        );
-      }
+          });
+        }
+      });
     }
 
-    return { ...med, schedules };
+    return await repo.createMedicationAtomic(medInput, scheduleInputs, intakeInputs);
   }
 
   async function generateAndFetchTodayIntakes(patientId: string) {
@@ -95,18 +99,15 @@ export const createMedicationsService = (repo: MedicationsRepo, provider: Medica
       limit: 100,
     });
 
-    // For each medication, ensure intakes exist for today
+    // For each medication, ensure intakes exist for today per schedule
     for (const med of activeMeds) {
       if (!isMedicationActiveOnDate(med, date)) continue;
-
-      const alreadyExists = await repo.intakesExistForDate(med.id, date);
-      if (alreadyExists) continue;
 
       const schedules = await repo.listSchedulesByMedication(med.id);
       const todaySchedules = schedules.filter(s => s.weekday === null || s.weekday === weekday);
 
       if (todaySchedules.length > 0) {
-        await repo.createManyIntakes(
+        await repo.ensureIntakesForSchedules(
           todaySchedules.map(s => ({
             patientMedicationId: med.id,
             scheduleId: s.id,

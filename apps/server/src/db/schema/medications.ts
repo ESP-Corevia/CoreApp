@@ -104,6 +104,11 @@ export const patientMedicationIntakes = pgTable(
         patientMedicationSchedules.id,
       ],
     }).onDelete('set null'),
+    unique('patient_medication_intakes_med_sched_date_uniq').on(
+      table.patientMedicationId,
+      table.scheduleId,
+      table.scheduledDate,
+    ),
   ],
 );
 

@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: pass */
 import { TRPCError } from '@trpc/server';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { type DeepMockProxy, mockDeep } from 'vitest-mock-extended';
@@ -141,21 +142,23 @@ describe('createMedication', () => {
     schedules: [{ intakeTime: '08:00', intakeMoment: 'MORNING' as const, quantity: '1' }],
   };
 
-  it('creates medication and schedules', async () => {
-    const createdMed = { id: 'med_1', patientId: 'u_1', startDate: '2099-01-01', endDate: null };
-    repo.createMedication.mockResolvedValue(createdMed as any);
-    repo.createSchedule.mockResolvedValue({
-      id: 'sched_1',
-      weekday: null,
-      intakeTime: '08:00',
-    } as any);
-    repo.createManyIntakes.mockResolvedValue([]);
+  it('creates medication and schedules via atomic repo call', async () => {
+    const atomicResult = {
+      id: 'med_1',
+      patientId: 'u_1',
+      startDate: '2099-01-01',
+      endDate: null,
+      schedules: [{ id: 'sched_1', weekday: null, intakeTime: '08:00' }],
+    };
+    repo.createMedicationAtomic.mockResolvedValue(atomicResult as any);
 
     const result = await service.createMedication('u_1', input);
 
     expect(result.id).toBe('med_1');
-    expect(repo.createMedication).toHaveBeenCalledTimes(1);
-    expect(repo.createSchedule).toHaveBeenCalledTimes(1);
+    expect(repo.createMedicationAtomic).toHaveBeenCalledTimes(1);
+    // Future start date → no intake inputs
+    const call = repo.createMedicationAtomic.mock.calls[0];
+    expect(call[2]).toEqual([]);
   });
 
   it('rejects if endDate before startDate', async () => {
@@ -165,34 +168,16 @@ describe('createMedication', () => {
   });
 
   it('generates intakes when medication starts today or earlier', async () => {
-    const createdMed = { id: 'med_1', patientId: 'u_1', startDate: '2020-01-01', endDate: null };
-    repo.createMedication.mockResolvedValue(createdMed as any);
-    repo.createSchedule.mockResolvedValue({
-      id: 'sched_1',
-      weekday: null,
-      intakeTime: '08:00',
-    } as any);
-    repo.createManyIntakes.mockResolvedValue([]);
+    repo.createMedicationAtomic.mockResolvedValue({ id: 'med_1', schedules: [] } as any);
 
     await service.createMedication('u_1', { ...input, startDate: '2020-01-01' });
 
-    expect(repo.createManyIntakes).toHaveBeenCalledTimes(1);
+    const call = repo.createMedicationAtomic.mock.calls[0];
+    expect(call[2].length).toBeGreaterThan(0);
   });
 
   it('generates intakes when endDate is in the future', async () => {
-    const createdMed = {
-      id: 'med_1',
-      patientId: 'u_1',
-      startDate: '2020-01-01',
-      endDate: '2099-12-31',
-    };
-    repo.createMedication.mockResolvedValue(createdMed as any);
-    repo.createSchedule.mockResolvedValue({
-      id: 'sched_1',
-      weekday: null,
-      intakeTime: '08:00',
-    } as any);
-    repo.createManyIntakes.mockResolvedValue([]);
+    repo.createMedicationAtomic.mockResolvedValue({ id: 'med_1', schedules: [] } as any);
 
     await service.createMedication('u_1', {
       ...input,
@@ -200,22 +185,12 @@ describe('createMedication', () => {
       endDate: '2099-12-31',
     });
 
-    expect(repo.createManyIntakes).toHaveBeenCalledTimes(1);
+    const call = repo.createMedicationAtomic.mock.calls[0];
+    expect(call[2].length).toBeGreaterThan(0);
   });
 
   it('skips intake generation when endDate is in the past', async () => {
-    const createdMed = {
-      id: 'med_1',
-      patientId: 'u_1',
-      startDate: '2020-01-01',
-      endDate: '2020-06-01',
-    };
-    repo.createMedication.mockResolvedValue(createdMed as any);
-    repo.createSchedule.mockResolvedValue({
-      id: 'sched_1',
-      weekday: null,
-      intakeTime: '08:00',
-    } as any);
+    repo.createMedicationAtomic.mockResolvedValue({ id: 'med_1', schedules: [] } as any);
 
     await service.createMedication('u_1', {
       ...input,
@@ -223,21 +198,23 @@ describe('createMedication', () => {
       endDate: '2020-06-01',
     });
 
-    expect(repo.createManyIntakes).not.toHaveBeenCalled();
+    const call = repo.createMedicationAtomic.mock.calls[0];
+    expect(call[2]).toEqual([]);
   });
 
   it('skips intake generation when schedule weekday does not match today', async () => {
-    const createdMed = { id: 'med_1', patientId: 'u_1', startDate: '2020-01-01', endDate: null };
-    repo.createMedication.mockResolvedValue(createdMed as any);
-    repo.createSchedule.mockResolvedValue({
-      id: 'sched_1',
-      weekday: 99,
-      intakeTime: '08:00',
-    } as any);
+    repo.createMedicationAtomic.mockResolvedValue({ id: 'med_1', schedules: [] } as any);
 
-    await service.createMedication('u_1', { ...input, startDate: '2020-01-01' });
+    await service.createMedication('u_1', {
+      ...input,
+      startDate: '2020-01-01',
+      schedules: [
+        { intakeTime: '08:00', intakeMoment: 'MORNING' as const, quantity: '1', weekday: 99 },
+      ],
+    });
 
-    expect(repo.createManyIntakes).not.toHaveBeenCalled();
+    const call = repo.createMedicationAtomic.mock.calls[0];
+    expect(call[2]).toEqual([]);
   });
 });
 
@@ -563,14 +540,13 @@ describe('adminListAll', () => {
 });
 
 describe('today', () => {
-  it('returns intakes for today and generates missing ones', async () => {
+  it('returns intakes for today and ensures missing ones via upsert', async () => {
     const med = { id: 'med_1', patientId: 'u_1', startDate: '2020-01-01', endDate: null };
     repo.listByPatient.mockResolvedValue([med] as any);
-    repo.intakesExistForDate.mockResolvedValue(false);
     repo.listSchedulesByMedication.mockResolvedValue([
       { id: 'sched_1', weekday: null, intakeTime: '08:00' },
     ] as any);
-    repo.createManyIntakes.mockResolvedValue([]);
+    repo.ensureIntakesForSchedules.mockResolvedValue([]);
     repo.listIntakesByDate.mockResolvedValue([
       {
         id: 'int_1',
@@ -595,19 +571,21 @@ describe('today', () => {
 
     expect(result.intakes).toHaveLength(1);
     expect(result.intakes[0].intakeMoment).toBe('MORNING');
-    expect(repo.createManyIntakes).toHaveBeenCalledTimes(1);
+    expect(repo.ensureIntakesForSchedules).toHaveBeenCalledTimes(1);
   });
 
-  it('skips intake generation if already exist for today', async () => {
+  it('calls ensureIntakesForSchedules idempotently (no coarse exists check)', async () => {
     const med = { id: 'med_1', patientId: 'u_1', startDate: '2020-01-01', endDate: null };
     repo.listByPatient.mockResolvedValue([med] as any);
-    repo.intakesExistForDate.mockResolvedValue(true);
+    repo.listSchedulesByMedication.mockResolvedValue([
+      { id: 'sched_1', weekday: null, intakeTime: '08:00' },
+    ] as any);
+    repo.ensureIntakesForSchedules.mockResolvedValue([]);
     repo.listIntakesByDate.mockResolvedValue([]);
 
-    const result = await service.today('u_1');
+    await service.today('u_1');
 
-    expect(result.intakes).toEqual([]);
-    expect(repo.createManyIntakes).not.toHaveBeenCalled();
+    expect(repo.ensureIntakesForSchedules).toHaveBeenCalledTimes(1);
   });
 
   it('skips medications outside date range', async () => {
@@ -618,7 +596,7 @@ describe('today', () => {
     const result = await service.today('u_1');
 
     expect(result.intakes).toEqual([]);
-    expect(repo.intakesExistForDate).not.toHaveBeenCalled();
+    expect(repo.ensureIntakesForSchedules).not.toHaveBeenCalled();
   });
 
   it('skips medications with past endDate', async () => {
@@ -634,7 +612,7 @@ describe('today', () => {
     const result = await service.today('u_1');
 
     expect(result.intakes).toEqual([]);
-    expect(repo.intakesExistForDate).not.toHaveBeenCalled();
+    expect(repo.ensureIntakesForSchedules).not.toHaveBeenCalled();
   });
 
   it('handles intakes without scheduleId', async () => {
@@ -690,7 +668,6 @@ describe('today', () => {
   it('filters schedules by weekday when generating intakes', async () => {
     const med = { id: 'med_1', patientId: 'u_1', startDate: '2020-01-01', endDate: null };
     repo.listByPatient.mockResolvedValue([med] as any);
-    repo.intakesExistForDate.mockResolvedValue(false);
     repo.listSchedulesByMedication.mockResolvedValue([
       { id: 'sched_1', weekday: 99, intakeTime: '08:00' },
     ] as any);
@@ -698,7 +675,7 @@ describe('today', () => {
 
     await service.today('u_1');
 
-    expect(repo.createManyIntakes).not.toHaveBeenCalled();
+    expect(repo.ensureIntakesForSchedules).not.toHaveBeenCalled();
   });
 });
 
@@ -711,19 +688,19 @@ describe('adminCreateMedication', () => {
   };
 
   it('creates medication for any patient', async () => {
-    const createdMed = { id: 'med_1', patientId: 'u_1', startDate: '2099-01-01', endDate: null };
-    repo.createMedication.mockResolvedValue(createdMed as any);
-    repo.createSchedule.mockResolvedValue({
-      id: 'sched_1',
-      weekday: null,
-      intakeTime: '08:00',
-    } as any);
+    const atomicResult = {
+      id: 'med_1',
+      patientId: 'u_1',
+      startDate: '2099-01-01',
+      endDate: null,
+      schedules: [{ id: 'sched_1', weekday: null, intakeTime: '08:00' }],
+    };
+    repo.createMedicationAtomic.mockResolvedValue(atomicResult as any);
 
     const result = await service.adminCreateMedication('u_1', input);
 
     expect(result.id).toBe('med_1');
-    expect(repo.createMedication).toHaveBeenCalledTimes(1);
-    expect(repo.createSchedule).toHaveBeenCalledTimes(1);
+    expect(repo.createMedicationAtomic).toHaveBeenCalledTimes(1);
   });
 
   it('rejects if endDate before startDate', async () => {
@@ -733,34 +710,16 @@ describe('adminCreateMedication', () => {
   });
 
   it('generates intakes if medication starts today or earlier', async () => {
-    const createdMed = { id: 'med_1', patientId: 'u_1', startDate: '2020-01-01', endDate: null };
-    repo.createMedication.mockResolvedValue(createdMed as any);
-    repo.createSchedule.mockResolvedValue({
-      id: 'sched_1',
-      weekday: null,
-      intakeTime: '08:00',
-    } as any);
-    repo.createManyIntakes.mockResolvedValue([]);
+    repo.createMedicationAtomic.mockResolvedValue({ id: 'med_1', schedules: [] } as any);
 
     await service.adminCreateMedication('u_1', { ...input, startDate: '2020-01-01' });
 
-    expect(repo.createManyIntakes).toHaveBeenCalledTimes(1);
+    const call = repo.createMedicationAtomic.mock.calls[0];
+    expect(call[2].length).toBeGreaterThan(0);
   });
 
   it('generates intakes when endDate is in the future', async () => {
-    const createdMed = {
-      id: 'med_1',
-      patientId: 'u_1',
-      startDate: '2020-01-01',
-      endDate: '2099-12-31',
-    };
-    repo.createMedication.mockResolvedValue(createdMed as any);
-    repo.createSchedule.mockResolvedValue({
-      id: 'sched_1',
-      weekday: null,
-      intakeTime: '08:00',
-    } as any);
-    repo.createManyIntakes.mockResolvedValue([]);
+    repo.createMedicationAtomic.mockResolvedValue({ id: 'med_1', schedules: [] } as any);
 
     await service.adminCreateMedication('u_1', {
       ...input,
@@ -768,38 +727,27 @@ describe('adminCreateMedication', () => {
       endDate: '2099-12-31',
     });
 
-    expect(repo.createManyIntakes).toHaveBeenCalledTimes(1);
+    const call = repo.createMedicationAtomic.mock.calls[0];
+    expect(call[2].length).toBeGreaterThan(0);
   });
 
   it('filters schedules by weekday', async () => {
-    const createdMed = { id: 'med_1', patientId: 'u_1', startDate: '2020-01-01', endDate: null };
-    repo.createMedication.mockResolvedValue(createdMed as any);
-    // Schedule with a specific weekday that won't match today
-    repo.createSchedule.mockResolvedValue({
-      id: 'sched_1',
-      weekday: 99, // impossible weekday, won't match
-      intakeTime: '08:00',
-    } as any);
+    repo.createMedicationAtomic.mockResolvedValue({ id: 'med_1', schedules: [] } as any);
 
-    await service.adminCreateMedication('u_1', { ...input, startDate: '2020-01-01' });
+    await service.adminCreateMedication('u_1', {
+      ...input,
+      startDate: '2020-01-01',
+      schedules: [
+        { intakeTime: '08:00', intakeMoment: 'MORNING' as const, quantity: '1', weekday: 99 },
+      ],
+    });
 
-    // No intakes generated because weekday doesn't match
-    expect(repo.createManyIntakes).not.toHaveBeenCalled();
+    const call = repo.createMedicationAtomic.mock.calls[0];
+    expect(call[2]).toEqual([]);
   });
 
   it('skips intake generation when endDate is in the past', async () => {
-    const createdMed = {
-      id: 'med_1',
-      patientId: 'u_1',
-      startDate: '2020-01-01',
-      endDate: '2020-06-01',
-    };
-    repo.createMedication.mockResolvedValue(createdMed as any);
-    repo.createSchedule.mockResolvedValue({
-      id: 'sched_1',
-      weekday: null,
-      intakeTime: '08:00',
-    } as any);
+    repo.createMedicationAtomic.mockResolvedValue({ id: 'med_1', schedules: [] } as any);
 
     await service.adminCreateMedication('u_1', {
       ...input,
@@ -807,7 +755,8 @@ describe('adminCreateMedication', () => {
       endDate: '2020-06-01',
     });
 
-    expect(repo.createManyIntakes).not.toHaveBeenCalled();
+    const call = repo.createMedicationAtomic.mock.calls[0];
+    expect(call[2]).toEqual([]);
   });
 });
 
@@ -835,18 +784,17 @@ describe('adminTodayByPatient', () => {
   it('generates and returns intakes for a patient', async () => {
     const med = { id: 'med_1', patientId: 'u_1', startDate: '2020-01-01', endDate: null };
     repo.listByPatient.mockResolvedValue([med] as any);
-    repo.intakesExistForDate.mockResolvedValue(false);
     repo.listSchedulesByMedication.mockResolvedValue([
       { id: 'sched_1', weekday: null, intakeTime: '08:00' },
     ] as any);
-    repo.createManyIntakes.mockResolvedValue([]);
+    repo.ensureIntakesForSchedules.mockResolvedValue([]);
     repo.listIntakesByDate.mockResolvedValue([]);
 
     const result = await service.adminTodayByPatient('u_1');
 
     expect(result.date).toBeDefined();
     expect(result.intakes).toEqual([]);
-    expect(repo.createManyIntakes).toHaveBeenCalledTimes(1);
+    expect(repo.ensureIntakesForSchedules).toHaveBeenCalledTimes(1);
   });
 
   it('enriches intakes with schedule info', async () => {
@@ -890,18 +838,7 @@ describe('adminTodayByPatient', () => {
 
     await service.adminTodayByPatient('u_1');
 
-    expect(repo.intakesExistForDate).not.toHaveBeenCalled();
-  });
-
-  it('skips intake generation if already exist for today', async () => {
-    const med = { id: 'med_1', patientId: 'u_1', startDate: '2020-01-01', endDate: null };
-    repo.listByPatient.mockResolvedValue([med] as any);
-    repo.intakesExistForDate.mockResolvedValue(true);
-    repo.listIntakesByDate.mockResolvedValue([]);
-
-    await service.adminTodayByPatient('u_1');
-
-    expect(repo.createManyIntakes).not.toHaveBeenCalled();
+    expect(repo.ensureIntakesForSchedules).not.toHaveBeenCalled();
   });
 
   it('handles intakes without scheduleId', async () => {
@@ -957,7 +894,6 @@ describe('adminTodayByPatient', () => {
   it('filters schedules by weekday when generating intakes', async () => {
     const med = { id: 'med_1', patientId: 'u_1', startDate: '2020-01-01', endDate: null };
     repo.listByPatient.mockResolvedValue([med] as any);
-    repo.intakesExistForDate.mockResolvedValue(false);
     repo.listSchedulesByMedication.mockResolvedValue([
       { id: 'sched_1', weekday: 99, intakeTime: '08:00' },
     ] as any);
@@ -965,7 +901,7 @@ describe('adminTodayByPatient', () => {
 
     await service.adminTodayByPatient('u_1');
 
-    expect(repo.createManyIntakes).not.toHaveBeenCalled();
+    expect(repo.ensureIntakesForSchedules).not.toHaveBeenCalled();
   });
 });
 

@@ -23,6 +23,11 @@ import {
 } from 'drizzle-orm';
 import { z } from 'zod';
 
+/** Escape LIKE/ILIKE metacharacters so user input is matched literally. */
+export function escapeLike(value: string): string {
+  return value.replace(/[\\%_]/g, ch => `\\${ch}`);
+}
+
 export function toDate(value: any): Date {
   if (value instanceof Date) return value;
 
@@ -60,8 +65,8 @@ export function coerceValueForColumn(column: any, value: any) {
 }
 
 export const operatorHandlers = {
-  iLike: (column: any, value: string) => ilike(column, `%${value}%`),
-  notILike: (column: any, value: string) => notIlike(column, `%${value}%`),
+  iLike: (column: any, value: string) => ilike(column, `%${escapeLike(value)}%`),
+  notILike: (column: any, value: string) => notIlike(column, `%${escapeLike(value)}%`),
 
   eq: (column: any, value: any) => {
     const coercedValue = coerceValueForColumn(column, value);
@@ -213,8 +218,9 @@ export function buildQueryOptions<TTable extends Table>(
 
   // ----- Search -----
   if (search && searchInFields && searchInFields.length > 0) {
+    const escaped = escapeLike(search);
     const searchConditions = searchInFields.map(field =>
-      ilike((table as Record<string, any>)[field], `%${search}%`),
+      ilike((table as Record<string, any>)[field], `%${escaped}%`),
     );
 
     whereParts.push(or(...searchConditions));

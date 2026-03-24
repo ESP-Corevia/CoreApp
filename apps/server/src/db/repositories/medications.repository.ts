@@ -1,6 +1,7 @@
 import { and, asc, desc, eq, ilike, inArray, or, sql } from 'drizzle-orm';
 import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 
+import { escapeLike } from '../../utils/db';
 import type * as schema from '../schema';
 import {
   patientMedicationIntakes,
@@ -56,6 +57,67 @@ export const createMedicationsRepo = (db: DrizzleDB) => ({
       })
       .returning();
     return row;
+  },
+
+  createMedicationAtomic: async (
+    medInput: CreateMedicationInput,
+    scheduleInputs: CreateScheduleInput[],
+    intakeInputs: Array<{
+      scheduleIndex: number;
+      scheduledDate: string;
+      scheduledTime: string;
+    }>,
+  ) => {
+    return await db.transaction(async tx => {
+      const [med] = await tx
+        .insert(patientMedications)
+        .values({
+          patientId: medInput.patientId,
+          medicationExternalId: medInput.medicationExternalId ?? null,
+          source: medInput.source,
+          cis: medInput.cis ?? null,
+          cip: medInput.cip ?? null,
+          medicationName: medInput.medicationName,
+          medicationForm: medInput.medicationForm ?? null,
+          activeSubstances: medInput.activeSubstances ?? null,
+          dosageLabel: medInput.dosageLabel ?? null,
+          instructions: medInput.instructions ?? null,
+          startDate: medInput.startDate,
+          endDate: medInput.endDate ?? null,
+        })
+        .returning();
+
+      const schedules = await Promise.all(
+        scheduleInputs.map(s =>
+          tx
+            .insert(patientMedicationSchedules)
+            .values({
+              patientMedicationId: med.id,
+              weekday: s.weekday ?? null,
+              intakeTime: s.intakeTime,
+              intakeMoment: s.intakeMoment,
+              quantity: s.quantity,
+              unit: s.unit ?? null,
+              notes: s.notes ?? null,
+            })
+            .returning()
+            .then(rows => rows[0]),
+        ),
+      );
+
+      if (intakeInputs.length > 0) {
+        await tx.insert(patientMedicationIntakes).values(
+          intakeInputs.map(i => ({
+            patientMedicationId: med.id,
+            scheduleId: schedules[i.scheduleIndex].id,
+            scheduledDate: i.scheduledDate,
+            scheduledTime: i.scheduledTime,
+          })),
+        );
+      }
+
+      return { ...med, schedules };
+    });
   },
 
   getById: async (id: string) => {
@@ -250,6 +312,35 @@ export const createMedicationsRepo = (db: DrizzleDB) => ({
       .returning();
   },
 
+  ensureIntakesForSchedules: async (
+    data: Array<{
+      patientMedicationId: string;
+      scheduleId: string;
+      scheduledDate: string;
+      scheduledTime: string;
+    }>,
+  ) => {
+    if (data.length === 0) return [];
+    return await db
+      .insert(patientMedicationIntakes)
+      .values(
+        data.map(d => ({
+          patientMedicationId: d.patientMedicationId,
+          scheduleId: d.scheduleId,
+          scheduledDate: d.scheduledDate,
+          scheduledTime: d.scheduledTime,
+        })),
+      )
+      .onConflictDoNothing({
+        target: [
+          patientMedicationIntakes.patientMedicationId,
+          patientMedicationIntakes.scheduleId,
+          patientMedicationIntakes.scheduledDate,
+        ],
+      })
+      .returning();
+  },
+
   getIntakeById: async (id: string) => {
     return (
       (await db.query.patientMedicationIntakes.findFirst({
@@ -335,8 +426,8 @@ export const createMedicationsRepo = (db: DrizzleDB) => ({
     if (params.search) {
       conditions.push(
         or(
-          ilike(patientMedications.medicationName, `%${params.search}%`),
-          ilike(users.name, `%${params.search}%`),
+          ilike(patientMedications.medicationName, `%${escapeLike(params.search)}%`),
+          ilike(users.name, `%${escapeLike(params.search)}%`),
         ),
       );
     }
@@ -385,8 +476,8 @@ export const createMedicationsRepo = (db: DrizzleDB) => ({
     if (params.search) {
       conditions.push(
         or(
-          ilike(patientMedications.medicationName, `%${params.search}%`),
-          ilike(users.name, `%${params.search}%`),
+          ilike(patientMedications.medicationName, `%${escapeLike(params.search)}%`),
+          ilike(users.name, `%${escapeLike(params.search)}%`),
         ),
       );
     }

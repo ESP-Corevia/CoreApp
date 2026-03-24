@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: pass */
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
 
 import { applyMigration, db, resetDb } from '../../../test/db';
@@ -137,6 +138,108 @@ describe('medications.repository', () => {
       expect(med.medicationForm).toBeNull();
       expect(med.dosageLabel).toBeNull();
       expect(med.endDate).toBeNull();
+    });
+  });
+
+  describe('createMedicationAtomic', () => {
+    it('creates medication, schedules, and intakes in one transaction', async () => {
+      const result = await repo.createMedicationAtomic(
+        {
+          patientId,
+          medicationName: 'Doliprane',
+          source: 'api-medicaments-fr',
+          startDate: '2025-01-01',
+        },
+        [
+          { patientMedicationId: '', intakeTime: '08:00', intakeMoment: 'MORNING', quantity: '1' },
+          { patientMedicationId: '', intakeTime: '20:00', intakeMoment: 'EVENING', quantity: '2' },
+        ],
+        [
+          { scheduleIndex: 0, scheduledDate: '2025-06-15', scheduledTime: '08:00' },
+          { scheduleIndex: 1, scheduledDate: '2025-06-15', scheduledTime: '20:00' },
+        ],
+      );
+
+      expect(result.id).toBeDefined();
+      expect(result.patientId).toBe(patientId);
+      expect(result.medicationName).toBe('Doliprane');
+      expect(result.schedules).toHaveLength(2);
+      expect(result.schedules[0].intakeTime).toBe('08:00');
+      expect(result.schedules[1].intakeTime).toBe('20:00');
+
+      // Verify intakes were created
+      const intakes = await repo.listIntakesByDate(patientId, '2025-06-15');
+      expect(intakes).toHaveLength(2);
+      expect(intakes.some(i => i.scheduledTime === '08:00')).toBe(true);
+      expect(intakes.some(i => i.scheduledTime === '20:00')).toBe(true);
+    });
+
+    it('creates medication and schedules without intakes', async () => {
+      const result = await repo.createMedicationAtomic(
+        {
+          patientId,
+          medicationName: 'Ibuprofène',
+          source: 'manual',
+          startDate: '2099-01-01',
+        },
+        [{ patientMedicationId: '', intakeTime: '12:00', intakeMoment: 'NOON', quantity: '1' }],
+        [],
+      );
+
+      expect(result.id).toBeDefined();
+      expect(result.schedules).toHaveLength(1);
+
+      // No intakes should exist
+      const found = await repo.getById(result.id);
+      expect(found).not.toBeNull();
+    });
+
+    it('links intakes to the correct schedule via scheduleIndex', async () => {
+      const result = await repo.createMedicationAtomic(
+        {
+          patientId,
+          medicationName: 'Test',
+          source: 'manual',
+          startDate: '2025-01-01',
+        },
+        [
+          { patientMedicationId: '', intakeTime: '08:00', intakeMoment: 'MORNING', quantity: '1' },
+          { patientMedicationId: '', intakeTime: '20:00', intakeMoment: 'EVENING', quantity: '1' },
+        ],
+        [{ scheduleIndex: 1, scheduledDate: '2025-06-15', scheduledTime: '20:00' }],
+      );
+
+      const intakes = await repo.listIntakesByDate(patientId, '2025-06-15');
+      expect(intakes).toHaveLength(1);
+      expect(intakes[0].scheduleId).toBe(result.schedules[1].id);
+    });
+
+    it('rolls back all changes on failure', async () => {
+      const countBefore = await repo.countByPatient({ patientId });
+
+      await expect(
+        repo.createMedicationAtomic(
+          {
+            patientId,
+            medicationName: 'Will Fail',
+            source: 'manual',
+            startDate: '2025-01-01',
+          },
+          [
+            {
+              patientMedicationId: '',
+              intakeTime: '08:00',
+              intakeMoment: 'MORNING',
+              quantity: '1',
+            },
+          ],
+          // scheduleIndex out of bounds will cause a runtime error inside the transaction
+          [{ scheduleIndex: 99, scheduledDate: '2025-06-15', scheduledTime: '08:00' }],
+        ),
+      ).rejects.toThrow();
+
+      const countAfter = await repo.countByPatient({ patientId });
+      expect(countAfter).toBe(countBefore);
     });
   });
 
@@ -432,6 +535,125 @@ describe('medications.repository', () => {
 
     it('returns empty array for empty input', async () => {
       const result = await repo.createManyIntakes([]);
+      expect(result).toEqual([]);
+    });
+  });
+
+  describe('ensureIntakesForSchedules', () => {
+    it('creates intakes that do not exist yet', async () => {
+      const med = await seedMedication();
+      const sched = await seedSchedule(med.id);
+
+      const result = await repo.ensureIntakesForSchedules([
+        {
+          patientMedicationId: med.id,
+          scheduleId: sched.id,
+          scheduledDate: '2025-06-15',
+          scheduledTime: '08:00',
+        },
+      ]);
+
+      expect(result).toHaveLength(1);
+      expect(result[0].status).toBe('PENDING');
+      expect(result[0].scheduleId).toBe(sched.id);
+    });
+
+    it('silently skips duplicates (idempotent)', async () => {
+      const med = await seedMedication();
+      const sched = await seedSchedule(med.id);
+
+      // First call creates
+      await repo.ensureIntakesForSchedules([
+        {
+          patientMedicationId: med.id,
+          scheduleId: sched.id,
+          scheduledDate: '2025-06-15',
+          scheduledTime: '08:00',
+        },
+      ]);
+
+      // Second call with same key → no error, no duplicate
+      const result = await repo.ensureIntakesForSchedules([
+        {
+          patientMedicationId: med.id,
+          scheduleId: sched.id,
+          scheduledDate: '2025-06-15',
+          scheduledTime: '08:00',
+        },
+      ]);
+
+      expect(result).toHaveLength(0); // ON CONFLICT DO NOTHING → nothing returned
+
+      // Only one intake exists
+      const intakes = await repo.listIntakesByDate(patientId, '2025-06-15');
+      expect(intakes).toHaveLength(1);
+    });
+
+    it('creates only missing intakes when some already exist', async () => {
+      const med = await seedMedication();
+      const sched1 = await seedSchedule(med.id, { intakeTime: '08:00' });
+      const sched2 = await seedSchedule(med.id, { intakeTime: '20:00' });
+
+      // Create intake for sched1 only
+      await repo.ensureIntakesForSchedules([
+        {
+          patientMedicationId: med.id,
+          scheduleId: sched1.id,
+          scheduledDate: '2025-06-15',
+          scheduledTime: '08:00',
+        },
+      ]);
+
+      // Now ensure both → only sched2 intake is new
+      const result = await repo.ensureIntakesForSchedules([
+        {
+          patientMedicationId: med.id,
+          scheduleId: sched1.id,
+          scheduledDate: '2025-06-15',
+          scheduledTime: '08:00',
+        },
+        {
+          patientMedicationId: med.id,
+          scheduleId: sched2.id,
+          scheduledDate: '2025-06-15',
+          scheduledTime: '20:00',
+        },
+      ]);
+
+      expect(result).toHaveLength(1);
+      expect(result[0].scheduleId).toBe(sched2.id);
+
+      const intakes = await repo.listIntakesByDate(patientId, '2025-06-15');
+      expect(intakes).toHaveLength(2);
+    });
+
+    it('allows same schedule on different dates', async () => {
+      const med = await seedMedication();
+      const sched = await seedSchedule(med.id);
+
+      await repo.ensureIntakesForSchedules([
+        {
+          patientMedicationId: med.id,
+          scheduleId: sched.id,
+          scheduledDate: '2025-06-15',
+          scheduledTime: '08:00',
+        },
+        {
+          patientMedicationId: med.id,
+          scheduleId: sched.id,
+          scheduledDate: '2025-06-16',
+          scheduledTime: '08:00',
+        },
+      ]);
+
+      const day1 = await repo.listIntakesByDate(patientId, '2025-06-15');
+      const day2 = await repo.listIntakesByDate(patientId, '2025-06-16');
+      expect(day1).toHaveLength(1);
+      expect(day2).toHaveLength(1);
+    });
+
+    it('returns empty array for empty input', async () => {
+      const result = await repo.ensureIntakesForSchedules([]);
       expect(result).toEqual([]);
     });
   });
