@@ -20,6 +20,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   lint:
+    if: "!contains(github.event.pull_request.labels.*.name, 'autorelease: pending')"
     name: 🧼 Lint Code
     runs-on: ubuntu-latest
     outputs:

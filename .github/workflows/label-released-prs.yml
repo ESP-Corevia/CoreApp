@@ -1,0 +1,78 @@
+name: "🏷️ Label Released PRs"
+
+on:
+  workflow_dispatch:
+    inputs:
+      all:
+        description: "Label PRs from all releases (not just the latest)"
+        required: false
+        type: boolean
+        default: true
+  workflow_call:
+    inputs:
+      all:
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  label:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📦 Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: 🏷️ Ensure label exists
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh label create "released" --color "0E8A16" --description "Included in a release" 2>/dev/null || true
+
+      - name: 🏷️ Label PRs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          TAGS=($(git tag --list '*-v[0-9]*.[0-9]*.[0-9]*' --sort=version:refname))
+
+          if [ ${#TAGS[@]} -eq 0 ]; then
+            echo "No semver tags found"
+            exit 0
+          fi
+
+          LABEL_ALL="${{ inputs.all }}"
+          LABELED=0
+
+          for i in "${!TAGS[@]}"; do
+            TAG="${TAGS[$i]}"
+
+            if [ "$LABEL_ALL" != "true" ] && [ "$i" -ne $((${#TAGS[@]} - 1)) ]; then
+              continue
+            fi
+
+            if [ "$i" -eq 0 ]; then
+              RANGE="${TAG}"
+            else
+              PREV="${TAGS[$((i - 1))]}"
+              RANGE="${PREV}..${TAG}"
+            fi
+
+            echo "=== Processing ${TAG} (range: ${RANGE}) ==="
+
+            PR_NUMBERS=$(git log --format="%s" "$RANGE" | grep -oE '#[0-9]+' | tr -d '#' | sort -u || true)
+
+            for pr in $PR_NUMBERS; do
+              echo "  Labeling PR #$pr as released (${TAG})"
+              gh pr edit "$pr" --add-label "released" 2>/dev/null || true
+              LABELED=$((LABELED + 1))
+            done
+          done
+
+          echo ""
+          echo "Done. Labeled ${LABELED} PRs as released."

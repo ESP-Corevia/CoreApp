@@ -1,87 +1,29 @@
-name: 🚀 Release Please
+name: "📦 Release"
 
 on:
-  workflow_dispatch: {}
+  push:
+    branches: [master]
 
 permissions:
   contents: write
   pull-requests: write
-  issues: write
 
 jobs:
-  release:
+  release-please:
     runs-on: ubuntu-latest
+    outputs:
+      releases_created: ${{ steps.release.outputs.releases_created }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-
-      - name: 🤖 Release Please
-        id: rp
-        uses: googleapis/release-please-action@v4
+      - uses: googleapis/release-please-action@v4
+        id: release
         with:
           token: ${{ secrets.GH_PAT }}
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
-          target-branch: master
 
-      - name: 🔎 Debug rp outputs
-        run: |
-          echo '${{ toJSON(steps.rp.outputs) }}'
-
-      - name: ✅ Mark release PR as published
-        if: ${{
-          steps.rp.outputs['apps/web--release_created'] == 'true' ||
-          steps.rp.outputs['apps/server--release_created'] == 'true' ||
-          steps.rp.outputs['apps/home--release_created'] == 'true'
-          }}
-        uses: actions/github-script@v8
-        with:
-          github-token: ${{ secrets.GH_PAT }}
-          script: |
-            const candidates = [
-              `${{ steps.rp.outputs['apps/server--tag_name'] }}`,
-              `${{ steps.rp.outputs['apps/web--tag_name'] }}`,
-              `${{ steps.rp.outputs['apps/home--tag_name'] }}`,
-            ].filter(t => t && t !== "undefined" && t !== "null");
-
-            const tag = candidates[0];
-            console.log("Using tag:", tag);
-
-            if (!tag) {
-              core.setFailed("No tag_name output found from release-please");
-              return;
-            }
-
-            const prs = await github.paginate(github.rest.pulls.list, {
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              state: "closed",
-              per_page: 100
-            });
-
-            const pr = prs.find(p =>
-              p.merged_at &&
-              (p.user?.login === "release-please[bot]" || p.user?.login === "github-actions[bot]") &&
-              (p.labels || []).some(l => (l.name || "").startsWith("autorelease:"))
-            );
-
-            if (!pr) {
-              console.log("No matching release PR found");
-              return;
-            }
-
-            await github.rest.issues.addLabels({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: pr.number,
-              labels: ["autorelease: published"]
-            });
-
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: pr.number,
-              body: `✅ Released in **${tag}** 🎉`
-            });
+  label-prs:
+    needs: release-please
+    if: needs.release-please.outputs.releases_created == 'true'
+    uses: ./.github/workflows/label-released-prs.yml
+    with:
+      all: false

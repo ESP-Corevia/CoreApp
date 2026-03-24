@@ -13,6 +13,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   PrTitleLint:
+    if: "!contains(github.event.pull_request.labels.*.name, 'autorelease: pending')"
     name: ✅ Lint PR Title
     uses: ESP-Corevia/.github/.github/workflows/pr-message-lint.yml@master
     permissions:

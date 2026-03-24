@@ -17,6 +17,7 @@
     "db:migrate": "turbo -F server db:migrate",
     "db:seed": "turbo -F server db:seed",
     "db:check": "turbo -F server db:check",
+    "format": "biome check --write .",
     "prepare": "husky || true"
   },
   "devDependencies": {

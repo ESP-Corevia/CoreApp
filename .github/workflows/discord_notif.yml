@@ -7,5 +7,6 @@ on:
 
 jobs:
     notify:
+        if: "!contains(github.event.pull_request.labels.*.name, 'autorelease: pending')"
         uses: ESP-Corevia/.github/.github/workflows/pr_review_notification.yml@master
         secrets: inherit

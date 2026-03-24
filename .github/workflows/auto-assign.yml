@@ -8,6 +8,7 @@ on:
 
 jobs:
   auto_assign_author:
+    if: "!contains(github.event.pull_request.labels.*.name, 'autorelease: pending')"
     name: 👤 Assign PR/Issue Author
     uses: ESP-Corevia/.github/.github/workflows/auto-assign.yml@master # or @main
     permissions:
