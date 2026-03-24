@@ -1,8 +1,16 @@
 /* v8 ignore file -- @preserve */
 
 import { useQuery } from '@tanstack/react-query';
-import { Calendar, Home, LayoutDashboard, Settings, Stethoscope } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import {
+  Calendar,
+  ClipboardList,
+  Home,
+  LayoutDashboard,
+  Pill,
+  Settings,
+  Stethoscope,
+} from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation, useNavigate } from 'react-router';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -30,7 +38,7 @@ interface NavigationItem {
   badge?: string;
 }
 
-const mainItems: NavigationItem[] = [
+const baseMainItems: NavigationItem[] = [
   {
     title: 'Home',
     url: '/',
@@ -126,6 +134,29 @@ export function AppSidebar() {
     enabled: Boolean(session),
   });
   const { state: sidebarState } = useSidebar();
+  const role = (session as Record<string, unknown>)?.role as
+    | 'patient'
+    | 'admin'
+    | 'doctor'
+    | undefined;
+
+  const mainItems = useMemo<NavigationItem[]>(() => {
+    const items = [...baseMainItems];
+
+    if (role === 'admin') {
+      items.push(
+        { title: 'Medications', url: '/medications', icon: Pill },
+        { title: 'Pillbox', url: '/pillbox', icon: ClipboardList },
+      );
+    } else if (role === 'patient') {
+      items.push(
+        { title: 'Medications', url: '/medications', icon: Pill },
+        { title: 'My Pillbox', url: '/pillbox', icon: ClipboardList },
+      );
+    }
+
+    return items;
+  }, [role]);
   const isActive = (url: string) => {
     return location.pathname === url;
   };

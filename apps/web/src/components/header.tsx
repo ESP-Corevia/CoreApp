@@ -11,8 +11,14 @@ export default function Header() {
       '/dashboard': 'Dashboard',
       '/settings': 'Settings',
       '/profile': 'Profile',
+      '/medications': 'Medications',
+      '/pillbox': 'Pillbox',
+      '/doctors': 'Doctors',
+      '/appointments': 'Appointments',
     };
-    return titles[pathname] || 'Page';
+    if (titles[pathname]) return titles[pathname];
+    if (pathname.startsWith('/pillbox/')) return 'Pillbox Details';
+    return 'Page';
   };
 
   return (
