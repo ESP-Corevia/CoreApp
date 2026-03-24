@@ -14,6 +14,9 @@ const envSchema = z.object({
   LOG_LEVEL: z.enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal']).default('info'),
   SEED_ADMIN_EMAIL: z.email().default('admin@admin.com'),
   SEED_ADMIN_PASSWORD: z.string().min(8).default('azertyuiop'),
+  API_MEDICAMENTS_URL: z.url().default('https://medicaments-api.giygas.dev'),
+  API_MEDICAMENTS_TIMEOUT: z.coerce.number().default(5000),
+  API_MEDICAMENTS_CACHE_TTL: z.coerce.number().default(900000),
 });
 
 const parsed = envSchema.safeParse(process.env);

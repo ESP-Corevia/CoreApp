@@ -4,7 +4,12 @@
   "ignoreBinaries": ["biome"],
   "ignoreDependencies": ["@trpc/client", "pino-pretty"],
   "ignoreExportsUsedInFile": true,
-  "ignore": ["src/db/schema/**", "src/lib/permissions.ts", "src/utils/db.ts"],
+  "ignore": [
+    "src/db/schema/**",
+    "src/lib/permissions.ts",
+    "src/utils/db.ts",
+    "src/lib/medications/**"
+  ],
   "rules": {
     "exports": "warn",
     "types": "warn"
