@@ -7,6 +7,8 @@ import { AppointmentActionsMenu } from './appointment-actions-menu';
 
 vi.mock('@/queries', () => ({
   useUpdateAppointmentStatus: vi.fn().mockReturnValue({ mutate: vi.fn(), isPending: false }),
+  useUpdateAppointment: vi.fn().mockReturnValue({ mutate: vi.fn(), isPending: false }),
+  useDeleteAppointment: vi.fn().mockReturnValue({ mutate: vi.fn(), isPending: false }),
 }));
 
 const makeAppointment = (status: string) => ({
@@ -27,21 +29,34 @@ describe('AppointmentActionsMenu', () => {
     vi.clearAllMocks();
   });
 
-  it('renders no menu button for COMPLETED appointment', () => {
-    const { queryByRole } = render(
+  it('renders menu button for COMPLETED appointment with edit and delete', async () => {
+    const { getByRole, queryByText } = render(
       <AppointmentActionsMenu appointment={makeAppointment('COMPLETED')} />,
     );
-    expect(queryByRole('button')).not.toBeInTheDocument();
+    const user = userEvent.setup();
+
+    await user.click(getByRole('button', { name: /open appointment menu/i }));
+
+    expect(queryByText('Edit')).toBeInTheDocument();
+    expect(queryByText('Delete')).toBeInTheDocument();
+    expect(queryByText('Confirm')).not.toBeInTheDocument();
+    expect(queryByText('Complete')).not.toBeInTheDocument();
   });
 
-  it('renders no menu button for CANCELLED appointment', () => {
-    const { queryByRole } = render(
+  it('renders menu button for CANCELLED appointment with edit and delete', async () => {
+    const { getByRole, queryByText } = render(
       <AppointmentActionsMenu appointment={makeAppointment('CANCELLED')} />,
     );
-    expect(queryByRole('button')).not.toBeInTheDocument();
+    const user = userEvent.setup();
+
+    await user.click(getByRole('button', { name: /open appointment menu/i }));
+
+    expect(queryByText('Edit')).toBeInTheDocument();
+    expect(queryByText('Delete')).toBeInTheDocument();
+    expect(queryByText('Confirm')).not.toBeInTheDocument();
   });
 
-  it('shows Confirm and Cancel actions for PENDING appointment', async () => {
+  it('shows Edit, Confirm, Cancel, and Delete actions for PENDING appointment', async () => {
     const { getByRole, queryByText } = render(
       <AppointmentActionsMenu appointment={makeAppointment('PENDING')} />,
     );
@@ -49,12 +64,14 @@ describe('AppointmentActionsMenu', () => {
 
     await user.click(getByRole('button', { name: /open appointment menu/i }));
 
+    expect(queryByText('Edit')).toBeInTheDocument();
     expect(queryByText('Confirm')).toBeInTheDocument();
     expect(queryByText('Cancel')).toBeInTheDocument();
+    expect(queryByText('Delete')).toBeInTheDocument();
     expect(queryByText('Complete')).not.toBeInTheDocument();
   });
 
-  it('shows Complete and Cancel actions for CONFIRMED appointment', async () => {
+  it('shows Edit, Complete, Cancel, and Delete actions for CONFIRMED appointment', async () => {
     const { getByRole, queryByText } = render(
       <AppointmentActionsMenu appointment={makeAppointment('CONFIRMED')} />,
     );
@@ -62,8 +79,10 @@ describe('AppointmentActionsMenu', () => {
 
     await user.click(getByRole('button', { name: /open appointment menu/i }));
 
+    expect(queryByText('Edit')).toBeInTheDocument();
     expect(queryByText('Complete')).toBeInTheDocument();
     expect(queryByText('Cancel')).toBeInTheDocument();
+    expect(queryByText('Delete')).toBeInTheDocument();
     expect(queryByText('Confirm')).not.toBeInTheDocument();
   });
 

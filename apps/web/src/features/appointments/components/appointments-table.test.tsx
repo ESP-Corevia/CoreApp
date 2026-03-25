@@ -6,6 +6,8 @@ import AppointmentsTable from './appointments-table';
 
 vi.mock('@/queries', () => ({
   useUpdateAppointmentStatus: vi.fn().mockReturnValue({ mutate: vi.fn(), isPending: false }),
+  useUpdateAppointment: vi.fn().mockReturnValue({ mutate: vi.fn(), isPending: false }),
+  useDeleteAppointment: vi.fn().mockReturnValue({ mutate: vi.fn(), isPending: false }),
 }));
 
 const mockAppointments: Appointment[] = [

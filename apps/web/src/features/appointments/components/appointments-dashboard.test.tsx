@@ -9,6 +9,7 @@ import AppointmentsDashboard from './appointments-dashboard';
 
 vi.mock('@/queries', () => ({
   useListAppointments: vi.fn().mockReturnValue({ data: undefined, error: null, isLoading: true }),
+  useCreateAppointment: vi.fn().mockReturnValue({ mutate: vi.fn(), isPending: false }),
 }));
 
 vi.mock('sonner', () => ({

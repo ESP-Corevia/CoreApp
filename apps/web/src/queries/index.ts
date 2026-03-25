@@ -1,3 +1,5 @@
+export { useCreateAppointment } from './useCreateAppointment';
+export { useDeleteAppointment } from './useDeleteAppointment';
 export { useDeleteUser } from './useDeleteUser';
 export { useImpersonateUser } from './useImpersonateUser';
 export { useListAppointments } from './useListAppointments';
@@ -20,4 +22,5 @@ export { useRevokeSessions } from './useRevokeSessions';
 export { useRevokeUserSessions } from './useRevokeUserSessions';
 export { useSearchMedications } from './useSearchMedications';
 export { useUnbanUser } from './useUnbanUser';
+export { useUpdateAppointment } from './useUpdateAppointment';
 export { useUpdateAppointmentStatus } from './useUpdateAppointmentStatus';

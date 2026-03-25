@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { useListAppointments } from '@/queries';
 
 import AppointmentsTable from './appointments-table';
+import { AppointmentCreateDialog } from './modals/appointment-create-dialog';
 
 export default function AppointmentsDashboard({
   session,
@@ -70,6 +71,9 @@ export default function AppointmentsDashboard({
 
   return (
     <div className="space-y-6">
+      <div className="flex items-center justify-end">
+        <AppointmentCreateDialog />
+      </div>
       <AppointmentsTable
         title={t('appointments.title', 'Appointments Management')}
         data={appointmentRows}
