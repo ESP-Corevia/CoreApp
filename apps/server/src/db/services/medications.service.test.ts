@@ -677,6 +677,28 @@ describe('today', () => {
 
     expect(repo.ensureIntakesForSchedules).not.toHaveBeenCalled();
   });
+
+  it('paginates through all active medications', async () => {
+    const fullPage = Array.from({ length: 100 }, (_, i) => ({
+      id: `med_${i}`,
+      patientId: 'u_1',
+      startDate: '2020-01-01',
+      endDate: null,
+    }));
+    const secondPage = [
+      { id: 'med_100', patientId: 'u_1', startDate: '2020-01-01', endDate: null },
+    ];
+    repo.listByPatient
+      .mockResolvedValueOnce(fullPage as any)
+      .mockResolvedValueOnce(secondPage as any);
+    repo.listSchedulesByMedication.mockResolvedValue([]);
+    repo.listIntakesByDate.mockResolvedValue([]);
+
+    await service.today('u_1');
+
+    expect(repo.listByPatient).toHaveBeenCalledTimes(2);
+    expect(repo.listByPatient).toHaveBeenNthCalledWith(2, expect.objectContaining({ offset: 100 }));
+  });
 });
 
 describe('adminCreateMedication', () => {

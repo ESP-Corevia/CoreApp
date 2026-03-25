@@ -91,13 +91,21 @@ export const createMedicationsService = (repo: MedicationsRepo, provider: Medica
   async function generateAndFetchTodayIntakes(patientId: string) {
     const { date, weekday } = getParisNow();
 
-    // Get all active medications for today
-    const activeMeds = await repo.listByPatient({
-      patientId,
-      isActive: true,
-      offset: 0,
-      limit: 100,
-    });
+    // Get all active medications for today (paginate to avoid missing any)
+    const activeMeds = [];
+    let offset = 0;
+    const pageSize = 100;
+    while (true) {
+      const page = await repo.listByPatient({
+        patientId,
+        isActive: true,
+        offset,
+        limit: pageSize,
+      });
+      activeMeds.push(...page);
+      if (page.length < pageSize) break;
+      offset += pageSize;
+    }
 
     // For each medication, ensure intakes exist for today per schedule
     for (const med of activeMeds) {

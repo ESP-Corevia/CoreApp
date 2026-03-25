@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, ilike, inArray, or, sql } from 'drizzle-orm';
+import { and, asc, desc, eq, gte, ilike, inArray, isNull, lte, or, sql } from 'drizzle-orm';
 import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 
 import { escapeLike } from '../../utils/db';
@@ -375,6 +375,8 @@ export const createMedicationsRepo = (db: DrizzleDB) => ({
           eq(patientMedications.patientId, patientId),
           eq(patientMedicationIntakes.scheduledDate, date),
           eq(patientMedications.isActive, true),
+          lte(patientMedications.startDate, date),
+          or(isNull(patientMedications.endDate), gte(patientMedications.endDate, date)),
         ),
       )
       .orderBy(asc(patientMedicationIntakes.scheduledTime));
@@ -388,7 +390,9 @@ export const createMedicationsRepo = (db: DrizzleDB) => ({
         takenAt: status === 'TAKEN' ? new Date() : null,
         notes: notes ?? null,
       })
-      .where(eq(patientMedicationIntakes.id, id))
+      .where(
+        and(eq(patientMedicationIntakes.id, id), eq(patientMedicationIntakes.status, 'PENDING')),
+      )
       .returning();
     return row ?? null;
   },
