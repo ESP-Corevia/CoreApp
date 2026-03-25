@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.1.0](https://github.com/ESP-Corevia/CoreApp/compare/server-v1.0.0...server-v1.1.0) (2026-03-25)
+
+
+### ✨ Features
+
+* add medications backend (repository, service, router) ([#106](https://github.com/ESP-Corevia/CoreApp/issues/106)) ([d3ade3d](https://github.com/ESP-Corevia/CoreApp/commit/d3ade3d88cba0471c1097a1bdad4c1c981b8e34f))
+* add medications search and pillbox management UI ([#107](https://github.com/ESP-Corevia/CoreApp/issues/107)) ([e91030a](https://github.com/ESP-Corevia/CoreApp/commit/e91030a7d60edc70b466d804d391c4cf770ca5bc))
+* add pillbox seed data ([#108](https://github.com/ESP-Corevia/CoreApp/issues/108)) ([5a55fd3](https://github.com/ESP-Corevia/CoreApp/commit/5a55fd359466982dc41455115a5537ab31284fa6))
+
 ## 1.0.0 (2026-03-24)
 
 
