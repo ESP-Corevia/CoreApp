@@ -30,7 +30,7 @@ export const medicationsRouter = router({
     .meta({
       openapi: {
         method: 'GET',
-        path: '/api/medications/search',
+        path: '/medications/search',
         summary: 'Search medications',
         description: 'Search the external medications database (BDPM) by name or active substance.',
         tags: ['Medications'],
@@ -46,7 +46,7 @@ export const medicationsRouter = router({
     .meta({
       openapi: {
         method: 'GET',
-        path: '/api/medications/by-code',
+        path: '/medications/by-code',
         summary: 'Get medication by code',
         description:
           'Retrieve a specific medication from the external database by CIS, CIP, or external ID.',
@@ -65,7 +65,7 @@ export const pillboxRouter = router({
     .meta({
       openapi: {
         method: 'GET',
-        path: '/api/pillbox',
+        path: '/pillbox',
         summary: 'List my medications',
         description:
           'Returns a paginated list of the authenticated patient medications with optional active filter.',
@@ -82,7 +82,7 @@ export const pillboxRouter = router({
     .meta({
       openapi: {
         method: 'GET',
-        path: '/api/pillbox/today',
+        path: '/pillbox/today',
         summary: 'Get today pillbox',
         description:
           'Returns all medication intakes scheduled for today, auto-generating intake records as needed.',
@@ -99,7 +99,7 @@ export const pillboxRouter = router({
     .meta({
       openapi: {
         method: 'GET',
-        path: '/api/pillbox/{id}',
+        path: '/pillbox/{id}',
         summary: 'Get medication detail',
         description:
           'Returns the detail of a patient medication including its schedules. The caller must be the owner or an admin.',
@@ -117,7 +117,7 @@ export const pillboxRouter = router({
     .meta({
       openapi: {
         method: 'POST',
-        path: '/api/pillbox',
+        path: '/pillbox',
         summary: 'Add a medication to pillbox',
         description:
           'Adds a new medication to the patient pillbox with at least one intake schedule.',
@@ -134,7 +134,7 @@ export const pillboxRouter = router({
     .meta({
       openapi: {
         method: 'PATCH',
-        path: '/api/pillbox/{id}',
+        path: '/pillbox/{id}',
         summary: 'Update a medication',
         description:
           'Updates dosage, instructions, dates, or active status of a patient medication.',
@@ -151,7 +151,7 @@ export const pillboxRouter = router({
     .meta({
       openapi: {
         method: 'DELETE',
-        path: '/api/pillbox/{id}',
+        path: '/pillbox/{id}',
         summary: 'Delete a medication',
         description:
           'Removes a medication and all its schedules and intakes from the patient pillbox.',
@@ -168,7 +168,7 @@ export const pillboxRouter = router({
     .meta({
       openapi: {
         method: 'POST',
-        path: '/api/pillbox/schedules',
+        path: '/pillbox/schedules',
         summary: 'Add an intake schedule',
         description: 'Adds a new intake schedule to an existing patient medication.',
         tags: ['Pillbox'],
@@ -188,7 +188,7 @@ export const pillboxRouter = router({
     .meta({
       openapi: {
         method: 'PATCH',
-        path: '/api/pillbox/schedules/{id}',
+        path: '/pillbox/schedules/{id}',
         summary: 'Update an intake schedule',
         description: 'Updates time, moment, quantity, or weekday of an intake schedule.',
         tags: ['Pillbox'],
@@ -208,7 +208,7 @@ export const pillboxRouter = router({
     .meta({
       openapi: {
         method: 'DELETE',
-        path: '/api/pillbox/schedules/{id}',
+        path: '/pillbox/schedules/{id}',
         summary: 'Delete an intake schedule',
         description: 'Removes an intake schedule from a patient medication.',
         tags: ['Pillbox'],
@@ -228,7 +228,7 @@ export const pillboxRouter = router({
     .meta({
       openapi: {
         method: 'POST',
-        path: '/api/pillbox/intakes/{id}/taken',
+        path: '/pillbox/intakes/{id}/taken',
         summary: 'Mark intake as taken',
         description: 'Marks a pending medication intake as taken with optional notes.',
         tags: ['Pillbox'],
@@ -248,7 +248,7 @@ export const pillboxRouter = router({
     .meta({
       openapi: {
         method: 'POST',
-        path: '/api/pillbox/intakes/{id}/skipped',
+        path: '/pillbox/intakes/{id}/skipped',
         summary: 'Mark intake as skipped',
         description: 'Marks a pending medication intake as skipped with optional notes.',
         tags: ['Pillbox'],
@@ -270,7 +270,7 @@ export const pillboxRouter = router({
     .meta({
       openapi: {
         method: 'GET',
-        path: '/api/pillbox/admin',
+        path: '/admin/pillbox',
         summary: 'List all patient medications (admin)',
         description: 'Admin endpoint to list all patient medications with optional filters.',
         tags: ['Pillbox Admin'],
@@ -286,7 +286,7 @@ export const pillboxRouter = router({
     .meta({
       openapi: {
         method: 'POST',
-        path: '/api/pillbox/admin',
+        path: '/admin/pillbox',
         summary: 'Create medication for a patient (admin)',
         description: 'Admin endpoint to add a medication to a specific patient pillbox.',
         tags: ['Pillbox Admin'],
@@ -303,7 +303,7 @@ export const pillboxRouter = router({
     .meta({
       openapi: {
         method: 'PATCH',
-        path: '/api/pillbox/admin/{id}',
+        path: '/admin/pillbox/{id}',
         summary: 'Update medication (admin)',
         description: 'Admin endpoint to update any patient medication.',
         tags: ['Pillbox Admin'],
@@ -319,7 +319,7 @@ export const pillboxRouter = router({
     .meta({
       openapi: {
         method: 'DELETE',
-        path: '/api/pillbox/admin/{id}',
+        path: '/admin/pillbox/{id}',
         summary: 'Delete medication (admin)',
         description: 'Admin endpoint to remove any patient medication.',
         tags: ['Pillbox Admin'],
@@ -335,7 +335,7 @@ export const pillboxRouter = router({
     .meta({
       openapi: {
         method: 'GET',
-        path: '/api/pillbox/admin/today/{patientId}',
+        path: '/admin/pillbox/today/{patientId}',
         summary: 'Get patient today pillbox (admin)',
         description: 'Admin endpoint to view a specific patient today schedule.',
         tags: ['Pillbox Admin'],

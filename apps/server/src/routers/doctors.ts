@@ -22,7 +22,7 @@ export const doctorsRouter = router({
     .meta({
       openapi: {
         method: 'GET',
-        path: '/api/doctors',
+        path: '/doctors',
         summary: 'List bookable doctors',
         description:
           'Returns a paginated list of bookable doctors with optional filters on specialty, city, and free-text search.',
@@ -45,7 +45,7 @@ export const doctorsRouter = router({
     .meta({
       openapi: {
         method: 'GET',
-        path: '/api/doctors/{doctorId}/available-slots',
+        path: '/doctors/{doctorId}/available-slots',
         summary: 'Get available slots for a doctor on a given date',
         description:
           'Returns the list of available 30-minute appointment slots for a doctor on a specific date (Europe/Paris timezone). Excludes reserved and blocked slots.',
