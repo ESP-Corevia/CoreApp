@@ -51,3 +51,6 @@ e2e/
 
 # Logs
 *.log
+
+# Certs (mounted as volume, not baked into images)
+certs/

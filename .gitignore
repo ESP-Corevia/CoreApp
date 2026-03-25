@@ -2,6 +2,7 @@ node_modules
 .turbo
 .alchemy
 .env
+certs/
 # START Ruler Generated Files
 *.bak
 .codex/config.toml
