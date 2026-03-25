@@ -220,6 +220,93 @@ export const createAppointmentsService = (repo: ReturnType<typeof createAppointm
     };
   },
 
+  adminCreateAppointment: async (input: z.infer<typeof CreateAppointmentInputSchema> & { patientId: string }) => {
+    if (!BASE_SLOTS.includes(input.time)) {
+      throw new TRPCError({
+        code: 'UNPROCESSABLE_CONTENT',
+        message: `Invalid time slot: ${input.time}. Must be a valid 30-minute slot.`,
+      });
+    }
+
+    const result = await repo.createAppointmentAtomic({
+      doctorId: input.doctorId,
+      patientId: input.patientId,
+      date: input.date,
+      time: input.time,
+      reason: input.reason,
+    });
+
+    if ('conflict' in result) {
+      throw new TRPCError({
+        code: 'CONFLICT',
+        message: 'This time slot is already booked',
+      });
+    }
+
+    if ('blocked' in result) {
+      throw new TRPCError({
+        code: 'CONFLICT',
+        message: 'This time slot is blocked by the doctor',
+      });
+    }
+
+    return result.appointment;
+  },
+
+  adminUpdateAppointment: async (
+    appointmentId: string,
+    input: { date?: string; time?: string; reason?: string; doctorId?: string; patientId?: string },
+  ) => {
+    const appointment = await repo.getByIdWithDoctor(appointmentId);
+
+    if (!appointment) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'Appointment not found',
+      });
+    }
+
+    if (input.time && !BASE_SLOTS.includes(input.time)) {
+      throw new TRPCError({
+        code: 'UNPROCESSABLE_CONTENT',
+        message: `Invalid time slot: ${input.time}. Must be a valid 30-minute slot.`,
+      });
+    }
+
+    const updated = await repo.update(appointmentId, input);
+
+    if (!updated) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Failed to update appointment',
+      });
+    }
+
+    return updated;
+  },
+
+  adminDeleteAppointment: async (appointmentId: string) => {
+    const appointment = await repo.getByIdWithDoctor(appointmentId);
+
+    if (!appointment) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'Appointment not found',
+      });
+    }
+
+    const deleted = await repo.deleteById(appointmentId);
+
+    if (!deleted) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Failed to delete appointment',
+      });
+    }
+
+    return deleted;
+  },
+
   updateAppointmentStatus: async (appointmentId: string, newStatus: string) => {
     const appointment = await repo.getByIdWithDoctor(appointmentId);
 

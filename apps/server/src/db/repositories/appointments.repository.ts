@@ -224,6 +224,43 @@ export const createAppointmentsRepo = (db: DrizzleDB) => ({
     return row ?? null;
   },
 
+  update: async (
+    id: string,
+    data: Partial<Pick<CreateAppointmentInput, 'doctorId' | 'patientId' | 'date' | 'time' | 'reason'>>,
+  ) => {
+    const [row] = await db
+      .update(appointments)
+      .set({ ...data, updatedAt: new Date() } as any)
+      .where(eq(appointments.id, id))
+      .returning({
+        id: appointments.id,
+        doctorId: appointments.doctorId,
+        patientId: appointments.patientId,
+        date: appointments.date,
+        time: appointments.time,
+        status: appointments.status,
+        reason: appointments.reason,
+      });
+
+    return row ?? null;
+  },
+
+  deleteById: async (id: string) => {
+    const [row] = await db
+      .delete(appointments)
+      .where(eq(appointments.id, id))
+      .returning({
+        id: appointments.id,
+        doctorId: appointments.doctorId,
+        patientId: appointments.patientId,
+        date: appointments.date,
+        time: appointments.time,
+        status: appointments.status,
+      });
+
+    return row ?? null;
+  },
+
   createAppointmentAtomic: async (input: CreateAppointmentInput) => {
     return await db.transaction(
       async tx => {

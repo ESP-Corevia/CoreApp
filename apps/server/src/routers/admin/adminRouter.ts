@@ -2,7 +2,13 @@ import { z } from 'zod';
 
 import { adminProcedure, router } from '../../middlewares';
 
-import { listAppointments, updateAppointmentStatus } from './adminAppointmentsRouter';
+import {
+  createAppointment,
+  deleteAppointment,
+  listAppointments,
+  updateAppointment,
+  updateAppointmentStatus,
+} from './adminAppointmentsRouter';
 import { listDoctors } from './adminDoctorsRouter';
 
 export const adminRouter = router({
@@ -91,5 +97,8 @@ export const adminRouter = router({
     }),
   listDoctors,
   listAppointments,
+  createAppointment,
+  updateAppointment,
+  deleteAppointment,
   updateAppointmentStatus,
 });

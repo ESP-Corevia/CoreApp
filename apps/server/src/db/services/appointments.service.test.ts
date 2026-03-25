@@ -267,6 +267,168 @@ describe('appointmentsService', () => {
     });
   });
 
+  describe('adminCreateAppointment', () => {
+    it('creates appointment for any patient/doctor without future-date check', async () => {
+      const result = await service.adminCreateAppointment({
+        doctorId: DOCTOR_ID,
+        patientId: PATIENT_ID,
+        date: '2020-01-01',
+        time: VALID_TIME,
+      });
+
+      expect(result).toEqual(fakeAppointment);
+      expect(mockAppointmentsRepo.createAppointmentAtomic).toHaveBeenCalledWith({
+        doctorId: DOCTOR_ID,
+        patientId: PATIENT_ID,
+        date: '2020-01-01',
+        time: VALID_TIME,
+        reason: undefined,
+      });
+    });
+
+    it('throws 422 for invalid time slot', async () => {
+      await expect(
+        service.adminCreateAppointment({
+          doctorId: DOCTOR_ID,
+          patientId: PATIENT_ID,
+          date: FUTURE_DATE,
+          time: '10:15',
+        }),
+      ).rejects.toThrow(expect.objectContaining({ code: 'UNPROCESSABLE_CONTENT' }));
+    });
+
+    it('throws 409 when slot is already booked', async () => {
+      mockAppointmentsRepo.createAppointmentAtomic.mockResolvedValue({
+        conflict: true as const,
+      });
+
+      await expect(
+        service.adminCreateAppointment({
+          doctorId: DOCTOR_ID,
+          patientId: PATIENT_ID,
+          date: FUTURE_DATE,
+          time: VALID_TIME,
+        }),
+      ).rejects.toThrow(expect.objectContaining({ code: 'CONFLICT' }));
+    });
+
+    it('throws 409 when slot is blocked by doctor', async () => {
+      mockAppointmentsRepo.createAppointmentAtomic.mockResolvedValue({
+        blocked: true as const,
+      });
+
+      await expect(
+        service.adminCreateAppointment({
+          doctorId: DOCTOR_ID,
+          patientId: PATIENT_ID,
+          date: FUTURE_DATE,
+          time: VALID_TIME,
+        }),
+      ).rejects.toThrow('blocked by the doctor');
+    });
+  });
+
+  describe('adminUpdateAppointment', () => {
+    const fakeDetail = {
+      ...fakeAppointment,
+      reason: null,
+      createdAt: new Date('2099-06-15T08:00:00Z'),
+      updatedAt: null,
+      doctor: {
+        id: DOCTOR_ID,
+        name: null,
+        specialty: 'Cardiology',
+        address: '1 Rue Test',
+        imageUrl: null,
+      },
+    };
+
+    it('updates appointment fields', async () => {
+      mockAppointmentsRepo.getByIdWithDoctor.mockResolvedValue(fakeDetail);
+      mockAppointmentsRepo.update.mockResolvedValue({
+        ...fakeAppointment,
+        reason: 'Updated',
+        time: '14:00',
+      });
+
+      const result = await service.adminUpdateAppointment(fakeAppointment.id, {
+        time: '14:00',
+        reason: 'Updated',
+      });
+
+      expect(result.time).toBe('14:00');
+      expect(result.reason).toBe('Updated');
+    });
+
+    it('throws NOT_FOUND when appointment does not exist', async () => {
+      mockAppointmentsRepo.getByIdWithDoctor.mockResolvedValue(null as any);
+
+      await expect(
+        service.adminUpdateAppointment('non-existent', { reason: 'test' }),
+      ).rejects.toThrow(expect.objectContaining({ code: 'NOT_FOUND' }));
+    });
+
+    it('throws 422 for invalid time slot', async () => {
+      mockAppointmentsRepo.getByIdWithDoctor.mockResolvedValue(fakeDetail);
+
+      await expect(
+        service.adminUpdateAppointment(fakeAppointment.id, { time: '10:15' }),
+      ).rejects.toThrow(expect.objectContaining({ code: 'UNPROCESSABLE_CONTENT' }));
+    });
+
+    it('throws INTERNAL_SERVER_ERROR when update returns null', async () => {
+      mockAppointmentsRepo.getByIdWithDoctor.mockResolvedValue(fakeDetail);
+      mockAppointmentsRepo.update.mockResolvedValue(null as any);
+
+      await expect(
+        service.adminUpdateAppointment(fakeAppointment.id, { reason: 'test' }),
+      ).rejects.toThrow(expect.objectContaining({ code: 'INTERNAL_SERVER_ERROR' }));
+    });
+  });
+
+  describe('adminDeleteAppointment', () => {
+    const fakeDetail = {
+      ...fakeAppointment,
+      reason: null,
+      createdAt: new Date('2099-06-15T08:00:00Z'),
+      updatedAt: null,
+      doctor: {
+        id: DOCTOR_ID,
+        name: null,
+        specialty: 'Cardiology',
+        address: '1 Rue Test',
+        imageUrl: null,
+      },
+    };
+
+    it('deletes appointment successfully', async () => {
+      mockAppointmentsRepo.getByIdWithDoctor.mockResolvedValue(fakeDetail);
+      mockAppointmentsRepo.deleteById.mockResolvedValue(fakeAppointment);
+
+      const result = await service.adminDeleteAppointment(fakeAppointment.id);
+
+      expect(result).toEqual(fakeAppointment);
+      expect(mockAppointmentsRepo.deleteById).toHaveBeenCalledWith(fakeAppointment.id);
+    });
+
+    it('throws NOT_FOUND when appointment does not exist', async () => {
+      mockAppointmentsRepo.getByIdWithDoctor.mockResolvedValue(null as any);
+
+      await expect(service.adminDeleteAppointment('non-existent')).rejects.toThrow(
+        expect.objectContaining({ code: 'NOT_FOUND' }),
+      );
+    });
+
+    it('throws INTERNAL_SERVER_ERROR when delete returns null', async () => {
+      mockAppointmentsRepo.getByIdWithDoctor.mockResolvedValue(fakeDetail);
+      mockAppointmentsRepo.deleteById.mockResolvedValue(null as any);
+
+      await expect(service.adminDeleteAppointment(fakeAppointment.id)).rejects.toThrow(
+        expect.objectContaining({ code: 'INTERNAL_SERVER_ERROR' }),
+      );
+    });
+  });
+
   describe('updateAppointmentStatus', () => {
     const fakeDetail = {
       ...fakeAppointment,

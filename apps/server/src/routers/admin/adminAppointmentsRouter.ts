@@ -66,6 +66,113 @@ export const listAppointments = adminProcedure
     });
   });
 
+export const createAppointment = adminProcedure
+  .meta({
+    openapi: {
+      method: 'POST',
+      path: '/admin/appointments',
+      summary: 'Create an appointment',
+      description: 'Admin creates an appointment on behalf of a patient.',
+      protect: true,
+      tags: ['AdminRouter'],
+    },
+  })
+  .input(
+    z.object({
+      doctorId: z.string().uuid(),
+      patientId: z.string().uuid(),
+      date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'date must be YYYY-MM-DD'),
+      time: z.string().regex(/^\d{2}:\d{2}$/, 'time must be HH:mm'),
+      reason: z.string().optional(),
+    }),
+  )
+  .output(
+    z.object({
+      id: z.string(),
+      doctorId: z.string(),
+      patientId: z.string(),
+      date: z.string(),
+      time: z.string(),
+      status: z.string(),
+    }),
+  )
+  .mutation(async ({ input, ctx }) => {
+    return await ctx.services.appointmentsService.adminCreateAppointment(input);
+  });
+
+export const updateAppointment = adminProcedure
+  .meta({
+    openapi: {
+      method: 'PUT',
+      path: '/admin/appointments/{id}',
+      summary: 'Update an appointment',
+      description: 'Admin updates appointment fields (date, time, reason, doctorId, patientId).',
+      protect: true,
+      tags: ['AdminRouter'],
+    },
+  })
+  .input(
+    z.object({
+      id: z.string().uuid(),
+      date: z
+        .string()
+        .regex(/^\d{4}-\d{2}-\d{2}$/, 'date must be YYYY-MM-DD')
+        .optional(),
+      time: z
+        .string()
+        .regex(/^\d{2}:\d{2}$/, 'time must be HH:mm')
+        .optional(),
+      reason: z.string().optional(),
+      doctorId: z.string().uuid().optional(),
+      patientId: z.string().uuid().optional(),
+    }),
+  )
+  .output(
+    z.object({
+      id: z.string(),
+      doctorId: z.string(),
+      patientId: z.string(),
+      date: z.string(),
+      time: z.string(),
+      status: z.string(),
+      reason: z.string().nullable(),
+    }),
+  )
+  .mutation(async ({ input, ctx }) => {
+    const { id, ...data } = input;
+    return await ctx.services.appointmentsService.adminUpdateAppointment(id, data);
+  });
+
+export const deleteAppointment = adminProcedure
+  .meta({
+    openapi: {
+      method: 'DELETE',
+      path: '/admin/appointments/{id}',
+      summary: 'Delete an appointment',
+      description: 'Admin deletes an appointment.',
+      protect: true,
+      tags: ['AdminRouter'],
+    },
+  })
+  .input(
+    z.object({
+      id: z.string().uuid(),
+    }),
+  )
+  .output(
+    z.object({
+      id: z.string(),
+      doctorId: z.string(),
+      patientId: z.string(),
+      date: z.string(),
+      time: z.string(),
+      status: z.string(),
+    }),
+  )
+  .mutation(async ({ input, ctx }) => {
+    return await ctx.services.appointmentsService.adminDeleteAppointment(input.id);
+  });
+
 export const updateAppointmentStatus = adminProcedure
   .meta({
     openapi: {
