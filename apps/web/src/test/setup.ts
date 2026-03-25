@@ -23,7 +23,6 @@ Object.defineProperty(window, 'matchMedia', {
 });
 // Radix Select fixes
 if (!Element.prototype.hasPointerCapture) {
-  // eslint-disable-next-line no-unused-vars
   Element.prototype.hasPointerCapture = (_pointerId: number) => true;
 }
 

@@ -205,8 +205,7 @@ export default function PillboxDetailRoute() {
     );
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const med = medication as any;
+  const med = medication;
 
   return (
     <div className="mx-auto max-w-3xl space-y-6 p-6">

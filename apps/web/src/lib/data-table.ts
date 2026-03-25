@@ -45,7 +45,6 @@ export function getFilterOperators(filterVariant: FilterVariant) {
     multiSelect: dataTableConfig.multiSelectOperators,
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   return operatorMap[filterVariant] ?? dataTableConfig.textOperators;
 }
 
@@ -60,7 +59,6 @@ export function getDefaultFilterOperator(filterVariant: FilterVariant, operator?
   return operators[0]?.value ?? (filterVariant === 'text' ? 'iLike' : 'eq');
 }
 
-// eslint-disable-next-line no-unused-vars
 function _getValidFilters<TData>(
   filters: ExtendedColumnFilter<TData>[],
 ): ExtendedColumnFilter<TData>[] {
@@ -70,8 +68,7 @@ function _getValidFilters<TData>(
       filter.operator === 'isNotEmpty' ||
       (Array.isArray(filter.value)
         ? filter.value.length > 0
-        : // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-          filter.value !== '' && filter.value !== null && filter.value !== undefined),
+        : filter.value !== '' && filter.value !== null && filter.value !== undefined),
   );
 }
 export function convertToExtendedFilters<TData>(

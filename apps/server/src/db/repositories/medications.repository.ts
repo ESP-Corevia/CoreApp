@@ -129,16 +129,18 @@ export const createMedicationsRepo = (db: DrizzleDB) => ({
   },
 
   getDetailById: async (id: string) => {
-    return (
-      (await db.query.patientMedications.findFirst({
-        where: eq(patientMedications.id, id),
-        with: {
-          schedules: {
-            orderBy: asc(patientMedicationSchedules.intakeTime),
-          },
+    const row = await db.query.patientMedications.findFirst({
+      where: eq(patientMedications.id, id),
+      with: {
+        user: { columns: { name: true, email: true } },
+        schedules: {
+          orderBy: asc(patientMedicationSchedules.intakeTime),
         },
-      })) ?? null
-    );
+      },
+    });
+    if (!row) return null;
+    const { user, ...med } = row;
+    return { ...med, patientName: user?.name ?? null, patientEmail: user?.email ?? null };
   },
 
   listByPatient: async (params: {

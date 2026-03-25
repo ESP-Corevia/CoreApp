@@ -14,7 +14,6 @@ vi.mock('sonner', () => ({
 }));
 
 vi.mock('@/providers/trpc', async importOriginal => {
-  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
   const original = await importOriginal<typeof import('@/providers/trpc')>();
   return {
     ...original,

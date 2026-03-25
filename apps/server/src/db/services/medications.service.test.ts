@@ -142,15 +142,19 @@ describe('createMedication', () => {
     schedules: [{ intakeTime: '08:00', intakeMoment: 'MORNING' as const, quantity: '1' }],
   };
 
+  const detailResult = {
+    id: 'med_1',
+    patientId: 'u_1',
+    startDate: '2099-01-01',
+    endDate: null,
+    patientName: 'Test',
+    patientEmail: 'test@test.com',
+    schedules: [{ id: 'sched_1', weekday: null, intakeTime: '08:00' }],
+  };
+
   it('creates medication and schedules via atomic repo call', async () => {
-    const atomicResult = {
-      id: 'med_1',
-      patientId: 'u_1',
-      startDate: '2099-01-01',
-      endDate: null,
-      schedules: [{ id: 'sched_1', weekday: null, intakeTime: '08:00' }],
-    };
-    repo.createMedicationAtomic.mockResolvedValue(atomicResult as any);
+    repo.createMedicationAtomic.mockResolvedValue({ id: 'med_1' } as any);
+    repo.getDetailById.mockResolvedValue(detailResult as any);
 
     const result = await service.createMedication('u_1', input);
 
@@ -161,6 +165,15 @@ describe('createMedication', () => {
     expect(call[2]).toEqual([]);
   });
 
+  it('throws INTERNAL_SERVER_ERROR if detail fetch fails after create', async () => {
+    repo.createMedicationAtomic.mockResolvedValue({ id: 'med_1' } as any);
+    repo.getDetailById.mockResolvedValue(null);
+
+    await expect(service.createMedication('u_1', input)).rejects.toMatchObject({
+      code: 'INTERNAL_SERVER_ERROR',
+    });
+  });
+
   it('rejects if endDate before startDate', async () => {
     await expect(
       service.createMedication('u_1', { ...input, endDate: '2098-12-31' }),
@@ -169,6 +182,7 @@ describe('createMedication', () => {
 
   it('generates intakes when medication starts today or earlier', async () => {
     repo.createMedicationAtomic.mockResolvedValue({ id: 'med_1', schedules: [] } as any);
+    repo.getDetailById.mockResolvedValue(detailResult as any);
 
     await service.createMedication('u_1', { ...input, startDate: '2020-01-01' });
 
@@ -178,6 +192,7 @@ describe('createMedication', () => {
 
   it('generates intakes when endDate is in the future', async () => {
     repo.createMedicationAtomic.mockResolvedValue({ id: 'med_1', schedules: [] } as any);
+    repo.getDetailById.mockResolvedValue(detailResult as any);
 
     await service.createMedication('u_1', {
       ...input,
@@ -191,6 +206,7 @@ describe('createMedication', () => {
 
   it('skips intake generation when endDate is in the past', async () => {
     repo.createMedicationAtomic.mockResolvedValue({ id: 'med_1', schedules: [] } as any);
+    repo.getDetailById.mockResolvedValue(detailResult as any);
 
     await service.createMedication('u_1', {
       ...input,
@@ -204,6 +220,7 @@ describe('createMedication', () => {
 
   it('skips intake generation when schedule weekday does not match today', async () => {
     repo.createMedicationAtomic.mockResolvedValue({ id: 'med_1', schedules: [] } as any);
+    repo.getDetailById.mockResolvedValue(detailResult as any);
 
     await service.createMedication('u_1', {
       ...input,
@@ -709,15 +726,19 @@ describe('adminCreateMedication', () => {
     schedules: [{ intakeTime: '08:00', intakeMoment: 'MORNING' as const, quantity: '1' }],
   };
 
+  const adminDetailResult = {
+    id: 'med_1',
+    patientId: 'u_1',
+    startDate: '2099-01-01',
+    endDate: null,
+    patientName: 'Test',
+    patientEmail: 'test@test.com',
+    schedules: [{ id: 'sched_1', weekday: null, intakeTime: '08:00' }],
+  };
+
   it('creates medication for any patient', async () => {
-    const atomicResult = {
-      id: 'med_1',
-      patientId: 'u_1',
-      startDate: '2099-01-01',
-      endDate: null,
-      schedules: [{ id: 'sched_1', weekday: null, intakeTime: '08:00' }],
-    };
-    repo.createMedicationAtomic.mockResolvedValue(atomicResult as any);
+    repo.createMedicationAtomic.mockResolvedValue({ id: 'med_1' } as any);
+    repo.getDetailById.mockResolvedValue(adminDetailResult as any);
 
     const result = await service.adminCreateMedication('u_1', input);
 
@@ -733,6 +754,7 @@ describe('adminCreateMedication', () => {
 
   it('generates intakes if medication starts today or earlier', async () => {
     repo.createMedicationAtomic.mockResolvedValue({ id: 'med_1', schedules: [] } as any);
+    repo.getDetailById.mockResolvedValue(adminDetailResult as any);
 
     await service.adminCreateMedication('u_1', { ...input, startDate: '2020-01-01' });
 
@@ -742,6 +764,7 @@ describe('adminCreateMedication', () => {
 
   it('generates intakes when endDate is in the future', async () => {
     repo.createMedicationAtomic.mockResolvedValue({ id: 'med_1', schedules: [] } as any);
+    repo.getDetailById.mockResolvedValue(adminDetailResult as any);
 
     await service.adminCreateMedication('u_1', {
       ...input,
@@ -755,6 +778,7 @@ describe('adminCreateMedication', () => {
 
   it('filters schedules by weekday', async () => {
     repo.createMedicationAtomic.mockResolvedValue({ id: 'med_1', schedules: [] } as any);
+    repo.getDetailById.mockResolvedValue(adminDetailResult as any);
 
     await service.adminCreateMedication('u_1', {
       ...input,
@@ -770,6 +794,7 @@ describe('adminCreateMedication', () => {
 
   it('skips intake generation when endDate is in the past', async () => {
     repo.createMedicationAtomic.mockResolvedValue({ id: 'med_1', schedules: [] } as any);
+    repo.getDetailById.mockResolvedValue(adminDetailResult as any);
 
     await service.adminCreateMedication('u_1', {
       ...input,

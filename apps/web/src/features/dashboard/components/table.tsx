@@ -38,11 +38,8 @@ export default function DataTableUsers({
   data: User[];
   pageCount?: number;
   search?: string;
-  // eslint-disable-next-line no-unused-vars
   onSearchChange?: (value: string) => void;
-  // eslint-disable-next-line no-unused-vars
   onFiltersChange?: (filters: ExtendedColumnFilter<User>[]) => void;
-  // eslint-disable-next-line no-unused-vars
   onSortingChange?: (sorting: ExtendedColumnSort<User>) => void;
   isLoading: boolean;
   title: string;

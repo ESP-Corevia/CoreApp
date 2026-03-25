@@ -131,13 +131,6 @@
       "instructions": "Instructions",
       "intakeMoment": "Moment",
       "intakeTime": "Time",
-      "moments": {
-        "BEDTIME": "Bedtime",
-        "CUSTOM": "Custom",
-        "EVENING": "Evening",
-        "MORNING": "Morning",
-        "NOON": "Noon"
-      },
       "isActiveHint": "Disable to archive this treatment without deleting it",
       "isActiveLabel": "Active treatment",
       "medicationCreated": "Medication added to pillbox successfully",
@@ -146,6 +139,13 @@
       "medicationDeleteError": "Error deleting treatment: {{message}}",
       "medicationUpdated": "Treatment updated",
       "medicationUpdateError": "Error updating treatment: {{message}}",
+      "moments": {
+        "BEDTIME": "Bedtime",
+        "CUSTOM": "Custom",
+        "EVENING": "Evening",
+        "MORNING": "Morning",
+        "NOON": "Noon"
+      },
       "newSchedule": "New reminder",
       "noSchedules": "No reminders configured",
       "notFound": "Treatment not found",
@@ -216,7 +216,6 @@
       "passwordUpdated": "Password updated successfully",
       "passwordUpdateError": "Failed to update password. Check your current password.",
       "personalDetails": "Your personal details",
-      "previewLabel": "Preview Profile Information",
       "profileInformation": "Profile Information",
       "save": "Save",
       "savingChanges": "Saving changes...",

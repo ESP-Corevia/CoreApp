@@ -131,13 +131,6 @@
       "instructions": "Instructions",
       "intakeMoment": "Moment",
       "intakeTime": "Heure",
-      "moments": {
-        "BEDTIME": "Au coucher",
-        "CUSTOM": "Personnalisé",
-        "EVENING": "Soir",
-        "MORNING": "Matin",
-        "NOON": "Midi"
-      },
       "isActiveHint": "Désactivez pour archiver ce traitement sans le supprimer",
       "isActiveLabel": "Traitement actif",
       "medicationCreated": "Médicament ajouté au pilulier avec succès",
@@ -146,6 +139,13 @@
       "medicationDeleteError": "Erreur lors de la suppression du traitement : {{message}}",
       "medicationUpdated": "Traitement mis à jour",
       "medicationUpdateError": "Erreur lors de la mise à jour du traitement : {{message}}",
+      "moments": {
+        "BEDTIME": "Au coucher",
+        "CUSTOM": "Personnalisé",
+        "EVENING": "Soir",
+        "MORNING": "Matin",
+        "NOON": "Midi"
+      },
       "newSchedule": "Nouveau rappel",
       "noSchedules": "Aucun rappel configuré",
       "notFound": "Traitement introuvable",
@@ -217,7 +217,6 @@
       "passwordUpdated": "Mot de passe mis à jour avec succès",
       "passwordUpdateError": "Échec de la mise à jour du mot de passe. Vérifiez votre mot de passe actuel.",
       "personalDetails": "Vos informations personnelles",
-      "previewLabel": "Aperçu des informations du profil",
       "profileInformation": "Informations du profil",
       "save": "Enregistrer",
       "savingChanges": "Enregistrement des modifications...",

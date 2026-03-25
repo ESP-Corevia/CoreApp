@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: pass */
 import { waitFor } from '@testing-library/react';
 import { toast } from 'sonner';
 import { describe, expect, it, vi } from 'vitest';
@@ -7,7 +8,9 @@ import { renderHook } from '@/test/renderHook';
 import {
   useAddSchedule,
   useAdminCreateMedication,
+  useAdminDeleteMedication,
   useAdminPillboxList,
+  useAdminUpdateMedication,
   useDeleteSchedule,
   usePillboxDetail,
   useUpdateSchedule,
@@ -21,7 +24,6 @@ vi.mock('sonner', () => ({
 }));
 
 vi.mock('@/providers/trpc', async importOriginal => {
-  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
   const original = await importOriginal<typeof import('@/providers/trpc')>();
   return {
     ...original,
@@ -30,6 +32,8 @@ vi.mock('@/providers/trpc', async importOriginal => {
         addSchedule: { mutate: vi.fn() },
         updateSchedule: { mutate: vi.fn() },
         deleteSchedule: { mutate: vi.fn() },
+        adminUpdateMedication: { mutate: vi.fn() },
+        adminDeleteMedication: { mutate: vi.fn() },
         adminCreateMedication: { mutate: vi.fn() },
       },
     },
@@ -209,6 +213,18 @@ describe('useAddSchedule', () => {
       expect(toast.error).toHaveBeenCalledWith(expect.stringContaining('Failed'));
     });
   });
+
+  it('shows fallback error message for non-Error values', async () => {
+    const mutate = (trpcClient as any).pillbox.addSchedule.mutate;
+    mutate.mockRejectedValueOnce(null);
+
+    const { result } = renderHook(() => useAddSchedule());
+    result.current.mutate({ patientMedicationId: 'med_1', intakeTime: '08:00' });
+
+    await waitFor(() => {
+      expect(toast.error).toHaveBeenCalledWith(expect.stringContaining('Erreur inconnue'));
+    });
+  });
 });
 
 describe('useUpdateSchedule', () => {
@@ -239,6 +255,18 @@ describe('useUpdateSchedule', () => {
       expect(toast.error).toHaveBeenCalledWith(expect.stringContaining('Update failed'));
     });
   });
+
+  it('shows fallback error message for non-Error values', async () => {
+    const mutate = (trpcClient as any).pillbox.updateSchedule.mutate;
+    mutate.mockRejectedValueOnce(undefined);
+
+    const { result } = renderHook(() => useUpdateSchedule());
+    result.current.mutate({ id: 'sched_1' });
+
+    await waitFor(() => {
+      expect(toast.error).toHaveBeenCalledWith(expect.stringContaining('Erreur inconnue'));
+    });
+  });
 });
 
 describe('useDeleteSchedule', () => {
@@ -265,6 +293,100 @@ describe('useDeleteSchedule', () => {
 
     await waitFor(() => {
       expect(toast.error).toHaveBeenCalledWith(expect.stringContaining('Delete failed'));
+    });
+  });
+
+  it('shows fallback error message for non-Error values', async () => {
+    const mutate = (trpcClient as any).pillbox.deleteSchedule.mutate;
+    mutate.mockRejectedValueOnce(false);
+
+    const { result } = renderHook(() => useDeleteSchedule());
+    result.current.mutate({ id: 'sched_1' });
+
+    await waitFor(() => {
+      expect(toast.error).toHaveBeenCalledWith(expect.stringContaining('Erreur inconnue'));
+    });
+  });
+});
+
+describe('useAdminUpdateMedication', () => {
+  it('calls mutate and shows success toast', async () => {
+    const mutate = (trpcClient as any).pillbox.adminUpdateMedication.mutate;
+    mutate.mockResolvedValueOnce({ id: 'med_1' });
+
+    const { result } = renderHook(() => useAdminUpdateMedication());
+
+    result.current.mutate({ id: 'med_1', dosageLabel: '500mg' });
+
+    await waitFor(() => {
+      expect(mutate).toHaveBeenCalledWith(
+        expect.objectContaining({ id: 'med_1', dosageLabel: '500mg' }),
+      );
+      expect(toast.success).toHaveBeenCalled();
+    });
+  });
+
+  it('shows error toast on failure', async () => {
+    const mutate = (trpcClient as any).pillbox.adminUpdateMedication.mutate;
+    mutate.mockRejectedValueOnce(new Error('Update failed'));
+
+    const { result } = renderHook(() => useAdminUpdateMedication());
+    result.current.mutate({ id: 'med_1' });
+
+    await waitFor(() => {
+      expect(toast.error).toHaveBeenCalledWith(expect.stringContaining('Update failed'));
+    });
+  });
+
+  it('shows fallback error message for non-Error values', async () => {
+    const mutate = (trpcClient as any).pillbox.adminUpdateMedication.mutate;
+    mutate.mockRejectedValueOnce('string error');
+
+    const { result } = renderHook(() => useAdminUpdateMedication());
+    result.current.mutate({ id: 'med_1' });
+
+    await waitFor(() => {
+      expect(toast.error).toHaveBeenCalledWith(expect.stringContaining('Erreur inconnue'));
+    });
+  });
+});
+
+describe('useAdminDeleteMedication', () => {
+  it('calls mutate and shows success toast', async () => {
+    const mutate = (trpcClient as any).pillbox.adminDeleteMedication.mutate;
+    mutate.mockResolvedValueOnce({ id: 'med_1' });
+
+    const { result } = renderHook(() => useAdminDeleteMedication());
+
+    result.current.mutate({ id: 'med_1' });
+
+    await waitFor(() => {
+      expect(mutate).toHaveBeenCalledWith({ id: 'med_1' });
+      expect(toast.success).toHaveBeenCalled();
+    });
+  });
+
+  it('shows error toast on failure', async () => {
+    const mutate = (trpcClient as any).pillbox.adminDeleteMedication.mutate;
+    mutate.mockRejectedValueOnce(new Error('Delete failed'));
+
+    const { result } = renderHook(() => useAdminDeleteMedication());
+    result.current.mutate({ id: 'med_1' });
+
+    await waitFor(() => {
+      expect(toast.error).toHaveBeenCalledWith(expect.stringContaining('Delete failed'));
+    });
+  });
+
+  it('shows fallback error message for non-Error values', async () => {
+    const mutate = (trpcClient as any).pillbox.adminDeleteMedication.mutate;
+    mutate.mockRejectedValueOnce(42);
+
+    const { result } = renderHook(() => useAdminDeleteMedication());
+    result.current.mutate({ id: 'med_1' });
+
+    await waitFor(() => {
+      expect(toast.error).toHaveBeenCalledWith(expect.stringContaining('Erreur inconnue'));
     });
   });
 });
@@ -303,6 +425,18 @@ describe('useAdminCreateMedication', () => {
 
     await waitFor(() => {
       expect(toast.error).toHaveBeenCalledWith(expect.stringContaining('Create failed'));
+    });
+  });
+
+  it('shows fallback error message for non-Error values', async () => {
+    const mutate = (trpcClient as any).pillbox.adminCreateMedication.mutate;
+    mutate.mockRejectedValueOnce(123);
+
+    const { result } = renderHook(() => useAdminCreateMedication());
+    result.current.mutate(input);
+
+    await waitFor(() => {
+      expect(toast.error).toHaveBeenCalledWith(expect.stringContaining('Erreur inconnue'));
     });
   });
 });

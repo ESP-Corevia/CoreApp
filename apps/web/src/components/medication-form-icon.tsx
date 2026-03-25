@@ -44,8 +44,8 @@ export default function MedicationFormIcon({
   title,
 }: MedicationFormIconProps) {
   const key = iconKey ?? 'unknown';
-  const emoji = EMOJI_MAP[key] ?? EMOJI_MAP.unknown!;
-  const label = title ?? LABEL_MAP[key] ?? LABEL_MAP.unknown!;
+  const emoji = EMOJI_MAP[key] ?? EMOJI_MAP.unknown;
+  const label = title ?? LABEL_MAP[key] ?? LABEL_MAP.unknown;
 
   if (withBackground) {
     return (

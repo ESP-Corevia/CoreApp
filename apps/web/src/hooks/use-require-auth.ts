@@ -20,16 +20,14 @@ function usePermission(resource: string, permission: string) {
         const { data } = await authClient.admin.hasPermission({
           permissions: { [resource]: [permission] },
         });
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+
         if (!cancelled) setAllowed(!!data?.success);
       } catch (e) {
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         if (!cancelled) {
           setAllowed(false);
           setError(e);
         }
       } finally {
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         if (!cancelled) setIsChecking(false);
       }
     })();

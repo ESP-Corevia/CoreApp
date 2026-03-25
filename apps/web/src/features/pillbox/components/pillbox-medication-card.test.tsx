@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: pass */
 import { screen } from '@testing-library/react';
 
 import { render } from '@/test/render';

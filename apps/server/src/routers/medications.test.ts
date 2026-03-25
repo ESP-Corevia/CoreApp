@@ -30,6 +30,8 @@ const fakeMed = {
   isActive: true,
   createdAt: new Date(),
   updatedAt: null,
+  patientName: 'John Doe',
+  patientEmail: 'john.doe@example.com',
 };
 
 const fakeMedDetail = { ...fakeMed, schedules: [] };

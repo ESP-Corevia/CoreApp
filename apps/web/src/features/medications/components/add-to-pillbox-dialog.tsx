@@ -31,7 +31,6 @@ import type { MedicationData } from './medication-card';
 
 interface AddToPillboxDialogProps {
   open: boolean;
-  // eslint-disable-next-line no-unused-vars
   onOpenChange: (open: boolean) => void;
   medication: MedicationData;
 }
@@ -110,7 +109,7 @@ export default function AddToPillboxDialog({
         if (i !== index) return s;
         const updated = { ...s, [field]: value };
         if (field === 'intakeMoment' && value in DEFAULT_TIMES) {
-          updated.intakeTime = DEFAULT_TIMES[value]!;
+          updated.intakeTime = DEFAULT_TIMES[value];
         }
         return updated;
       }),
@@ -307,7 +306,6 @@ export default function AddToPillboxDialog({
                 </div>
 
                 {field.state.value.map((schedule, index) => (
-                  // eslint-disable-next-line react/no-array-index-key
                   <div key={index} className="space-y-3 rounded-lg border bg-muted/20 p-3">
                     <div className="flex items-center justify-between">
                       <span className="font-medium text-muted-foreground text-sm">

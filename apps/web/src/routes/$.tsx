@@ -3,7 +3,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import { ErrorScreen } from '@/components/errorScreen';
 
 import type { Route } from './+types/_index';
-// eslint-disable-next-line no-unused-vars
+
 export function meta(_: Route.MetaArgs) {
   return [
     { title: '404 - Not Found' },

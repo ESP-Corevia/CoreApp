@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: pass */
 import { faker } from '@faker-js/faker';
 import { waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';

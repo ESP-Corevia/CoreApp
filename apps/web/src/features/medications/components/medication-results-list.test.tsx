@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: pass */
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
@@ -10,6 +11,7 @@ vi.mock('./medication-card', () => ({
   default: ({ medication, onAdd }: any) => (
     <div data-testid={`card-${medication.cis}`}>
       {medication.name}
+      {/** biome-ignore lint/a11y/useButtonType: pass */}
       <button onClick={() => onAdd(medication)}>Add</button>
     </div>
   ),

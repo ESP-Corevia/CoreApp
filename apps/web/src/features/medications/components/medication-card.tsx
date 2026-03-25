@@ -28,7 +28,7 @@ export interface MedicationData {
 
 interface MedicationCardProps {
   medication: MedicationData;
-  // eslint-disable-next-line no-unused-vars
+
   onAdd: (medication: MedicationData) => void;
 }
 

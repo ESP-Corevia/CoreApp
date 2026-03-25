@@ -150,7 +150,7 @@ export default function ScheduleEditor({ medicationId, schedules }: ScheduleEdit
     setter(prev => {
       const updated = { ...prev, [field]: value };
       if (field === 'intakeMoment' && value in DEFAULT_TIMES) {
-        updated.intakeTime = DEFAULT_TIMES[value]!;
+        updated.intakeTime = DEFAULT_TIMES[value];
       }
       return updated;
     });

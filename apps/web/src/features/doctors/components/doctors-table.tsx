@@ -33,7 +33,6 @@ export default function DoctorsTable({
   data: Doctor[];
   pageCount?: number;
   search?: string;
-  // eslint-disable-next-line no-unused-vars
   onSearchChange?: (value: string) => void;
   isLoading: boolean;
   title: string;

@@ -30,7 +30,6 @@ import type { User } from '@/types/data-table';
 
 interface BanUserDialogProps {
   open: boolean;
-  // eslint-disable-next-line no-unused-vars
   onOpenChange: (open: boolean) => void;
   user: User;
 }

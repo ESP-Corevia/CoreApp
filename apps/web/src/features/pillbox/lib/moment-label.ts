@@ -2,7 +2,7 @@ import type { TFunction } from 'i18next';
 
 export const INTAKE_MOMENT_KEYS = ['MORNING', 'NOON', 'EVENING', 'BEDTIME', 'CUSTOM'] as const;
 
-export type IntakeMomentKey = (typeof INTAKE_MOMENT_KEYS)[number];
+// type IntakeMomentKey = (typeof INTAKE_MOMENT_KEYS)[number];
 
 export function getIntakeMomentLabel(t: TFunction, moment: string) {
   switch (moment) {

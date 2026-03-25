@@ -1,3 +1,5 @@
+/** biome-ignore-all lint/style/noNonNullAssertion: pass */
+/** biome-ignore-all lint/suspicious/noExplicitAny: pass */
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
@@ -9,7 +11,6 @@ import AddToPillboxDialog from './add-to-pillbox-dialog';
 import type { MedicationData } from './medication-card';
 
 vi.mock('@/providers/trpc', async importOriginal => {
-  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
   const original = await importOriginal<typeof import('@/providers/trpc')>();
   return {
     ...original,
