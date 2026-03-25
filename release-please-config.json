@@ -3,6 +3,7 @@
   "release-type": "node",
   "include-v-in-tag": true,
   "pull-request-header": ":robot: Corevia Release",
+  "changelog-type": "github",
   "changelog-sections": [
     { "type": "feat", "section": "✨ Features", "hidden": false },
     { "type": "fix", "section": "🐛 Fixes", "hidden": false },
