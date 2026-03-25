@@ -1,60 +1,52 @@
 FROM node:24.13.1-alpine AS base
 
-# This Dockerfile is copy-pasted into our main docs at /docs/handbook/deploying-with-docker.
-# Make sure you update both files!
-
-# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
-RUN apk update
 RUN apk add --no-cache libc6-compat
-# Set working directory
 WORKDIR /app
 
 # ---
 FROM base AS prepare
 RUN npm install -g turbo
 COPY . .
-# Add lockfile and package.json's of isolated subworkspace
 RUN turbo prune home --docker
 
 # ---
 FROM base AS builder
 
 ARG VITE_BACKOFFICE_DOMAIN
+ENV VITE_BACKOFFICE_DOMAIN=$VITE_BACKOFFICE_DOMAIN
 
-RUN corepack enable
-RUN corepack prepare pnpm@10.12.1 --activate
+RUN corepack enable && corepack prepare pnpm@10.12.1 --activate
 WORKDIR /app
+
 # First install the dependencies (as they change less often)
 COPY --from=prepare /app/out/json/ .
-
 RUN pnpm install --frozen-lockfile
+
 # Build the project
 COPY --from=prepare /app/out/full/ .
-
-COPY tsconfig.json ./tsconfig.json
-COPY tsconfig.base.json ./tsconfig.base.json
 COPY tsconfig.* ./
-# Uncomment and use build args to enable remote caching
-# ARG TURBO_TEAM
-# ENV TURBO_TEAM=$TURBO_TEAM
-
-# ARG TURBO_TOKEN
-# ENV TURBO_TOKEN=$TURBO_TOKEN
 
 RUN pnpm turbo -F home build
 
 
-
-
+# ---
 FROM nginx:stable-alpine-slim
 
-# # Don't run production as root for security reasons
-# RUN addgroup --system --gid 1001 nodejs
-# RUN adduser --system --uid 1001 nextjs
-# USER nextjs
+# Non-root user setup
+RUN addgroup --system --gid 1001 appgroup \
+    && adduser --system --uid 1001 appuser \
+    && chown -R appuser:appgroup /var/cache/nginx /var/log/nginx /etc/nginx/conf.d \
+    && touch /var/run/nginx.pid && chown appuser:appgroup /var/run/nginx.pid
+
+# SPA routing + security headers config
+COPY apps/home/nginx.conf /etc/nginx/conf.d/default.conf
+
+USER appuser
 
 WORKDIR /usr/share/nginx/html
-# Automatically leverage output traces to reduce image size
-COPY --from=builder /app/apps/home/build/client ./
+
+COPY --from=builder --chown=appuser:appgroup /app/apps/home/build/client ./
+
+EXPOSE 8080
 
 CMD ["nginx", "-g", "daemon off;"]

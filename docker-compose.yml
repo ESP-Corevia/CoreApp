@@ -2,14 +2,14 @@ name: Corevia
 
 services:
   postgres:
-    image: postgres:18
+    image: postgres:17-alpine
     container_name: Corevia-postgres
     env_file:
       - ./.env
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-Corevia}
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
     ports:
       - "5432:5432"
     volumes:
@@ -19,7 +19,13 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - backend
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 512M
 
   server:
     profiles:
@@ -29,25 +35,36 @@ services:
       context: .
       dockerfile: apps/server/Dockerfile
       target: server
-    volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
     container_name: Corevia-server
     env_file:
       - ./.env
     environment:
-      NODE_ENV: ${NODE_ENV:-development}
-      DATABASE_URL: ${DATABASE_URL:-postgres://postgres:password@postgres:5432/Corevia}
-      CORS_ORIGIN: ${CORS_ORIGIN:-"http://localhost"}
-      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-"supersecret"}
-      BETTER_AUTH_URL: "http://server:3000"
-      SESSION_SECRET: ${SESSION_SECRET:-"supersecret"}
+      NODE_ENV: ${NODE_ENV:-production}
+      DATABASE_URL: ${DATABASE_URL:?DATABASE_URL is required}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost}
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?BETTER_AUTH_SECRET is required}
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL:-http://server:3000}
+      SESSION_SECRET: ${SESSION_SECRET:?SESSION_SECRET is required}
     ports:
       - "3000:3000"
     depends_on:
       migrate:
         condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:3000/health').then(r=>{if(!r.ok)throw r;process.exit(0)}).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    networks:
+      - frontend
+      - backend
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
   migrate:
     build:
       context: .
@@ -57,10 +74,12 @@ services:
     env_file:
       - ./.env
     environment:
-      DATABASE_URL: ${DATABASE_URL:-postgres://postgres:password@postgres:5432/Corevia}
+      DATABASE_URL: ${DATABASE_URL:?DATABASE_URL is required}
     depends_on:
       postgres:
         condition: service_healthy
+    networks:
+      - backend
     restart: "no"
 
   seed:
@@ -74,11 +93,13 @@ services:
     env_file:
       - ./.env
     environment:
-      DATABASE_URL: ${DATABASE_URL:-postgres://postgres:password@postgres:5432/Corevia}
+      DATABASE_URL: ${DATABASE_URL:?DATABASE_URL is required}
     depends_on:
       migrate:
         condition: service_completed_successfully
-    command: ["pnpm", "db:seed"]
+    networks:
+      - backend
+
   web:
     profiles:
       - web
@@ -86,29 +107,44 @@ services:
       context: .
       dockerfile: ./apps/web/Dockerfile
       args:
-        VITE_SERVER_URL: "http://localhost:3000"
+        VITE_SERVER_URL: ${VITE_SERVER_URL:-http://localhost:3000}
     container_name: Corevia-web
     environment:
       NODE_ENV: production
-      VITE_API_URL: "http://server:3000"
     ports:
-      - "5173:80"
+      - "80:8080"
     depends_on:
-      - server
+      server:
+        condition: service_healthy
+    networks:
+      - frontend
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 128M
 
   drizzle-gateway:
     image: ghcr.io/drizzle-team/gateway:latest
     container_name: Corevia-drizzle-gateway
-    restart: always
+    restart: unless-stopped
     ports:
       - "4983:4983"
     environment:
       PORT: 4983
       STORE_PATH: "/data"
-      MASTERPASS: ${MASTERPASS:-devpass123}
+      MASTERPASS: ${MASTERPASS:?MASTERPASS is required}
     volumes:
       - drizzle-gateway:/data
+    networks:
+      - backend
+
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
+    internal: true
 
 volumes:
   Corevia_postgres_data:

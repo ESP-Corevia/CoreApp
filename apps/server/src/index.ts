@@ -89,6 +89,10 @@ fastify.register(fastifyTRPCPlugin, {
 fastify.get('/', () => {
   return 'OK';
 });
+
+fastify.get('/health', () => {
+  return { status: 'ok' };
+});
 fastify.register(fastifyTRPCOpenApiPlugin, {
   basePath: '/api',
   router: appRouter,
