@@ -124,6 +124,16 @@ describe('createMedicationsProvider', () => {
       expect(result.items[0].name).toBe('Med 2');
     });
 
+    it('returns empty result on 404 response', async () => {
+      global.fetch = mockFetchError(404);
+
+      const result = await provider.search('nonexistent');
+
+      expect(result.items).toEqual([]);
+      expect(result.total).toBe(0);
+      expect(result.page).toBe(1);
+    });
+
     it('throws on non-ok response', async () => {
       global.fetch = mockFetchError(500);
 

@@ -174,6 +174,11 @@ export function createMedicationsProvider() {
       try {
         const response = await fetchWithTimeout(url);
         if (!response.ok) {
+          if (response.status === 404) {
+            const empty: MedicationSearchResponse = { items: [], total: 0, page, limit };
+            searchCache.set(key, { data: empty, expiresAt: Date.now() + getCacheTTL() });
+            return empty;
+          }
           logger.error({ status: response.status, url }, 'External API error');
           throw new Error(`API returned ${response.status}`);
         }

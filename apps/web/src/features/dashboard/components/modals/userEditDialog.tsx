@@ -31,7 +31,6 @@ import type { User } from '@/types/data-table';
 
 interface EditUserDialogProps {
   open: boolean;
-  // eslint-disable-next-line no-unused-vars
   onOpenChange: (open: boolean) => void;
   user: User;
 }
@@ -71,7 +70,6 @@ export function EditUserDialog({ open, onOpenChange, user }: EditUserDialogProps
         if (value.role !== normalizedUserRole) {
           await authClient.admin.setRole({
             userId: user.id,
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             role: value.role as any,
           });
         }

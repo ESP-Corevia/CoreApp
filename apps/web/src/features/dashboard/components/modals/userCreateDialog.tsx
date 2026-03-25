@@ -61,7 +61,6 @@ export function CreateUserDialog() {
           email: value.email,
           password: value.password,
           name: value.name,
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           role: value.role as any,
         });
 

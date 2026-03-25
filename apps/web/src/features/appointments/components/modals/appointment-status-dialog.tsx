@@ -17,7 +17,6 @@ import type { Appointment } from '../appointments-table';
 
 interface AppointmentStatusDialogProps {
   open: boolean;
-  // eslint-disable-next-line no-unused-vars
   onOpenChange: (open: boolean) => void;
   appointment: Appointment;
   targetStatus: 'CONFIRMED' | 'COMPLETED' | 'CANCELLED';

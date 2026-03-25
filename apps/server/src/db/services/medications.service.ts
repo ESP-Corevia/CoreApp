@@ -85,7 +85,16 @@ export const createMedicationsService = (repo: MedicationsRepo, provider: Medica
       });
     }
 
-    return await repo.createMedicationAtomic(medInput, scheduleInputs, intakeInputs);
+    const created = await repo.createMedicationAtomic(medInput, scheduleInputs, intakeInputs);
+    // Re-fetch to include user info (patientName, patientEmail) for the output schema
+    const detail = await repo.getDetailById(created.id);
+    if (!detail) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Failed to fetch created medication',
+      });
+    }
+    return detail;
   }
 
   async function generateAndFetchTodayIntakes(patientId: string) {

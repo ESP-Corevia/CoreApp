@@ -114,6 +114,8 @@ export const PatientMedicationOutputSchema = z.object({
 });
 
 export const PatientMedicationDetailOutputSchema = PatientMedicationOutputSchema.extend({
+  patientName: z.string().nullable(),
+  patientEmail: z.string().nullable(),
   schedules: z.array(
     z.object({
       id: z.uuid(),

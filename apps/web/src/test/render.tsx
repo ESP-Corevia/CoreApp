@@ -15,7 +15,7 @@ type Options = {
   router?: React.ComponentProps<typeof MemoryRouter>;
   lang?: 'en' | 'fr';
   queryClient?: QueryClient;
-  // eslint-disable-next-line no-unused-vars
+
   trpcHandlers?: Record<string, (input: unknown) => unknown | Promise<unknown>>;
 };
 
@@ -35,7 +35,6 @@ export function render(ui: React.ReactElement, opts: Options = {}): RenderResult
     return ({ op }) =>
       observable(observer => {
         const fn = trpcHandlers[op.path];
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         Promise.resolve(fn ? fn(op.input) : { _mock: true, path: op.path })
           .then(data => {
             observer.next({ result: { type: 'data', data } });

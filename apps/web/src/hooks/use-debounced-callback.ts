@@ -2,7 +2,6 @@ import * as React from 'react';
 
 import { useCallbackRef } from '@/hooks/use-callback-ref';
 
-// eslint-disable-next-line no-unused-vars
 export function useDebouncedCallback<T extends (...args: never[]) => unknown>(
   callback: T,
   delay: number,
