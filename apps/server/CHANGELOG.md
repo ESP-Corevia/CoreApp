@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.1.1 (2026-03-25)
+
+## What's Changed
+* fix(deps): update server (drizzle) by @renovate[bot] in https://github.com/ESP-Corevia/CoreApp/pull/111
+* fix(deps): update server (postgres) to v8.20.0 by @renovate[bot] in https://github.com/ESP-Corevia/CoreApp/pull/112
+
+
+**Full Changelog**: https://github.com/ESP-Corevia/CoreApp/compare/server-v1.1.0...server-v1.1.1
+
 ## [1.1.0](https://github.com/ESP-Corevia/CoreApp/compare/server-v1.0.0...server-v1.1.0) (2026-03-25)
 
 
