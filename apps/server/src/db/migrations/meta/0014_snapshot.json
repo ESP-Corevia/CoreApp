@@ -992,7 +992,13 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "patient_medication_intakes_med_sched_date_uniq": {
+          "name": "patient_medication_intakes_med_sched_date_uniq",
+          "nullsNotDistinct": false,
+          "columns": ["patient_medication_id", "schedule_id", "scheduled_date"]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false

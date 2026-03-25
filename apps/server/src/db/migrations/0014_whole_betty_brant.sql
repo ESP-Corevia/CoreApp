@@ -54,4 +54,5 @@ CREATE INDEX "patient_medication_intakes_status_idx" ON "patient_medication_inta
 CREATE INDEX "patient_medication_schedules_med_idx" ON "patient_medication_schedules" USING btree ("patient_medication_id");--> statement-breakpoint
 CREATE INDEX "patient_medications_patient_idx" ON "patient_medications" USING btree ("patient_id");--> statement-breakpoint
 CREATE INDEX "patient_medications_active_idx" ON "patient_medications" USING btree ("patient_id","is_active");--> statement-breakpoint
-CREATE INDEX "patient_medications_name_idx" ON "patient_medications" USING btree ("medication_name");
+CREATE INDEX "patient_medications_name_idx" ON "patient_medications" USING btree ("medication_name");--> statement-breakpoint
+ALTER TABLE "patient_medication_intakes" ADD CONSTRAINT "patient_medication_intakes_med_sched_date_uniq" UNIQUE("patient_medication_id","schedule_id","scheduled_date");
