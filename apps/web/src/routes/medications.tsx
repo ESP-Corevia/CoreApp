@@ -1,6 +1,6 @@
 import MedicationsRoute from '@/features/medications/routes';
 
-import type { Route } from './+types/_index';
+import type { Route } from './+types/medications';
 
 export function meta(_: Route.MetaArgs) {
   return [{ title: 'Médicaments' }, { name: 'description', content: 'Recherche de médicaments' }];

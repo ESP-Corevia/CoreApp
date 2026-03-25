@@ -51,7 +51,7 @@ function getSubmitButton() {
 function getScheduleAddButton() {
   const buttons = screen.getAllByRole('button');
   return buttons.find(
-    btn => btn.textContent.includes('Ajouter') && btn.getAttribute('type') === 'button',
+    btn => btn.textContent?.includes('Ajouter') && btn.getAttribute('type') === 'button',
   )!;
 }
 
