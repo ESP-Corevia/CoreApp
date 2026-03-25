@@ -20,3 +20,37 @@ node_modules/.pnpm
 # Env files
 .env
 .env.*
+
+# Documentation
+*.md
+LICENSE
+
+# IDE / editor
+.vscode/
+.idea/
+
+# CI / tooling config
+.github/
+.husky/
+docker-compose*.yml
+biome.json
+commitlint.config.*
+.prettierrc*
+.eslintrc*
+renovate.json
+
+# Test files
+e2e/
+**/test/
+**/*.test.ts
+**/*.spec.ts
+**/playwright-report/
+**/test-results/
+**/coverage/
+**/.lighthouseci/
+
+# Logs
+*.log
+
+# Certs (mounted as volume, not baked into images)
+certs/

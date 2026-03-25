@@ -9,55 +9,48 @@ WORKDIR /app
 # -------------------------
 FROM base AS builder
 
-# Install Turbo globally ONLY in builder
 RUN npm install -g turbo
-
 
 WORKDIR /app
 
 COPY . .
 
-# Prune everything except the server workspace
 RUN turbo prune server --docker
+
+
+# -------------------------
+# pnpm-base (shared corepack setup)
+# -------------------------
+FROM base AS pnpm-base
+
+RUN corepack enable && corepack prepare pnpm@10.12.1 --activate
 
 
 # -------------------------
 # Installer (install deps + build)
 # -------------------------
-FROM base AS installer
-
-RUN corepack enable
-RUN corepack prepare pnpm@10.12.1 --activate
+FROM pnpm-base AS installer
 
 WORKDIR /app
 
-# Load pruned package.json + lockfile + pnpm metadata
 COPY --from=builder /app/out/json/ ./
 
-# Install only the pruned dependencies
 RUN pnpm install --frozen-lockfile
 
-# Copy full pruned workspace
 COPY --from=builder /app/out/full/ ./
 
-# Turbo prune strips non-package.json files (tsconfig*, etc.)
-COPY tsconfig.json ./tsconfig.json
-COPY tsconfig.base.json ./tsconfig.base.json
 COPY tsconfig.* ./
 
-# Build the server app with Turbo
 RUN pnpm turbo -F server build
 
 
 # -------------------------
-# SERVER RUNTIME IMAGE (separate)
+# SERVER RUNTIME IMAGE
 # -------------------------
-FROM base AS server
+FROM pnpm-base AS server
 
-RUN corepack enable
-RUN corepack prepare pnpm@10.12.1 --activate
+ENV NODE_ENV=production
 
-# Create non-root user
 RUN addgroup --system --gid 1001 expressjs \
     && adduser  --system --uid 1001 expressjs
 
@@ -65,22 +58,19 @@ USER expressjs
 
 WORKDIR /app
 
-# Copy compiled & pruned project
-COPY --from=installer /app ./
+COPY --from=installer --chown=expressjs:expressjs /app ./
 
-# Move into server workspace
 WORKDIR /app/apps/server
 
-# Run start
-CMD ["pnpm","start"]
+EXPOSE 3000
+
+CMD ["node","dist/index.js"]
+
 
 # -------------------------
-# SEED RUNTIME IMAGE (separate)
+# SEED RUNTIME IMAGE
 # -------------------------
-FROM base AS seed
-
-RUN corepack enable
-RUN corepack prepare pnpm@10.12.1 --activate
+FROM pnpm-base AS seed
 
 WORKDIR /app
 
@@ -89,13 +79,11 @@ COPY --from=installer /app ./
 WORKDIR /app/apps/server
 CMD ["pnpm", "db:seed"]
 
-# -------------------------
-# MIGRATE RUNTIME IMAGE (separate)
-# -------------------------
-FROM base AS migrate
 
-RUN corepack enable
-RUN corepack prepare pnpm@10.12.1 --activate
+# -------------------------
+# MIGRATE RUNTIME IMAGE
+# -------------------------
+FROM pnpm-base AS migrate
 
 WORKDIR /app
 
