@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/ESP-Corevia/CoreApp/compare/web-v1.0.0...web-v1.1.0) (2026-03-25)
+
+
+### ✨ Features
+
+* add medications search and pillbox management UI ([#107](https://github.com/ESP-Corevia/CoreApp/issues/107)) ([e91030a](https://github.com/ESP-Corevia/CoreApp/commit/e91030a7d60edc70b466d804d391c4cf770ca5bc))
+
 ## 1.0.0 (2026-03-24)
 
 
