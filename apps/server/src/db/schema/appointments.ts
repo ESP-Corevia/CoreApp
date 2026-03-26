@@ -17,10 +17,12 @@ export const appointments = pgTable(
     doctorId: t
       .uuid('doctor_id')
       .notNull()
+      //need to reference doctors, not users
       .references(() => doctors.id, { onDelete: 'cascade' }),
     patientId: t
       .uuid('patient_id')
       .notNull()
+      //doctors also can be patients, so we reference users, not patients
       .references(() => users.id, { onDelete: 'cascade' }),
     date: t.date('date', { mode: 'string' }).notNull(),
     time: t.varchar('time', { length: 5 }).notNull(),

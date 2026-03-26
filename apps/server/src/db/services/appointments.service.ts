@@ -105,7 +105,7 @@ export const createAppointmentsService = (repo: ReturnType<typeof createAppointm
     if (!BASE_SLOTS.includes(input.time)) {
       throw new TRPCError({
         code: 'UNPROCESSABLE_CONTENT',
-        message: `Invalid time slot: ${input.time}. Must be a valid 30-minute slot.`,
+        message: `Invalid time slot: ${input.time}. Allowed appointment slots are every 30 minutes from 08:00 to 17:30, excluding the break from 12:00 to 13:00.`,
       });
     }
 
@@ -224,7 +224,7 @@ export const createAppointmentsService = (repo: ReturnType<typeof createAppointm
     if (!BASE_SLOTS.includes(input.time)) {
       throw new TRPCError({
         code: 'UNPROCESSABLE_CONTENT',
-        message: `Invalid time slot: ${input.time}. Must be a valid 30-minute slot.`,
+        message: `Invalid time slot: ${input.time}. Allowed appointment slots are every 30 minutes from 08:00 to 17:30, excluding the break from 12:00 to 13:00.`,
       });
     }
 
@@ -269,7 +269,7 @@ export const createAppointmentsService = (repo: ReturnType<typeof createAppointm
     if (input.time && !BASE_SLOTS.includes(input.time)) {
       throw new TRPCError({
         code: 'UNPROCESSABLE_CONTENT',
-        message: `Invalid time slot: ${input.time}. Must be a valid 30-minute slot.`,
+        message: `Invalid time slot: ${input.time}. Allowed appointment slots are every 30 minutes from 08:00 to 17:30, excluding the break from 12:00 to 13:00.`,
       });
     }
 

@@ -1,4 +1,6 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: pass */
+import fs from 'node:fs';
+import path from 'node:path';
 import fastifyCors from '@fastify/cors';
 import ScalarApiReference from '@scalar/fastify-api-reference';
 import { type FastifyTRPCPluginOptions, fastifyTRPCPlugin } from '@trpc/server/adapters/fastify';
@@ -15,12 +17,19 @@ import { createContext } from './lib/context';
 import { type AppRouter, appRouter } from './routers/index';
 import { mergeOpenApiDocs } from './utils/functions';
 
+const certPath = path.resolve(import.meta.dirname, '../../../certs/cert.pem');
+const keyPath = path.resolve(import.meta.dirname, '../../../certs/key.pem');
+const hasCerts = fs.existsSync(certPath) && fs.existsSync(keyPath);
+
 const baseCorsConfig = {
   origin: [
     env.CORS_ORIGIN,
     'http://localhost:3000',
     'http://127.0.0.1:3000',
     'http://10.0.2.2:3000',
+    ...(hasCerts
+      ? ['https://localhost:5173', 'https://localhost:3000', 'https://127.0.0.1:3000']
+      : []),
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true,
@@ -40,6 +49,12 @@ const fastify = Fastify({
       },
     },
   },
+  ...(hasCerts && {
+    https: {
+      key: fs.readFileSync(keyPath),
+      cert: fs.readFileSync(certPath),
+    },
+  }),
 });
 
 fastify.register(fastifyCors, baseCorsConfig);
@@ -49,7 +64,8 @@ fastify.route({
   url: '/api/auth/*',
   async handler(request, reply) {
     try {
-      const url = new URL(request.url, `http://${request.headers.host}`);
+      const proto = hasCerts ? 'https' : 'http';
+      const url = new URL(request.url, `${proto}://${request.headers.host}`);
       const headers = new Headers();
       Object.entries(request.headers).forEach(([key, value]) => {
         if (value) headers.append(key, value.toString());
@@ -120,6 +136,7 @@ fastify.register(ScalarApiReference, {
     darkMode: true,
   },
 });
+const protocol = hasCerts ? 'https' : 'http';
 fastify.listen({ port: 3000, host: '0.0.0.0' }, err => {
   if (err) {
     fastify.log.error(err);
@@ -128,9 +145,9 @@ fastify.listen({ port: 3000, host: '0.0.0.0' }, err => {
   const addr = fastify.server.address();
   const url =
     addr && typeof addr === 'object'
-      ? `http://${addr.address}:${addr.port}`
-      : 'http://localhost:3000';
+      ? `${protocol}://${addr.address}:${addr.port}`
+      : `${protocol}://localhost:3000`;
   printBanner('CoreviaBackend', `Corevia API listening at ${url}`);
 
-  fastify.log.info('Server running on port 3000');
+  fastify.log.info(`Server running on port 3000 (${protocol})`);
 });

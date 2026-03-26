@@ -27,9 +27,23 @@ import { useUpdateAppointment } from '@/queries';
 import type { Appointment } from '../appointments-table';
 
 const TIME_SLOTS = [
-  '08:00', '08:30', '09:00', '09:30', '10:00', '10:30',
-  '11:00', '11:30', '12:00', '14:00', '14:30', '15:00',
-  '15:30', '16:00', '16:30', '17:00', '17:30',
+  '08:00',
+  '08:30',
+  '09:00',
+  '09:30',
+  '10:00',
+  '10:30',
+  '11:00',
+  '11:30',
+  '13:30',
+  '14:00',
+  '14:30',
+  '15:00',
+  '15:30',
+  '16:00',
+  '16:30',
+  '17:00',
+  '17:30',
 ];
 
 interface AppointmentEditDialogProps {
@@ -38,14 +52,20 @@ interface AppointmentEditDialogProps {
   appointment: Appointment;
 }
 
-export function AppointmentEditDialog({ open, onOpenChange, appointment }: AppointmentEditDialogProps) {
+export function AppointmentEditDialog({
+  open,
+  onOpenChange,
+  appointment,
+}: AppointmentEditDialogProps) {
   const { t } = useTranslation();
   const mutation = useUpdateAppointment();
 
   const editSchema = z.object({
-    date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, t('appointments.form.dateFormat', 'Date must be YYYY-MM-DD')),
+    date: z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/, t('appointments.form.dateFormat', 'Date must be YYYY-MM-DD')),
     time: z.string().min(1, t('appointments.form.timeRequired', 'Time is required')),
-    reason: z.string().optional(),
+    reason: z.string(),
   });
 
   const form = useForm({
@@ -172,7 +192,10 @@ export function AppointmentEditDialog({ open, onOpenChange, appointment }: Appoi
                   value={field.state.value}
                   onBlur={field.handleBlur}
                   onChange={e => field.handleChange(e.target.value)}
-                  placeholder={t('appointments.form.reasonPlaceholder', 'Reason for the appointment (optional)')}
+                  placeholder={t(
+                    'appointments.form.reasonPlaceholder',
+                    'Reason for the appointment (optional)',
+                  )}
                   rows={3}
                 />
               </div>

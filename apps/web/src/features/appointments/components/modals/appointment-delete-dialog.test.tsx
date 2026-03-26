@@ -38,11 +38,7 @@ describe('AppointmentDeleteDialog', () => {
 
   const setup = () =>
     render(
-      <AppointmentDeleteDialog
-        open
-        onOpenChange={onOpenChange}
-        appointment={baseAppointment}
-      />,
+      <AppointmentDeleteDialog open onOpenChange={onOpenChange} appointment={baseAppointment} />,
     );
 
   it('renders dialog with appointment details', () => {

@@ -39,11 +39,7 @@ describe('AppointmentEditDialog', () => {
 
   const setup = () =>
     render(
-      <AppointmentEditDialog
-        open
-        onOpenChange={onOpenChange}
-        appointment={baseAppointment}
-      />,
+      <AppointmentEditDialog open onOpenChange={onOpenChange} appointment={baseAppointment} />,
     );
 
   it('renders dialog with pre-filled values', () => {

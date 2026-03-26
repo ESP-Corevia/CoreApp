@@ -21,7 +21,11 @@ interface AppointmentDeleteDialogProps {
   appointment: Appointment;
 }
 
-export function AppointmentDeleteDialog({ open, onOpenChange, appointment }: AppointmentDeleteDialogProps) {
+export function AppointmentDeleteDialog({
+  open,
+  onOpenChange,
+  appointment,
+}: AppointmentDeleteDialogProps) {
   const { t } = useTranslation();
   const mutation = useDeleteAppointment();
 

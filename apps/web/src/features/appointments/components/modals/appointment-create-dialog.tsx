@@ -27,9 +27,23 @@ import { Textarea } from '@/components/ui/textarea';
 import { useCreateAppointment } from '@/queries';
 
 const TIME_SLOTS = [
-  '08:00', '08:30', '09:00', '09:30', '10:00', '10:30',
-  '11:00', '11:30', '12:00', '14:00', '14:30', '15:00',
-  '15:30', '16:00', '16:30', '17:00', '17:30',
+  '08:00',
+  '08:30',
+  '09:00',
+  '09:30',
+  '10:00',
+  '10:30',
+  '11:00',
+  '11:30',
+  '13:30',
+  '14:00',
+  '14:30',
+  '15:00',
+  '15:30',
+  '16:00',
+  '16:30',
+  '17:00',
+  '17:30',
 ];
 
 export function AppointmentCreateDialog() {
@@ -38,11 +52,13 @@ export function AppointmentCreateDialog() {
   const mutation = useCreateAppointment();
 
   const createSchema = z.object({
-    doctorId: z.string().uuid(t('appointments.form.doctorIdRequired', 'Valid doctor ID is required')),
-    patientId: z.string().uuid(t('appointments.form.patientIdRequired', 'Valid patient ID is required')),
-    date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, t('appointments.form.dateFormat', 'Date must be YYYY-MM-DD')),
+    doctorId: z.uuid(t('appointments.form.doctorIdRequired', 'Valid doctor ID is required')),
+    patientId: z.uuid(t('appointments.form.patientIdRequired', 'Valid patient ID is required')),
+    date: z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/, t('appointments.form.dateFormat', 'Date must be YYYY-MM-DD')),
     time: z.string().min(1, t('appointments.form.timeRequired', 'Time is required')),
-    reason: z.string().optional(),
+    reason: z.string(),
   });
 
   const form = useForm({
@@ -214,7 +230,10 @@ export function AppointmentCreateDialog() {
                   value={field.state.value}
                   onBlur={field.handleBlur}
                   onChange={e => field.handleChange(e.target.value)}
-                  placeholder={t('appointments.form.reasonPlaceholder', 'Reason for the appointment (optional)')}
+                  placeholder={t(
+                    'appointments.form.reasonPlaceholder',
+                    'Reason for the appointment (optional)',
+                  )}
                   rows={3}
                 />
               </div>
