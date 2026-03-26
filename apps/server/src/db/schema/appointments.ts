@@ -2,6 +2,7 @@ import { index, pgEnum, pgTable } from 'drizzle-orm/pg-core';
 
 import { users } from './auth';
 
+/** Statut d'un rendez-vous : en attente, confirmé, annulé ou terminé. */
 export const appointmentStatusEnum = pgEnum('appointment_status', [
   'PENDING',
   'CONFIRMED',
@@ -9,6 +10,11 @@ export const appointmentStatusEnum = pgEnum('appointment_status', [
   'COMPLETED',
 ]);
 
+/**
+ * Rendez-vous entre un médecin et un patient.
+ * Les champs `doctorId` et `patientId` référencent `users.id` (pas `doctors.id` / `patients.id`).
+ * Indexée par (médecin, date), par patient, et par statut pour les requêtes courantes.
+ */
 export const appointments = pgTable(
   'appointments',
   t => ({
@@ -40,6 +46,11 @@ export const appointments = pgTable(
   ],
 );
 
+/**
+ * Créneaux bloqués par un médecin (indisponibilités).
+ * Empêche la prise de rendez-vous sur ces créneaux.
+ * Le `doctorId` référence `users.id` (le user ID du médecin).
+ */
 export const doctorBlocks = pgTable(
   'doctor_blocks',
   t => ({
