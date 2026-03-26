@@ -9,6 +9,7 @@ import { createAvailabilityRepo } from './availability.repository';
 const repo = createAvailabilityRepo(db as any);
 
 let doctorId: string;
+let doctorUserId: string;
 const TEST_DATE = '2026-06-15';
 
 beforeAll(async () => {
@@ -37,6 +38,8 @@ beforeEach(async () => {
       createdAt: new Date(),
     })
     .returning({ id: users.id });
+  doctorUserId = userDoctor.id;
+
   // Seed a doctor
   const [doctor] = await db
     .insert(doctors)
@@ -51,7 +54,7 @@ beforeEach(async () => {
 
   // Seed a PENDING appointment at 10:00
   await db.insert(appointments).values({
-    doctorId,
+    doctorId: doctorUserId,
     patientId: user.id,
     date: TEST_DATE,
     time: '10:00',
@@ -60,7 +63,7 @@ beforeEach(async () => {
 
   // Seed a CONFIRMED appointment at 14:00
   await db.insert(appointments).values({
-    doctorId,
+    doctorId: doctorUserId,
     patientId: user.id,
     date: TEST_DATE,
     time: '14:00',
@@ -69,7 +72,7 @@ beforeEach(async () => {
 
   // Seed a CANCELLED appointment at 15:00 (should NOT be excluded)
   await db.insert(appointments).values({
-    doctorId,
+    doctorId: doctorUserId,
     patientId: user.id,
     date: TEST_DATE,
     time: '15:00',
@@ -78,7 +81,7 @@ beforeEach(async () => {
 
   // Seed a block at 11:30
   await db.insert(doctorBlocks).values({
-    doctorId,
+    doctorId: doctorUserId,
     date: TEST_DATE,
     time: '11:30',
     reason: 'Personal',
@@ -96,9 +99,19 @@ describe('availability.repository', () => {
     });
   });
 
+  describe('getDoctorUserId', () => {
+    it('returns userId for existing doctor', async () => {
+      expect(await repo.getDoctorUserId(doctorId)).toBe(doctorUserId);
+    });
+
+    it('returns null for non-existing doctor', async () => {
+      expect(await repo.getDoctorUserId('00000000-0000-0000-0000-000000000000')).toBeNull();
+    });
+  });
+
   describe('getReservedSlots', () => {
     it('returns only PENDING and CONFIRMED slots', async () => {
-      const slots = await repo.getReservedSlots(doctorId, TEST_DATE);
+      const slots = await repo.getReservedSlots(doctorUserId, TEST_DATE);
       expect(slots).toContain('10:00');
       expect(slots).toContain('14:00');
       expect(slots).not.toContain('15:00'); // CANCELLED
@@ -106,20 +119,20 @@ describe('availability.repository', () => {
     });
 
     it('returns empty for a date with no appointments', async () => {
-      const slots = await repo.getReservedSlots(doctorId, '2026-01-01');
+      const slots = await repo.getReservedSlots(doctorUserId, '2026-01-01');
       expect(slots).toEqual([]);
     });
   });
 
   describe('getBlockedSlots', () => {
     it('returns blocked time slots', async () => {
-      const slots = await repo.getBlockedSlots(doctorId, TEST_DATE);
+      const slots = await repo.getBlockedSlots(doctorUserId, TEST_DATE);
       expect(slots).toContain('11:30');
       expect(slots).toHaveLength(1);
     });
 
     it('returns empty for a date with no blocks', async () => {
-      const slots = await repo.getBlockedSlots(doctorId, '2026-01-01');
+      const slots = await repo.getBlockedSlots(doctorUserId, '2026-01-01');
       expect(slots).toEqual([]);
     });
   });

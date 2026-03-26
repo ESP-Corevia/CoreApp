@@ -3,7 +3,7 @@ import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { db as DB } from '../index';
 
 import type * as schema from '../schema';
-import { doctors, users } from '../schema';
+import { doctors, doctorUsersView, users } from '../schema';
 
 type DrizzleDB = PostgresJsDatabase<typeof schema>;
 
@@ -27,21 +27,21 @@ function buildAdminFilters(params: ListAllAdminParams) {
   const conditions = [];
 
   if (params.specialty) {
-    conditions.push(eq(doctors.specialty, params.specialty));
+    conditions.push(eq(doctorUsersView.specialty, params.specialty));
   }
 
   if (params.city) {
-    conditions.push(ilike(doctors.city, params.city));
+    conditions.push(ilike(doctorUsersView.city, params.city));
   }
 
   if (params.search) {
     const pattern = `%${params.search}%`;
     conditions.push(
       or(
-        ilike(users.name, pattern),
-        ilike(users.email, pattern),
-        ilike(doctors.specialty, pattern),
-        ilike(doctors.city, pattern),
+        ilike(doctorUsersView.name, pattern),
+        ilike(doctorUsersView.email, pattern),
+        ilike(doctorUsersView.specialty, pattern),
+        ilike(doctorUsersView.city, pattern),
       ),
     );
   }
@@ -53,17 +53,20 @@ function buildFilters(params: ListBookableParams) {
   const conditions = [];
 
   if (params.specialty) {
-    conditions.push(eq(doctors.specialty, params.specialty));
+    conditions.push(eq(doctorUsersView.specialty, params.specialty));
   }
 
   if (params.city) {
-    conditions.push(ilike(doctors.city, params.city));
+    conditions.push(ilike(doctorUsersView.city, params.city));
   }
 
   if (params.search) {
     const pattern = `%${params.search}%`;
     conditions.push(
-      sql`(${ilike(doctors.specialty, pattern)} OR ${ilike(doctors.address, pattern)})`,
+      or(
+        ilike(doctorUsersView.specialty, pattern),
+        ilike(doctorUsersView.doctorAddress, pattern),
+      ),
     );
   }
 
@@ -76,17 +79,16 @@ export const createDoctorsRepo = (db: DrizzleDB = DB) => ({
 
     return await db
       .select({
-        id: doctors.id,
-        userId: doctors.userId,
-        specialty: doctors.specialty,
-        address: doctors.address,
-        name: users.name,
-        city: doctors.city,
+        id: doctorUsersView.doctorId,
+        userId: doctorUsersView.userId,
+        specialty: doctorUsersView.specialty,
+        address: doctorUsersView.doctorAddress,
+        name: doctorUsersView.name,
+        city: doctorUsersView.city,
       })
-      .from(doctors)
+      .from(doctorUsersView)
       .where(where)
-      .orderBy(asc(doctors.specialty))
-      .leftJoin(users, eq(doctors.userId, users.id))
+      .orderBy(asc(doctorUsersView.specialty))
       .limit(params.limit)
       .offset(params.offset);
   },
@@ -94,12 +96,12 @@ export const createDoctorsRepo = (db: DrizzleDB = DB) => ({
   getByUserId: async (userId: string) => {
     const [row] = await db
       .select({
-        specialty: doctors.specialty,
-        address: doctors.address,
-        city: doctors.city,
+        specialty: doctorUsersView.specialty,
+        address: doctorUsersView.doctorAddress,
+        city: doctorUsersView.city,
       })
-      .from(doctors)
-      .where(eq(doctors.userId, userId))
+      .from(doctorUsersView)
+      .where(eq(doctorUsersView.userId, userId))
       .limit(1);
 
     return row ?? null;
@@ -130,7 +132,10 @@ export const createDoctorsRepo = (db: DrizzleDB = DB) => ({
   countBookable: async (params: Omit<ListBookableParams, 'offset' | 'limit'>) => {
     const where = buildFilters({ ...params, offset: 0, limit: 0 });
 
-    const [row] = await db.select({ count: sql<number>`count(*)` }).from(doctors).where(where);
+    const [row] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(doctorUsersView)
+      .where(where);
 
     return Number(row.count);
   },
@@ -140,19 +145,18 @@ export const createDoctorsRepo = (db: DrizzleDB = DB) => ({
 
     return await db
       .select({
-        id: doctors.id,
-        userId: doctors.userId,
-        specialty: doctors.specialty,
-        address: doctors.address,
-        city: doctors.city,
-        name: users.name,
-        email: users.email,
-        image: users.image,
+        id: doctorUsersView.doctorId,
+        userId: doctorUsersView.userId,
+        specialty: doctorUsersView.specialty,
+        address: doctorUsersView.doctorAddress,
+        city: doctorUsersView.city,
+        name: doctorUsersView.name,
+        email: doctorUsersView.email,
+        image: doctorUsersView.image,
       })
-      .from(doctors)
-      .leftJoin(users, eq(doctors.userId, users.id))
+      .from(doctorUsersView)
       .where(where)
-      .orderBy(asc(users.name))
+      .orderBy(asc(doctorUsersView.name))
       .limit(params.limit)
       .offset(params.offset);
   },
@@ -162,8 +166,7 @@ export const createDoctorsRepo = (db: DrizzleDB = DB) => ({
 
     const [row] = await db
       .select({ count: sql<number>`count(*)` })
-      .from(doctors)
-      .leftJoin(users, eq(doctors.userId, users.id))
+      .from(doctorUsersView)
       .where(where);
 
     return Number(row.count);

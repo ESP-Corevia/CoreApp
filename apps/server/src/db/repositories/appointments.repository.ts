@@ -3,7 +3,7 @@ import { and, asc, desc, eq, gte, ilike, inArray, lte, or, sql } from 'drizzle-o
 import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 
 import type * as schema from '../schema';
-import { appointments, doctorBlocks, doctors, users } from '../schema';
+import { appointments, doctorBlocks, doctorUsersView, users } from '../schema';
 
 type DrizzleDB = PostgresJsDatabase<typeof schema>;
 
@@ -54,7 +54,7 @@ function buildAllFilters(params: ListAllParams) {
   if (params.search) {
     const pattern = `%${params.search}%`;
     conditions.push(
-      or(ilike(sql`doctor_user.name`, pattern), ilike(sql`patient_user.name`, pattern)),
+      or(ilike(doctorUsersView.name, pattern), ilike(sql`patient_user.name`, pattern)),
     );
   }
 
@@ -102,15 +102,14 @@ export const createAppointmentsRepo = (db: DrizzleDB) => ({
         createdAt: appointments.createdAt,
         updatedAt: appointments.updatedAt,
         doctor: {
-          id: doctors.id,
-          name: users.name,
-          specialty: doctors.specialty,
-          address: doctors.address,
+          id: doctorUsersView.doctorId,
+          name: doctorUsersView.name,
+          specialty: doctorUsersView.specialty,
+          address: doctorUsersView.doctorAddress,
         },
       })
       .from(appointments)
-      .innerJoin(doctors, eq(appointments.doctorId, doctors.id))
-      .leftJoin(users, eq(doctors.userId, users.id))
+      .innerJoin(doctorUsersView, eq(appointments.doctorId, doctorUsersView.userId))
       .where(eq(appointments.id, id))
       .limit(1);
 
@@ -131,15 +130,14 @@ export const createAppointmentsRepo = (db: DrizzleDB) => ({
         status: appointments.status,
         reason: appointments.reason,
         doctor: {
-          id: doctors.id,
-          name: users.name,
-          specialty: doctors.specialty,
-          address: doctors.address,
+          id: doctorUsersView.doctorId,
+          name: doctorUsersView.name,
+          specialty: doctorUsersView.specialty,
+          address: doctorUsersView.doctorAddress,
         },
       })
       .from(appointments)
-      .innerJoin(doctors, eq(appointments.doctorId, doctors.id))
-      .leftJoin(users, eq(doctors.userId, users.id))
+      .innerJoin(doctorUsersView, eq(appointments.doctorId, doctorUsersView.userId))
       .where(where)
       .orderBy(...order)
       .limit(params.limit)
@@ -155,7 +153,6 @@ export const createAppointmentsRepo = (db: DrizzleDB) => ({
   },
 
   listAll: async (params: ListAllParams) => {
-    const doctorUser = db.select({ id: users.id, name: users.name }).from(users).as('doctor_user');
     const patientUser = db
       .select({ id: users.id, name: users.name })
       .from(users)
@@ -174,12 +171,11 @@ export const createAppointmentsRepo = (db: DrizzleDB) => ({
         status: appointments.status,
         reason: appointments.reason,
         createdAt: appointments.createdAt,
-        doctorName: doctorUser.name,
+        doctorName: doctorUsersView.name,
         patientName: patientUser.name,
       })
       .from(appointments)
-      .innerJoin(doctors, eq(appointments.doctorId, doctors.id))
-      .leftJoin(doctorUser, eq(doctors.userId, doctorUser.id))
+      .innerJoin(doctorUsersView, eq(appointments.doctorId, doctorUsersView.userId))
       .leftJoin(patientUser, eq(appointments.patientId, patientUser.id))
       .where(where)
       .orderBy(...order)
@@ -188,7 +184,6 @@ export const createAppointmentsRepo = (db: DrizzleDB) => ({
   },
 
   countAll: async (params: Omit<ListAllParams, 'offset' | 'limit' | 'sort'>) => {
-    const doctorUser = db.select({ id: users.id, name: users.name }).from(users).as('doctor_user');
     const patientUser = db
       .select({ id: users.id, name: users.name })
       .from(users)
@@ -199,8 +194,7 @@ export const createAppointmentsRepo = (db: DrizzleDB) => ({
     const [row] = await db
       .select({ count: sql<number>`count(*)` })
       .from(appointments)
-      .innerJoin(doctors, eq(appointments.doctorId, doctors.id))
-      .leftJoin(doctorUser, eq(doctors.userId, doctorUser.id))
+      .innerJoin(doctorUsersView, eq(appointments.doctorId, doctorUsersView.userId))
       .leftJoin(patientUser, eq(appointments.patientId, patientUser.id))
       .where(where);
 

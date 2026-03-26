@@ -19,7 +19,7 @@ beforeAll(async () => {
 beforeEach(async () => {
   await resetDb();
 
-  const [user] = await db
+  const [patientUser] = await db
     .insert(users)
     .values({
       name: 'Patient Test',
@@ -28,17 +28,25 @@ beforeEach(async () => {
       createdAt: new Date(),
     })
     .returning({ id: users.id });
-  patientId = user.id;
+  patientId = patientUser.id;
 
-  const [doctor] = await db
-    .insert(doctors)
+  const [doctorUser] = await db
+    .insert(users)
     .values({
-      specialty: 'Cardiology',
-      address: '1 Rue de Test, Paris',
-      city: 'Paris',
+      name: 'Dr. Test',
+      email: 'doctor@test.com',
+      emailVerified: true,
+      createdAt: new Date(),
     })
-    .returning({ id: doctors.id });
-  doctorId = doctor.id;
+    .returning({ id: users.id });
+  doctorId = doctorUser.id;
+
+  await db.insert(doctors).values({
+    userId: doctorUser.id,
+    specialty: 'Cardiology',
+    address: '1 Rue de Test, Paris',
+    city: 'Paris',
+  });
 });
 
 describe('appointments.repository', () => {
@@ -330,16 +338,13 @@ describe('appointments.repository', () => {
         })
         .returning({ id: users.id });
 
-      const [doc2] = await db
-        .insert(doctors)
-        .values({
-          userId: doctorUser.id,
-          specialty: 'Dermatology',
-          address: '5 Rue Test, Lyon',
-          city: 'Lyon',
-        })
-        .returning({ id: doctors.id });
-      doctor2Id = doc2.id;
+      await db.insert(doctors).values({
+        userId: doctorUser.id,
+        specialty: 'Dermatology',
+        address: '5 Rue Test, Lyon',
+        city: 'Lyon',
+      });
+      doctor2Id = doctorUser.id;
 
       await db.insert(appointments).values([
         {

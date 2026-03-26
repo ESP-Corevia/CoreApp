@@ -17,6 +17,7 @@ export const patientMedications = pgTable(
   'patient_medications',
   t => ({
     id: t.uuid('id').defaultRandom().primaryKey(),
+    /** References users.id — the patient's user ID */
     patientId: t
       .uuid('patient_id')
       .notNull()

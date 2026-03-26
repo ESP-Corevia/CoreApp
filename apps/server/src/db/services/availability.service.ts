@@ -45,8 +45,8 @@ export const createAvailabilityService = (repo: ReturnType<typeof createAvailabi
       });
     }
 
-    const exists = await repo.doctorExists(doctorId);
-    if (!exists) {
+    const doctorUserId = await repo.getDoctorUserId(doctorId);
+    if (!doctorUserId) {
       throw new TRPCError({
         code: 'NOT_FOUND',
         message: 'Doctor not found',
@@ -54,8 +54,8 @@ export const createAvailabilityService = (repo: ReturnType<typeof createAvailabi
     }
 
     const [reserved, blocked] = await Promise.all([
-      repo.getReservedSlots(doctorId, date),
-      repo.getBlockedSlots(doctorId, date),
+      repo.getReservedSlots(doctorUserId, date),
+      repo.getBlockedSlots(doctorUserId, date),
     ]);
 
     const unavailable = new Set([...reserved, ...blocked]);

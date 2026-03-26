@@ -16,13 +16,22 @@ export const createAvailabilityRepo = (db: DrizzleDB) => ({
     return !!row;
   },
 
-  getReservedSlots: async (doctorId: string, date: string): Promise<string[]> => {
+  getDoctorUserId: async (doctorId: string): Promise<string | null> => {
+    const [row] = await db
+      .select({ userId: doctors.userId })
+      .from(doctors)
+      .where(eq(doctors.id, doctorId))
+      .limit(1);
+    return row?.userId ?? null;
+  },
+
+  getReservedSlots: async (doctorUserId: string, date: string): Promise<string[]> => {
     const rows = await db
       .select({ time: appointments.time })
       .from(appointments)
       .where(
         and(
-          eq(appointments.doctorId, doctorId),
+          eq(appointments.doctorId, doctorUserId),
           eq(appointments.date, date),
           inArray(appointments.status, ['PENDING', 'CONFIRMED']),
         ),
@@ -30,11 +39,11 @@ export const createAvailabilityRepo = (db: DrizzleDB) => ({
     return rows.map(r => r.time);
   },
 
-  getBlockedSlots: async (doctorId: string, date: string): Promise<string[]> => {
+  getBlockedSlots: async (doctorUserId: string, date: string): Promise<string[]> => {
     const rows = await db
       .select({ time: doctorBlocks.time })
       .from(doctorBlocks)
-      .where(and(eq(doctorBlocks.doctorId, doctorId), eq(doctorBlocks.date, date)));
+      .where(and(eq(doctorBlocks.doctorId, doctorUserId), eq(doctorBlocks.date, date)));
     return rows.map(r => r.time);
   },
 });

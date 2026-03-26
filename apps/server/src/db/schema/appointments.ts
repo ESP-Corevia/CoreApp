@@ -1,7 +1,6 @@
 import { index, pgEnum, pgTable } from 'drizzle-orm/pg-core';
 
 import { users } from './auth';
-import { doctors } from './doctors';
 
 export const appointmentStatusEnum = pgEnum('appointment_status', [
   'PENDING',
@@ -14,15 +13,15 @@ export const appointments = pgTable(
   'appointments',
   t => ({
     id: t.uuid('id').defaultRandom().primaryKey(),
+    /** References users.id — the doctor's user ID, not doctors.id */
     doctorId: t
       .uuid('doctor_id')
       .notNull()
-      //need to reference doctors, not users
-      .references(() => doctors.id, { onDelete: 'cascade' }),
+      .references(() => users.id, { onDelete: 'cascade' }),
+    /** References users.id — the patient's user ID */
     patientId: t
       .uuid('patient_id')
       .notNull()
-      //doctors also can be patients, so we reference users, not patients
       .references(() => users.id, { onDelete: 'cascade' }),
     date: t.date('date', { mode: 'string' }).notNull(),
     time: t.varchar('time', { length: 5 }).notNull(),
@@ -45,10 +44,11 @@ export const doctorBlocks = pgTable(
   'doctor_blocks',
   t => ({
     id: t.uuid('id').defaultRandom().primaryKey(),
+    /** References users.id — the doctor's user ID, not doctors.id */
     doctorId: t
       .uuid('doctor_id')
       .notNull()
-      .references(() => doctors.id, { onDelete: 'cascade' }),
+      .references(() => users.id, { onDelete: 'cascade' }),
     date: t.date('date', { mode: 'string' }).notNull(),
     time: t.varchar('time', { length: 5 }).notNull(),
     reason: t.text('reason'),
