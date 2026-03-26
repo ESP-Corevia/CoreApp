@@ -63,10 +63,7 @@ function buildFilters(params: ListBookableParams) {
   if (params.search) {
     const pattern = `%${params.search}%`;
     conditions.push(
-      or(
-        ilike(doctorUsersView.specialty, pattern),
-        ilike(doctorUsersView.doctorAddress, pattern),
-      ),
+      or(ilike(doctorUsersView.specialty, pattern), ilike(doctorUsersView.doctorAddress, pattern)),
     );
   }
 
@@ -74,6 +71,10 @@ function buildFilters(params: ListBookableParams) {
 }
 
 export const createDoctorsRepo = (db: DrizzleDB = DB) => ({
+  /**
+   * Liste les médecins disponibles à la prise de rendez-vous (vue patient).
+   * Filtrable par spécialité, ville et recherche textuelle (spécialité, adresse).
+   */
   listBookable: async (params: ListBookableParams) => {
     const where = buildFilters(params);
 
@@ -93,6 +94,10 @@ export const createDoctorsRepo = (db: DrizzleDB = DB) => ({
       .offset(params.offset);
   },
 
+  /**
+   * Récupère le profil médecin (spécialité, adresse, ville) à partir du `users.id`.
+   * @returns Le profil médecin, ou `null` si l'utilisateur n'a pas de profil médecin.
+   */
   getByUserId: async (userId: string) => {
     const [row] = await db
       .select({
@@ -107,13 +112,16 @@ export const createDoctorsRepo = (db: DrizzleDB = DB) => ({
     return row ?? null;
   },
 
+  /**
+   * Met à jour le profil médecin et touche `users.updatedAt` dans une transaction.
+   * @returns Le profil médecin mis à jour, ou `null` si aucun profil n'existe pour ce user.
+   */
   updateByUserId: (
     userId: string,
     data: Partial<{
       specialty: string;
       address: string;
       city: string;
-      imageUrl: string | null;
     }>,
   ) => {
     return db.transaction(async tx => {
@@ -129,6 +137,9 @@ export const createDoctorsRepo = (db: DrizzleDB = DB) => ({
     });
   },
 
+  /**
+   * Compte le nombre total de médecins disponibles (mêmes filtres que `listBookable`, sans pagination).
+   */
   countBookable: async (params: Omit<ListBookableParams, 'offset' | 'limit'>) => {
     const where = buildFilters({ ...params, offset: 0, limit: 0 });
 
@@ -140,6 +151,10 @@ export const createDoctorsRepo = (db: DrizzleDB = DB) => ({
     return Number(row.count);
   },
 
+  /**
+   * Liste tous les médecins (vue admin) avec nom, email et image.
+   * Filtrable par spécialité, ville et recherche textuelle (nom, email, spécialité, ville).
+   */
   listAllAdmin: async (params: ListAllAdminParams) => {
     const where = buildAdminFilters(params);
 
@@ -161,6 +176,9 @@ export const createDoctorsRepo = (db: DrizzleDB = DB) => ({
       .offset(params.offset);
   },
 
+  /**
+   * Compte le nombre total de médecins (mêmes filtres que `listAllAdmin`, sans pagination).
+   */
   countAllAdmin: async (params: Omit<ListAllAdminParams, 'offset' | 'limit'>) => {
     const where = buildAdminFilters({ ...params, offset: 0, limit: 0 });
 

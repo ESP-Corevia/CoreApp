@@ -104,43 +104,6 @@ async function seedIntake(
 // ─── Patient Medications ────────────────────────────────────
 
 describe('medications.repository', () => {
-  describe('createMedication', () => {
-    it('creates a medication and returns it', async () => {
-      const med = await repo.createMedication({
-        patientId,
-        medicationName: 'Doliprane',
-        source: 'api-medicaments-fr',
-        startDate: '2025-01-01',
-        cis: '60234100',
-        medicationForm: 'comprimé',
-        activeSubstances: ['PARACÉTAMOL'],
-        dosageLabel: '500mg',
-      });
-
-      expect(med.id).toBeDefined();
-      expect(med.patientId).toBe(patientId);
-      expect(med.medicationName).toBe('Doliprane');
-      expect(med.cis).toBe('60234100');
-      expect(med.activeSubstances).toEqual(['PARACÉTAMOL']);
-      expect(med.isActive).toBe(true);
-    });
-
-    it('defaults nullable fields to null', async () => {
-      const med = await repo.createMedication({
-        patientId,
-        medicationName: 'Test',
-        source: 'manual',
-        startDate: '2025-01-01',
-      });
-
-      expect(med.cis).toBeNull();
-      expect(med.cip).toBeNull();
-      expect(med.medicationForm).toBeNull();
-      expect(med.dosageLabel).toBeNull();
-      expect(med.endDate).toBeNull();
-    });
-  });
-
   describe('createMedicationAtomic', () => {
     it('creates medication, schedules, and intakes in one transaction', async () => {
       const result = await repo.createMedicationAtomic(
@@ -501,44 +464,6 @@ describe('medications.repository', () => {
 
   // ─── Intakes ────────────────────────────────────────────
 
-  describe('createIntake', () => {
-    it('creates a single intake', async () => {
-      const med = await seedMedication();
-      const sched = await seedSchedule(med.id);
-
-      const intake = await repo.createIntake({
-        patientMedicationId: med.id,
-        scheduleId: sched.id,
-        scheduledDate: '2025-06-15',
-        scheduledTime: '08:00',
-      });
-
-      expect(intake.id).toBeDefined();
-      expect(intake.status).toBe('PENDING');
-      expect(intake.takenAt).toBeNull();
-    });
-  });
-
-  describe('createManyIntakes', () => {
-    it('creates multiple intakes', async () => {
-      const med = await seedMedication();
-
-      const intakes = await repo.createManyIntakes([
-        { patientMedicationId: med.id, scheduledDate: '2025-06-15', scheduledTime: '08:00' },
-        { patientMedicationId: med.id, scheduledDate: '2025-06-15', scheduledTime: '12:00' },
-        { patientMedicationId: med.id, scheduledDate: '2025-06-15', scheduledTime: '20:00' },
-      ]);
-
-      expect(intakes).toHaveLength(3);
-      expect(intakes.every(i => i.status === 'PENDING')).toBe(true);
-    });
-
-    it('returns empty array for empty input', async () => {
-      const result = await repo.createManyIntakes([]);
-      expect(result).toEqual([]);
-    });
-  });
-
   describe('ensureIntakesForSchedules', () => {
     it('creates intakes that do not exist yet', async () => {
       const med = await seedMedication();
@@ -725,28 +650,6 @@ describe('medications.repository', () => {
 
       const intakes = await repo.listIntakesByDate(patientId, '2025-06-15');
       expect(intakes).toHaveLength(0);
-    });
-  });
-
-  describe('intakesExistForDate', () => {
-    it('returns true when intakes exist', async () => {
-      const med = await seedMedication();
-      await seedIntake(med.id, null, { scheduledDate: '2025-06-15' });
-
-      expect(await repo.intakesExistForDate(med.id, '2025-06-15')).toBe(true);
-    });
-
-    it('returns false when no intakes exist', async () => {
-      const med = await seedMedication();
-
-      expect(await repo.intakesExistForDate(med.id, '2025-06-15')).toBe(false);
-    });
-
-    it('returns false for different date', async () => {
-      const med = await seedMedication();
-      await seedIntake(med.id, null, { scheduledDate: '2025-06-15' });
-
-      expect(await repo.intakesExistForDate(med.id, '2025-06-16')).toBe(false);
     });
   });
 

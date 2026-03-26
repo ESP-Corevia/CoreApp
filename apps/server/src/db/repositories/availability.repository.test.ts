@@ -8,7 +8,7 @@ import { createAvailabilityRepo } from './availability.repository';
 
 const repo = createAvailabilityRepo(db as any);
 
-let doctorId: string;
+let _doctorId: string;
 let doctorUserId: string;
 const TEST_DATE = '2026-06-15';
 
@@ -50,7 +50,7 @@ beforeEach(async () => {
       city: 'Paris',
     })
     .returning({ id: doctors.id });
-  doctorId = doctor.id;
+  _doctorId = doctor.id;
 
   // Seed a PENDING appointment at 10:00
   await db.insert(appointments).values({
@@ -89,26 +89,6 @@ beforeEach(async () => {
 });
 
 describe('availability.repository', () => {
-  describe('doctorExists', () => {
-    it('returns true for existing doctor', async () => {
-      expect(await repo.doctorExists(doctorId)).toBe(true);
-    });
-
-    it('returns false for non-existing doctor', async () => {
-      expect(await repo.doctorExists('00000000-0000-0000-0000-000000000000')).toBe(false);
-    });
-  });
-
-  describe('getDoctorUserId', () => {
-    it('returns userId for existing doctor', async () => {
-      expect(await repo.getDoctorUserId(doctorId)).toBe(doctorUserId);
-    });
-
-    it('returns null for non-existing doctor', async () => {
-      expect(await repo.getDoctorUserId('00000000-0000-0000-0000-000000000000')).toBeNull();
-    });
-  });
-
   describe('getReservedSlots', () => {
     it('returns only PENDING and CONFIRMED slots', async () => {
       const slots = await repo.getReservedSlots(doctorUserId, TEST_DATE);

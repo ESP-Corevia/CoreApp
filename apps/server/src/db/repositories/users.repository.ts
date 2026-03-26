@@ -1,9 +1,19 @@
-import { and, eq, type InferInsertModel, type InferSelectModel, ne, sql } from 'drizzle-orm';
+import {
+  and,
+  eq,
+  type InferInsertModel,
+  type InferSelectModel,
+  ilike,
+  ne,
+  or,
+  type SQL,
+  sql,
+} from 'drizzle-orm';
 import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
-import type { QueryOptions } from '../../utils/db';
+import { escapeLike, type QueryOptions } from '../../utils/db';
 import { db as DB } from '../index';
 import type * as schema from '../schema';
-import { doctors, patients, users } from '../schema';
+import { doctorUsersView, patientUsersView, users } from '../schema';
 
 type DrizzleDB = PostgresJsDatabase<typeof schema>;
 
@@ -79,101 +89,61 @@ export const createUsersRepo = (db: DrizzleDB = DB) => ({
     };
   },
 
+  /**
+   * Liste les utilisateurs avec leur profil (doctor ou patient) via les vues SQL.
+   * @param role - "doctor" ou "patient" : détermine quelle vue est interrogée.
+   * @param search - Recherche optionnelle sur le nom ou l'email (ilike).
+   * @param id - Filtre optionnel par user ID exact.
+   */
   listUsersWithDetails: async ({
-    options,
-    pageParams,
-    userId,
+    role,
+    search,
+    id,
+    page = 1,
+    perPage = 10,
   }: {
-    options: QueryOptions;
-    pageParams: { page?: number; perPage?: number };
-    userId: string;
+    role: 'doctor' | 'patient';
+    search?: string;
+    id?: string;
+    page?: number;
+    perPage?: number;
   }) => {
-    const { page = 1, perPage = 10 } = pageParams;
+    const view = role === 'doctor' ? doctorUsersView : patientUsersView;
 
-    let whereClause: ReturnType<typeof and> = ne(users.id, userId);
-    if (options.where) {
-      whereClause = and(options.where, whereClause);
+    const conditions: SQL<unknown>[] = [];
+    if (id) {
+      conditions.push(eq(view.userId, id));
+    }
+    if (search) {
+      const escaped = escapeLike(search);
+      const searchCondition = or(
+        ilike(view.name, `%${escaped}%`),
+        ilike(view.email, `%${escaped}%`),
+      );
+      if (searchCondition) conditions.push(searchCondition);
     }
 
-    const rows = await db
-      .select({
-        id: users.id,
-        name: users.name,
-        email: users.email,
-        emailVerified: users.emailVerified,
-        image: users.image,
-        role: users.role,
-        banned: users.banned,
-        banReason: users.banReason,
-        banExpires: users.banExpires,
-        lastLoginMethod: users.lastLoginMethod,
-        createdAt: users.createdAt,
-        updatedAt: users.updatedAt,
-        patientDateOfBirth: patients.dateOfBirth,
-        patientGender: patients.gender,
-        patientPhone: patients.phone,
-        patientAddress: patients.address,
-        patientBloodType: patients.bloodType,
-        patientAllergies: patients.allergies,
-        patientEmergencyContactName: patients.emergencyContactName,
-        patientEmergencyContactPhone: patients.emergencyContactPhone,
-        doctorSpecialty: doctors.specialty,
-        doctorAddress: doctors.address,
-        doctorCity: doctors.city,
-      })
-      .from(users)
-      .leftJoin(patients, eq(patients.userId, users.id))
-      .leftJoin(doctors, eq(doctors.userId, users.id))
-      .where(whereClause)
-      .limit(options.limit ?? perPage)
-      .offset(options.offset ?? 0);
+    const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
 
-    const [{ count }] = await db
-      .select({ count: sql<number>`count(*)` })
-      .from(users)
-      .where(whereClause ?? sql`TRUE`);
+    const [items, [{ count }]] = await Promise.all([
+      db
+        .select()
+        .from(view)
+        .where(whereClause)
+        .limit(perPage)
+        .offset((page - 1) * perPage),
+      db
+        .select({ count: sql<number>`count(*)` })
+        .from(view)
+        .where(whereClause ?? sql`TRUE`),
+    ]);
 
     const totalItems = Number(count);
-    const totalPages = Math.ceil(totalItems / perPage);
-
-    const items = rows.map(row => ({
-      id: row.id,
-      name: row.name,
-      email: row.email,
-      emailVerified: row.emailVerified,
-      image: row.image,
-      role: row.role,
-      banned: row.banned,
-      banReason: row.banReason,
-      banExpires: row.banExpires,
-      lastLoginMethod: row.lastLoginMethod,
-      createdAt: row.createdAt,
-      updatedAt: row.updatedAt,
-      patient: row.patientDateOfBirth
-        ? {
-            dateOfBirth: row.patientDateOfBirth,
-            gender: row.patientGender,
-            phone: row.patientPhone,
-            address: row.patientAddress,
-            bloodType: row.patientBloodType,
-            allergies: row.patientAllergies,
-            emergencyContactName: row.patientEmergencyContactName,
-            emergencyContactPhone: row.patientEmergencyContactPhone,
-          }
-        : null,
-      doctor: row.doctorSpecialty
-        ? {
-            specialty: row.doctorSpecialty,
-            address: row.doctorAddress,
-            city: row.doctorCity,
-          }
-        : null,
-    }));
 
     return {
       users: items,
       totalItems,
-      totalPages,
+      totalPages: Math.ceil(totalItems / perPage),
       page,
       perPage,
     };

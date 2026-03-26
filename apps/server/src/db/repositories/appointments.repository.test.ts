@@ -2,7 +2,7 @@
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
 
 import { applyMigration, db, resetDb } from '../../../test/db';
-import { appointments, doctorBlocks, doctors, users } from '../schema';
+import { appointments, doctorBlocks, doctors, patients, users } from '../schema';
 
 import { createAppointmentsRepo } from './appointments.repository';
 
@@ -29,6 +29,12 @@ beforeEach(async () => {
     })
     .returning({ id: users.id });
   patientId = patientUser.id;
+
+  await db.insert(patients).values({
+    userId: patientUser.id,
+    dateOfBirth: '1990-01-01',
+    gender: 'MALE',
+  });
 
   const [doctorUser] = await db
     .insert(users)
@@ -327,6 +333,12 @@ describe('appointments.repository', () => {
         })
         .returning({ id: users.id });
       patient2Id = patient2.id;
+
+      await db.insert(patients).values({
+        userId: patient2.id,
+        dateOfBirth: '1995-05-15',
+        gender: 'FEMALE',
+      });
 
       const [doctorUser] = await db
         .insert(users)

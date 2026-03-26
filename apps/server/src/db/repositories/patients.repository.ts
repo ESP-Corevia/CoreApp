@@ -12,6 +12,10 @@ export type PatientInsert = InferInsertModel<typeof patients>;
 export type PatientUpdate = Omit<PatientInsert, 'id' | 'userId' | 'createdAt' | 'updatedAt'>;
 
 export const createPatientsRepo = (db: DrizzleDB = DB) => ({
+  /**
+   * Récupère le profil patient (infos médicales et personnelles) à partir du `users.id`.
+   * @returns Le profil patient sans `id` ni `userId`, ou `null` si aucun profil n'existe.
+   */
   findByUserId: async (userId: string): Promise<Omit<Patient, 'id' | 'userId'> | null> => {
     const [row] = await db
       .select({
@@ -30,6 +34,11 @@ export const createPatientsRepo = (db: DrizzleDB = DB) => ({
     return row ?? null;
   },
 
+  /**
+   * Crée ou met à jour le profil patient (upsert sur `userId`).
+   * Touche `users.updatedAt` dans la même transaction.
+   * @returns Le profil patient créé ou mis à jour.
+   */
   upsert: async (userId: string, data: PatientUpdate): Promise<Patient> => {
     return await db.transaction(async tx => {
       const [row] = await tx

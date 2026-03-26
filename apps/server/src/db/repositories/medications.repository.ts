@@ -38,27 +38,11 @@ export interface CreateScheduleInput {
 }
 
 export const createMedicationsRepo = (db: DrizzleDB) => ({
-  createMedication: async (input: CreateMedicationInput) => {
-    const [row] = await db
-      .insert(patientMedications)
-      .values({
-        patientId: input.patientId,
-        medicationExternalId: input.medicationExternalId ?? null,
-        source: input.source,
-        cis: input.cis ?? null,
-        cip: input.cip ?? null,
-        medicationName: input.medicationName,
-        medicationForm: input.medicationForm ?? null,
-        activeSubstances: input.activeSubstances ?? null,
-        dosageLabel: input.dosageLabel ?? null,
-        instructions: input.instructions ?? null,
-        startDate: input.startDate,
-        endDate: input.endDate ?? null,
-      })
-      .returning();
-    return row;
-  },
-
+  /**
+   * Crée un médicament avec ses schedules et intakes initiales dans une seule transaction.
+   * Les `intakeInputs` référencent les schedules par index (position dans `scheduleInputs`).
+   * @returns Le médicament créé avec ses schedules.
+   */
   createMedicationAtomic: async (
     medInput: CreateMedicationInput,
     scheduleInputs: CreateScheduleInput[],
@@ -73,17 +57,17 @@ export const createMedicationsRepo = (db: DrizzleDB) => ({
         .insert(patientMedications)
         .values({
           patientId: medInput.patientId,
-          medicationExternalId: medInput.medicationExternalId ?? null,
+          medicationExternalId: medInput.medicationExternalId,
           source: medInput.source,
-          cis: medInput.cis ?? null,
-          cip: medInput.cip ?? null,
+          cis: medInput.cis,
+          cip: medInput.cip,
           medicationName: medInput.medicationName,
-          medicationForm: medInput.medicationForm ?? null,
-          activeSubstances: medInput.activeSubstances ?? null,
-          dosageLabel: medInput.dosageLabel ?? null,
-          instructions: medInput.instructions ?? null,
+          medicationForm: medInput.medicationForm,
+          activeSubstances: medInput.activeSubstances,
+          dosageLabel: medInput.dosageLabel,
+          instructions: medInput.instructions,
           startDate: medInput.startDate,
-          endDate: medInput.endDate ?? null,
+          endDate: medInput.endDate,
         })
         .returning();
 
@@ -120,6 +104,10 @@ export const createMedicationsRepo = (db: DrizzleDB) => ({
     });
   },
 
+  /**
+   * Récupère un médicament par son ID (sans relations).
+   * @returns Le médicament, ou `null` si introuvable.
+   */
   getById: async (id: string) => {
     return (
       (await db.query.patientMedications.findFirst({
@@ -128,6 +116,10 @@ export const createMedicationsRepo = (db: DrizzleDB) => ({
     );
   },
 
+  /**
+   * Récupère un médicament par son ID avec le nom/email du patient et ses schedules.
+   * @returns Le médicament détaillé, ou `null` si introuvable.
+   */
   getDetailById: async (id: string) => {
     const row = await db.query.patientMedications.findFirst({
       where: eq(patientMedications.id, id),
@@ -143,6 +135,9 @@ export const createMedicationsRepo = (db: DrizzleDB) => ({
     return { ...med, patientName: user?.name ?? null, patientEmail: user?.email ?? null };
   },
 
+  /**
+   * Liste les médicaments d'un patient avec pagination, filtrable par statut actif/inactif.
+   */
   listByPatient: async (params: {
     patientId: string;
     isActive?: boolean;
@@ -163,6 +158,9 @@ export const createMedicationsRepo = (db: DrizzleDB) => ({
       .offset(params.offset);
   },
 
+  /**
+   * Compte les médicaments d'un patient (mêmes filtres que `listByPatient`, sans pagination).
+   */
   countByPatient: async (params: { patientId: string; isActive?: boolean }) => {
     const conditions = [eq(patientMedications.patientId, params.patientId)];
     if (params.isActive !== undefined) {
@@ -177,6 +175,10 @@ export const createMedicationsRepo = (db: DrizzleDB) => ({
     return Number(row.count);
   },
 
+  /**
+   * Met à jour partiellement un médicament (posologie, instructions, dates, statut actif).
+   * @returns Le médicament mis à jour, ou `null` si l'ID n'existe pas.
+   */
   updateMedication: async (
     id: string,
     data: Partial<{
@@ -195,6 +197,10 @@ export const createMedicationsRepo = (db: DrizzleDB) => ({
     return row ?? null;
   },
 
+  /**
+   * Supprime un médicament par son ID (cascade sur schedules et intakes).
+   * @returns L'ID du médicament supprimé, ou `null` si introuvable.
+   */
   deleteMedication: async (id: string) => {
     const [row] = await db
       .delete(patientMedications)
@@ -205,22 +211,30 @@ export const createMedicationsRepo = (db: DrizzleDB) => ({
 
   // ─── Schedules ──────────────────────────────────
 
+  /**
+   * Crée un planning de prise pour un médicament donné.
+   * @returns La ligne insérée.
+   */
   createSchedule: async (input: CreateScheduleInput) => {
     const [row] = await db
       .insert(patientMedicationSchedules)
       .values({
         patientMedicationId: input.patientMedicationId,
-        weekday: input.weekday ?? null,
+        weekday: input.weekday,
         intakeTime: input.intakeTime,
         intakeMoment: input.intakeMoment,
         quantity: input.quantity,
-        unit: input.unit ?? null,
-        notes: input.notes ?? null,
+        unit: input.unit,
+        notes: input.notes,
       })
       .returning();
     return row;
   },
 
+  /**
+   * Récupère un schedule par son ID.
+   * @returns Le schedule, ou `null` si introuvable.
+   */
   getScheduleById: async (id: string) => {
     return (
       (await db.query.patientMedicationSchedules.findFirst({
@@ -229,6 +243,10 @@ export const createMedicationsRepo = (db: DrizzleDB) => ({
     );
   },
 
+  /**
+   * Récupère plusieurs schedules par leurs IDs en une seule requête.
+   * @returns Liste des schedules trouvés (peut être plus courte que `ids` si certains n'existent pas).
+   */
   getSchedulesByIds: async (ids: string[]) => {
     if (ids.length === 0) return [];
     return await db
@@ -237,6 +255,10 @@ export const createMedicationsRepo = (db: DrizzleDB) => ({
       .where(inArray(patientMedicationSchedules.id, ids));
   },
 
+  /**
+   * Met à jour partiellement un schedule (jour, heure, moment, quantité, unité, notes).
+   * @returns Le schedule mis à jour, ou `null` si l'ID n'existe pas.
+   */
   updateSchedule: async (
     id: string,
     data: Partial<{
@@ -256,6 +278,10 @@ export const createMedicationsRepo = (db: DrizzleDB) => ({
     return row ?? null;
   },
 
+  /**
+   * Supprime un schedule par son ID.
+   * @returns L'ID du schedule supprimé, ou `null` si introuvable.
+   */
   deleteSchedule: async (id: string) => {
     const [row] = await db
       .delete(patientMedicationSchedules)
@@ -264,6 +290,9 @@ export const createMedicationsRepo = (db: DrizzleDB) => ({
     return row ?? null;
   },
 
+  /**
+   * Liste tous les schedules d'un médicament, triés par heure de prise.
+   */
   listSchedulesByMedication: async (patientMedicationId: string) => {
     return await db
       .select()
@@ -274,46 +303,11 @@ export const createMedicationsRepo = (db: DrizzleDB) => ({
 
   // ─── Intakes ────────────────────────────────────
 
-  createIntake: async (data: {
-    patientMedicationId: string;
-    scheduleId?: string | null;
-    scheduledDate: string;
-    scheduledTime: string;
-  }) => {
-    const [row] = await db
-      .insert(patientMedicationIntakes)
-      .values({
-        patientMedicationId: data.patientMedicationId,
-        scheduleId: data.scheduleId ?? null,
-        scheduledDate: data.scheduledDate,
-        scheduledTime: data.scheduledTime,
-      })
-      .returning();
-    return row;
-  },
-
-  createManyIntakes: async (
-    data: Array<{
-      patientMedicationId: string;
-      scheduleId?: string | null;
-      scheduledDate: string;
-      scheduledTime: string;
-    }>,
-  ) => {
-    if (data.length === 0) return [];
-    return await db
-      .insert(patientMedicationIntakes)
-      .values(
-        data.map(d => ({
-          patientMedicationId: d.patientMedicationId,
-          scheduleId: d.scheduleId ?? null,
-          scheduledDate: d.scheduledDate,
-          scheduledTime: d.scheduledTime,
-        })),
-      )
-      .returning();
-  },
-
+  /**
+   * Crée les prises manquantes pour des schedules donnés (upsert : ignore les doublons existants).
+   * Utilise `ON CONFLICT DO NOTHING` sur la contrainte unique (médicament, schedule, date).
+   * @returns Uniquement les lignes nouvellement insérées.
+   */
   ensureIntakesForSchedules: async (
     data: Array<{
       patientMedicationId: string;
@@ -343,6 +337,10 @@ export const createMedicationsRepo = (db: DrizzleDB) => ({
       .returning();
   },
 
+  /**
+   * Récupère une prise par son ID.
+   * @returns La prise, ou `null` si introuvable.
+   */
   getIntakeById: async (id: string) => {
     return (
       (await db.query.patientMedicationIntakes.findFirst({
@@ -351,6 +349,10 @@ export const createMedicationsRepo = (db: DrizzleDB) => ({
     );
   },
 
+  /**
+   * Liste les prises d'un patient pour une date donnée, avec les infos du médicament.
+   * Ne retourne que les prises dont le médicament est actif et dont la période couvre la date.
+   */
   listIntakesByDate: async (patientId: string, date: string) => {
     return await db
       .select({
@@ -384,13 +386,18 @@ export const createMedicationsRepo = (db: DrizzleDB) => ({
       .orderBy(asc(patientMedicationIntakes.scheduledTime));
   },
 
+  /**
+   * Met à jour le statut d'une prise (TAKEN ou SKIPPED). Ne fonctionne que si la prise est encore PENDING.
+   * Enregistre `takenAt` automatiquement si le statut est TAKEN.
+   * @returns La prise mise à jour, ou `null` si introuvable ou déjà traitée.
+   */
   updateIntakeStatus: async (id: string, status: 'TAKEN' | 'SKIPPED', notes?: string | null) => {
     const [row] = await db
       .update(patientMedicationIntakes)
       .set({
         status,
         takenAt: status === 'TAKEN' ? new Date() : null,
-        notes: notes ?? null,
+        notes: notes,
       })
       .where(
         and(eq(patientMedicationIntakes.id, id), eq(patientMedicationIntakes.status, 'PENDING')),
@@ -399,22 +406,12 @@ export const createMedicationsRepo = (db: DrizzleDB) => ({
     return row ?? null;
   },
 
-  // Check if intakes already exist for a medication on a date
-  intakesExistForDate: async (patientMedicationId: string, date: string) => {
-    const [row] = await db
-      .select({ count: sql<number>`count(*)` })
-      .from(patientMedicationIntakes)
-      .where(
-        and(
-          eq(patientMedicationIntakes.patientMedicationId, patientMedicationId),
-          eq(patientMedicationIntakes.scheduledDate, date),
-        ),
-      );
-    return Number(row.count) > 0;
-  },
-
   // ─── Admin Queries ──────────────────────────────────
 
+  /**
+   * Liste tous les médicaments (vue admin) avec nom et email du patient.
+   * Filtrable par patient, recherche textuelle (nom médicament ou nom patient) et statut actif.
+   */
   listAllMedications: async (params: {
     patientId?: string;
     search?: string;
@@ -467,6 +464,9 @@ export const createMedicationsRepo = (db: DrizzleDB) => ({
       .offset(params.offset);
   },
 
+  /**
+   * Compte tous les médicaments (mêmes filtres que `listAllMedications`, sans pagination).
+   */
   countAllMedications: async (params: {
     patientId?: string;
     search?: string;
