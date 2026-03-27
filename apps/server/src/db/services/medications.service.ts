@@ -157,6 +157,9 @@ export const createMedicationsService = (repo: MedicationsRepo, provider: Medica
   }
 
   return {
+    /**
+     * Recherche des médicaments dans l'API externe (api-medicaments-fr).
+     */
     search: async (input: { query: string; page: number; limit: number }) => {
       try {
         return await provider.search(input.query, input.page, input.limit);
@@ -169,6 +172,9 @@ export const createMedicationsService = (repo: MedicationsRepo, provider: Medica
       }
     },
 
+    /**
+     * Récupère un médicament depuis l'API externe par code CIS, CIP ou ID externe.
+     */
     getByCode: async (input: { cis?: string; cip?: string; externalId?: string }) => {
       try {
         return await provider.getByCode(input);
@@ -183,6 +189,9 @@ export const createMedicationsService = (repo: MedicationsRepo, provider: Medica
 
     //Pillbox
 
+    /**
+     * Liste les médicaments du patient connecté avec pagination, filtrable par statut actif/inactif.
+     */
     listMine: async (patientId: string, query: z.infer<typeof ListPillboxInputSchema>) => {
       const offset = (query.page - 1) * query.limit;
       const [items, total] = await Promise.all([
@@ -192,6 +201,12 @@ export const createMedicationsService = (repo: MedicationsRepo, provider: Medica
       return { items, page: query.page, limit: query.limit, total };
     },
 
+    /**
+     * Récupère le détail d'un médicament avec ses schedules et les infos du patient.
+     * Vérifie que l'utilisateur est le patient concerné ou un admin.
+     * @throws NOT_FOUND si le médicament n'existe pas.
+     * @throws FORBIDDEN si l'utilisateur n'est ni le patient ni un admin.
+     */
     detail: async (userId: string, medicationId: string, isAdmin: boolean) => {
       const med = await repo.getDetailById(medicationId);
       if (!med) {
@@ -203,6 +218,10 @@ export const createMedicationsService = (repo: MedicationsRepo, provider: Medica
       return med;
     },
 
+    /**
+     * Crée un médicament avec ses schedules et génère les intakes du jour si applicable.
+     * @throws BAD_REQUEST si la date de fin est avant la date de début.
+     */
     createMedication: (
       patientId: string,
       input: z.infer<typeof CreatePatientMedicationInputSchema>,
@@ -210,6 +229,11 @@ export const createMedicationsService = (repo: MedicationsRepo, provider: Medica
       return createMedicationWithSchedules(patientId, input);
     },
 
+    /**
+     * Met à jour un médicament du patient connecté (posologie, instructions, dates, statut).
+     * @throws NOT_FOUND si le médicament n'existe pas.
+     * @throws FORBIDDEN si le médicament n'appartient pas au patient.
+     */
     updateMedication: async (
       userId: string,
       input: z.infer<typeof UpdatePatientMedicationInputSchema>,
@@ -227,6 +251,11 @@ export const createMedicationsService = (repo: MedicationsRepo, provider: Medica
       return updated;
     },
 
+    /**
+     * Supprime un médicament du patient connecté (cascade sur schedules et intakes).
+     * @throws NOT_FOUND si le médicament n'existe pas.
+     * @throws FORBIDDEN si le médicament n'appartient pas au patient.
+     */
     deleteMedication: async (userId: string, medicationId: string) => {
       const existing = await repo.getById(medicationId);
       if (!existing) {
@@ -241,6 +270,11 @@ export const createMedicationsService = (repo: MedicationsRepo, provider: Medica
 
     //Schedules
 
+    /**
+     * Ajoute un schedule à un médicament existant.
+     * @throws NOT_FOUND si le médicament n'existe pas.
+     * @throws FORBIDDEN si le médicament n'appartient pas au patient (sauf admin).
+     */
     addSchedule: async (
       userId: string,
       input: z.infer<typeof AddScheduleInputSchema>,
@@ -265,6 +299,11 @@ export const createMedicationsService = (repo: MedicationsRepo, provider: Medica
       });
     },
 
+    /**
+     * Met à jour un schedule existant (jour, heure, moment, quantité, unité, notes).
+     * @throws NOT_FOUND si le schedule n'existe pas.
+     * @throws FORBIDDEN si le médicament associé n'appartient pas au patient (sauf admin).
+     */
     updateSchedule: async (
       userId: string,
       input: z.infer<typeof UpdateScheduleInputSchema>,
@@ -283,6 +322,11 @@ export const createMedicationsService = (repo: MedicationsRepo, provider: Medica
       return await repo.updateSchedule(id, data);
     },
 
+    /**
+     * Supprime un schedule existant.
+     * @throws NOT_FOUND si le schedule n'existe pas.
+     * @throws FORBIDDEN si le médicament associé n'appartient pas au patient (sauf admin).
+     */
     deleteSchedule: async (userId: string, scheduleId: string, isAdmin: boolean) => {
       const schedule = await repo.getScheduleById(scheduleId);
       if (!schedule) {
@@ -298,10 +342,20 @@ export const createMedicationsService = (repo: MedicationsRepo, provider: Medica
 
     //Today / Intakes
 
+    /**
+     * Génère les prises du jour pour le patient et retourne la liste enrichie
+     * (nom du médicament, moment, quantité, unité).
+     */
     today: (patientId: string) => {
       return generateAndFetchTodayIntakes(patientId);
     },
 
+    /**
+     * Marque une prise comme TAKEN. Ne fonctionne que si la prise est encore PENDING.
+     * @throws NOT_FOUND si la prise n'existe pas.
+     * @throws FORBIDDEN si le médicament n'appartient pas au patient.
+     * @throws BAD_REQUEST si la prise n'est plus en statut PENDING.
+     */
     markIntakeTaken: async (userId: string, intakeId: string, notes?: string | null) => {
       const intake = await repo.getIntakeById(intakeId);
       if (!intake) {
@@ -323,6 +377,12 @@ export const createMedicationsService = (repo: MedicationsRepo, provider: Medica
       return await repo.updateIntakeStatus(intakeId, 'TAKEN', notes);
     },
 
+    /**
+     * Marque une prise comme SKIPPED. Ne fonctionne que si la prise est encore PENDING.
+     * @throws NOT_FOUND si la prise n'existe pas.
+     * @throws FORBIDDEN si le médicament n'appartient pas au patient.
+     * @throws BAD_REQUEST si la prise n'est plus en statut PENDING.
+     */
     markIntakeSkipped: async (userId: string, intakeId: string, notes?: string | null) => {
       const intake = await repo.getIntakeById(intakeId);
       if (!intake) {
@@ -346,6 +406,10 @@ export const createMedicationsService = (repo: MedicationsRepo, provider: Medica
 
     //Admin Operations
 
+    /**
+     * Liste tous les médicaments (vue admin) avec nom/email du patient.
+     * Filtrable par patient, recherche textuelle et statut actif.
+     */
     adminListAll: async (query: {
       patientId?: string;
       search?: string;
@@ -371,6 +435,9 @@ export const createMedicationsService = (repo: MedicationsRepo, provider: Medica
       return { items, page: query.page, limit: query.limit, total };
     },
 
+    /**
+     * Crée un médicament en tant qu'admin pour un patient donné (pas de vérification de propriété).
+     */
     adminCreateMedication: (
       patientId: string,
       input: z.infer<typeof CreatePatientMedicationInputSchema>,
@@ -378,6 +445,10 @@ export const createMedicationsService = (repo: MedicationsRepo, provider: Medica
       return createMedicationWithSchedules(patientId, input);
     },
 
+    /**
+     * Met à jour un médicament en tant qu'admin (pas de vérification de propriété).
+     * @throws NOT_FOUND si le médicament n'existe pas.
+     */
     adminUpdateMedication: async (input: z.infer<typeof UpdatePatientMedicationInputSchema>) => {
       const existing = await repo.getById(input.id);
       if (!existing) {
@@ -387,6 +458,10 @@ export const createMedicationsService = (repo: MedicationsRepo, provider: Medica
       return await repo.updateMedication(id, updateData);
     },
 
+    /**
+     * Supprime un médicament en tant qu'admin (pas de vérification de propriété).
+     * @throws NOT_FOUND si le médicament n'existe pas.
+     */
     adminDeleteMedication: async (medicationId: string) => {
       const existing = await repo.getById(medicationId);
       if (!existing) {
@@ -395,6 +470,9 @@ export const createMedicationsService = (repo: MedicationsRepo, provider: Medica
       return await repo.deleteMedication(medicationId);
     },
 
+    /**
+     * Génère et récupère les prises du jour pour un patient donné (vue admin).
+     */
     adminTodayByPatient: (patientId: string) => {
       return generateAndFetchTodayIntakes(patientId);
     },

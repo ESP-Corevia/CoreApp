@@ -134,7 +134,7 @@ describe('appointmentsService', () => {
       updatedAt: null,
       doctor: {
         id: DOCTOR_ID,
-        name: null,
+        name: 'Dr. Smith',
         specialty: 'Cardiology',
         address: '1 Rue Test',
         imageUrl: null,
@@ -336,7 +336,7 @@ describe('appointmentsService', () => {
       updatedAt: null,
       doctor: {
         id: DOCTOR_ID,
-        name: null,
+        name: 'Dr. Smith',
         specialty: 'Cardiology',
         address: '1 Rue Test',
         imageUrl: null,
@@ -394,7 +394,7 @@ describe('appointmentsService', () => {
       updatedAt: null,
       doctor: {
         id: DOCTOR_ID,
-        name: null,
+        name: 'Dr. Smith',
         specialty: 'Cardiology',
         address: '1 Rue Test',
         imageUrl: null,
@@ -437,7 +437,7 @@ describe('appointmentsService', () => {
       updatedAt: null,
       doctor: {
         id: DOCTOR_ID,
-        name: null,
+        name: 'Dr. Smith',
         specialty: 'Cardiology',
         address: '1 Rue Test',
         imageUrl: null,
@@ -543,7 +543,7 @@ describe('appointmentsService', () => {
         reason: null,
         doctor: {
           id: DOCTOR_ID,
-          name: null,
+          name: 'Dr. Smith',
           specialty: 'Cardiology',
           address: '1 Rue Test',
           imageUrl: null,

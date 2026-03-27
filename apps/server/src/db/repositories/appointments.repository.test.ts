@@ -509,4 +509,80 @@ describe('appointments.repository', () => {
       expect(result).toBeNull();
     });
   });
+
+  describe('update', () => {
+    it('updates fields and returns the updated row', async () => {
+      const created = await repo.createAppointmentAtomic({
+        doctorId,
+        patientId,
+        date: TEST_DATE,
+        time: '10:00',
+        reason: 'Checkup',
+      });
+      const apptId = ('appointment' in created && created.appointment?.id) as string;
+
+      const result = await repo.update(apptId, {
+        date: '2099-07-01',
+        time: '14:00',
+        reason: 'Follow-up',
+      });
+
+      expect(result).not.toBeNull();
+      expect(result?.id).toBe(apptId);
+      expect(result?.date).toBe('2099-07-01');
+      expect(result?.time).toBe('14:00');
+      expect(result?.reason).toBe('Follow-up');
+    });
+
+    it('updates only provided fields', async () => {
+      const created = await repo.createAppointmentAtomic({
+        doctorId,
+        patientId,
+        date: TEST_DATE,
+        time: '10:00',
+        reason: 'Checkup',
+      });
+      const apptId = ('appointment' in created && created.appointment?.id) as string;
+
+      const result = await repo.update(apptId, { reason: 'Updated reason' });
+
+      expect(result?.date).toBe(TEST_DATE);
+      expect(result?.time).toBe('10:00');
+      expect(result?.reason).toBe('Updated reason');
+    });
+
+    it('returns null for non-existing id', async () => {
+      const result = await repo.update('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a99', {
+        reason: 'Nope',
+      });
+      expect(result).toBeNull();
+    });
+  });
+
+  describe('deleteById', () => {
+    it('deletes the appointment and returns the deleted row', async () => {
+      const created = await repo.createAppointmentAtomic({
+        doctorId,
+        patientId,
+        date: TEST_DATE,
+        time: '10:00',
+      });
+      const apptId = ('appointment' in created && created.appointment?.id) as string;
+
+      const deleted = await repo.deleteById(apptId);
+
+      expect(deleted).not.toBeNull();
+      expect(deleted?.id).toBe(apptId);
+      expect(deleted?.status).toBe('PENDING');
+
+      // Verify it's actually gone
+      const fetched = await repo.getByIdWithDoctor(apptId);
+      expect(fetched).toBeNull();
+    });
+
+    it('returns null for non-existing id', async () => {
+      const result = await repo.deleteById('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a99');
+      expect(result).toBeNull();
+    });
+  });
 });

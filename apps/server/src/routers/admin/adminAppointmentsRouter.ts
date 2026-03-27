@@ -79,8 +79,8 @@ export const createAppointment = adminProcedure
   })
   .input(
     z.object({
-      doctorId: z.string().uuid(),
-      patientId: z.string().uuid(),
+      doctorId: z.uuid(),
+      patientId: z.uuid(),
       date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'date must be YYYY-MM-DD'),
       time: z.string().regex(/^\d{2}:\d{2}$/, 'time must be HH:mm'),
       reason: z.string().optional(),
@@ -113,7 +113,7 @@ export const updateAppointment = adminProcedure
   })
   .input(
     z.object({
-      id: z.string().uuid(),
+      id: z.uuid(),
       date: z
         .string()
         .regex(/^\d{4}-\d{2}-\d{2}$/, 'date must be YYYY-MM-DD')

@@ -1,19 +1,23 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: pass */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { mockAvailabilityRepo } from '../../../test/repositories';
+import { mockAvailabilityRepo, mockDoctorsRepo } from '../../../test/repositories';
 
 import { BASE_SLOTS, createAvailabilityService } from './availability.service';
 
-const service = createAvailabilityService(mockAvailabilityRepo);
+const service = createAvailabilityService(mockAvailabilityRepo, mockDoctorsRepo);
 
 const DOCTOR_ID = '00000000-0000-0000-0000-000000000001';
-const DOCTOR_USER_ID = '00000000-0000-0000-0000-000000000099';
 const FUTURE_DATE = '2099-01-15';
 
 beforeEach(() => {
   vi.resetAllMocks();
-  // Default: doctor exists and has a userId
-  mockAvailabilityRepo.getDoctorUserId.mockResolvedValue(DOCTOR_USER_ID);
+  // Default: doctor exists
+  mockDoctorsRepo.getByUserId.mockResolvedValue({
+    specialty: 'Cardiology',
+    address: '1 Rue de Test',
+    city: 'Paris',
+  });
   mockAvailabilityRepo.getReservedSlots.mockResolvedValue([]);
   mockAvailabilityRepo.getBlockedSlots.mockResolvedValue([]);
 });
@@ -30,11 +34,11 @@ describe('availabilityService', () => {
           code: 'UNPROCESSABLE_CONTENT',
         }),
       );
-      expect(mockAvailabilityRepo.getDoctorUserId).not.toHaveBeenCalled();
+      expect(mockDoctorsRepo.getByUserId).not.toHaveBeenCalled();
     });
 
     it('throws NOT_FOUND when doctor does not exist', async () => {
-      mockAvailabilityRepo.getDoctorUserId.mockResolvedValue(null);
+      mockDoctorsRepo.getByUserId.mockResolvedValue(null as any);
 
       await expect(service.getAvailableSlots(DOCTOR_ID, FUTURE_DATE)).rejects.toThrow(
         expect.objectContaining({
@@ -72,18 +76,12 @@ describe('availabilityService', () => {
       expect(BASE_SLOTS).toContain('13:30');
     });
 
-    it('fetches reserved and blocked slots with doctorUserId', async () => {
+    it('fetches reserved and blocked slots with doctorId', async () => {
       await service.getAvailableSlots(DOCTOR_ID, FUTURE_DATE);
 
-      expect(mockAvailabilityRepo.getDoctorUserId).toHaveBeenCalledWith(DOCTOR_ID);
-      expect(mockAvailabilityRepo.getReservedSlots).toHaveBeenCalledWith(
-        DOCTOR_USER_ID,
-        FUTURE_DATE,
-      );
-      expect(mockAvailabilityRepo.getBlockedSlots).toHaveBeenCalledWith(
-        DOCTOR_USER_ID,
-        FUTURE_DATE,
-      );
+      expect(mockDoctorsRepo.getByUserId).toHaveBeenCalledWith(DOCTOR_ID);
+      expect(mockAvailabilityRepo.getReservedSlots).toHaveBeenCalledWith(DOCTOR_ID, FUTURE_DATE);
+      expect(mockAvailabilityRepo.getBlockedSlots).toHaveBeenCalledWith(DOCTOR_ID, FUTURE_DATE);
     });
   });
 });

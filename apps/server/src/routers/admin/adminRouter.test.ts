@@ -272,7 +272,7 @@ describe('adminRouter', () => {
         patientId: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a13',
         date: '2099-06-15',
         time: '10:00',
-        status: 'PENDING',
+        status: 'PENDING' as const,
       };
 
       mockServices.appointmentsService.adminCreateAppointment.mockResolvedValue(mockCreated);
@@ -340,7 +340,7 @@ describe('adminRouter', () => {
         patientId: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a13',
         date: '2099-07-01',
         time: '14:00',
-        status: 'PENDING',
+        status: 'PENDING' as const,
         reason: 'Updated reason',
       };
 
@@ -390,7 +390,7 @@ describe('adminRouter', () => {
         patientId: 'pat-1',
         date: '2099-06-15',
         time: '10:00',
-        status: 'PENDING',
+        status: 'PENDING' as const,
       };
 
       mockServices.appointmentsService.adminDeleteAppointment.mockResolvedValue(mockDeleted);
