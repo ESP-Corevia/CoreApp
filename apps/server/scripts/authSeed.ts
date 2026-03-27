@@ -285,14 +285,26 @@ const APPOINTMENT_REASONS = [
 ];
 
 const BASE_SLOTS = [
-  '08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
-  '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30',
+  '08:00',
+  '08:30',
+  '09:00',
+  '09:30',
+  '10:00',
+  '10:30',
+  '11:00',
+  '11:30',
+  '13:30',
+  '14:00',
+  '14:30',
+  '15:00',
+  '15:30',
+  '16:00',
+  '16:30',
+  '17:00',
+  '17:30',
 ];
 
-async function seedAppointments(
-  patientUserIds: string[],
-  doctorUserIds: string[],
-) {
+async function seedAppointments(patientUserIds: string[], doctorUserIds: string[]) {
   let total = 0;
 
   const rows = [];

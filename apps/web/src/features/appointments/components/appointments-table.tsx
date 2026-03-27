@@ -1,9 +1,9 @@
 'use client';
 
 import type { ColumnDef } from '@tanstack/react-table';
-import { t } from 'i18next';
 import { CalendarClock, CircleDot, Clock, Stethoscope, Text, User } from 'lucide-react';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { DataTable } from '@/components/data-table/data-table';
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
 import { DataTableToolbar } from '@/components/data-table/data-table-toolbar';
@@ -74,6 +74,7 @@ export default function AppointmentsTable({
 }) {
   const appointments = useMemo(() => data, [data]);
   const pageCount = providedPageCount ?? Math.ceil((appointments.length || 1) / 10);
+  const { t } = useTranslation();
 
   const columns = useMemo<ColumnDef<Appointment>[]>(
     () => [

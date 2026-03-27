@@ -166,6 +166,67 @@ describe('doctors.repository', () => {
     });
   });
 
+  describe('createByUserId', () => {
+    let userId: string;
+
+    beforeEach(async () => {
+      const [user] = await db
+        .insert(users)
+        .values({
+          name: 'Dr. New',
+          email: 'new@example.com',
+          emailVerified: true,
+          createdAt: new Date(),
+        })
+        .returning({ id: users.id });
+      userId = user.id;
+    });
+
+    it('creates a doctor profile and returns it', async () => {
+      const result = await repo.createByUserId(userId, {
+        specialty: 'Oncology',
+        address: '3 Rue Neuve, Nantes',
+        city: 'Nantes',
+      });
+
+      expect(result).toMatchObject({
+        userId,
+        specialty: 'Oncology',
+        address: '3 Rue Neuve, Nantes',
+        city: 'Nantes',
+      });
+      expect(result.id).toBeDefined();
+    });
+
+    it('persists the doctor in the database', async () => {
+      await repo.createByUserId(userId, {
+        specialty: 'Oncology',
+        address: '3 Rue Neuve, Nantes',
+        city: 'Nantes',
+      });
+
+      const [row] = await db.select().from(doctors).where(eq(doctors.userId, userId));
+      expect(row).toBeDefined();
+      expect(row.specialty).toBe('Oncology');
+    });
+
+    it('throws on duplicate userId (unique constraint)', async () => {
+      await repo.createByUserId(userId, {
+        specialty: 'Oncology',
+        address: '3 Rue Neuve, Nantes',
+        city: 'Nantes',
+      });
+
+      await expect(
+        repo.createByUserId(userId, {
+          specialty: 'Cardiology',
+          address: '1 Rue Test',
+          city: 'Paris',
+        }),
+      ).rejects.toThrow();
+    });
+  });
+
   describe('updateByUserId', () => {
     let userId: string;
 

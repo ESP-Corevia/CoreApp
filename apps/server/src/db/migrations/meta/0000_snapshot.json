@@ -124,12 +124,8 @@
           "name": "appointments_doctor_id_users_id_fk",
           "tableFrom": "appointments",
           "tableTo": "users",
-          "columnsFrom": [
-            "doctor_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["doctor_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -137,12 +133,8 @@
           "name": "appointments_patient_id_users_id_fk",
           "tableFrom": "appointments",
           "tableTo": "users",
-          "columnsFrom": [
-            "patient_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["patient_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -217,12 +209,8 @@
           "name": "doctor_blocks_doctor_id_users_id_fk",
           "tableFrom": "doctor_blocks",
           "tableTo": "users",
-          "columnsFrom": [
-            "doctor_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["doctor_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -339,12 +327,8 @@
           "name": "accounts_user_id_users_id_fk",
           "tableFrom": "accounts",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -452,12 +436,8 @@
           "name": "sessions_user_id_users_id_fk",
           "tableFrom": "sessions",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -467,9 +447,7 @@
         "sessions_token_unique": {
           "name": "sessions_token_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "token"
-          ]
+          "columns": ["token"]
         }
       },
       "policies": {},
@@ -585,9 +563,7 @@
         "users_email_unique": {
           "name": "users_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},
@@ -748,12 +724,8 @@
           "name": "doctors_user_id_users_id_fk",
           "tableFrom": "doctors",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -763,9 +735,7 @@
         "doctors_user_id_unique": {
           "name": "doctors_user_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "user_id"
-          ]
+          "columns": ["user_id"]
         }
       },
       "policies": {},
@@ -883,12 +853,8 @@
           "name": "patient_medication_intakes_patient_medication_id_patient_medications_id_fk",
           "tableFrom": "patient_medication_intakes",
           "tableTo": "patient_medications",
-          "columnsFrom": [
-            "patient_medication_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["patient_medication_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -896,14 +862,8 @@
           "name": "patient_medication_intakes_patient_medication_id_schedule_id_patient_medication_schedules_patient_medication_id_id_fk",
           "tableFrom": "patient_medication_intakes",
           "tableTo": "patient_medication_schedules",
-          "columnsFrom": [
-            "patient_medication_id",
-            "schedule_id"
-          ],
-          "columnsTo": [
-            "patient_medication_id",
-            "id"
-          ],
+          "columnsFrom": ["patient_medication_id", "schedule_id"],
+          "columnsTo": ["patient_medication_id", "id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -913,11 +873,7 @@
         "patient_medication_intakes_med_sched_date_uniq": {
           "name": "patient_medication_intakes_med_sched_date_uniq",
           "nullsNotDistinct": false,
-          "columns": [
-            "patient_medication_id",
-            "schedule_id",
-            "scheduled_date"
-          ]
+          "columns": ["patient_medication_id", "schedule_id", "scheduled_date"]
         }
       },
       "policies": {},
@@ -1015,12 +971,8 @@
           "name": "patient_medication_schedules_patient_medication_id_patient_medications_id_fk",
           "tableFrom": "patient_medication_schedules",
           "tableTo": "patient_medications",
-          "columnsFrom": [
-            "patient_medication_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["patient_medication_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1030,10 +982,7 @@
         "patient_medication_schedules_med_id_uniq": {
           "name": "patient_medication_schedules_med_id_uniq",
           "nullsNotDistinct": false,
-          "columns": [
-            "patient_medication_id",
-            "id"
-          ]
+          "columns": ["patient_medication_id", "id"]
         }
       },
       "policies": {},
@@ -1202,12 +1151,8 @@
           "name": "patient_medications_patient_id_users_id_fk",
           "tableFrom": "patient_medications",
           "tableTo": "users",
-          "columnsFrom": [
-            "patient_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["patient_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1323,12 +1268,8 @@
           "name": "patients_user_id_users_id_fk",
           "tableFrom": "patients",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1338,9 +1279,7 @@
         "patients_user_id_unique": {
           "name": "patients_user_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "user_id"
-          ]
+          "columns": ["user_id"]
         }
       },
       "policies": {},
@@ -1352,55 +1291,27 @@
     "public.appointment_status": {
       "name": "appointment_status",
       "schema": "public",
-      "values": [
-        "PENDING",
-        "CONFIRMED",
-        "CANCELLED",
-        "COMPLETED"
-      ]
+      "values": ["PENDING", "CONFIRMED", "CANCELLED", "COMPLETED"]
     },
     "public.intake_moment": {
       "name": "intake_moment",
       "schema": "public",
-      "values": [
-        "MORNING",
-        "NOON",
-        "EVENING",
-        "BEDTIME",
-        "CUSTOM"
-      ]
+      "values": ["MORNING", "NOON", "EVENING", "BEDTIME", "CUSTOM"]
     },
     "public.intake_status": {
       "name": "intake_status",
       "schema": "public",
-      "values": [
-        "PENDING",
-        "TAKEN",
-        "SKIPPED"
-      ]
+      "values": ["PENDING", "TAKEN", "SKIPPED"]
     },
     "public.blood_type": {
       "name": "blood_type",
       "schema": "public",
-      "values": [
-        "A+",
-        "A-",
-        "B+",
-        "B-",
-        "AB+",
-        "AB-",
-        "O+",
-        "O-"
-      ]
+      "values": ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]
     },
     "public.gender": {
       "name": "gender",
       "schema": "public",
-      "values": [
-        "MALE",
-        "FEMALE",
-        "OTHER"
-      ]
+      "values": ["MALE", "FEMALE", "OTHER"]
     }
   },
   "schemas": {},

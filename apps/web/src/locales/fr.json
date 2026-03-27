@@ -10,8 +10,48 @@
       "cancel": "Annuler",
       "complete": "Terminer",
       "confirm": "Confirmer",
+      "create": "Créer un rendez-vous",
+      "created": "Rendez-vous créé avec succès",
+      "createDialog": {
+        "description": "Créer un nouveau rendez-vous pour un patient avec un médecin.",
+        "title": "Nouveau rendez-vous"
+      },
+      "createError": "Échec de la création du rendez-vous : {{message}}",
+      "creating": "Création...",
+      "delete": "Supprimer",
+      "deleted": "Rendez-vous supprimé avec succès",
+      "deleteDialog": {
+        "description": "Êtes-vous sûr de vouloir supprimer le rendez-vous de {{patient}} avec {{doctor}} le {{date}} à {{time}} ? Cette action est irréversible.",
+        "title": "Supprimer le rendez-vous"
+      },
+      "deleteError": "Échec de la suppression du rendez-vous : {{message}}",
+      "deleting": "Suppression...",
+      "edit": "Modifier",
+      "editDialog": {
+        "description": "Modifier le rendez-vous de {{patient}} avec {{doctor}}.",
+        "title": "Modifier le rendez-vous"
+      },
+      "form": {
+        "date": "Date",
+        "dateFormat": "La date doit être au format AAAA-MM-JJ",
+        "doctorId": "ID du médecin",
+        "doctorIdPlaceholder": "Entrez l'UUID du médecin",
+        "doctorIdRequired": "Un ID de médecin valide est requis",
+        "patientId": "ID du patient",
+        "patientIdPlaceholder": "Entrez l'UUID du patient",
+        "patientIdRequired": "Un ID de patient valide est requis",
+        "reason": "Motif",
+        "reasonPlaceholder": "Motif du rendez-vous (optionnel)",
+        "selectTime": "Sélectionner l'heure",
+        "time": "Heure",
+        "timeRequired": "L'heure est requise"
+      },
       "loadError": "Échec du chargement des rendez-vous : {{message}}",
       "openMenu": "Ouvrir le menu du rendez-vous",
+      "reopen": "Réouvrir",
+      "save": "Enregistrer les modifications",
+      "saving": "Enregistrement...",
+      "search": "Rechercher par nom de patient ou médecin…",
       "statusDialog": {
         "confirm": "{{action}}",
         "description": "Êtes-vous sûr de vouloir {{action}} ? Patient : {{patient}}, Médecin : {{doctor}}, Date : {{date}} à {{time}}.",
@@ -19,7 +59,9 @@
       },
       "statusUpdated": "Statut du rendez-vous mis à jour avec succès",
       "statusUpdateError": "Échec de la mise à jour du statut : {{message}}",
-      "title": "Gestion des Rendez-vous"
+      "title": "Gestion des Rendez-vous",
+      "updated": "Rendez-vous mis à jour avec succès",
+      "updateError": "Échec de la mise à jour du rendez-vous : {{message}}"
     },
     "banUserDialog": {
       "banning": "Bannissement...",
@@ -59,8 +101,40 @@
       "noResults": "Aucun résultat."
     },
     "doctors": {
+      "created": "Profil médecin créé avec succès",
+      "createDialog": {
+        "description": "Entrez l'UUID de l'utilisateur et les informations du médecin. L'utilisateur doit déjà avoir le rôle \"doctor\".",
+        "title": "Créer un profil médecin"
+      },
+      "createDoctor": "Créer un médecin",
+      "createError": "Échec de la création du médecin : {{message}}",
+      "createProfile": "Créer le profil médecin",
+      "creating": "Création...",
+      "edit": "Modifier le profil",
+      "editDialog": {
+        "description": "Modifier le profil de {{name}}.",
+        "title": "Modifier le profil médecin"
+      },
+      "form": {
+        "address": "Adresse",
+        "addressPlaceholder": "ex. 10 Rue de la Paix",
+        "addressRequired": "L'adresse est requise",
+        "city": "Ville",
+        "cityPlaceholder": "ex. Paris",
+        "cityRequired": "La ville est requise",
+        "specialty": "Spécialité",
+        "specialtyPlaceholder": "ex. Cardiologie",
+        "specialtyRequired": "La spécialité est requise",
+        "userId": "UUID de l'utilisateur",
+        "userIdInvalid": "Doit être un UUID valide"
+      },
       "loadError": "Échec du chargement des médecins : {{message}}",
-      "title": "Gestion des Médecins"
+      "openMenu": "Ouvrir le menu du médecin",
+      "save": "Enregistrer les modifications",
+      "saving": "Enregistrement...",
+      "title": "Gestion des Médecins",
+      "updated": "Profil médecin mis à jour avec succès",
+      "updateError": "Échec de la mise à jour du médecin : {{message}}"
     },
     "errorScreen": {
       "permissionDenied": "Vous n'avez pas l'autorisation d'accéder à cette ressource."
@@ -157,7 +231,7 @@
       "patientIdRequired": "L'identifiant du patient est requis",
       "quantity": "Quantité",
       "resultsCount_one": "{{count}} traitement trouvé",
-      "resultsCount_many": "",
+      "resultsCount_many": "{{count}} traitements trouvés",
       "resultsCount_other": "{{count}} traitements trouvés",
       "scheduleAdded": "Rappel ajouté avec succès",
       "scheduleAddError": "Erreur lors de l'ajout du rappel : {{message}}",
@@ -301,8 +375,10 @@
     },
     "UserActionsMenu": {
       "banUser": "Bannir l'utilisateur",
+      "copyId": "Copier l'ID",
       "deleteUser": "Supprimer l'utilisateur",
       "editUser": "Modifier l'utilisateur",
+      "idCopied": "ID utilisateur copié dans le presse-papiers",
       "impersonate": "Usurper",
       "openUserMenu": "Ouvrir le menu utilisateur",
       "revokeSessions": "Révoquer toutes les sessions",
@@ -365,6 +441,9 @@
     "userMenu": {
       "signIn": "Se connecter",
       "signOut": "Se déconnecter"
+    },
+    "users": {
+      "idCopied": "ID utilisateur copié dans le presse-papiers"
     },
     "userSetPasswordModal": {
       "cancel": "Annuler",

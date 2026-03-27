@@ -113,6 +113,21 @@ export const createDoctorsRepo = (db: DrizzleDB = DB) => ({
   },
 
   /**
+   * Crée un profil médecin pour un utilisateur existant.
+   * @returns Le profil médecin créé.
+   */
+  createByUserId: async (
+    userId: string,
+    data: { specialty: string; address: string; city: string },
+  ) => {
+    const [row] = await db
+      .insert(doctors)
+      .values({ userId, ...data })
+      .returning();
+    return row;
+  },
+
+  /**
    * Met à jour le profil médecin et touche `users.updatedAt` dans une transaction.
    * @returns Le profil médecin mis à jour, ou `null` si aucun profil n'existe pour ce user.
    */

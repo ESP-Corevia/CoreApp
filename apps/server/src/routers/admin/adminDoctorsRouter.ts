@@ -1,6 +1,82 @@
+import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
 import { adminProcedure } from '../../middlewares';
+
+export const createDoctor = adminProcedure
+  .meta({
+    openapi: {
+      method: 'POST',
+      path: '/admin/doctors',
+      summary: 'Create a doctor profile',
+      description: 'Admin creates a doctor profile for an existing user with role "doctor".',
+      protect: true,
+      tags: ['AdminRouter'],
+    },
+  })
+  .input(
+    z.object({
+      userId: z.uuid(),
+      specialty: z.string().min(1),
+      address: z.string().min(1),
+      city: z.string().min(1),
+    }),
+  )
+  .output(
+    z.object({
+      id: z.string(),
+      userId: z.string().nullable(),
+      specialty: z.string(),
+      address: z.string(),
+      city: z.string(),
+    }),
+  )
+  .mutation(async ({ input, ctx }) => {
+    const { userId, ...data } = input;
+    return await ctx.services.doctorsService.createProfile(userId, data);
+  });
+
+export const updateDoctor = adminProcedure
+  .meta({
+    openapi: {
+      method: 'PUT',
+      path: '/admin/doctors/{userId}',
+      summary: 'Update a doctor profile',
+      description: 'Admin updates a doctor profile (specialty, address, city).',
+      protect: true,
+      tags: ['AdminRouter'],
+    },
+  })
+  .input(
+    z.object({
+      userId: z.uuid(),
+      specialty: z.string().optional(),
+      address: z.string().optional(),
+      city: z.string().optional(),
+    }),
+  )
+  .output(
+    z.object({
+      id: z.string(),
+      userId: z.string().nullable(),
+      specialty: z.string(),
+      address: z.string(),
+      city: z.string(),
+    }),
+  )
+  .mutation(async ({ input, ctx }) => {
+    const { userId, ...data } = input;
+    try {
+      const updated = await ctx.services.doctorsService.updateProfile(userId, data);
+      if (!updated) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Doctor profile not found' });
+      }
+      return updated;
+    } catch (error) {
+      if (error instanceof TRPCError) throw error;
+      throw new TRPCError({ code: 'NOT_FOUND', message: 'Doctor profile not found' });
+    }
+  });
 
 export const listDoctors = adminProcedure
   .meta({

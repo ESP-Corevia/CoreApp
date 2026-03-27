@@ -9,6 +9,8 @@ import DoctorsDashboard from './doctors-dashboard';
 
 vi.mock('@/queries', () => ({
   useListDoctors: vi.fn().mockReturnValue({ data: undefined, error: null, isLoading: true }),
+  useCreateDoctor: vi.fn().mockReturnValue({ mutate: vi.fn(), isPending: false }),
+  useUpdateDoctor: vi.fn().mockReturnValue({ mutate: vi.fn(), isPending: false }),
 }));
 
 vi.mock('sonner', () => ({

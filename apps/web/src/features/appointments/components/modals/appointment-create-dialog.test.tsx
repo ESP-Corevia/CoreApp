@@ -75,12 +75,12 @@ describe('AppointmentCreateDialog', () => {
   });
 
   it('calls onSuccess callback from mutation', async () => {
-    const { getByRole, getByLabelText, user } = await setup();
-
     let onSuccessFn: () => void = () => {};
     mutate.mockImplementation((_input: unknown, opts: { onSuccess: () => void }) => {
       onSuccessFn = opts.onSuccess;
     });
+
+    const { getByRole, getByLabelText, user } = await setup();
 
     await user.type(
       getByRole('textbox', { name: /Doctor ID/i }),
@@ -101,7 +101,6 @@ describe('AppointmentCreateDialog', () => {
       expect(mutate).toHaveBeenCalled();
     });
 
-    // Verify the onSuccess callback is set
     expect(onSuccessFn).toBeDefined();
   });
 

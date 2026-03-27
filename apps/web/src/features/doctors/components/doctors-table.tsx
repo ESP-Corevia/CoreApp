@@ -1,15 +1,17 @@
 'use client';
 
 import type { ColumnDef } from '@tanstack/react-table';
-import { Mail, MapPin, Stethoscope, Text } from 'lucide-react';
+import { ClipboardCopy, Mail, MapPin, Stethoscope, Text } from 'lucide-react';
 import { useMemo } from 'react';
-
+import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 import { DataTable } from '@/components/data-table/data-table';
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
 import { DataTableToolbar } from '@/components/data-table/data-table-toolbar';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { useDataTable } from '@/hooks/use-data-table';
+import { DoctorActionsMenu } from './doctor-actions-menu';
 
 export interface Doctor {
   id: string;
@@ -39,9 +41,33 @@ export default function DoctorsTable({
 }) {
   const doctors = useMemo(() => data, [data]);
   const pageCount = providedPageCount ?? Math.ceil((doctors.length || 1) / 10);
-
+  const { t } = useTranslation();
   const columns = useMemo<ColumnDef<Doctor>[]>(
     () => [
+      {
+        id: 'userId',
+        accessorKey: 'userId',
+        header: ({ column }) => <DataTableColumnHeader column={column} label="ID" />,
+        cell: ({ cell }) => {
+          const id = cell.getValue<string>();
+          return (
+            <button
+              type="button"
+              className="inline-flex cursor-pointer items-center gap-1 font-mono text-muted-foreground text-xs transition-colors hover:text-foreground"
+              title={id}
+              onClick={() => {
+                navigator.clipboard.writeText(id);
+                toast.success(t('users.idCopied', 'User ID copied to clipboard'));
+              }}
+            >
+              <ClipboardCopy className="h-3 w-3" />
+              {id.slice(0, 8)}...
+            </button>
+          );
+        },
+        enableSorting: false,
+        enableHiding: true,
+      },
       {
         id: 'name',
         accessorKey: 'name',
@@ -128,8 +154,14 @@ export default function DoctorsTable({
         },
         enableSorting: false,
       },
+      {
+        id: 'actions',
+        cell: ({ row }) => <DoctorActionsMenu doctor={row.original} />,
+        enableSorting: false,
+        enableHiding: false,
+      },
     ],
-    [],
+    [t],
   );
 
   const { table } = useDataTable<Doctor>({

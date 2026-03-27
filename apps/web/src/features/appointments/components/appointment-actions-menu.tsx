@@ -1,4 +1,12 @@
-import { CheckCircle, CircleCheck, MoreHorizontal, Pencil, RotateCcw, Trash2, XCircle } from 'lucide-react';
+import {
+  CheckCircle,
+  CircleCheck,
+  MoreHorizontal,
+  Pencil,
+  RotateCcw,
+  Trash2,
+  XCircle,
+} from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 

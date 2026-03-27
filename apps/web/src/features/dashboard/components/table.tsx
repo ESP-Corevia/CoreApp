@@ -3,8 +3,10 @@
 import { SiGithub, SiGoogle } from '@icons-pack/react-simple-icons';
 
 import type { ColumnDef } from '@tanstack/react-table';
-import { Ban, CalendarClock, History, Mail, Shield, Text } from 'lucide-react';
+import { Ban, CalendarClock, ClipboardCopy, History, Mail, Shield, Text } from 'lucide-react';
 import { useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 
 import { DataTable } from '@/components/data-table/data-table';
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
@@ -47,8 +49,34 @@ export default function DataTableUsers({
   const users = useMemo(() => data, [data]);
   const pageCount = providedPageCount ?? Math.ceil((users.length || 1) / 10);
 
+  const { t } = useTranslation();
+
   const columns = useMemo<ColumnDef<User>[]>(
     () => [
+      {
+        id: 'id',
+        accessorKey: 'id',
+        header: ({ column }) => <DataTableColumnHeader column={column} label="ID" />,
+        cell: ({ cell }) => {
+          const id = cell.getValue<string>();
+          return (
+            <button
+              type="button"
+              className="inline-flex cursor-pointer items-center gap-1 font-mono text-muted-foreground text-xs transition-colors hover:text-foreground"
+              title={id}
+              onClick={() => {
+                navigator.clipboard.writeText(id);
+                toast.success(t('users.idCopied', 'User ID copied to clipboard'));
+              }}
+            >
+              <ClipboardCopy className="h-3 w-3" />
+              {id.slice(0, 8)}...
+            </button>
+          );
+        },
+        enableSorting: false,
+        enableHiding: true,
+      },
       // {
       //   id: 'select',
       //   header: ({ table }) => (
@@ -297,7 +325,7 @@ export default function DataTableUsers({
         enableHiding: false,
       },
     ],
-    [],
+    [t],
   );
 
   const { table, filters } = useDataTable<User>({

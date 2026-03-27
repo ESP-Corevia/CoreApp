@@ -1,6 +1,8 @@
+import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
 import type { createDoctorsRepo } from '../repositories/doctors.repository';
+import type { createUsersRepo } from '../repositories/users.repository';
 
 export const DoctorProfileSchema = z.object({
   specialty: z.string(),
@@ -40,7 +42,38 @@ export interface ListBookableQuery {
   limit: number;
 }
 
-export const createDoctorsService = (repo: ReturnType<typeof createDoctorsRepo>) => ({
+export const createDoctorsService = (
+  repo: ReturnType<typeof createDoctorsRepo>,
+  usersRepo: ReturnType<typeof createUsersRepo>,
+) => ({
+  /**
+   * Crée un profil médecin pour un utilisateur existant.
+   * Vérifie que l'utilisateur existe et qu'il a le rôle "doctor".
+   * @throws NOT_FOUND si l'utilisateur n'existe pas.
+   * @throws BAD_REQUEST si l'utilisateur n'a pas le rôle "doctor".
+   * @throws CONFLICT si l'utilisateur a déjà un profil médecin.
+   */
+  createProfile: async (
+    userId: string,
+    data: { specialty: string; address: string; city: string },
+  ) => {
+    const user = await usersRepo.findById({ id: userId });
+    if (!user) {
+      throw new TRPCError({ code: 'NOT_FOUND', message: 'User not found' });
+    }
+    if (user.role !== 'doctor') {
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message: `User role is "${user.role ?? 'none'}", expected "doctor"`,
+      });
+    }
+    const existing = await repo.getByUserId(userId);
+    if (existing) {
+      throw new TRPCError({ code: 'CONFLICT', message: 'Doctor profile already exists' });
+    }
+    return repo.createByUserId(userId, data);
+  },
+
   /**
    * Liste les médecins disponibles à la prise de rendez-vous (vue patient).
    * Filtrable par spécialité, ville et recherche textuelle, avec pagination.

@@ -5,25 +5,29 @@ import { toast } from 'sonner';
 
 import { trpcClient, useTrpc } from '@/providers/trpc';
 
-export function useUpdateAppointmentStatus() {
+interface CreateDoctorInput {
+  userId: string;
+  specialty: string;
+  address: string;
+  city: string;
+}
+
+export function useCreateDoctor() {
   const trpc = useTrpc();
   const queryClient = useQueryClient();
   const { t } = useTranslation();
 
   return useMutation({
-    mutationFn: (input: {
-      id: string;
-      status: 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED';
-    }) => {
-      return trpcClient.admin.updateAppointmentStatus.mutate(input);
+    mutationFn: (input: CreateDoctorInput) => {
+      return trpcClient.admin.createDoctor.mutate(input);
     },
     onSuccess: () => {
-      toast.success(t('appointments.statusUpdated', 'Appointment status updated successfully'));
-      void queryClient.invalidateQueries(trpc.admin.listAppointments.queryFilter());
+      toast.success(t('doctors.created', 'Doctor profile created successfully'));
+      void queryClient.invalidateQueries(trpc.admin.listDoctors.queryFilter());
     },
     onError: error => {
       toast.error(
-        t('appointments.statusUpdateError', 'Failed to update status: {{message}}', {
+        t('doctors.createError', 'Failed to create doctor: {{message}}', {
           message: error instanceof Error ? error.message : 'Unknown error',
         }),
       );

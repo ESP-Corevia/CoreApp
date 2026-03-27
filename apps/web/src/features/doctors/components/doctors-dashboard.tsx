@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { useListDoctors } from '@/queries';
 
 import DoctorsTable from './doctors-table';
+import { DoctorCreateDialog } from './modals/doctor-create-dialog';
 
 export default function DoctorsDashboard({
   session,
@@ -61,6 +62,9 @@ export default function DoctorsDashboard({
 
   return (
     <div className="space-y-6">
+      <div className="flex items-center justify-end">
+        <DoctorCreateDialog />
+      </div>
       <DoctorsTable
         title={t('doctors.title', 'Doctors Management')}
         data={doctorRows}

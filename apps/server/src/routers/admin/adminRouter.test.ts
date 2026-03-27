@@ -105,6 +105,115 @@ describe('adminRouter', () => {
     });
   });
 
+  describe('createDoctor', () => {
+    beforeEach(() => {
+      mockServices.doctorsService.createProfile.mockReset();
+      authMock.api.userHasPermission.mockResolvedValue({
+        success: true,
+        error: null,
+      });
+    });
+
+    it('creates a doctor profile and returns it', async () => {
+      const caller = createTestCaller({ customSession: fakeSession });
+
+      const mockCreated = {
+        id: 'doc-new',
+        userId: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+        specialty: 'Cardiology',
+        address: '10 Rue Test',
+        city: 'Paris',
+      };
+
+      mockServices.doctorsService.createProfile.mockResolvedValue(mockCreated);
+
+      const result = await caller.admin.createDoctor({
+        userId: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+        specialty: 'Cardiology',
+        address: '10 Rue Test',
+        city: 'Paris',
+      });
+
+      expect(result).toEqual(mockCreated);
+      expect(mockServices.doctorsService.createProfile).toHaveBeenCalledWith(
+        'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+        { specialty: 'Cardiology', address: '10 Rue Test', city: 'Paris' },
+      );
+    });
+
+    it('propagates service errors', async () => {
+      const caller = createTestCaller({ customSession: fakeSession });
+      const { TRPCError } = await import('@trpc/server');
+
+      mockServices.doctorsService.createProfile.mockRejectedValue(
+        new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'User role is "patient", expected "doctor"',
+        }),
+      );
+
+      await expect(
+        caller.admin.createDoctor({
+          userId: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+          specialty: 'Cardiology',
+          address: '10 Rue Test',
+          city: 'Paris',
+        }),
+      ).rejects.toThrow('User role is "patient", expected "doctor"');
+    });
+  });
+
+  describe('updateDoctor', () => {
+    beforeEach(() => {
+      mockServices.doctorsService.updateProfile.mockReset();
+      authMock.api.userHasPermission.mockResolvedValue({
+        success: true,
+        error: null,
+      });
+    });
+
+    it('updates a doctor profile and returns it', async () => {
+      const caller = createTestCaller({ customSession: fakeSession });
+
+      const mockUpdated = {
+        id: 'doc-1',
+        userId: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+        specialty: 'Oncology',
+        address: '10 Rue Test',
+        city: 'Lyon',
+      };
+
+      mockServices.doctorsService.updateProfile.mockResolvedValue(mockUpdated);
+
+      const result = await caller.admin.updateDoctor({
+        userId: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+        specialty: 'Oncology',
+        city: 'Lyon',
+      });
+
+      expect(result).toEqual(mockUpdated);
+      expect(mockServices.doctorsService.updateProfile).toHaveBeenCalledWith(
+        'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+        { specialty: 'Oncology', city: 'Lyon' },
+      );
+    });
+
+    it('returns NOT_FOUND when doctor does not exist', async () => {
+      const caller = createTestCaller({ customSession: fakeSession });
+
+      mockServices.doctorsService.updateProfile.mockRejectedValue(
+        new Error('Doctor profile not found'),
+      );
+
+      await expect(
+        caller.admin.updateDoctor({
+          userId: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+          specialty: 'Oncology',
+        }),
+      ).rejects.toThrow('Doctor profile not found');
+    });
+  });
+
   describe('listAppointments', () => {
     beforeEach(() => {
       mockServices.appointmentsService.listAllAppointments.mockReset();

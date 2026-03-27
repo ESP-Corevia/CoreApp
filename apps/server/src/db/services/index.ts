@@ -18,7 +18,7 @@ import { createUsersService } from './users.service';
 const medicationsProvider = createMedicationsProvider();
 
 export const usersService = createUsersService(usersRepo);
-export const doctorsService = createDoctorsService(doctorsRepo);
+export const doctorsService = createDoctorsService(doctorsRepo, usersRepo);
 export const patientsService = createPatientsService(patientsRepo);
 export const availabilityService = createAvailabilityService(availabilityRepo, doctorsRepo);
 export const appointmentsService = createAppointmentsService(appointmentsRepo);

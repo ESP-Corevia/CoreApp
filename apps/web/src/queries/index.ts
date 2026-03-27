@@ -1,4 +1,5 @@
 export { useCreateAppointment } from './useCreateAppointment';
+export { useCreateDoctor } from './useCreateDoctor';
 export { useDeleteAppointment } from './useDeleteAppointment';
 export { useDeleteUser } from './useDeleteUser';
 export { useImpersonateUser } from './useImpersonateUser';
@@ -24,3 +25,4 @@ export { useSearchMedications } from './useSearchMedications';
 export { useUnbanUser } from './useUnbanUser';
 export { useUpdateAppointment } from './useUpdateAppointment';
 export { useUpdateAppointmentStatus } from './useUpdateAppointmentStatus';
+export { useUpdateDoctor } from './useUpdateDoctor';

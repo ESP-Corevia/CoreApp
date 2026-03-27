@@ -10,8 +10,48 @@
       "cancel": "Cancel",
       "complete": "Complete",
       "confirm": "Confirm",
+      "create": "Create Appointment",
+      "created": "Appointment created successfully",
+      "createDialog": {
+        "description": "Create a new appointment for a patient with a doctor.",
+        "title": "New Appointment"
+      },
+      "createError": "Failed to create appointment: {{message}}",
+      "creating": "Creating...",
+      "delete": "Delete",
+      "deleted": "Appointment deleted successfully",
+      "deleteDialog": {
+        "description": "Are you sure you want to delete the appointment for {{patient}} with {{doctor}} on {{date}} at {{time}}? This action cannot be undone.",
+        "title": "Delete Appointment"
+      },
+      "deleteError": "Failed to delete appointment: {{message}}",
+      "deleting": "Deleting...",
+      "edit": "Edit",
+      "editDialog": {
+        "description": "Update appointment for {{patient}} with {{doctor}}.",
+        "title": "Edit Appointment"
+      },
+      "form": {
+        "date": "Date",
+        "dateFormat": "Date must be YYYY-MM-DD",
+        "doctorId": "Doctor ID",
+        "doctorIdPlaceholder": "Enter doctor UUID",
+        "doctorIdRequired": "Valid doctor ID is required",
+        "patientId": "Patient ID",
+        "patientIdPlaceholder": "Enter patient UUID",
+        "patientIdRequired": "Valid patient ID is required",
+        "reason": "Reason",
+        "reasonPlaceholder": "Reason for the appointment (optional)",
+        "selectTime": "Select time",
+        "time": "Time",
+        "timeRequired": "Time is required"
+      },
       "loadError": "Failed to load appointments: {{message}}",
       "openMenu": "Open appointment menu",
+      "reopen": "Reopen",
+      "save": "Save Changes",
+      "saving": "Saving...",
+      "search": "Search by patient or doctor name…",
       "statusDialog": {
         "confirm": "{{action}}",
         "description": "Are you sure you want to {{action}}? Patient: {{patient}}, Doctor: {{doctor}}, Date: {{date}} at {{time}}.",
@@ -19,7 +59,9 @@
       },
       "statusUpdated": "Appointment status updated successfully",
       "statusUpdateError": "Failed to update status: {{message}}",
-      "title": "Appointments Management"
+      "title": "Appointments Management",
+      "updated": "Appointment updated successfully",
+      "updateError": "Failed to update appointment: {{message}}"
     },
     "banUserDialog": {
       "banning": "Banning...",
@@ -59,8 +101,40 @@
       "noResults": "No results."
     },
     "doctors": {
+      "created": "Doctor profile created successfully",
+      "createDialog": {
+        "description": "Enter the user UUID and doctor details. The user must already have the role \"doctor\".",
+        "title": "Create Doctor Profile"
+      },
+      "createDoctor": "Create Doctor",
+      "createError": "Failed to create doctor: {{message}}",
+      "createProfile": "Create Doctor Profile",
+      "creating": "Creating...",
+      "edit": "Edit Profile",
+      "editDialog": {
+        "description": "Update profile for {{name}}.",
+        "title": "Edit Doctor Profile"
+      },
+      "form": {
+        "address": "Address",
+        "addressPlaceholder": "e.g. 10 Rue de la Paix",
+        "addressRequired": "Address is required",
+        "city": "City",
+        "cityPlaceholder": "e.g. Paris",
+        "cityRequired": "City is required",
+        "specialty": "Specialty",
+        "specialtyPlaceholder": "e.g. Cardiology",
+        "specialtyRequired": "Specialty is required",
+        "userId": "User UUID",
+        "userIdInvalid": "Must be a valid UUID"
+      },
       "loadError": "Failed to load doctors: {{message}}",
-      "title": "Doctors Management"
+      "openMenu": "Open doctor menu",
+      "save": "Save Changes",
+      "saving": "Saving...",
+      "title": "Doctors Management",
+      "updated": "Doctor profile updated successfully",
+      "updateError": "Failed to update doctor: {{message}}"
     },
     "errorScreen": {
       "permissionDenied": "You do not have permission to access that resource."
@@ -300,8 +374,10 @@
     },
     "UserActionsMenu": {
       "banUser": "Ban User",
+      "copyId": "Copy ID",
       "deleteUser": "Delete User",
       "editUser": "Edit User",
+      "idCopied": "User ID copied to clipboard",
       "impersonate": "Impersonate",
       "openUserMenu": "Open user menu",
       "revokeSessions": "Revoke all Sessions",
@@ -364,6 +440,9 @@
     "userMenu": {
       "signIn": "Sign In",
       "signOut": "Sign Out"
+    },
+    "users": {
+      "idCopied": "User ID copied to clipboard"
     },
     "userSetPasswordModal": {
       "cancel": "Cancel",
