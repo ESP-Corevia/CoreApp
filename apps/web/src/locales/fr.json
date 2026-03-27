@@ -173,6 +173,46 @@
     "notFound": {
       "title": "Page introuvable"
     },
+    "patients": {
+      "copyId": "Copier l'ID",
+      "created": "Profil patient créé avec succès",
+      "createDialog": {
+        "description": "Entrez l'UUID de l'utilisateur et les informations du patient. L'utilisateur doit déjà avoir le rôle \"patient\".",
+        "title": "Créer un profil patient"
+      },
+      "createError": "Échec de la création du patient : {{message}}",
+      "createPatient": "Créer un patient",
+      "createProfile": "Créer le profil patient",
+      "creating": "Création...",
+      "delete": "Supprimer",
+      "deleted": "Profil patient supprimé avec succès",
+      "deleteDialog": {
+        "description": "Êtes-vous sûr de vouloir supprimer le profil patient de {{name}} ? Les données médicales seront supprimées mais pas le compte utilisateur.",
+        "title": "Supprimer le profil patient"
+      },
+      "deleteError": "Échec de la suppression du patient : {{message}}",
+      "deleteProfile": "Supprimer le profil",
+      "deleting": "Suppression...",
+      "edit": "Modifier le profil",
+      "editDialog": {
+        "description": "Modifier le profil de {{name}}.",
+        "title": "Modifier le profil patient"
+      },
+      "form": {
+        "dateOfBirth": "Date de naissance",
+        "gender": "Genre",
+        "userId": "UUID de l'utilisateur",
+        "userIdInvalid": "Doit être un UUID valide"
+      },
+      "loadError": "Échec du chargement des patients : {{message}}",
+      "openMenu": "Ouvrir le menu du patient",
+      "save": "Enregistrer les modifications",
+      "saving": "Enregistrement...",
+      "searchPlaceholder": "Rechercher par nom ou email…",
+      "title": "Gestion des Patients",
+      "updated": "Profil patient mis à jour avec succès",
+      "updateError": "Échec de la mise à jour du patient : {{message}}"
+    },
     "pillbox": {
       "active": "Actif",
       "activeFilter": "Actifs",

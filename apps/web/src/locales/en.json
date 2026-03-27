@@ -173,6 +173,46 @@
     "notFound": {
       "title": "Page Not Found"
     },
+    "patients": {
+      "copyId": "Copy ID",
+      "created": "Patient profile created successfully",
+      "createDialog": {
+        "description": "Enter the user UUID and patient details. The user must already have the role \"patient\".",
+        "title": "Create Patient Profile"
+      },
+      "createError": "Failed to create patient: {{message}}",
+      "createPatient": "Create Patient",
+      "createProfile": "Create Patient Profile",
+      "creating": "Creating...",
+      "delete": "Delete",
+      "deleted": "Patient profile deleted successfully",
+      "deleteDialog": {
+        "description": "Are you sure you want to delete the patient profile for {{name}}? This will remove their medical data but not their user account.",
+        "title": "Delete Patient Profile"
+      },
+      "deleteError": "Failed to delete patient: {{message}}",
+      "deleteProfile": "Delete Profile",
+      "deleting": "Deleting...",
+      "edit": "Edit Profile",
+      "editDialog": {
+        "description": "Update profile for {{name}}.",
+        "title": "Edit Patient Profile"
+      },
+      "form": {
+        "dateOfBirth": "Date of Birth",
+        "gender": "Gender",
+        "userId": "User UUID",
+        "userIdInvalid": "Must be a valid UUID"
+      },
+      "loadError": "Failed to load patients: {{message}}",
+      "openMenu": "Open patient menu",
+      "save": "Save Changes",
+      "saving": "Saving...",
+      "searchPlaceholder": "Search by name or email…",
+      "title": "Patients Management",
+      "updated": "Patient profile updated successfully",
+      "updateError": "Failed to update patient: {{message}}"
+    },
     "pillbox": {
       "active": "Active",
       "activeFilter": "Active",

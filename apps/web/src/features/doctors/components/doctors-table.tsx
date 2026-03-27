@@ -170,6 +170,7 @@ export default function DoctorsTable({
     columns,
     pageCount,
     initialState: {
+      columnPinning: { right: ['actions'] },
       sorting: [{ id: 'name', desc: false }],
       pagination: { pageIndex: 0, pageSize: 10 },
       globalFilter: search,

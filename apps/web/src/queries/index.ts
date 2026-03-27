@@ -1,10 +1,13 @@
 export { useCreateAppointment } from './useCreateAppointment';
 export { useCreateDoctor } from './useCreateDoctor';
+export { useCreatePatient } from './useCreatePatient';
 export { useDeleteAppointment } from './useDeleteAppointment';
+export { useDeletePatient } from './useDeletePatient';
 export { useDeleteUser } from './useDeleteUser';
 export { useImpersonateUser } from './useImpersonateUser';
 export { useListAppointments } from './useListAppointments';
 export { useListDoctors } from './useListDoctors';
+export { useListPatients } from './useListPatients';
 export { useListSessions } from './useListSessions';
 export { useListUsers } from './useListUsers';
 export {
@@ -26,3 +29,4 @@ export { useUnbanUser } from './useUnbanUser';
 export { useUpdateAppointment } from './useUpdateAppointment';
 export { useUpdateAppointmentStatus } from './useUpdateAppointmentStatus';
 export { useUpdateDoctor } from './useUpdateDoctor';
+export { useUpdatePatient } from './useUpdatePatient';

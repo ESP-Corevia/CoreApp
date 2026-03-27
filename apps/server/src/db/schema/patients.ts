@@ -4,7 +4,7 @@ import { index, pgEnum, pgTable } from 'drizzle-orm/pg-core';
 import { users } from './auth';
 
 /** Genre du patient. */
-export const genderEnum = pgEnum('gender', ['MALE', 'FEMALE', 'OTHER']);
+export const genderEnum = pgEnum('gender', ['MALE', 'FEMALE']);
 
 /** Groupe sanguin du patient. */
 export const bloodTypeEnum = pgEnum('blood_type', [

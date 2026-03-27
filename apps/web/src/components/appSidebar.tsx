@@ -9,6 +9,7 @@ import {
   Pill,
   Settings,
   Stethoscope,
+  Users,
 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -53,6 +54,11 @@ const baseMainItems: NavigationItem[] = [
     title: 'Doctors',
     url: '/doctors',
     icon: Stethoscope,
+  },
+  {
+    title: 'Patients',
+    url: '/patients',
+    icon: Users,
   },
   {
     title: 'Appointments',

@@ -10,6 +10,7 @@ import {
   updateAppointmentStatus,
 } from './adminAppointmentsRouter';
 import { createDoctor, listDoctors, updateDoctor } from './adminDoctorsRouter';
+import { createPatient, deletePatient, listPatients, updatePatient } from './adminPatientsRouter';
 
 export const adminRouter = router({
   isAdmin: adminProcedure
@@ -98,6 +99,10 @@ export const adminRouter = router({
   listDoctors,
   createDoctor,
   updateDoctor,
+  listPatients,
+  createPatient,
+  updatePatient,
+  deletePatient,
   listAppointments,
   createAppointment,
   updateAppointment,

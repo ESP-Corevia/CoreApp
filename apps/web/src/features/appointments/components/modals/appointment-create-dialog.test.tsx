@@ -32,6 +32,33 @@ describe('AppointmentCreateDialog', () => {
     return { ...ui, user };
   };
 
+  /** Paste text into an input — much faster than user.type for long strings like UUIDs */
+  async function fill(user: ReturnType<typeof userEvent.setup>, el: HTMLElement, value: string) {
+    await user.click(el);
+    await user.paste(value);
+  }
+
+  async function fillFormAndSubmit(ui: Awaited<ReturnType<typeof setup>>) {
+    const { getByRole, getByLabelText, user } = ui;
+
+    await fill(
+      user,
+      getByRole('textbox', { name: /Doctor ID/i }),
+      'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+    );
+    await fill(
+      user,
+      getByRole('textbox', { name: /Patient ID/i }),
+      'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a12',
+    );
+    await fill(user, getByLabelText(/Date/i), '2099-06-15');
+
+    await user.click(getByRole('combobox', { name: /Time/i }));
+    await user.click(getByRole('option', { name: '10:00' }));
+
+    await user.click(getByRole('button', { name: /Create Appointment/i }));
+  }
+
   it('renders dialog correctly when opened', async () => {
     const { getByRole, getByLabelText } = await setup();
 
@@ -43,23 +70,9 @@ describe('AppointmentCreateDialog', () => {
   });
 
   it('submits form with valid data', async () => {
-    const { getByRole, getByLabelText, user } = await setup();
+    const ui = await setup();
 
-    await user.type(
-      getByRole('textbox', { name: /Doctor ID/i }),
-      'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
-    );
-    await user.type(
-      getByRole('textbox', { name: /Patient ID/i }),
-      'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a12',
-    );
-    await user.type(getByLabelText(/Date/i), '2099-06-15');
-
-    await user.click(getByRole('combobox', { name: /Time/i }));
-    const option = await getByRole('option', { name: '10:00' });
-    await user.click(option);
-
-    await user.click(getByRole('button', { name: /Create Appointment/i }));
+    await fillFormAndSubmit(ui);
 
     await waitFor(() => {
       expect(mutate).toHaveBeenCalledWith(
@@ -74,34 +87,21 @@ describe('AppointmentCreateDialog', () => {
     });
   });
 
-  it('calls onSuccess callback from mutation', async () => {
-    let onSuccessFn: () => void = () => {};
+  it('passes onSuccess callback to mutation', async () => {
+    let receivedOpts: { onSuccess?: () => void } = {};
     mutate.mockImplementation((_input: unknown, opts: { onSuccess: () => void }) => {
-      onSuccessFn = opts.onSuccess;
+      receivedOpts = opts;
     });
 
-    const { getByRole, getByLabelText, user } = await setup();
+    const ui = await setup();
 
-    await user.type(
-      getByRole('textbox', { name: /Doctor ID/i }),
-      'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
-    );
-    await user.type(
-      getByRole('textbox', { name: /Patient ID/i }),
-      'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a12',
-    );
-    await user.type(getByLabelText(/Date/i), '2099-06-15');
-
-    await user.click(getByRole('combobox', { name: /Time/i }));
-    await user.click(getByRole('option', { name: '10:00' }));
-
-    await user.click(getByRole('button', { name: /Create Appointment/i }));
+    await fillFormAndSubmit(ui);
 
     await waitFor(() => {
       expect(mutate).toHaveBeenCalled();
     });
 
-    expect(onSuccessFn).toBeDefined();
+    expect(typeof receivedOpts.onSuccess).toBe('function');
   });
 
   it('shows cancel button that closes dialog', async () => {
