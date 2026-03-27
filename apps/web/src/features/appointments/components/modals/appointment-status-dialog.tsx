@@ -19,16 +19,18 @@ interface AppointmentStatusDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   appointment: Appointment;
-  targetStatus: 'CONFIRMED' | 'COMPLETED' | 'CANCELLED';
+  targetStatus: 'PENDING' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED';
 }
 
 const STATUS_LABELS: Record<string, string> = {
+  PENDING: 'Reopen',
   CONFIRMED: 'Confirm',
   COMPLETED: 'Complete',
   CANCELLED: 'Cancel',
 };
 
 const STATUS_DESCRIPTIONS: Record<string, string> = {
+  PENDING: 'reopen this appointment',
   CONFIRMED: 'confirm this appointment',
   COMPLETED: 'mark this appointment as completed',
   CANCELLED: 'cancel this appointment',

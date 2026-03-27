@@ -6,7 +6,7 @@ interface UseListAppointmentsParams {
   page: number;
   perPage: number;
   search?: string;
-  status?: 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED';
+  status?: ('PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED')[];
   from?: string;
   to?: string;
   doctorId?: string;

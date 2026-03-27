@@ -395,7 +395,7 @@ describe('appointments.repository', () => {
 
     it('filters by status', async () => {
       const items = await repo.listAll({
-        status: 'PENDING',
+        status: ['PENDING'],
         offset: 0,
         limit: 10,
         sort: 'dateAsc',
@@ -477,7 +477,7 @@ describe('appointments.repository', () => {
     });
 
     it('counts with status filter', async () => {
-      const count = await repo.countAll({ status: 'PENDING' });
+      const count = await repo.countAll({ status: ['PENDING'] });
       expect(count).toBe(1);
     });
 

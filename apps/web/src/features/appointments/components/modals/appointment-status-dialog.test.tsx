@@ -36,7 +36,7 @@ describe('AppointmentStatusDialog', () => {
     } as any);
   });
 
-  const setup = (targetStatus: 'CONFIRMED' | 'COMPLETED' | 'CANCELLED' = 'CONFIRMED') =>
+  const setup = (targetStatus: 'PENDING' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED' = 'CONFIRMED') =>
     render(
       <AppointmentStatusDialog
         open
@@ -64,6 +64,21 @@ describe('AppointmentStatusDialog', () => {
     const { getByRole } = setup('COMPLETED');
 
     expect(getByRole('alertdialog', { name: /Complete Appointment/i })).toBeInTheDocument();
+  });
+
+  it('renders dialog with correct title for reopen action', () => {
+    const { getByRole } = setup('PENDING');
+
+    expect(getByRole('alertdialog', { name: /Reopen Appointment/i })).toBeInTheDocument();
+  });
+
+  it('calls mutation with PENDING status on reopen confirm', async () => {
+    const { getByRole } = setup('PENDING');
+    const user = userEvent.setup();
+
+    await user.click(getByRole('button', { name: /^Reopen$/i }));
+
+    expect(mutate).toHaveBeenCalledWith({ id: 'appt-1', status: 'PENDING' }, expect.any(Object));
   });
 
   it('shows patient and doctor info in description', () => {

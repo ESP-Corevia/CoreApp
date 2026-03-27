@@ -17,6 +17,7 @@ import { cn } from '@/lib/utils';
 interface DataTableToolbarProps<TData> extends React.ComponentProps<'div'> {
   table: Table<TData>;
   isLoading?: boolean;
+  searchPlaceholder?: string;
 }
 
 export function DataTableToolbar<TData>({
@@ -24,6 +25,7 @@ export function DataTableToolbar<TData>({
   children,
   className,
   isLoading,
+  searchPlaceholder = 'Search…',
   ...props
 }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
@@ -60,7 +62,7 @@ export function DataTableToolbar<TData>({
       <div className="flex flex-1 flex-wrap items-center gap-2">
         <InputGroup className="h-8 w-64 lg:w-80">
           <InputGroupInput
-            placeholder="Search by name or email…"
+            placeholder={searchPlaceholder}
             value={inputValue}
             onChange={e => setInputValue(e.target.value)}
             disabled={isLoading}

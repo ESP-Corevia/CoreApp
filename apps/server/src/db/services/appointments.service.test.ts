@@ -223,7 +223,7 @@ describe('appointmentsService', () => {
       await service.listAllAppointments({
         page: 1,
         perPage: 10,
-        status: 'PENDING',
+        status: ['PENDING'],
         from: '2099-01-01',
         to: '2099-12-31',
         doctorId: DOCTOR_ID,
@@ -232,7 +232,7 @@ describe('appointmentsService', () => {
       });
 
       expect(mockAppointmentsRepo.listAll).toHaveBeenCalledWith({
-        status: 'PENDING',
+        status: ['PENDING'],
         from: '2099-01-01',
         to: '2099-12-31',
         doctorId: DOCTOR_ID,
@@ -242,7 +242,7 @@ describe('appointmentsService', () => {
         sort: 'dateAsc',
       });
       expect(mockAppointmentsRepo.countAll).toHaveBeenCalledWith({
-        status: 'PENDING',
+        status: ['PENDING'],
         from: '2099-01-01',
         to: '2099-12-31',
         doctorId: DOCTOR_ID,

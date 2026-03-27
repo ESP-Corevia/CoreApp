@@ -202,7 +202,7 @@ export const createAppointmentsService = (repo: ReturnType<typeof createAppointm
     page: number;
     perPage: number;
     search?: string;
-    status?: string;
+    status?: string[];
     from?: string;
     to?: string;
     doctorId?: string;
@@ -347,7 +347,8 @@ export const createAppointmentsService = (repo: ReturnType<typeof createAppointm
 
   /**
    * Change le statut d'un rendez-vous en respectant les transitions autorisées :
-   * PENDING → CONFIRMED | CANCELLED, CONFIRMED → COMPLETED | CANCELLED.
+   * PENDING → CONFIRMED | CANCELLED, CONFIRMED → COMPLETED | CANCELLED,
+   * CANCELLED → PENDING, COMPLETED → PENDING (réouverture par un admin).
    * @throws NOT_FOUND si le rendez-vous n'existe pas.
    * @throws BAD_REQUEST si la transition de statut est invalide.
    */
@@ -366,8 +367,8 @@ export const createAppointmentsService = (repo: ReturnType<typeof createAppointm
     const validTransitions: Record<string, string[]> = {
       PENDING: ['CONFIRMED', 'CANCELLED'],
       CONFIRMED: ['COMPLETED', 'CANCELLED'],
-      CANCELLED: [],
-      COMPLETED: [],
+      CANCELLED: ['PENDING'],
+      COMPLETED: ['PENDING'],
     };
 
     if (!validTransitions[currentStatus]?.includes(newStatus)) {

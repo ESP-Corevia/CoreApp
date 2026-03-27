@@ -1,15 +1,14 @@
 'use client';
 
 import type { ColumnDef } from '@tanstack/react-table';
+import { t } from 'i18next';
 import { CalendarClock, CircleDot, Clock, Stethoscope, Text, User } from 'lucide-react';
 import { useMemo } from 'react';
-
 import { DataTable } from '@/components/data-table/data-table';
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
 import { DataTableToolbar } from '@/components/data-table/data-table-toolbar';
 import { Badge } from '@/components/ui/badge';
 import { useDataTable } from '@/hooks/use-data-table';
-
 import { AppointmentActionsMenu } from './appointment-actions-menu';
 
 export interface Appointment {
@@ -256,7 +255,11 @@ export default function AppointmentsTable({
         <h1 className="font-bold text-2xl">{title}</h1>
       </div>
       <DataTable table={table}>
-        <DataTableToolbar table={table} isLoading={isLoading} />
+        <DataTableToolbar
+          table={table}
+          isLoading={isLoading}
+          searchPlaceholder={t('appointments.search', 'Search by patient or doctor name…')}
+        />
       </DataTable>
     </div>
   );

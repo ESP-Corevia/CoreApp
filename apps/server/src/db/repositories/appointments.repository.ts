@@ -25,7 +25,7 @@ export interface ListByPatientParams {
 }
 
 export interface ListAllParams {
-  status?: string;
+  status?: string[];
   from?: string;
   to?: string;
   doctorId?: string;
@@ -38,8 +38,8 @@ export interface ListAllParams {
 function buildAllFilters(params: ListAllParams) {
   const conditions = [];
 
-  if (params.status) {
-    conditions.push(eq(appointments.status, params.status as any));
+  if (params.status && params.status.length > 0) {
+    conditions.push(inArray(appointments.status, params.status as any));
   }
   if (params.from) {
     conditions.push(gte(appointments.date, params.from));

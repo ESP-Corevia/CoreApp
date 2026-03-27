@@ -1,4 +1,4 @@
-import { CheckCircle, CircleCheck, MoreHorizontal, Pencil, Trash2, XCircle } from 'lucide-react';
+import { CheckCircle, CircleCheck, MoreHorizontal, Pencil, RotateCcw, Trash2, XCircle } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -24,15 +24,16 @@ export function AppointmentActionsMenu({ appointment }: AppointmentActionsMenuPr
   const [statusDialogOpen, setStatusDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [targetStatus, setTargetStatus] = useState<'CONFIRMED' | 'COMPLETED' | 'CANCELLED'>(
-    'CONFIRMED',
-  );
+  const [targetStatus, setTargetStatus] = useState<
+    'PENDING' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED'
+  >('CONFIRMED');
 
   const canConfirm = appointment.status === 'PENDING';
   const canComplete = appointment.status === 'CONFIRMED';
   const canCancel = appointment.status === 'PENDING' || appointment.status === 'CONFIRMED';
+  const canReopen = appointment.status === 'COMPLETED' || appointment.status === 'CANCELLED';
 
-  const handleStatusAction = (status: 'CONFIRMED' | 'COMPLETED' | 'CANCELLED') => {
+  const handleStatusAction = (status: 'PENDING' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED') => {
     setTargetStatus(status);
     setStatusDialogOpen(true);
   };
@@ -67,6 +68,12 @@ export function AppointmentActionsMenu({ appointment }: AppointmentActionsMenuPr
             <DropdownMenuItem variant="destructive" onClick={() => handleStatusAction('CANCELLED')}>
               <XCircle className="mr-2 h-4 w-4" />
               {t('appointments.cancel', 'Cancel')}
+            </DropdownMenuItem>
+          )}
+          {canReopen && (
+            <DropdownMenuItem onClick={() => handleStatusAction('PENDING')}>
+              <RotateCcw className="mr-2 h-4 w-4" />
+              {t('appointments.reopen', 'Reopen')}
             </DropdownMenuItem>
           )}
           <DropdownMenuSeparator />

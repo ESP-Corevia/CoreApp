@@ -18,7 +18,7 @@ export const listAppointments = adminProcedure
       page: z.number().int().positive(),
       perPage: z.number().int().positive(),
       search: z.string().optional(),
-      status: z.enum(['PENDING', 'CONFIRMED', 'CANCELLED', 'COMPLETED']).optional(),
+      status: z.array(z.enum(['PENDING', 'CONFIRMED', 'CANCELLED', 'COMPLETED'])).optional(),
       from: z
         .string()
         .regex(/^\d{4}-\d{2}-\d{2}$/, 'from must be YYYY-MM-DD')
@@ -187,8 +187,8 @@ export const updateAppointmentStatus = adminProcedure
   })
   .input(
     z.object({
-      id: z.string().uuid(),
-      status: z.enum(['CONFIRMED', 'CANCELLED', 'COMPLETED']),
+      id: z.uuid(),
+      status: z.enum(['PENDING', 'CONFIRMED', 'CANCELLED', 'COMPLETED']),
     }),
   )
   .output(

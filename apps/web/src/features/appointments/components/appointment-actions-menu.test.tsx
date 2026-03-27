@@ -29,7 +29,7 @@ describe('AppointmentActionsMenu', () => {
     vi.clearAllMocks();
   });
 
-  it('renders menu button for COMPLETED appointment with edit and delete', async () => {
+  it('renders Reopen for COMPLETED appointment', async () => {
     const { getByRole, queryByText } = render(
       <AppointmentActionsMenu appointment={makeAppointment('COMPLETED')} />,
     );
@@ -39,11 +39,13 @@ describe('AppointmentActionsMenu', () => {
 
     expect(queryByText('Edit')).toBeInTheDocument();
     expect(queryByText('Delete')).toBeInTheDocument();
+    expect(queryByText('Reopen')).toBeInTheDocument();
     expect(queryByText('Confirm')).not.toBeInTheDocument();
     expect(queryByText('Complete')).not.toBeInTheDocument();
+    expect(queryByText('Cancel')).not.toBeInTheDocument();
   });
 
-  it('renders menu button for CANCELLED appointment with edit and delete', async () => {
+  it('renders Reopen for CANCELLED appointment', async () => {
     const { getByRole, queryByText } = render(
       <AppointmentActionsMenu appointment={makeAppointment('CANCELLED')} />,
     );
@@ -53,7 +55,9 @@ describe('AppointmentActionsMenu', () => {
 
     expect(queryByText('Edit')).toBeInTheDocument();
     expect(queryByText('Delete')).toBeInTheDocument();
+    expect(queryByText('Reopen')).toBeInTheDocument();
     expect(queryByText('Confirm')).not.toBeInTheDocument();
+    expect(queryByText('Complete')).not.toBeInTheDocument();
   });
 
   it('shows Edit, Confirm, Cancel, and Delete actions for PENDING appointment', async () => {
@@ -69,6 +73,7 @@ describe('AppointmentActionsMenu', () => {
     expect(queryByText('Cancel')).toBeInTheDocument();
     expect(queryByText('Delete')).toBeInTheDocument();
     expect(queryByText('Complete')).not.toBeInTheDocument();
+    expect(queryByText('Reopen')).not.toBeInTheDocument();
   });
 
   it('shows Edit, Complete, Cancel, and Delete actions for CONFIRMED appointment', async () => {
@@ -84,6 +89,20 @@ describe('AppointmentActionsMenu', () => {
     expect(queryByText('Cancel')).toBeInTheDocument();
     expect(queryByText('Delete')).toBeInTheDocument();
     expect(queryByText('Confirm')).not.toBeInTheDocument();
+    expect(queryByText('Reopen')).not.toBeInTheDocument();
+  });
+
+  it('opens status dialog when clicking Reopen', async () => {
+    const { getByRole, queryByText } = render(
+      <AppointmentActionsMenu appointment={makeAppointment('COMPLETED')} />,
+    );
+    const user = userEvent.setup();
+
+    await user.click(getByRole('button', { name: /open appointment menu/i }));
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
+    await user.click(queryByText('Reopen')!);
+
+    expect(getByRole('alertdialog')).toBeInTheDocument();
   });
 
   it('opens status dialog when clicking an action', async () => {

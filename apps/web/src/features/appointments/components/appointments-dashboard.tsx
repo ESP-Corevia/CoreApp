@@ -1,4 +1,10 @@
-import { parseAsInteger, parseAsString, parseAsStringEnum, useQueryStates } from 'nuqs';
+import {
+  parseAsArrayOf,
+  parseAsInteger,
+  parseAsString,
+  parseAsStringEnum,
+  useQueryStates,
+} from 'nuqs';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -19,7 +25,7 @@ export default function AppointmentsDashboard({
     page: parseAsInteger.withDefault(1),
     perPage: parseAsInteger.withDefault(10),
     search: parseAsString.withDefault(''),
-    status: parseAsStringEnum(['PENDING', 'CONFIRMED', 'CANCELLED', 'COMPLETED']),
+    status: parseAsArrayOf(parseAsStringEnum(['PENDING', 'CONFIRMED', 'CANCELLED', 'COMPLETED'])),
     sort: parseAsStringEnum(['dateAsc', 'dateDesc', 'createdAtDesc']).withDefault('dateDesc'),
   });
 
@@ -33,12 +39,10 @@ export default function AppointmentsDashboard({
     page: queryParams.page,
     perPage: queryParams.perPage,
     search: search || undefined,
-    status: (queryParams.status ?? undefined) as
-      | 'PENDING'
-      | 'CONFIRMED'
-      | 'CANCELLED'
-      | 'COMPLETED'
-      | undefined,
+    status:
+      queryParams.status && queryParams.status.length > 0
+        ? (queryParams.status as ('PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED')[])
+        : undefined,
     sort: queryParams.sort as 'dateAsc' | 'dateDesc' | 'createdAtDesc',
     enabled: !!session?.isAuthenticated,
   });
