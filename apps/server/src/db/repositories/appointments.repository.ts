@@ -4,7 +4,6 @@ import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 
 import type * as schema from '../schema';
 import { appointments, doctorBlocks, doctorUsersView, patientUsersView } from '../schema';
-
 type DrizzleDB = PostgresJsDatabase<typeof schema>;
 
 export interface CreateAppointmentInput {

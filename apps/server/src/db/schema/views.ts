@@ -3,7 +3,7 @@ import { boolean, pgView, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 /**
  * Vue SQL qui joint `users` + `doctors` pour obtenir le profil complet d'un médecin en une seule requête.
  * Évite de faire un JOIN manuel à chaque fois qu'on a besoin des infos utilisateur + médecin.
- * Marquée `.existing()` car la vue est créée côté SQL (migration), pas par Drizzle.
+ * Marquée `.existing()` car le SQL de la vue est maintenu manuellement dans la migration.
  */
 export const doctorUsersView = pgView('doctor_users_view', {
   userId: uuid('user_id').notNull(),
@@ -24,7 +24,7 @@ export const doctorUsersView = pgView('doctor_users_view', {
 /**
  * Vue SQL qui joint `users` + `patients` pour obtenir le profil complet d'un patient en une seule requête.
  * Inclut les infos médicales (groupe sanguin, allergies, contact d'urgence) et les infos utilisateur.
- * Marquée `.existing()` car la vue est créée côté SQL (migration), pas par Drizzle.
+ * Marquée `.existing()` car le SQL de la vue est maintenu manuellement dans la migration.
  */
 export const patientUsersView = pgView('patient_users_view', {
   userId: uuid('user_id').notNull(),
