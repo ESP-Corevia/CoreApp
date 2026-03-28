@@ -122,9 +122,9 @@ export const updateAppointment = adminProcedure
         .string()
         .regex(/^\d{2}:\d{2}$/, 'time must be HH:mm')
         .optional(),
-      reason: z.string().optional(),
-      doctorId: z.string().uuid().optional(),
-      patientId: z.string().uuid().optional(),
+      reason: z.string().nullable().optional(),
+      doctorId: z.uuid().optional(),
+      patientId: z.uuid().optional(),
     }),
   )
   .output(
@@ -156,7 +156,7 @@ export const deleteAppointment = adminProcedure
   })
   .input(
     z.object({
-      id: z.string().uuid(),
+      id: z.uuid(),
     }),
   )
   .output(

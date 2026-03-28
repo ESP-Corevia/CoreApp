@@ -47,7 +47,9 @@ export default function DoctorsTable({
       {
         id: 'userId',
         accessorKey: 'userId',
-        header: ({ column }) => <DataTableColumnHeader column={column} label="ID" />,
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} label={t('table.id', 'ID')} />
+        ),
         cell: ({ cell }) => {
           const id = cell.getValue<string>();
           return (
@@ -71,7 +73,9 @@ export default function DoctorsTable({
       {
         id: 'name',
         accessorKey: 'name',
-        header: ({ column }) => <DataTableColumnHeader column={column} label="Name" />,
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} label={t('table.name', 'Name')} />
+        ),
         cell: ({ row }) => (
           <div className="flex items-center gap-2">
             <Avatar className="h-8 w-8">
@@ -82,7 +86,7 @@ export default function DoctorsTable({
           </div>
         ),
         meta: {
-          label: 'Name',
+          label: t('table.name', 'Name'),
           variant: 'text',
           icon: Text,
         },
@@ -90,7 +94,9 @@ export default function DoctorsTable({
       {
         id: 'email',
         accessorKey: 'email',
-        header: ({ column }) => <DataTableColumnHeader column={column} label="Email" />,
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} label={t('table.email', 'Email')} />
+        ),
         cell: ({ cell }) => {
           const email = cell.getValue<Doctor['email']>();
           return (
@@ -101,7 +107,7 @@ export default function DoctorsTable({
           );
         },
         meta: {
-          label: 'Email',
+          label: t('table.email', 'Email'),
           variant: 'text',
           icon: Mail,
         },
@@ -109,7 +115,9 @@ export default function DoctorsTable({
       {
         id: 'specialty',
         accessorKey: 'specialty',
-        header: ({ column }) => <DataTableColumnHeader column={column} label="Specialty" />,
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} label={t('doctors.form.specialty', 'Specialty')} />
+        ),
         cell: ({ cell }) => {
           const specialty = cell.getValue<Doctor['specialty']>();
           return (
@@ -120,7 +128,7 @@ export default function DoctorsTable({
           );
         },
         meta: {
-          label: 'Specialty',
+          label: t('doctors.form.specialty', 'Specialty'),
           variant: 'text',
           icon: Stethoscope,
         },
@@ -128,7 +136,9 @@ export default function DoctorsTable({
       {
         id: 'city',
         accessorKey: 'city',
-        header: ({ column }) => <DataTableColumnHeader column={column} label="City" />,
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} label={t('doctors.form.city', 'City')} />
+        ),
         cell: ({ cell }) => {
           const city = cell.getValue<Doctor['city']>();
           return (
@@ -139,7 +149,7 @@ export default function DoctorsTable({
           );
         },
         meta: {
-          label: 'City',
+          label: t('doctors.form.city', 'City'),
           variant: 'text',
           icon: MapPin,
         },
@@ -147,7 +157,9 @@ export default function DoctorsTable({
       {
         id: 'address',
         accessorKey: 'address',
-        header: ({ column }) => <DataTableColumnHeader column={column} label="Address" />,
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} label={t('table.address', 'Address')} />
+        ),
         cell: ({ cell }) => {
           const address = cell.getValue<Doctor['address']>();
           return <span className="text-muted-foreground text-sm">{address}</span>;
@@ -169,6 +181,7 @@ export default function DoctorsTable({
     data: doctors,
     columns,
     pageCount,
+    enableRowSelection: false,
     initialState: {
       columnPinning: { right: ['actions'] },
       sorting: [{ id: 'name', desc: false }],
@@ -187,7 +200,11 @@ export default function DoctorsTable({
         <h1 className="font-bold text-2xl">{title}</h1>
       </div>
       <DataTable table={table}>
-        <DataTableToolbar table={table} isLoading={isLoading} />
+        <DataTableToolbar
+          table={table}
+          isLoading={isLoading}
+          searchPlaceholder={t('doctors.searchPlaceholder', 'Search by name or specialty\u2026')}
+        />
       </DataTable>
     </div>
   );

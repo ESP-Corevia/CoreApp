@@ -1,24 +1,27 @@
 /* v8 ignore file -- @preserve */
+import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router';
 
 export default function Header() {
   const location = useLocation();
+  const { t } = useTranslation();
 
   // Convert pathname to readable page title
   const getPageTitle = (pathname: string) => {
     const titles: Record<string, string> = {
-      '/': 'Home',
-      '/dashboard': 'Dashboard',
-      '/settings': 'Settings',
-      '/profile': 'Profile',
-      '/medications': 'Medications',
-      '/pillbox': 'Pillbox',
-      '/doctors': 'Doctors',
-      '/appointments': 'Appointments',
+      '/': t('nav.home', 'Home'),
+      '/dashboard': t('nav.dashboard', 'Dashboard'),
+      '/settings': t('nav.settings', 'Settings'),
+      '/profile': t('nav.profile', 'Profile'),
+      '/medications': t('nav.medications', 'Medications'),
+      '/pillbox': t('nav.pillbox', 'Pillbox'),
+      '/doctors': t('nav.doctors', 'Doctors'),
+      '/patients': t('nav.patients', 'Patients'),
+      '/appointments': t('nav.appointments', 'Appointments'),
     };
     if (titles[pathname]) return titles[pathname];
-    if (pathname.startsWith('/pillbox/')) return 'Pillbox Details';
-    return 'Page';
+    if (pathname.startsWith('/pillbox/')) return t('nav.pillboxDetails', 'Pillbox Details');
+    return t('nav.page', 'Page');
   };
 
   return (

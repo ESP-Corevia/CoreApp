@@ -104,7 +104,9 @@ export function PatientEditDialog({ open, onOpenChange, patient }: PatientEditDi
             <form.Field name="dateOfBirth">
               {field => (
                 <div className="space-y-2">
-                  <Label htmlFor={field.name}>Date of Birth</Label>
+                  <Label htmlFor={field.name}>
+                    {t('patients.form.dateOfBirth', 'Date of Birth')}
+                  </Label>
                   <Input
                     id={field.name}
                     type="date"
@@ -119,7 +121,7 @@ export function PatientEditDialog({ open, onOpenChange, patient }: PatientEditDi
             <form.Field name="gender">
               {field => (
                 <div className="space-y-2">
-                  <Label htmlFor={field.name}>Gender</Label>
+                  <Label htmlFor={field.name}>{t('patients.form.gender', 'Gender')}</Label>
                   <Select
                     value={field.state.value}
                     onValueChange={v => field.handleChange(v as 'MALE' | 'FEMALE')}
@@ -128,8 +130,8 @@ export function PatientEditDialog({ open, onOpenChange, patient }: PatientEditDi
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="MALE">Male</SelectItem>
-                      <SelectItem value="FEMALE">Female</SelectItem>
+                      <SelectItem value="MALE">{t('patients.form.male', 'Male')}</SelectItem>
+                      <SelectItem value="FEMALE">{t('patients.form.female', 'Female')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -141,7 +143,7 @@ export function PatientEditDialog({ open, onOpenChange, patient }: PatientEditDi
             <form.Field name="phone">
               {field => (
                 <div className="space-y-2">
-                  <Label htmlFor={field.name}>Phone</Label>
+                  <Label htmlFor={field.name}>{t('patients.form.phone', 'Phone')}</Label>
                   <Input
                     id={field.name}
                     value={field.state.value}
@@ -155,7 +157,7 @@ export function PatientEditDialog({ open, onOpenChange, patient }: PatientEditDi
             <form.Field name="bloodType">
               {field => (
                 <div className="space-y-2">
-                  <Label htmlFor={field.name}>Blood Type</Label>
+                  <Label htmlFor={field.name}>{t('patients.form.bloodType', 'Blood Type')}</Label>
                   <Select value={field.state.value} onValueChange={field.handleChange}>
                     <SelectTrigger id={field.name}>
                       <SelectValue placeholder="—" />
@@ -176,7 +178,7 @@ export function PatientEditDialog({ open, onOpenChange, patient }: PatientEditDi
           <form.Field name="address">
             {field => (
               <div className="space-y-2">
-                <Label htmlFor={field.name}>Address</Label>
+                <Label htmlFor={field.name}>{t('patients.form.address', 'Address')}</Label>
                 <Input
                   id={field.name}
                   value={field.state.value}
@@ -190,7 +192,7 @@ export function PatientEditDialog({ open, onOpenChange, patient }: PatientEditDi
           <form.Field name="allergies">
             {field => (
               <div className="space-y-2">
-                <Label htmlFor={field.name}>Allergies</Label>
+                <Label htmlFor={field.name}>{t('patients.form.allergies', 'Allergies')}</Label>
                 <Input
                   id={field.name}
                   value={field.state.value}
@@ -205,13 +207,15 @@ export function PatientEditDialog({ open, onOpenChange, patient }: PatientEditDi
             <form.Field name="emergencyContactName">
               {field => (
                 <div className="space-y-2">
-                  <Label htmlFor={field.name}>Emergency Contact</Label>
+                  <Label htmlFor={field.name}>
+                    {t('patients.form.emergencyContact', 'Emergency Contact')}
+                  </Label>
                   <Input
                     id={field.name}
                     value={field.state.value}
                     onBlur={field.handleBlur}
                     onChange={e => field.handleChange(e.target.value)}
-                    placeholder="Name"
+                    placeholder={t('table.name', 'Name')}
                   />
                 </div>
               )}
@@ -220,13 +224,15 @@ export function PatientEditDialog({ open, onOpenChange, patient }: PatientEditDi
             <form.Field name="emergencyContactPhone">
               {field => (
                 <div className="space-y-2">
-                  <Label htmlFor={field.name}>Emergency Phone</Label>
+                  <Label htmlFor={field.name}>
+                    {t('patients.form.emergencyPhone', 'Emergency Phone')}
+                  </Label>
                   <Input
                     id={field.name}
                     value={field.state.value}
                     onBlur={field.handleBlur}
                     onChange={e => field.handleChange(e.target.value)}
-                    placeholder="Phone"
+                    placeholder={t('patients.form.phone', 'Phone')}
                   />
                 </div>
               )}

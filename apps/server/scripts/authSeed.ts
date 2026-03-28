@@ -401,6 +401,19 @@ async function seedPillbox(patientIds: string[]) {
         intakeMoment: moment as 'MORNING' | 'NOON' | 'EVENING' | 'BEDTIME',
         quantity: String(faker.number.int({ min: 1, max: 3 })),
         unit: med.form === 'gelule' ? 'gelule' : 'comprime',
+        notes:
+          faker.helpers.maybe(
+            () =>
+              faker.helpers.arrayElement([
+                'Prendre au cours du repas',
+                'Prendre à jeun le matin',
+                "Avec un grand verre d'eau",
+                'Ne pas croquer, avaler entier',
+                'Éviter les produits laitiers',
+                'Attendre 30 min avant de manger',
+              ]),
+            { probability: 0.4 },
+          ) ?? null,
       }));
 
       await db.insert(patientMedicationSchedules).values(scheduleRows);
@@ -537,6 +550,6 @@ async function main() {
 main()
   .then(() => process.exit(0))
   .catch(err => {
-    logger.error('❌ Seed error:', err);
+    logger.error(err, '❌ Seed error');
     process.exit(1);
   });

@@ -3,9 +3,10 @@ import {
   parseAsInteger,
   parseAsString,
   parseAsStringEnum,
+  useQueryState,
   useQueryStates,
 } from 'nuqs';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
@@ -13,6 +14,11 @@ import { useListAppointments } from '@/queries';
 
 import AppointmentsTable from './appointments-table';
 import { AppointmentCreateDialog } from './modals/appointment-create-dialog';
+
+function timestampToDate(ts: number): string {
+  const d = new Date(ts);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
 
 export default function AppointmentsDashboard({
   session,
@@ -29,6 +35,18 @@ export default function AppointmentsDashboard({
     sort: parseAsStringEnum(['dateAsc', 'dateDesc', 'createdAtDesc']).withDefault('dateDesc'),
   });
 
+  const [dateFilter] = useQueryState('date', parseAsString);
+
+  const { from, to } = useMemo(() => {
+    if (!dateFilter) return {};
+    const raw = String(dateFilter);
+    const parts = raw.split(',').map(Number).filter(Boolean);
+    return {
+      from: parts[0] ? timestampToDate(parts[0]) : undefined,
+      to: parts[1] ? timestampToDate(parts[1]) : undefined,
+    };
+  }, [dateFilter]);
+
   const [search, setSearch] = useState(queryParams.search);
 
   const {
@@ -43,6 +61,8 @@ export default function AppointmentsDashboard({
       queryParams.status && queryParams.status.length > 0
         ? (queryParams.status as ('PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED')[])
         : undefined,
+    from,
+    to,
     sort: queryParams.sort as 'dateAsc' | 'dateDesc' | 'createdAtDesc',
     enabled: !!session?.isAuthenticated,
   });

@@ -15,6 +15,13 @@
       "when": 1774608680768,
       "tag": "0001_strong_zeigeist",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1774726826006,
+      "tag": "0002_unknown_harrier",
+      "breakpoints": true
     }
   ]
 }

@@ -71,7 +71,9 @@ export default function PatientsTable({
       {
         id: 'userId',
         accessorKey: 'userId',
-        header: ({ column }) => <DataTableColumnHeader column={column} label="ID" />,
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} label={t('table.id', 'ID')} />
+        ),
         cell: ({ cell }) => {
           const id = cell.getValue<string>();
           return (
@@ -95,7 +97,9 @@ export default function PatientsTable({
       {
         id: 'name',
         accessorKey: 'name',
-        header: ({ column }) => <DataTableColumnHeader column={column} label="Name" />,
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} label={t('table.name', 'Name')} />
+        ),
         cell: ({ row }) => (
           <div className="flex items-center gap-2">
             <Avatar className="h-8 w-8">
@@ -106,7 +110,7 @@ export default function PatientsTable({
           </div>
         ),
         meta: {
-          label: 'Name',
+          label: t('table.name', 'Name'),
           variant: 'text',
           icon: Text,
         },
@@ -114,7 +118,9 @@ export default function PatientsTable({
       {
         id: 'email',
         accessorKey: 'email',
-        header: ({ column }) => <DataTableColumnHeader column={column} label="Email" />,
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} label={t('table.email', 'Email')} />
+        ),
         cell: ({ cell }) => (
           <div className="inline-flex items-center gap-2">
             <Mail className="h-4 w-4" />
@@ -122,7 +128,7 @@ export default function PatientsTable({
           </div>
         ),
         meta: {
-          label: 'Email',
+          label: t('table.email', 'Email'),
           variant: 'text',
           icon: Mail,
         },
@@ -130,7 +136,9 @@ export default function PatientsTable({
       {
         id: 'gender',
         accessorKey: 'gender',
-        header: ({ column }) => <DataTableColumnHeader column={column} label="Gender" />,
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} label={t('patients.form.gender', 'Gender')} />
+        ),
         cell: ({ cell }) => {
           const gender = cell.getValue<string>();
           return (
@@ -141,11 +149,11 @@ export default function PatientsTable({
           );
         },
         meta: {
-          label: 'Gender',
+          label: t('patients.form.gender', 'Gender'),
           variant: 'multiSelect',
           options: [
-            { label: 'Male', value: 'MALE', icon: UserRound },
-            { label: 'Female', value: 'FEMALE', icon: UserRound },
+            { label: t('patients.form.male', 'Male'), value: 'MALE', icon: UserRound },
+            { label: t('patients.form.female', 'Female'), value: 'FEMALE', icon: UserRound },
           ],
           operator: 'inArray',
         },
@@ -154,7 +162,12 @@ export default function PatientsTable({
       {
         id: 'dateOfBirth',
         accessorKey: 'dateOfBirth',
-        header: ({ column }) => <DataTableColumnHeader column={column} label="Date of Birth" />,
+        header: ({ column }) => (
+          <DataTableColumnHeader
+            column={column}
+            label={t('patients.form.dateOfBirth', 'Date of Birth')}
+          />
+        ),
         cell: ({ cell }) => (
           <div className="inline-flex items-center gap-1 text-muted-foreground text-sm">
             <CalendarDays className="h-4 w-4" />
@@ -165,7 +178,9 @@ export default function PatientsTable({
       {
         id: 'phone',
         accessorKey: 'phone',
-        header: ({ column }) => <DataTableColumnHeader column={column} label="Phone" />,
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} label={t('table.phone', 'Phone')} />
+        ),
         cell: ({ cell }) => {
           const phone = cell.getValue<string | null>();
           return (
@@ -179,7 +194,12 @@ export default function PatientsTable({
       {
         id: 'bloodType',
         accessorKey: 'bloodType',
-        header: ({ column }) => <DataTableColumnHeader column={column} label="Blood Type" />,
+        header: ({ column }) => (
+          <DataTableColumnHeader
+            column={column}
+            label={t('patients.form.bloodType', 'Blood Type')}
+          />
+        ),
         cell: ({ cell }) => {
           const bt = cell.getValue<string | null>();
           return bt ? (
@@ -196,7 +216,9 @@ export default function PatientsTable({
       {
         id: 'patientAddress',
         accessorKey: 'patientAddress',
-        header: ({ column }) => <DataTableColumnHeader column={column} label="Address" />,
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} label={t('table.address', 'Address')} />
+        ),
         cell: ({ cell }) => {
           const addr = cell.getValue<string | null>();
           return (
@@ -212,7 +234,12 @@ export default function PatientsTable({
       {
         id: 'allergies',
         accessorKey: 'allergies',
-        header: ({ column }) => <DataTableColumnHeader column={column} label="Allergies" />,
+        header: ({ column }) => (
+          <DataTableColumnHeader
+            column={column}
+            label={t('patients.form.allergies', 'Allergies')}
+          />
+        ),
         cell: ({ cell }) => {
           const allergies = cell.getValue<string | null>();
           return <span className="text-muted-foreground text-sm">{allergies ?? '—'}</span>;
@@ -235,13 +262,13 @@ export default function PatientsTable({
     data: patients,
     columns,
     pageCount,
+    enableRowSelection: false,
     initialState: {
       columnPinning: { right: ['actions'] },
       sorting: [{ id: 'name', desc: false }],
       pagination: { pageIndex: 0, pageSize: 10 },
       globalFilter: search,
       columnVisibility: {
-        userId: false,
         patientAddress: false,
         allergies: false,
       },

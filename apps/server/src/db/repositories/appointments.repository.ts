@@ -12,7 +12,7 @@ export interface CreateAppointmentInput {
   patientId: string;
   date: string;
   time: string;
-  reason?: string;
+  reason?: string | null;
 }
 
 export interface ListByPatientParams {

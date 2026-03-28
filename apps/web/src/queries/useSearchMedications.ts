@@ -1,28 +1,27 @@
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 
-import { useTrpc } from '@/providers/trpc';
+import { trpcClient } from '@/providers/trpc';
 
 interface UseSearchMedicationsParams {
   query: string;
-  page: number;
-  limit: number;
+  limit?: number;
   enabled?: boolean;
 }
 
 export function useSearchMedications({
   query,
-  page,
-  limit,
+  limit = 12,
   enabled = true,
 }: UseSearchMedicationsParams) {
-  const trpc = useTrpc();
-
-  return useQuery({
-    ...trpc.medications.search.queryOptions({
-      query,
-      page,
-      limit,
-    }),
+  return useInfiniteQuery({
+    queryKey: ['medications', 'search', { query, limit }],
+    queryFn: ({ pageParam }) =>
+      trpcClient.medications.search.query({ query, page: pageParam, limit }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, _allPages, lastPageParam) => {
+      const totalPages = Math.ceil(lastPage.total / lastPage.limit);
+      return lastPageParam < totalPages ? lastPageParam + 1 : undefined;
+    },
     enabled: enabled && query.length >= 3,
   });
 }

@@ -84,7 +84,7 @@ export function AppointmentEditDialog({
           id: appointment.id,
           date: value.date,
           time: value.time,
-          reason: value.reason || undefined,
+          reason: value.reason || null,
         },
         {
           onSuccess: () => {

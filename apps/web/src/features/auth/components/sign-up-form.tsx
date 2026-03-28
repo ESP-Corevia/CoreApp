@@ -164,7 +164,7 @@ export default function SignUpForm({ onSwitchToSignIn }: { onSwitchToSignIn: () 
                 disabled={!state.canSubmit || state.isSubmitting}
               >
                 {state.isSubmitting ? (
-                  <Trans i18nKey="signUp.form.submit.loading">Submitting...</Trans>
+                  <Trans i18nKey="signUp.submitting">Submitting...</Trans>
                 ) : (
                   <Trans i18nKey="signUp.form.submit">Sign Up</Trans>
                 )}

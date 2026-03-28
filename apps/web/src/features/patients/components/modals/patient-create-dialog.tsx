@@ -31,7 +31,7 @@ export function PatientCreateDialog() {
   const mutation = useCreatePatient();
 
   const schema = z.object({
-    userId: z.string().uuid(t('patients.form.userIdInvalid', 'Must be a valid UUID')),
+    userId: z.uuid(t('patients.form.userIdInvalid', 'Must be a valid UUID')),
     dateOfBirth: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Must be YYYY-MM-DD'),
     gender: z.enum(['MALE', 'FEMALE']),
   });

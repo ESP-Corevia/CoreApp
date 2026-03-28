@@ -1,11 +1,9 @@
 import { useDebounce } from '@uidotdev/usehooks';
-import { AlertTriangle, Pill, Search, ShieldCheck } from 'lucide-react';
-import { parseAsInteger, parseAsString, useQueryStates } from 'nuqs';
-import { useEffect, useState } from 'react';
+import { AlertTriangle, Pill, Search, ShieldCheck, X } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { useSearchMedications } from '@/queries';
 
 import MedicationResultsList from './medication-results-list';
@@ -19,101 +17,120 @@ interface MedicationsSearchProps {
 
 export default function MedicationsSearch({ session }: MedicationsSearchProps) {
   const { t } = useTranslation();
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  const [queryParams, setQueryParams] = useQueryStates({
-    q: parseAsString.withDefault(''),
-    page: parseAsInteger.withDefault(1),
-  });
-
-  const [searchInput, setSearchInput] = useState(queryParams.q);
+  const [searchInput, setSearchInput] = useState('');
   const debouncedSearch = useDebounce(searchInput, 300);
 
-  // Sync debounced value to URL params
-  useEffect(() => {
-    if (debouncedSearch !== queryParams.q) {
-      void setQueryParams({ q: debouncedSearch, page: 1 });
-    }
-  }, [debouncedSearch, queryParams.q, setQueryParams]);
+  const { data, isLoading, error, refetch, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useSearchMedications({
+      query: debouncedSearch,
+      limit: 12,
+      enabled: !!session?.isAuthenticated,
+    });
 
-  const {
-    data: searchData,
-    isLoading,
-    error,
-    refetch,
-  } = useSearchMedications({
-    query: debouncedSearch,
-    page: queryParams.page,
-    limit: 12,
-    enabled: !!session?.isAuthenticated,
-  });
+  const items = data?.pages.flatMap(page => page.items) ?? [];
+  const total = data?.pages[0]?.total ?? 0;
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
 
   if (!session?.isAuthenticated) {
     return null;
   }
 
-  const items = searchData?.items ?? [];
-  const total = searchData?.total ?? 0;
-  const limit = searchData?.limit ?? 12;
-  const totalPages = Math.ceil(total / limit);
-  const handlePageChange = (page: number) => {
-    void setQueryParams({ page });
-  };
+  const hasQuery = debouncedSearch.length >= 3;
+  const showHint = searchInput.length > 0 && searchInput.length < 3;
+  const hasResults = hasQuery && !error;
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="flex items-center gap-3">
-        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-teal-50 dark:bg-teal-950/40">
-          <Pill className="h-6 w-6 text-teal-600 dark:text-teal-400" />
-        </div>
-        <div>
-          <h1 className="font-bold text-2xl tracking-tight">
-            {t('medications.title', 'Recherche de médicaments')}
-          </h1>
-          <p className="text-muted-foreground text-sm">
-            {t('medications.subtitle', 'Consultez la base nationale et ajoutez à votre pilulier')}
-          </p>
-        </div>
-      </div>
+    <div className="space-y-6">
+      {/* Search hero — centered when idle, stays at top when results show */}
+      <div className={'flex flex-col items-center pt-8 pb-4'}>
+        <div className={'w-full max-w-xl space-y-5 text-center'}>
+          {/* Header */}
+          <div
+            className={hasResults ? 'flex items-center gap-3' : 'flex flex-col items-center gap-3'}
+          >
+            <div className="flex size-11 items-center justify-center rounded-xl bg-teal-50 dark:bg-teal-950/40">
+              <Pill className="size-6 text-teal-600 dark:text-teal-400" />
+            </div>
+            <div>
+              <h1 className="font-bold text-2xl tracking-tight">
+                {t('medications.title', 'Recherche de médicaments')}
+              </h1>
+              <p className="text-muted-foreground text-sm">
+                {t(
+                  'medications.subtitle',
+                  'Consultez la base nationale et ajoutez à votre pilulier',
+                )}
+              </p>
+            </div>
+          </div>
 
-      {/* Disclaimer banner */}
-      <div className="flex items-start gap-3 rounded-lg border border-sky-200/60 bg-sky-50/50 p-4 dark:border-sky-800/40 dark:bg-sky-950/20">
-        <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-sky-600 dark:text-sky-400" />
-        <p className="text-sky-900 text-sm leading-relaxed dark:text-sky-200">
-          {t(
-            'medications.disclaimer',
-            'Les informations affichées sont fournies à titre informatif. Demandez toujours conseil à un professionnel de santé avant de débuter, modifier ou arrêter un traitement.',
+          {/* Search input */}
+          <div className={'relative'}>
+            <Search className="pointer-events-none absolute top-1/2 left-4 size-5 -translate-y-1/2 text-muted-foreground" />
+            <input
+              ref={inputRef}
+              type="search"
+              value={searchInput}
+              onChange={e => setSearchInput(e.target.value)}
+              placeholder={t(
+                'medications.searchPlaceholder',
+                'Rechercher un médicament (min. 3 caractères, sans accents)...',
+              )}
+              className="h-12 w-full rounded-xl border bg-transparent pr-10 pl-12 text-base outline-none transition-colors placeholder:text-muted-foreground [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden"
+            />
+            {searchInput && (
+              <button
+                type="button"
+                onClick={() => setSearchInput('')}
+                className="absolute top-1/2 right-3 -translate-y-1/2 rounded-md p-1 text-muted-foreground transition-colors hover:text-foreground"
+              >
+                <X className="size-4" />
+              </button>
+            )}
+          </div>
+
+          {/* Hint */}
+          {showHint && !error && (
+            <p className="text-muted-foreground text-sm">
+              {t(
+                'medications.minChars',
+                'Saisissez au moins 3 caractères pour lancer la recherche',
+              )}
+            </p>
           )}
-        </p>
-      </div>
 
-      {/* Search input */}
-      <div className="relative max-w-2xl">
-        <Search className="pointer-events-none absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          type="search"
-          value={searchInput}
-          onChange={e => setSearchInput(e.target.value)}
-          placeholder={t(
-            'medications.searchPlaceholder',
-            'Rechercher un médicament (min. 3 caractères, sans accents)...',
+          {/* Disclaimer — only visible before search */}
+          {!hasResults && !showHint && (
+            <div className="flex items-start gap-3 rounded-lg border border-sky-200/60 bg-sky-50/50 p-4 text-left dark:border-sky-800/40 dark:bg-sky-950/20">
+              <ShieldCheck className="mt-0.5 size-5 shrink-0 text-sky-600 dark:text-sky-400" />
+              <p className="text-sky-900 text-sm leading-relaxed dark:text-sky-200">
+                {t(
+                  'medications.disclaimer',
+                  'Les informations affichées sont fournies à titre informatif. Demandez toujours conseil à un professionnel de santé avant de débuter, modifier ou arrêter un traitement.',
+                )}
+              </p>
+            </div>
           )}
-          className="h-12 rounded-xl border-2 pl-12 text-base transition-colors focus-visible:border-teal-400 dark:focus-visible:border-teal-500"
-        />
+        </div>
       </div>
 
-      {/* Minimum characters hint */}
-      {!error && queryParams.q.length > 0 && queryParams.q.length < 3 && (
-        <p className="text-center text-muted-foreground text-sm">
-          {t('medications.minChars', 'Saisissez au moins 3 caractères pour lancer la recherche')}
+      {/* Result count */}
+      {hasQuery && !isLoading && !error && total > 0 && (
+        <p className="text-muted-foreground text-sm tabular-nums">
+          {t('medications.resultCount', '{{count}} résultat(s) trouvé(s)', { count: total })}
         </p>
       )}
 
-      {/* Error state */}
+      {/* Error */}
       {error && (
         <div className="flex flex-col items-center justify-center gap-4 py-16">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-50 dark:bg-red-950/30">
-            <AlertTriangle className="h-8 w-8 text-red-500" />
+          <div className="flex size-16 items-center justify-center rounded-full bg-red-50 dark:bg-red-950/30">
+            <AlertTriangle className="size-8 text-red-500" />
           </div>
           <div className="text-center">
             <p className="font-medium">
@@ -130,13 +147,13 @@ export default function MedicationsSearch({ session }: MedicationsSearchProps) {
       )}
 
       {/* Results */}
-      {!error && queryParams.q.length >= 3 && (
+      {!error && hasQuery && (
         <MedicationResultsList
           items={items}
           isLoading={isLoading}
-          page={queryParams.page}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
+          hasNextPage={!!hasNextPage}
+          isFetchingNextPage={isFetchingNextPage}
+          onLoadMore={() => void fetchNextPage()}
         />
       )}
     </div>

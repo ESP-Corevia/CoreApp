@@ -24,7 +24,7 @@ export function DoctorCreateDialog() {
   const mutation = useCreateDoctor();
 
   const schema = z.object({
-    userId: z.string().uuid(t('doctors.form.userIdInvalid', 'Must be a valid UUID')),
+    userId: z.uuid(t('doctors.form.userIdInvalid', 'Must be a valid UUID')),
     specialty: z.string().min(1, t('doctors.form.specialtyRequired', 'Specialty is required')),
     address: z.string().min(1, t('doctors.form.addressRequired', 'Address is required')),
     city: z.string().min(1, t('doctors.form.cityRequired', 'City is required')),

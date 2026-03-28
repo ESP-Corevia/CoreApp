@@ -289,7 +289,13 @@ export const createAppointmentsService = (repo: ReturnType<typeof createAppointm
    */
   adminUpdateAppointment: async (
     appointmentId: string,
-    input: { date?: string; time?: string; reason?: string; doctorId?: string; patientId?: string },
+    input: {
+      date?: string;
+      time?: string;
+      reason?: string | null;
+      doctorId?: string;
+      patientId?: string;
+    },
   ) => {
     const appointment = await repo.getByIdWithDoctor(appointmentId);
 

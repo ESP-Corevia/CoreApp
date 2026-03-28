@@ -24,23 +24,11 @@ export interface Appointment {
   patientName: string | null;
 }
 
-const STATUS_VARIANTS: Record<string, { className: string; label: string }> = {
-  PENDING: {
-    className: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
-    label: 'Pending',
-  },
-  CONFIRMED: {
-    className: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
-    label: 'Confirmed',
-  },
-  COMPLETED: {
-    className: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
-    label: 'Completed',
-  },
-  CANCELLED: {
-    className: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
-    label: 'Cancelled',
-  },
+const STATUS_CLASSNAMES: Record<string, string> = {
+  PENDING: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
+  CONFIRMED: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
+  COMPLETED: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
+  CANCELLED: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
 };
 
 function formatDate(input?: string) {
@@ -81,7 +69,9 @@ export default function AppointmentsTable({
       {
         id: 'patientName',
         accessorKey: 'patientName',
-        header: ({ column }) => <DataTableColumnHeader column={column} label="Patient" />,
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} label={t('table.patient', 'Patient')} />
+        ),
         cell: ({ cell }) => {
           const name = cell.getValue<Appointment['patientName']>();
           return (
@@ -92,7 +82,7 @@ export default function AppointmentsTable({
           );
         },
         meta: {
-          label: 'Patient',
+          label: t('table.patient', 'Patient'),
           variant: 'text',
           icon: User,
         },
@@ -100,7 +90,9 @@ export default function AppointmentsTable({
       {
         id: 'doctorName',
         accessorKey: 'doctorName',
-        header: ({ column }) => <DataTableColumnHeader column={column} label="Doctor" />,
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} label={t('table.doctor', 'Doctor')} />
+        ),
         cell: ({ cell }) => {
           const name = cell.getValue<Appointment['doctorName']>();
           return (
@@ -111,7 +103,7 @@ export default function AppointmentsTable({
           );
         },
         meta: {
-          label: 'Doctor',
+          label: t('table.doctor', 'Doctor'),
           variant: 'text',
           icon: Stethoscope,
         },
@@ -119,7 +111,9 @@ export default function AppointmentsTable({
       {
         id: 'date',
         accessorKey: 'date',
-        header: ({ column }) => <DataTableColumnHeader column={column} label="Date" />,
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} label={t('table.date', 'Date')} />
+        ),
         cell: ({ cell }) => {
           const date = cell.getValue<Appointment['date']>();
           return (
@@ -130,7 +124,7 @@ export default function AppointmentsTable({
           );
         },
         meta: {
-          label: 'Date',
+          label: t('table.date', 'Date'),
           variant: 'dateRange',
           icon: CalendarClock,
           operator: 'isBetween',
@@ -140,7 +134,9 @@ export default function AppointmentsTable({
       {
         id: 'time',
         accessorKey: 'time',
-        header: ({ column }) => <DataTableColumnHeader column={column} label="Time" />,
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} label={t('table.time', 'Time')} />
+        ),
         cell: ({ cell }) => {
           const time = cell.getValue<Appointment['time']>();
           return (
@@ -155,31 +151,47 @@ export default function AppointmentsTable({
       {
         id: 'status',
         accessorKey: 'status',
-        header: ({ column }) => <DataTableColumnHeader column={column} label="Status" />,
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} label={t('table.status', 'Status')} />
+        ),
         cell: ({ cell }) => {
           const status = cell.getValue<Appointment['status']>();
-          const variant = STATUS_VARIANTS[status] ?? {
-            className: '',
-            label: status,
-          };
+          const statusLabel = t(`appointments.statuses.${status}`, status);
+          const className = STATUS_CLASSNAMES[status] ?? '';
           return (
             <Badge
               variant="outline"
-              className={`inline-flex items-center gap-1 border-0 ${variant.className}`}
+              className={`inline-flex items-center gap-1 border-0 ${className}`}
             >
               <CircleDot className="h-3 w-3" />
-              {variant.label}
+              {statusLabel}
             </Badge>
           );
         },
         meta: {
-          label: 'Status',
+          label: t('table.status', 'Status'),
           variant: 'multiSelect',
           options: [
-            { label: 'Pending', value: 'PENDING', icon: CircleDot },
-            { label: 'Confirmed', value: 'CONFIRMED', icon: CircleDot },
-            { label: 'Completed', value: 'COMPLETED', icon: CircleDot },
-            { label: 'Cancelled', value: 'CANCELLED', icon: CircleDot },
+            {
+              label: t('appointments.statuses.PENDING', 'Pending'),
+              value: 'PENDING',
+              icon: CircleDot,
+            },
+            {
+              label: t('appointments.statuses.CONFIRMED', 'Confirmed'),
+              value: 'CONFIRMED',
+              icon: CircleDot,
+            },
+            {
+              label: t('appointments.statuses.COMPLETED', 'Completed'),
+              value: 'COMPLETED',
+              icon: CircleDot,
+            },
+            {
+              label: t('appointments.statuses.CANCELLED', 'Cancelled'),
+              value: 'CANCELLED',
+              icon: CircleDot,
+            },
           ],
           operator: 'inArray',
         },
@@ -188,7 +200,9 @@ export default function AppointmentsTable({
       {
         id: 'reason',
         accessorKey: 'reason',
-        header: ({ column }) => <DataTableColumnHeader column={column} label="Reason" />,
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} label={t('table.reason', 'Reason')} />
+        ),
         cell: ({ cell }) => {
           const reason = cell.getValue<Appointment['reason']>();
           return (
@@ -198,7 +212,7 @@ export default function AppointmentsTable({
           );
         },
         meta: {
-          label: 'Reason',
+          label: t('table.reason', 'Reason'),
           variant: 'text',
           icon: Text,
         },
@@ -207,7 +221,9 @@ export default function AppointmentsTable({
       {
         id: 'createdAt',
         accessorKey: 'createdAt',
-        header: ({ column }) => <DataTableColumnHeader column={column} label="Created At" />,
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} label={t('table.createdAt', 'Created At')} />
+        ),
         cell: ({ cell }) => {
           const created = cell.getValue<Appointment['createdAt']>();
           return (
@@ -227,7 +243,7 @@ export default function AppointmentsTable({
         enableHiding: false,
       },
     ],
-    [],
+    [t],
   );
 
   const { table } = useDataTable<Appointment>({

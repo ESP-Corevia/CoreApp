@@ -9,7 +9,7 @@ interface UpdateAppointmentInput {
   id: string;
   date?: string;
   time?: string;
-  reason?: string;
+  reason?: string | null;
   doctorId?: string;
   patientId?: string;
 }

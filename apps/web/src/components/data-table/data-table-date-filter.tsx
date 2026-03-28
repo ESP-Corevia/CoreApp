@@ -165,14 +165,19 @@ export function DataTableDateFilter<TData>({
       <PopoverTrigger asChild>
         <Button variant="outline" size="sm" className="border-dashed font-normal">
           {hasValue ? (
-            <button
-              type="button"
+            // biome-ignore lint/a11y/useSemanticElements: pass
+            <span
+              role="button"
+              tabIndex={0}
               aria-label={`Clear ${title} filter`}
               onClick={onReset}
+              onKeyDown={e => {
+                if (e.key === 'Enter' || e.key === ' ') onReset(e as unknown as React.MouseEvent);
+              }}
               className="rounded-sm opacity-70 transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
             >
               <XCircle />
-            </button>
+            </span>
           ) : (
             <CalendarIcon />
           )}

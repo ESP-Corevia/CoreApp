@@ -52,10 +52,28 @@
       "save": "Enregistrer les modifications",
       "saving": "Enregistrement...",
       "search": "Rechercher par nom de patient ou médecin…",
+      "statusActions": {
+        "CANCELLED": "Annuler",
+        "COMPLETED": "Terminer",
+        "CONFIRMED": "Confirmer",
+        "PENDING": "Réouvrir"
+      },
+      "statusDescriptions": {
+        "CANCELLED": "annuler ce rendez-vous",
+        "COMPLETED": "marquer ce rendez-vous comme terminé",
+        "CONFIRMED": "confirmer ce rendez-vous",
+        "PENDING": "réouvrir ce rendez-vous"
+      },
       "statusDialog": {
         "confirm": "{{action}}",
         "description": "Êtes-vous sûr de vouloir {{action}} ? Patient : {{patient}}, Médecin : {{doctor}}, Date : {{date}} à {{time}}.",
         "title": "{{action}} le rendez-vous"
+      },
+      "statuses": {
+        "CANCELLED": "Annulé",
+        "COMPLETED": "Terminé",
+        "CONFIRMED": "Confirmé",
+        "PENDING": "En attente"
       },
       "statusUpdated": "Statut du rendez-vous mis à jour avec succès",
       "statusUpdateError": "Échec de la mise à jour du statut : {{message}}",
@@ -86,19 +104,35 @@
     },
     "common": {
       "cancel": "Annuler",
+      "loadingMore": "Chargement...",
       "next": "Suivant",
       "pageOf": "Page {{page}} sur {{total}}",
       "previous": "Précédent",
       "processing": "Traitement...",
       "retry": "Réessayer",
-      "save": "Enregistrer"
+      "rowCount": "{{count}} ligne(s)",
+      "rowsPerPage": "Lignes par page",
+      "rowsSelected": "{{selected}} sur {{total}} ligne(s) sélectionnée(s).",
+      "save": "Enregistrer",
+      "unknown": "Inconnu"
     },
     "dashboard": {
       "loadUsersError": "Échec du chargement des utilisateurs : {{message}}",
       "userManagement": "Gestion des utilisateurs"
     },
     "dataTable": {
-      "noResults": "Aucun résultat."
+      "clearFilters": "Effacer les filtres",
+      "hide": "Masquer",
+      "noColumns": "Aucune colonne trouvée.",
+      "noResults": "Aucun résultat.",
+      "noResultsFilter": "Aucun résultat trouvé.",
+      "resetFilters": "Réinitialiser",
+      "search": "Rechercher…",
+      "searchColumns": "Rechercher des colonnes...",
+      "sortAsc": "Croissant",
+      "sortDesc": "Décroissant",
+      "sortReset": "Réinitialiser",
+      "view": "Vue"
     },
     "doctors": {
       "created": "Profil médecin créé avec succès",
@@ -132,18 +166,26 @@
       "openMenu": "Ouvrir le menu du médecin",
       "save": "Enregistrer les modifications",
       "saving": "Enregistrement...",
+      "searchPlaceholder": "Rechercher par nom ou spécialité…",
       "title": "Gestion des Médecins",
       "updated": "Profil médecin mis à jour avec succès",
       "updateError": "Échec de la mise à jour du médecin : {{message}}"
+    },
+    "errorBoundary": {
+      "description": "Une erreur inattendue s'est produite.",
+      "heading": "Erreur",
+      "message": "Quelque chose s'est mal passé",
+      "stackTrace": "Trace de la pile",
+      "title": "Oups !"
     },
     "errorScreen": {
       "permissionDenied": "Vous n'avez pas l'autorisation d'accéder à cette ressource."
     },
     "forbidden": {
       "description": "L'accès à cette ressource est interdit. Vous n'avez pas les permissions nécessaires pour voir cette page.",
-      "goBackHome": "Retour à l'accueil"
+      "goBackHome": "Retour à l'accueil",
+      "title": "Interdit"
     },
-    "Go Back Home": "Retour à l'accueil",
     "HydrateFallback": {
       "loading": "Chargement…"
     },
@@ -155,9 +197,11 @@
       "addToPillbox": "Ajouter au pilulier",
       "currency": "€",
       "disclaimer": "Les informations affichées sont fournies à titre informatif. Demandez toujours conseil à un professionnel de santé avant de débuter, modifier ou arrêter un traitement.",
+      "endOfResults": "Fin des résultats",
       "minChars": "Saisissez au moins 3 caractères pour lancer la recherche",
       "noResults": "Aucun médicament trouvé",
       "noResultsHint": "Essayez avec un autre terme de recherche",
+      "resultCount": "{{count}} résultat(s) trouvé(s)",
       "searchError": "Erreur lors de la recherche",
       "searchErrorHint": "Vérifiez votre connexion et réessayez",
       "searchPlaceholder": "Rechercher un médicament (min. 3 caractères, sans accents)...",
@@ -170,7 +214,21 @@
       "system": "Système",
       "toggleTheme": "Changer de thème"
     },
+    "nav": {
+      "appointments": "Rendez-vous",
+      "dashboard": "Tableau de bord",
+      "doctors": "Médecins",
+      "home": "Accueil",
+      "main": "Principal",
+      "medications": "Médicaments",
+      "myPillbox": "Mon pilulier",
+      "patients": "Patients",
+      "pillbox": "Pilulier",
+      "settings": "Paramètres",
+      "workspace": "Espace de travail"
+    },
     "notFound": {
+      "description": "La page demandée est introuvable.",
       "title": "Page introuvable"
     },
     "patients": {
@@ -199,8 +257,17 @@
         "title": "Modifier le profil patient"
       },
       "form": {
+        "address": "Adresse",
+        "allergies": "Allergies",
+        "bloodType": "Groupe sanguin",
         "dateOfBirth": "Date de naissance",
+        "dateOfBirthInvalid": "Doit être au format AAAA-MM-JJ",
+        "emergencyContact": "Contact d'urgence",
+        "emergencyPhone": "Téléphone d'urgence",
+        "female": "Femme",
         "gender": "Genre",
+        "male": "Homme",
+        "phone": "Téléphone",
         "userId": "UUID de l'utilisateur",
         "userIdInvalid": "Doit être un UUID valide"
       },
@@ -264,6 +331,8 @@
       "noSchedules": "Aucun rappel configuré",
       "notFound": "Traitement introuvable",
       "notFoundHint": "Ce traitement n'existe pas ou a été supprimé",
+      "notes": "Notes",
+      "notesPlaceholder": "ex: Prendre au cours du repas",
       "noTreatmentsAdmin": "Aucun traitement trouvé",
       "noTreatmentsAdminHint": "Aucun résultat pour vos critères de recherche",
       "patientId": "Patient",
@@ -284,7 +353,18 @@
       "searchPlaceholder": "Rechercher un patient ou médicament...",
       "startDate": "Date de début",
       "startDateRequired": "La date de début est requise",
-      "unit": "Unité"
+      "unit": "Unité",
+      "weekday": "Jour",
+      "weekdays": {
+        "0": "Dimanche",
+        "1": "Lundi",
+        "2": "Mardi",
+        "3": "Mercredi",
+        "4": "Jeudi",
+        "5": "Vendredi",
+        "6": "Samedi",
+        "every": "Tous les jours"
+      }
     },
     "profile": {
       "accountStatus": "Statut du compte",
@@ -402,12 +482,30 @@
         },
         "submit": "S'inscrire"
       },
+      "submitting": "Inscription...",
       "success": "Inscription réussie",
       "switchToSignIn": "Vous avez déjà un compte ? Connectez-vous",
       "title": "Créer un compte"
     },
-    "The requested page could not be found": {
-      "": "La page demandée est introuvable."
+    "table": {
+      "actions": "Actions",
+      "address": "Adresse",
+      "admin": "Admin",
+      "createdAt": "Créé le",
+      "date": "Date",
+      "doctor": "Médecin",
+      "email": "Email",
+      "id": "ID",
+      "name": "Nom",
+      "no": "Non",
+      "patient": "Patient",
+      "phone": "Téléphone",
+      "reason": "Motif",
+      "role": "Rôle",
+      "status": "Statut",
+      "time": "Heure",
+      "updatedAt": "Modifié le",
+      "yes": "Oui"
     },
     "useImpersonateUser": {
       "failedToImpersonate": "Échec de l'usurpation de l'utilisateur : {{message}}",

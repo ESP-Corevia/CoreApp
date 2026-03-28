@@ -52,10 +52,28 @@
       "save": "Save Changes",
       "saving": "Saving...",
       "search": "Search by patient or doctor name…",
+      "statusActions": {
+        "CANCELLED": "Cancel",
+        "COMPLETED": "Complete",
+        "CONFIRMED": "Confirm",
+        "PENDING": "Reopen"
+      },
+      "statusDescriptions": {
+        "CANCELLED": "cancel this appointment",
+        "COMPLETED": "mark this appointment as completed",
+        "CONFIRMED": "confirm this appointment",
+        "PENDING": "reopen this appointment"
+      },
       "statusDialog": {
         "confirm": "{{action}}",
         "description": "Are you sure you want to {{action}}? Patient: {{patient}}, Doctor: {{doctor}}, Date: {{date}} at {{time}}.",
         "title": "{{action}} Appointment"
+      },
+      "statuses": {
+        "CANCELLED": "Cancelled",
+        "COMPLETED": "Completed",
+        "CONFIRMED": "Confirmed",
+        "PENDING": "Pending"
       },
       "statusUpdated": "Appointment status updated successfully",
       "statusUpdateError": "Failed to update status: {{message}}",
@@ -86,19 +104,35 @@
     },
     "common": {
       "cancel": "Cancel",
+      "loadingMore": "Loading...",
       "next": "Next",
       "pageOf": "Page {{page}} of {{total}}",
       "previous": "Previous",
       "processing": "Processing...",
       "retry": "Retry",
-      "save": "Save"
+      "rowCount": "{{count}} row(s)",
+      "rowsPerPage": "Rows per page",
+      "rowsSelected": "{{selected}} of {{total}} row(s) selected.",
+      "save": "Save",
+      "unknown": "Unknown"
     },
     "dashboard": {
       "loadUsersError": "Failed to load users: {{message}}",
       "userManagement": "Users Management"
     },
     "dataTable": {
-      "noResults": "No results."
+      "clearFilters": "Clear filters",
+      "hide": "Hide",
+      "noColumns": "No columns found.",
+      "noResults": "No results.",
+      "noResultsFilter": "No results found.",
+      "resetFilters": "Reset",
+      "search": "Search…",
+      "searchColumns": "Search columns...",
+      "sortAsc": "Asc",
+      "sortDesc": "Desc",
+      "sortReset": "Reset",
+      "view": "View"
     },
     "doctors": {
       "created": "Doctor profile created successfully",
@@ -132,18 +166,26 @@
       "openMenu": "Open doctor menu",
       "save": "Save Changes",
       "saving": "Saving...",
+      "searchPlaceholder": "Search by name or specialty…",
       "title": "Doctors Management",
       "updated": "Doctor profile updated successfully",
       "updateError": "Failed to update doctor: {{message}}"
+    },
+    "errorBoundary": {
+      "description": "An unexpected error occurred.",
+      "heading": "Error",
+      "message": "Something went wrong",
+      "stackTrace": "Stack trace",
+      "title": "Oops!"
     },
     "errorScreen": {
       "permissionDenied": "You do not have permission to access that resource."
     },
     "forbidden": {
       "description": "Access to this resource is forbidden. You don't have the necessary permissions to view this page.",
-      "goBackHome": "Go Back Home"
+      "goBackHome": "Go Back Home",
+      "title": "Forbidden"
     },
-    "Go Back Home": "Go Back Home",
     "HydrateFallback": {
       "loading": "Loading…"
     },
@@ -155,9 +197,11 @@
       "addToPillbox": "Add to pillbox",
       "currency": "€",
       "disclaimer": "The information displayed is for informational purposes only. Always consult a healthcare professional before starting, changing, or stopping a treatment.",
+      "endOfResults": "End of results",
       "minChars": "Enter at least 3 characters to search",
       "noResults": "No medications found",
       "noResultsHint": "Try a different search term",
+      "resultCount": "{{count}} result(s) found",
       "searchError": "Search error",
       "searchErrorHint": "Check your connection and try again",
       "searchPlaceholder": "Search a medication (min. 3 characters, without accents)...",
@@ -170,7 +214,21 @@
       "system": "System",
       "toggleTheme": "Toggle theme"
     },
+    "nav": {
+      "appointments": "Appointments",
+      "dashboard": "Dashboard",
+      "doctors": "Doctors",
+      "home": "Home",
+      "main": "Main",
+      "medications": "Medications",
+      "myPillbox": "My Pillbox",
+      "patients": "Patients",
+      "pillbox": "Pillbox",
+      "settings": "Settings",
+      "workspace": "Workspace"
+    },
     "notFound": {
+      "description": "The requested page could not be found.",
       "title": "Page Not Found"
     },
     "patients": {
@@ -199,8 +257,17 @@
         "title": "Edit Patient Profile"
       },
       "form": {
+        "address": "Address",
+        "allergies": "Allergies",
+        "bloodType": "Blood Type",
         "dateOfBirth": "Date of Birth",
+        "dateOfBirthInvalid": "Must be YYYY-MM-DD",
+        "emergencyContact": "Emergency Contact",
+        "emergencyPhone": "Emergency Phone",
+        "female": "Female",
         "gender": "Gender",
+        "male": "Male",
+        "phone": "Phone",
         "userId": "User UUID",
         "userIdInvalid": "Must be a valid UUID"
       },
@@ -264,6 +331,8 @@
       "noSchedules": "No reminders configured",
       "notFound": "Treatment not found",
       "notFoundHint": "This treatment does not exist or has been deleted",
+      "notes": "Notes",
+      "notesPlaceholder": "e.g. Take with meals",
       "noTreatmentsAdmin": "No treatments found",
       "noTreatmentsAdminHint": "No results for your search criteria",
       "patientId": "Patient",
@@ -283,7 +352,18 @@
       "searchPlaceholder": "Search a patient or medication...",
       "startDate": "Start date",
       "startDateRequired": "Start date is required",
-      "unit": "Unit"
+      "unit": "Unit",
+      "weekday": "Day",
+      "weekdays": {
+        "0": "Sunday",
+        "1": "Monday",
+        "2": "Tuesday",
+        "3": "Wednesday",
+        "4": "Thursday",
+        "5": "Friday",
+        "6": "Saturday",
+        "every": "Every day"
+      }
     },
     "profile": {
       "accountStatus": "Account Status",
@@ -401,12 +481,30 @@
         },
         "submit": "Sign Up"
       },
+      "submitting": "Submitting...",
       "success": "Sign up successful",
       "switchToSignIn": "Already have an account? Sign In",
       "title": "Create Account"
     },
-    "The requested page could not be found": {
-      "": "The requested page could not be found."
+    "table": {
+      "actions": "Actions",
+      "address": "Address",
+      "admin": "Admin",
+      "createdAt": "Created At",
+      "date": "Date",
+      "doctor": "Doctor",
+      "email": "Email",
+      "id": "ID",
+      "name": "Name",
+      "no": "No",
+      "patient": "Patient",
+      "phone": "Phone",
+      "reason": "Reason",
+      "role": "Role",
+      "status": "Status",
+      "time": "Time",
+      "updatedAt": "Updated At",
+      "yes": "Yes"
     },
     "useImpersonateUser": {
       "failedToImpersonate": "Failed to impersonate user: {{message}}",

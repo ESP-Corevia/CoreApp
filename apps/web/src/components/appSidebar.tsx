@@ -39,60 +39,6 @@ interface NavigationItem {
   badge?: string;
 }
 
-const baseMainItems: NavigationItem[] = [
-  {
-    title: 'Home',
-    url: '/',
-    icon: Home,
-  },
-  {
-    title: 'Dashboard',
-    url: '/dashboard',
-    icon: LayoutDashboard,
-  },
-  {
-    title: 'Doctors',
-    url: '/doctors',
-    icon: Stethoscope,
-  },
-  {
-    title: 'Patients',
-    url: '/patients',
-    icon: Users,
-  },
-  {
-    title: 'Appointments',
-    url: '/appointments',
-    icon: Calendar,
-  },
-];
-
-const secondaryItems: NavigationItem[] = [
-  // {
-  //   title: 'Team',
-  //   url: '/team',
-  //   icon: Users,
-  // },
-  // {
-  //   title: 'Documents',
-  //   url: '/documents',
-  //   icon: FileText,
-  // },
-  // {
-  //   title: 'Notifications',
-  //   url: '/notifications',
-  //   icon: Bell,
-  //   badge: '3',
-  // },
-];
-
-const settingsItems: NavigationItem[] = [
-  {
-    title: 'Settings',
-    url: '/settings',
-    icon: Settings,
-  },
-];
 export default function FooterDateTime({ onlyYear = false }: { onlyYear?: boolean }) {
   const { i18n } = useTranslation();
   const locale = i18n.language;
@@ -140,29 +86,49 @@ export function AppSidebar() {
     enabled: Boolean(session),
   });
   const { state: sidebarState } = useSidebar();
+  const { t } = useTranslation();
   const role = (session as Record<string, unknown>)?.role as
     | 'patient'
     | 'admin'
     | 'doctor'
     | undefined;
 
+  const baseMainItems = useMemo<NavigationItem[]>(
+    () => [
+      { title: t('nav.home', 'Home'), url: '/', icon: Home },
+      { title: t('nav.dashboard', 'Dashboard'), url: '/dashboard', icon: LayoutDashboard },
+      { title: t('nav.doctors', 'Doctors'), url: '/doctors', icon: Stethoscope },
+      { title: t('nav.patients', 'Patients'), url: '/patients', icon: Users },
+      { title: t('nav.appointments', 'Appointments'), url: '/appointments', icon: Calendar },
+    ],
+    [t],
+  );
+
+  const secondaryItems = useMemo<NavigationItem[]>(() => [], []);
+
+  const settingsItems = useMemo<NavigationItem[]>(
+    () => [{ title: t('nav.settings', 'Settings'), url: '/settings', icon: Settings }],
+    [t],
+  );
+
   const mainItems = useMemo<NavigationItem[]>(() => {
     const items = [...baseMainItems];
 
     if (role === 'admin') {
       items.push(
-        { title: 'Medications', url: '/medications', icon: Pill },
-        { title: 'Pillbox', url: '/pillbox', icon: ClipboardList },
+        { title: t('nav.medications', 'Medications'), url: '/medications', icon: Pill },
+        { title: t('nav.pillbox', 'Pillbox'), url: '/pillbox', icon: ClipboardList },
       );
     } else if (role === 'patient') {
       items.push(
-        { title: 'Medications', url: '/medications', icon: Pill },
-        { title: 'My Pillbox', url: '/pillbox', icon: ClipboardList },
+        { title: t('nav.medications', 'Medications'), url: '/medications', icon: Pill },
+        { title: t('nav.myPillbox', 'My Pillbox'), url: '/pillbox', icon: ClipboardList },
       );
     }
 
     return items;
-  }, [role]);
+  }, [baseMainItems, role, t]);
+
   const isActive = (url: string) => {
     return location.pathname === url;
   };
@@ -197,7 +163,7 @@ export function AppSidebar() {
         {/* Main Navigation */}
         <SidebarGroup>
           <SidebarGroupLabel className="font-semibold text-xs uppercase tracking-wider">
-            Main
+            {t('nav.main', 'Main')}
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>{renderMenuItems(mainItems)}</SidebarMenu>
@@ -207,7 +173,7 @@ export function AppSidebar() {
         {/* Secondary Navigation */}
         <SidebarGroup>
           <SidebarGroupLabel className="font-semibold text-xs uppercase tracking-wider">
-            Workspace
+            {t('nav.workspace', 'Workspace')}
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>{renderMenuItems(secondaryItems)}</SidebarMenu>

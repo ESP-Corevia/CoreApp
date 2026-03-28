@@ -39,7 +39,7 @@ export function ErrorScreen({
           ) : (
             <Button asChild>
               <Link to="/">
-                <Trans key="errorScreen.gobackhome">Go Back Home</Trans>
+                <Trans i18nKey="forbidden.goBackHome">Go Back Home</Trans>
               </Link>
             </Button>
           )}

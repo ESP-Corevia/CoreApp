@@ -36,9 +36,9 @@ function getInitials(name: string | null | undefined): string {
     .toUpperCase();
 }
 
-function formatDate(dateStr: string): string {
+function formatDate(dateStr: string, locale = 'fr-FR'): string {
   try {
-    return new Date(dateStr).toLocaleDateString('fr-FR', {
+    return new Date(dateStr).toLocaleDateString(locale, {
       day: 'numeric',
       month: 'short',
       year: 'numeric',
@@ -49,7 +49,7 @@ function formatDate(dateStr: string): string {
 }
 
 export default function PillboxMedicationCard({ medication }: PillboxMedicationCardProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const isAdmin = !!medication.patientName;
 
   return (
@@ -121,8 +121,10 @@ export default function PillboxMedicationCard({ medication }: PillboxMedicationC
             <div className="flex items-center gap-1.5 text-muted-foreground text-xs">
               <Calendar className="h-3.5 w-3.5" />
               <span>
-                {formatDate(medication.startDate)}
-                {medication.endDate ? ` \u2192 ${formatDate(medication.endDate)}` : ''}
+                {formatDate(medication.startDate, i18n.language === 'fr' ? 'fr-FR' : 'en-US')}
+                {medication.endDate
+                  ? ` \u2192 ${formatDate(medication.endDate, i18n.language === 'fr' ? 'fr-FR' : 'en-US')}`
+                  : ''}
               </span>
             </div>
             <ChevronRight className="h-4 w-4 text-muted-foreground/50 transition-transform group-hover:translate-x-0.5" />

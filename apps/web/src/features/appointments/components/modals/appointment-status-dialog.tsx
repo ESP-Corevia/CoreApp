@@ -22,20 +22,6 @@ interface AppointmentStatusDialogProps {
   targetStatus: 'PENDING' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED';
 }
 
-const STATUS_LABELS: Record<string, string> = {
-  PENDING: 'Reopen',
-  CONFIRMED: 'Confirm',
-  COMPLETED: 'Complete',
-  CANCELLED: 'Cancel',
-};
-
-const STATUS_DESCRIPTIONS: Record<string, string> = {
-  PENDING: 'reopen this appointment',
-  CONFIRMED: 'confirm this appointment',
-  COMPLETED: 'mark this appointment as completed',
-  CANCELLED: 'cancel this appointment',
-};
-
 export function AppointmentStatusDialog({
   open,
   onOpenChange,
@@ -44,6 +30,20 @@ export function AppointmentStatusDialog({
 }: AppointmentStatusDialogProps) {
   const { t } = useTranslation();
   const mutation = useUpdateAppointmentStatus();
+
+  const STATUS_LABELS: Record<string, string> = {
+    PENDING: t('appointments.statusActions.PENDING', 'Reopen'),
+    CONFIRMED: t('appointments.statusActions.CONFIRMED', 'Confirm'),
+    COMPLETED: t('appointments.statusActions.COMPLETED', 'Complete'),
+    CANCELLED: t('appointments.statusActions.CANCELLED', 'Cancel'),
+  };
+
+  const STATUS_DESCRIPTIONS: Record<string, string> = {
+    PENDING: t('appointments.statusDescriptions.PENDING', 'reopen this appointment'),
+    CONFIRMED: t('appointments.statusDescriptions.CONFIRMED', 'confirm this appointment'),
+    COMPLETED: t('appointments.statusDescriptions.COMPLETED', 'mark this appointment as completed'),
+    CANCELLED: t('appointments.statusDescriptions.CANCELLED', 'cancel this appointment'),
+  };
 
   const handleConfirm = () => {
     mutation.mutate(

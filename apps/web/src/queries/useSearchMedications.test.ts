@@ -28,7 +28,6 @@ describe('useSearchMedications', () => {
       () =>
         useSearchMedications({
           query: 'doli',
-          page: 1,
           limit: 12,
           enabled: true,
         }),
@@ -44,7 +43,7 @@ describe('useSearchMedications', () => {
       expect(handler).toHaveBeenCalledWith({ query: 'doli', page: 1, limit: 12 });
     });
 
-    expect(result.current.data).toEqual({
+    expect(result.current.data?.pages[0]).toEqual({
       items: [{ id: '1', name: 'DOLIPRANE 500mg' }],
       total: 1,
       page: 1,
@@ -59,7 +58,6 @@ describe('useSearchMedications', () => {
       () =>
         useSearchMedications({
           query: 'do',
-          page: 1,
           limit: 12,
           enabled: true,
         }),
@@ -82,7 +80,6 @@ describe('useSearchMedications', () => {
       () =>
         useSearchMedications({
           query: 'doli',
-          page: 1,
           limit: 12,
           enabled: false,
         }),

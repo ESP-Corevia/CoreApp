@@ -46,9 +46,9 @@ describe('MedicationResultsList', () => {
   const defaultProps = {
     items: [] as MedicationData[],
     isLoading: false,
-    page: 1,
-    totalPages: 1,
-    onPageChange: vi.fn(),
+    hasNextPage: false,
+    isFetchingNextPage: false,
+    onLoadMore: vi.fn(),
   };
 
   it('shows loading skeletons when isLoading', () => {
@@ -84,44 +84,22 @@ describe('MedicationResultsList', () => {
     expect(screen.getByTestId('dialog')).toHaveTextContent('Doliprane');
   });
 
-  it('shows pagination when totalPages > 1', () => {
-    render(<MedicationResultsList {...defaultProps} items={[makeMed()]} page={1} totalPages={3} />);
+  it('shows end of results when no next page', () => {
+    render(<MedicationResultsList {...defaultProps} items={[makeMed()]} hasNextPage={false} />);
 
-    expect(screen.getByText(/page 1 sur 3/i)).toBeInTheDocument();
+    expect(screen.getByText(/fin des résultats/i)).toBeInTheDocument();
   });
 
-  it('hides pagination when totalPages is 1', () => {
-    render(<MedicationResultsList {...defaultProps} items={[makeMed()]} page={1} totalPages={1} />);
-
-    expect(screen.queryByText(/page/i)).not.toBeInTheDocument();
-  });
-
-  it('calls onPageChange when next is clicked', async () => {
-    const onPageChange = vi.fn();
+  it('shows loading indicator when fetching next page', () => {
     render(
       <MedicationResultsList
         {...defaultProps}
         items={[makeMed()]}
-        page={1}
-        totalPages={3}
-        onPageChange={onPageChange}
+        hasNextPage
+        isFetchingNextPage
       />,
     );
 
-    await userEvent.setup().click(screen.getByText(/suivant/i));
-
-    expect(onPageChange).toHaveBeenCalledWith(2);
-  });
-
-  it('disables previous button on first page', () => {
-    render(<MedicationResultsList {...defaultProps} items={[makeMed()]} page={1} totalPages={3} />);
-
-    expect(screen.getByText(/précédent/i).closest('button')).toBeDisabled();
-  });
-
-  it('disables next button on last page', () => {
-    render(<MedicationResultsList {...defaultProps} items={[makeMed()]} page={3} totalPages={3} />);
-
-    expect(screen.getByText(/suivant/i).closest('button')).toBeDisabled();
+    expect(screen.getByText(/chargement/i)).toBeInTheDocument();
   });
 });

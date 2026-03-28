@@ -187,7 +187,7 @@ describe('listAllAdmin', () => {
   };
 
   beforeEach(() => {
-    mockRepositories.patientsRepo.listAllAdmin.mockResolvedValue([fakeAdminPatient]);
+    mockRepositories.patientsRepo.listAllAdmin.mockResolvedValue([fakeAdminPatient] as any);
     mockRepositories.patientsRepo.countAllAdmin.mockResolvedValue(1);
   });
 

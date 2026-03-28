@@ -4,6 +4,7 @@ import type { Column, Table } from '@tanstack/react-table';
 import { useDebounce } from '@uidotdev/usehooks';
 import { X } from 'lucide-react';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { DataTableDateFilter } from '@/components/data-table/data-table-date-filter';
 import { DataTableFacetedFilter } from '@/components/data-table/data-table-faceted-filter';
 import { DataTableSliderFilter } from '@/components/data-table/data-table-slider-filter';
@@ -28,6 +29,7 @@ export function DataTableToolbar<TData>({
   searchPlaceholder = 'Search…',
   ...props
 }: DataTableToolbarProps<TData>) {
+  const { t } = useTranslation();
   const isFiltered = table.getState().columnFilters.length > 0;
 
   const columns = React.useMemo(
@@ -87,7 +89,7 @@ export function DataTableToolbar<TData>({
             onClick={onReset}
           >
             <X />
-            Reset
+            {t('dataTable.resetFilters', 'Reset')}
           </Button>
         )}
       </div>

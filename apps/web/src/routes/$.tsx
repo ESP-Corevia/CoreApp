@@ -16,7 +16,9 @@ export default function CatchAll() {
     <ErrorScreen
       code="404"
       title={t('notFound.title', 'Page Not Found')}
-      description={<Trans key="notFound.description">The requested page could not be found.</Trans>}
+      description={
+        <Trans i18nKey="notFound.description">The requested page could not be found.</Trans>
+      }
     />
   );
 }
