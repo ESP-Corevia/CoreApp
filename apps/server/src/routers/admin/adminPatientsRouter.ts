@@ -145,7 +145,11 @@ export const updatePatient = adminProcedure
       return updated;
     } catch (error) {
       if (error instanceof TRPCError) throw error;
-      throw new TRPCError({ code: 'NOT_FOUND', message: 'Patient profile not found' });
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Failed to update patient profile',
+        cause: error,
+      });
     }
   });
 

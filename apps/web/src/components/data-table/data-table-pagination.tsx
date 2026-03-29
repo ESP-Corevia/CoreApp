@@ -72,8 +72,8 @@ export function DataTablePagination<TData>({
         </div>
 
         <div className="flex items-center justify-center font-medium text-sm tabular-nums">
-          {t('common.pageOf', 'Page {{current}} of {{total}}', {
-            current: currentPage,
+          {t('common.pageOf', 'Page {{page}} of {{total}}', {
+            page: currentPage,
             total: pageCount,
           })}
         </div>

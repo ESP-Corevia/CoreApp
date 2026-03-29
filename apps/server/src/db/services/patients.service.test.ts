@@ -147,12 +147,12 @@ describe('updateProfile', () => {
     expect(result).toEqual(updated);
   });
 
-  it('throws when the patient profile does not exist', async () => {
+  it('throws NOT_FOUND when the patient profile does not exist', async () => {
     mockRepositories.patientsRepo.findByUserId.mockResolvedValue(null);
 
     await expect(
       patientsService.updateProfile('no-user', { phone: '+33612345678' }),
-    ).rejects.toThrow('Patient profile not found');
+    ).rejects.toMatchObject({ code: 'NOT_FOUND', message: 'Patient profile not found' });
   });
 });
 

@@ -98,7 +98,6 @@ export function AppSidebar() {
       { title: t('nav.home', 'Home'), url: '/', icon: Home },
       { title: t('nav.dashboard', 'Dashboard'), url: '/dashboard', icon: LayoutDashboard },
       { title: t('nav.doctors', 'Doctors'), url: '/doctors', icon: Stethoscope },
-      { title: t('nav.patients', 'Patients'), url: '/patients', icon: Users },
       { title: t('nav.appointments', 'Appointments'), url: '/appointments', icon: Calendar },
     ],
     [t],
@@ -116,6 +115,7 @@ export function AppSidebar() {
 
     if (role === 'admin') {
       items.push(
+        { title: t('nav.patients', 'Patients'), url: '/patients', icon: Users },
         { title: t('nav.medications', 'Medications'), url: '/medications', icon: Pill },
         { title: t('nav.pillbox', 'Pillbox'), url: '/pillbox', icon: ClipboardList },
       );

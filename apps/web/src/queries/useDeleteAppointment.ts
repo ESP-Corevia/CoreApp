@@ -18,12 +18,8 @@ export function useDeleteAppointment() {
       toast.success(t('appointments.deleted', 'Appointment deleted successfully'));
       void queryClient.invalidateQueries(trpc.admin.listAppointments.queryFilter());
     },
-    onError: error => {
-      toast.error(
-        t('appointments.deleteError', 'Failed to delete appointment: {{message}}', {
-          message: error instanceof Error ? error.message : 'Unknown error',
-        }),
-      );
+    onError: () => {
+      toast.error(t('appointments.deleteError', 'Failed to delete appointment'));
     },
   });
 }

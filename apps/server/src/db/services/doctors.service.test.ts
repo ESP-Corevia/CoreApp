@@ -136,12 +136,12 @@ describe('updateProfile', () => {
     expect(result).toEqual(updated);
   });
 
-  it('throws when the doctor profile does not exist', async () => {
+  it('throws NOT_FOUND when the doctor profile does not exist', async () => {
     mockRepositories.doctorsRepo.getByUserId.mockResolvedValue(null as any);
 
     await expect(
       doctorsService.updateProfile('no-such-user', { specialty: 'Cardiology' }),
-    ).rejects.toThrow('Doctor profile not found');
+    ).rejects.toMatchObject({ code: 'NOT_FOUND', message: 'Doctor profile not found' });
 
     expect(mockRepositories.doctorsRepo.updateByUserId).not.toHaveBeenCalled();
   });

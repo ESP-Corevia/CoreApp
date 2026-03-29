@@ -60,7 +60,7 @@ describe('useDeleteAppointment', () => {
     result.current.mutate('appt-1');
 
     await waitFor(() => {
-      expect(toast.error).toHaveBeenCalledWith(expect.stringContaining('Appointment not found'));
+      expect(toast.error).toHaveBeenCalledWith('Failed to delete appointment');
     });
   });
 });

@@ -72,7 +72,7 @@ export const createPatientsService = (
   updateProfile: async (userId: string, data: Partial<PatientUpdate>) => {
     const patient = await repo.findByUserId(userId);
     if (!patient) {
-      throw new Error('Patient profile not found');
+      throw new TRPCError({ code: 'NOT_FOUND', message: 'Patient profile not found' });
     }
     return repo.updateByUserId(userId, data);
   },

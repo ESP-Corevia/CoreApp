@@ -105,7 +105,7 @@ export const createDoctorsService = (
   updateProfile: async (userId: string, data: UpdateDoctorProfileInput) => {
     const doctor = await repo.getByUserId(userId);
     if (!doctor) {
-      throw new Error('Doctor profile not found');
+      throw new TRPCError({ code: 'NOT_FOUND', message: 'Doctor profile not found' });
     }
     return repo.updateByUserId(userId, data);
   },

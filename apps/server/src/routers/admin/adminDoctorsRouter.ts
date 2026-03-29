@@ -74,7 +74,11 @@ export const updateDoctor = adminProcedure
       return updated;
     } catch (error) {
       if (error instanceof TRPCError) throw error;
-      throw new TRPCError({ code: 'NOT_FOUND', message: 'Doctor profile not found' });
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Failed to update doctor profile',
+        cause: error,
+      });
     }
   });
 

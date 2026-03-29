@@ -1,6 +1,8 @@
 import type { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import { and, asc, eq, ilike, or, sql } from 'drizzle-orm';
 import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
+
+import { escapeLike } from '../../utils/db';
 import { db as DB } from '../index';
 import type * as schema from '../schema';
 import { patients, patientUsersView, users } from '../schema';
@@ -52,7 +54,7 @@ export const createPatientsRepo = (db: DrizzleDB = DB) => ({
       conditions.push(eq(patientUsersView.gender, params.gender));
     }
     if (params.search) {
-      const pattern = `%${params.search}%`;
+      const pattern = `%${escapeLike(params.search)}%`;
       conditions.push(
         or(ilike(patientUsersView.name, pattern), ilike(patientUsersView.email, pattern)),
       );
@@ -79,7 +81,7 @@ export const createPatientsRepo = (db: DrizzleDB = DB) => ({
       conditions.push(eq(patientUsersView.gender, params.gender));
     }
     if (params.search) {
-      const pattern = `%${params.search}%`;
+      const pattern = `%${escapeLike(params.search)}%`;
       conditions.push(
         or(ilike(patientUsersView.name, pattern), ilike(patientUsersView.email, pattern)),
       );
