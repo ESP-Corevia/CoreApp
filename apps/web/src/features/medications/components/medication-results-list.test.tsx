@@ -23,7 +23,7 @@ vi.mock('./add-to-pillbox-dialog', () => ({
 }));
 
 const makeMed = (overrides: Partial<MedicationData> = {}): MedicationData => ({
-  externalId: '60234100',
+  externalId: overrides.externalId ?? overrides.cis ?? '60234100',
   cis: '60234100',
   cip: null,
   name: 'Doliprane',

@@ -64,7 +64,6 @@ describe('MedicationsSearch', () => {
     expect(useSearchMedications).toHaveBeenCalledWith(
       expect.objectContaining({
         query: '',
-        page: 1,
         limit: 12,
         enabled: true,
       }),

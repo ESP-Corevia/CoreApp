@@ -8,5 +8,12 @@ export default defineConfig({
     output: 'src/locales/{{language}}.json',
     functions: ['t', '*.t', 'i18next.t'],
     transComponents: ['Trans', 'Translation'],
+    preservePatterns: [
+      'appointments.statuses.*',
+      'appointments.statusActions.*',
+      'appointments.statusDescriptions.*',
+      'pillbox.weekdays.*',
+      'pillbox.moments.*',
+    ],
   },
 });

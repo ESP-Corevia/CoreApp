@@ -7,8 +7,6 @@ import { render } from '@/test/render';
 
 import PillboxDetailRoute from './detail';
 
-// ─── Mocks ───────────────────────────────────────────────────
-
 vi.mock('sonner', () => ({
   toast: { success: vi.fn(), error: vi.fn() },
 }));
@@ -65,13 +63,13 @@ vi.mock('../components/schedule-editor', () => ({
   ),
 }));
 
-// ─── Helpers ─────────────────────────────────────────────────
+// Helpers
 
 const fakeMedication = {
   id: 'med_1',
   patientId: 'u_1',
   medicationName: 'Doliprane 500mg',
-  medicationForm: 'comprimé',
+  medicationForm: 'comprimÃ©',
   dosageLabel: '500mg',
   instructions: 'Prendre au cours du repas',
   startDate: '2025-01-01',
@@ -86,7 +84,7 @@ const fakeMedication = {
       intakeTime: '08:00',
       intakeMoment: 'MORNING',
       quantity: '1',
-      unit: 'comprimé',
+      unit: 'comprimÃ©',
       notes: null,
     },
   ],
@@ -105,14 +103,13 @@ beforeEach(() => {
   mockDetailError = null;
 });
 
-// ─── Tests ───────────────────────────────────────────────────
+// Tests
 
 describe('PillboxDetailRoute', () => {
   describe('loading states', () => {
     it('shows loader when auth is loading', () => {
       mockAuthLoading = true;
       renderDetail();
-      // Loader component renders a dialog/overlay — check it doesn't show medication content
       expect(screen.queryByText('Doliprane 500mg')).not.toBeInTheDocument();
     });
 
@@ -120,7 +117,6 @@ describe('PillboxDetailRoute', () => {
       mockDetailLoading = true;
       mockDetailData = null;
       renderDetail();
-      // Skeletons are rendered — no medication name should appear
       expect(screen.queryByText('Doliprane 500mg')).not.toBeInTheDocument();
     });
 
@@ -142,7 +138,7 @@ describe('PillboxDetailRoute', () => {
     it('renders medication name and form', () => {
       renderDetail();
       expect(screen.getByText('Doliprane 500mg')).toBeInTheDocument();
-      expect(screen.getByText('comprimé')).toBeInTheDocument();
+      expect(screen.getByText('comprimÃ©')).toBeInTheDocument();
     });
 
     it('shows active badge', () => {
@@ -176,8 +172,8 @@ describe('PillboxDetailRoute', () => {
 
     it('renders start and end dates', () => {
       renderDetail();
-      expect(screen.getByText(/1 janvier 2025/i)).toBeInTheDocument();
-      expect(screen.getByText(/31 décembre 2025/i)).toBeInTheDocument();
+      expect(screen.getByText(/January 1, 2025/i)).toBeInTheDocument();
+      expect(screen.getByText(/December 31, 2025/i)).toBeInTheDocument();
     });
 
     it('hides end date when null', () => {
@@ -247,7 +243,6 @@ describe('PillboxDetailRoute', () => {
       renderDetail();
 
       await user.click(screen.getByText('Supprimer'));
-      // Click the confirm button in the dialog
       const confirmButtons = screen.getAllByText('Supprimer');
       await user.click(confirmButtons[confirmButtons.length - 1]);
 

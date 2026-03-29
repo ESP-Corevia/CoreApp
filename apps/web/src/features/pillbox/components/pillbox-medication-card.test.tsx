@@ -47,14 +47,14 @@ describe('PillboxMedicationCard', () => {
   it('renders start date', () => {
     render(<PillboxMedicationCard medication={baseMedication} />);
 
-    expect(screen.getByText(/1 janv. 2025/i)).toBeInTheDocument();
+    expect(screen.getByText(/Jan 1, 2025/i)).toBeInTheDocument();
   });
 
   it('renders end date when provided', () => {
     const med = { ...baseMedication, endDate: '2025-06-30' };
     render(<PillboxMedicationCard medication={med} />);
 
-    expect(screen.getByText(/30 juin 2025/i)).toBeInTheDocument();
+    expect(screen.getByText(/Jun 30, 2025/i)).toBeInTheDocument();
   });
 
   it('renders patient info for admin view', () => {

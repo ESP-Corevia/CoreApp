@@ -110,24 +110,22 @@
       "previous": "Précédent",
       "processing": "Traitement...",
       "retry": "Réessayer",
-      "rowCount": "{{count}} ligne(s)",
+      "rowCount_one": "{{count}} ligne",
+      "rowCount_many": "",
+      "rowCount_other": "{{count}} lignes",
       "rowsPerPage": "Lignes par page",
       "rowsSelected": "{{selected}} sur {{total}} ligne(s) sélectionnée(s).",
-      "save": "Enregistrer",
-      "unknown": "Inconnu"
+      "save": "Enregistrer"
     },
     "dashboard": {
       "loadUsersError": "Échec du chargement des utilisateurs : {{message}}",
       "userManagement": "Gestion des utilisateurs"
     },
     "dataTable": {
-      "clearFilters": "Effacer les filtres",
       "hide": "Masquer",
       "noColumns": "Aucune colonne trouvée.",
       "noResults": "Aucun résultat.",
-      "noResultsFilter": "Aucun résultat trouvé.",
       "resetFilters": "Réinitialiser",
-      "search": "Rechercher…",
       "searchColumns": "Rechercher des colonnes...",
       "sortAsc": "Croissant",
       "sortDesc": "Décroissant",
@@ -171,13 +169,6 @@
       "updated": "Profil médecin mis à jour avec succès",
       "updateError": "Échec de la mise à jour du médecin : {{message}}"
     },
-    "errorBoundary": {
-      "description": "Une erreur inattendue s'est produite.",
-      "heading": "Erreur",
-      "message": "Quelque chose s'est mal passé",
-      "stackTrace": "Trace de la pile",
-      "title": "Oups !"
-    },
     "errorScreen": {
       "permissionDenied": "Vous n'avez pas l'autorisation d'accéder à cette ressource."
     },
@@ -201,7 +192,9 @@
       "minChars": "Saisissez au moins 3 caractères pour lancer la recherche",
       "noResults": "Aucun médicament trouvé",
       "noResultsHint": "Essayez avec un autre terme de recherche",
-      "resultCount": "{{count}} résultat(s) trouvé(s)",
+      "resultCount_one": "{{count}} résultat trouvé",
+      "resultCount_many": "",
+      "resultCount_other": "{{count}} résultats trouvés",
       "searchError": "Erreur lors de la recherche",
       "searchErrorHint": "Vérifiez votre connexion et réessayez",
       "searchPlaceholder": "Rechercher un médicament (min. 3 caractères, sans accents)...",
@@ -222,8 +215,11 @@
       "main": "Principal",
       "medications": "Médicaments",
       "myPillbox": "Mon pilulier",
+      "page": "Page",
       "patients": "Patients",
       "pillbox": "Pilulier",
+      "pillboxDetails": "Détails du pilulier",
+      "profile": "Profil",
       "settings": "Paramètres",
       "workspace": "Espace de travail"
     },
@@ -261,7 +257,6 @@
         "allergies": "Allergies",
         "bloodType": "Groupe sanguin",
         "dateOfBirth": "Date de naissance",
-        "dateOfBirthInvalid": "Doit être au format AAAA-MM-JJ",
         "emergencyContact": "Contact d'urgence",
         "emergencyPhone": "Téléphone d'urgence",
         "female": "Femme",
@@ -329,10 +324,10 @@
       },
       "newSchedule": "Nouveau rappel",
       "noSchedules": "Aucun rappel configuré",
-      "notFound": "Traitement introuvable",
-      "notFoundHint": "Ce traitement n'existe pas ou a été supprimé",
       "notes": "Notes",
       "notesPlaceholder": "ex: Prendre au cours du repas",
+      "notFound": "Traitement introuvable",
+      "notFoundHint": "Ce traitement n'existe pas ou a été supprimé",
       "noTreatmentsAdmin": "Aucun traitement trouvé",
       "noTreatmentsAdminHint": "Aucun résultat pour vos critères de recherche",
       "patientId": "Patient",
@@ -488,7 +483,6 @@
       "title": "Créer un compte"
     },
     "table": {
-      "actions": "Actions",
       "address": "Adresse",
       "admin": "Admin",
       "createdAt": "Créé le",
