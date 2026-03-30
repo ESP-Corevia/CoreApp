@@ -3,6 +3,10 @@ import { index, pgTable } from 'drizzle-orm/pg-core';
 
 import { users } from './auth';
 
+/**
+ * Profil médecin : informations professionnelles liées à un utilisateur ayant le rôle "doctor".
+ * Relation 1:1 avec `users` via `userId`. Contient la spécialité, l'adresse et la ville du cabinet.
+ */
 export const doctors = pgTable(
   'doctors',
   t => ({
@@ -22,6 +26,7 @@ export const doctors = pgTable(
   ],
 );
 
+/** Relation Drizzle : chaque profil médecin est lié à un seul utilisateur. */
 export const doctorsRelations = relations(doctors, ({ one }) => ({
   user: one(users, {
     fields: [doctors.userId],

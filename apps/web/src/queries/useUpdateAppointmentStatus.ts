@@ -11,7 +11,10 @@ export function useUpdateAppointmentStatus() {
   const { t } = useTranslation();
 
   return useMutation({
-    mutationFn: (input: { id: string; status: 'CONFIRMED' | 'CANCELLED' | 'COMPLETED' }) => {
+    mutationFn: (input: {
+      id: string;
+      status: 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED';
+    }) => {
       return trpcClient.admin.updateAppointmentStatus.mutate(input);
     },
     onSuccess: () => {

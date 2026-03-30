@@ -6,6 +6,8 @@ import AppointmentsTable from './appointments-table';
 
 vi.mock('@/queries', () => ({
   useUpdateAppointmentStatus: vi.fn().mockReturnValue({ mutate: vi.fn(), isPending: false }),
+  useUpdateAppointment: vi.fn().mockReturnValue({ mutate: vi.fn(), isPending: false }),
+  useDeleteAppointment: vi.fn().mockReturnValue({ mutate: vi.fn(), isPending: false }),
 }));
 
 const mockAppointments: Appointment[] = [
@@ -61,9 +63,9 @@ describe('AppointmentsTable', () => {
 
     expect(getByText('John Doe')).toBeInTheDocument();
     expect(getByText('Dr. Smith')).toBeInTheDocument();
-    expect(getByText('Pending')).toBeInTheDocument();
+    expect(getByText('PENDING')).toBeInTheDocument();
     expect(getByText('Dr. Jones')).toBeInTheDocument();
-    expect(getByText('Confirmed')).toBeInTheDocument();
+    expect(getByText('CONFIRMED')).toBeInTheDocument();
   });
 
   it('renders fallback for null names', () => {

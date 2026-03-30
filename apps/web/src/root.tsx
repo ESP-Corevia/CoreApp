@@ -93,6 +93,7 @@ const ROUTES_WITH_LAYOUT = [
   '/',
   '/dashboard',
   '/doctors',
+  '/patients',
   '/appointments',
   '/medications',
   '/pillbox',

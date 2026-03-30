@@ -23,7 +23,7 @@ export default function ForbiddenRoute() {
   return (
     <ErrorScreen
       code="403"
-      title="Forbidden"
+      title={t('forbidden.title', 'Forbidden')}
       description={
         <Trans i18nKey="forbidden.description">
           Access to this resource is forbidden. You don&apos;t have the necessary permissions to

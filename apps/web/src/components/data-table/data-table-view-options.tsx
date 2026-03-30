@@ -3,6 +3,7 @@
 import type { Table } from '@tanstack/react-table';
 import { Check, Settings2 } from 'lucide-react';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import {
   Command,
@@ -20,6 +21,7 @@ interface DataTableViewOptionsProps<TData> extends React.ComponentProps<typeof P
 }
 
 export function DataTableViewOptions<TData>({ table, ...props }: DataTableViewOptionsProps<TData>) {
+  const { t } = useTranslation();
   const columns = React.useMemo(
     () =>
       table
@@ -39,14 +41,14 @@ export function DataTableViewOptions<TData>({ table, ...props }: DataTableViewOp
           className="ml-auto hidden h-8 font-normal lg:flex"
         >
           <Settings2 className="text-muted-foreground" />
-          View
+          {t('dataTable.view', 'View')}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-44 p-0" {...props}>
         <Command>
-          <CommandInput placeholder="Search columns..." />
+          <CommandInput placeholder={t('dataTable.searchColumns', 'Search columns...')} />
           <CommandList>
-            <CommandEmpty>No columns found.</CommandEmpty>
+            <CommandEmpty>{t('dataTable.noColumns', 'No columns found.')}</CommandEmpty>
             <CommandGroup>
               {columns.map(column => (
                 <CommandItem

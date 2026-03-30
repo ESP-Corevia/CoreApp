@@ -42,9 +42,9 @@ import { useAdminDeleteMedication, useAdminUpdateMedication, usePillboxDetail } 
 
 import ScheduleEditor from '../components/schedule-editor';
 
-function formatDate(dateStr: string): string {
+function formatDate(dateStr: string, locale = 'fr-FR'): string {
   try {
-    return new Date(dateStr).toLocaleDateString('fr-FR', {
+    return new Date(dateStr).toLocaleDateString(locale, {
       day: 'numeric',
       month: 'long',
       year: 'numeric',
@@ -83,7 +83,7 @@ export default function PillboxDetailRoute() {
 
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const {
     data: medication,
@@ -266,7 +266,7 @@ export default function PillboxDetailRoute() {
             </div>
             <Badge variant="outline" className="shrink-0 text-xs">
               <User className="mr-1 h-3 w-3" />
-              Patient
+              {t('table.patient', 'Patient')}
             </Badge>
           </CardContent>
         </Card>
@@ -455,7 +455,9 @@ export default function PillboxDetailRoute() {
                     <p className="font-medium text-muted-foreground text-xs uppercase tracking-wider">
                       {t('pillbox.startDate', 'Date de début')}
                     </p>
-                    <p className="mt-0.5 font-medium text-sm">{formatDate(medication.startDate)}</p>
+                    <p className="mt-0.5 font-medium text-sm">
+                      {formatDate(medication.startDate, i18n.language === 'fr' ? 'fr-FR' : 'en-US')}
+                    </p>
                   </div>
                 </div>
                 {medication.endDate && (
@@ -465,7 +467,9 @@ export default function PillboxDetailRoute() {
                       <p className="font-medium text-muted-foreground text-xs uppercase tracking-wider">
                         {t('pillbox.endDate', 'Date de fin')}
                       </p>
-                      <p className="mt-0.5 font-medium text-sm">{formatDate(medication.endDate)}</p>
+                      <p className="mt-0.5 font-medium text-sm">
+                        {formatDate(medication.endDate, i18n.language === 'fr' ? 'fr-FR' : 'en-US')}
+                      </p>
                     </div>
                   </div>
                 )}

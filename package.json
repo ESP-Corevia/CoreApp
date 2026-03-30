@@ -33,7 +33,9 @@
   "pnpm": {
     "overrides": {
       "h3": ">=1.15.6",
-      "glob": ">=11.1.0"
+      "glob": ">=11.1.0",
+      "path-to-regexp": ">=8.4.0",
+      "picomatch": ">=4.0.4"
     }
   },
   "engines": {

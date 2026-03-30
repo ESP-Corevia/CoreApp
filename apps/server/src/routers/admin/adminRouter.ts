@@ -1,9 +1,16 @@
 import { z } from 'zod';
 
 import { adminProcedure, router } from '../../middlewares';
-
-import { listAppointments, updateAppointmentStatus } from './adminAppointmentsRouter';
-import { listDoctors } from './adminDoctorsRouter';
+import {
+  createAppointment,
+  deleteAppointment,
+  listAppointments,
+  updateAppointment,
+  updateAppointmentStatus,
+} from './adminAppointmentsRouter';
+import { createDoctor, listDoctors, updateDoctor } from './adminDoctorsRouter';
+import { createPatient, deletePatient, listPatients, updatePatient } from './adminPatientsRouter';
+import { MAX_ADMIN_PER_PAGE } from './constants';
 
 export const adminRouter = router({
   isAdmin: adminProcedure
@@ -36,7 +43,7 @@ export const adminRouter = router({
     .input(
       z.object({
         page: z.number().int().positive(),
-        perPage: z.number().int().positive(),
+        perPage: z.number().int().positive().max(MAX_ADMIN_PER_PAGE),
 
         search: z.string().optional(),
         searchInFields: z.array(z.string()).default(['email', 'name']),
@@ -90,6 +97,15 @@ export const adminRouter = router({
       return res;
     }),
   listDoctors,
+  createDoctor,
+  updateDoctor,
+  listPatients,
+  createPatient,
+  updatePatient,
+  deletePatient,
   listAppointments,
+  createAppointment,
+  updateAppointment,
+  deleteAppointment,
   updateAppointmentStatus,
 });

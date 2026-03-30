@@ -35,7 +35,7 @@ describe('useListAppointments', () => {
         useListAppointments({
           page: 1,
           perPage: 10,
-          status: 'PENDING',
+          status: ['PENDING'],
           from: '2099-01-01',
           to: '2099-12-31',
           sort: 'dateDesc',
@@ -57,7 +57,7 @@ describe('useListAppointments', () => {
       page: 1,
       perPage: 10,
       search: undefined,
-      status: 'PENDING',
+      status: ['PENDING'],
       from: '2099-01-01',
       to: '2099-12-31',
       doctorId: undefined,

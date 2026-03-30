@@ -3,6 +3,7 @@ import { foreignKey, index, pgEnum, pgTable, unique } from 'drizzle-orm/pg-core'
 
 import { users } from './auth';
 
+/** Moment de la journée pour la prise d'un médicament. */
 export const intakeMomentEnum = pgEnum('intake_moment', [
   'MORNING',
   'NOON',
@@ -11,12 +12,20 @@ export const intakeMomentEnum = pgEnum('intake_moment', [
   'CUSTOM',
 ]);
 
+/** Statut d'une prise de médicament : en attente, pris ou sauté. */
 export const intakeStatusEnum = pgEnum('intake_status', ['PENDING', 'TAKEN', 'SKIPPED']);
 
+/**
+ * Médicaments prescrits/suivis par un patient.
+ * Chaque entrée représente un médicament actif ou passé dans le traitement du patient.
+ * Contient les infos du médicament (nom, forme, substances actives, codes CIS/CIP)
+ * ainsi que les dates de début/fin du traitement.
+ */
 export const patientMedications = pgTable(
   'patient_medications',
   t => ({
     id: t.uuid('id').defaultRandom().primaryKey(),
+    /** References users.id — the patient's user ID */
     patientId: t
       .uuid('patient_id')
       .notNull()
@@ -46,6 +55,12 @@ export const patientMedications = pgTable(
   ],
 );
 
+/**
+ * Planning de prises pour un médicament donné.
+ * Définit quand et combien le patient doit prendre son médicament
+ * (ex : 1 comprimé le matin à 08:00, tous les lundis).
+ * `weekday` est optionnel : null = tous les jours, sinon 0=dimanche..6=samedi.
+ */
 export const patientMedicationSchedules = pgTable(
   'patient_medication_schedules',
   t => ({
@@ -72,6 +87,12 @@ export const patientMedicationSchedules = pgTable(
   ],
 );
 
+/**
+ * Historique des prises effectives de médicaments.
+ * Chaque ligne correspond à une prise planifiée pour une date donnée.
+ * Le statut indique si le patient a pris (TAKEN), sauté (SKIPPED) ou n'a pas encore confirmé (PENDING).
+ * Contrainte unique sur (médicament, schedule, date) pour éviter les doublons.
+ */
 export const patientMedicationIntakes = pgTable(
   'patient_medication_intakes',
   t => ({
@@ -112,6 +133,7 @@ export const patientMedicationIntakes = pgTable(
   ],
 );
 
+/** Relations Drizzle : un médicament patient appartient à un utilisateur et possède plusieurs schedules et prises. */
 export const patientMedicationsRelations = relations(patientMedications, ({ one, many }) => ({
   user: one(users, {
     fields: [patientMedications.patientId],
@@ -121,6 +143,7 @@ export const patientMedicationsRelations = relations(patientMedications, ({ one,
   intakes: many(patientMedicationIntakes),
 }));
 
+/** Relation Drizzle : chaque schedule appartient à un médicament patient. */
 export const patientMedicationSchedulesRelations = relations(
   patientMedicationSchedules,
   ({ one }) => ({
@@ -131,6 +154,7 @@ export const patientMedicationSchedulesRelations = relations(
   }),
 );
 
+/** Relations Drizzle : chaque prise est liée à un médicament patient et optionnellement à un schedule. */
 export const patientMedicationIntakesRelations = relations(patientMedicationIntakes, ({ one }) => ({
   patientMedication: one(patientMedications, {
     fields: [patientMedicationIntakes.patientMedicationId],

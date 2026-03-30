@@ -2,7 +2,7 @@
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
 
 import { applyMigration, db, resetDb } from '../../../test/db';
-import { appointments, doctorBlocks, doctors, users } from '../schema';
+import { appointments, doctorBlocks, doctors, patients, users } from '../schema';
 
 import { createAppointmentsRepo } from './appointments.repository';
 
@@ -19,7 +19,7 @@ beforeAll(async () => {
 beforeEach(async () => {
   await resetDb();
 
-  const [user] = await db
+  const [patientUser] = await db
     .insert(users)
     .values({
       name: 'Patient Test',
@@ -28,17 +28,31 @@ beforeEach(async () => {
       createdAt: new Date(),
     })
     .returning({ id: users.id });
-  patientId = user.id;
+  patientId = patientUser.id;
 
-  const [doctor] = await db
-    .insert(doctors)
+  await db.insert(patients).values({
+    userId: patientUser.id,
+    dateOfBirth: '1990-01-01',
+    gender: 'MALE',
+  });
+
+  const [doctorUser] = await db
+    .insert(users)
     .values({
-      specialty: 'Cardiology',
-      address: '1 Rue de Test, Paris',
-      city: 'Paris',
+      name: 'Dr. Test',
+      email: 'doctor@test.com',
+      emailVerified: true,
+      createdAt: new Date(),
     })
-    .returning({ id: doctors.id });
-  doctorId = doctor.id;
+    .returning({ id: users.id });
+  doctorId = doctorUser.id;
+
+  await db.insert(doctors).values({
+    userId: doctorUser.id,
+    specialty: 'Cardiology',
+    address: '1 Rue de Test, Paris',
+    city: 'Paris',
+  });
 });
 
 describe('appointments.repository', () => {
@@ -320,6 +334,12 @@ describe('appointments.repository', () => {
         .returning({ id: users.id });
       patient2Id = patient2.id;
 
+      await db.insert(patients).values({
+        userId: patient2.id,
+        dateOfBirth: '1995-05-15',
+        gender: 'FEMALE',
+      });
+
       const [doctorUser] = await db
         .insert(users)
         .values({
@@ -330,16 +350,13 @@ describe('appointments.repository', () => {
         })
         .returning({ id: users.id });
 
-      const [doc2] = await db
-        .insert(doctors)
-        .values({
-          userId: doctorUser.id,
-          specialty: 'Dermatology',
-          address: '5 Rue Test, Lyon',
-          city: 'Lyon',
-        })
-        .returning({ id: doctors.id });
-      doctor2Id = doc2.id;
+      await db.insert(doctors).values({
+        userId: doctorUser.id,
+        specialty: 'Dermatology',
+        address: '5 Rue Test, Lyon',
+        city: 'Lyon',
+      });
+      doctor2Id = doctorUser.id;
 
       await db.insert(appointments).values([
         {
@@ -378,7 +395,7 @@ describe('appointments.repository', () => {
 
     it('filters by status', async () => {
       const items = await repo.listAll({
-        status: 'PENDING',
+        status: ['PENDING'],
         offset: 0,
         limit: 10,
         sort: 'dateAsc',
@@ -460,7 +477,7 @@ describe('appointments.repository', () => {
     });
 
     it('counts with status filter', async () => {
-      const count = await repo.countAll({ status: 'PENDING' });
+      const count = await repo.countAll({ status: ['PENDING'] });
       expect(count).toBe(1);
     });
 
@@ -489,6 +506,82 @@ describe('appointments.repository', () => {
 
     it('returns null for non-existing id', async () => {
       const result = await repo.updateStatus('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a99', 'CONFIRMED');
+      expect(result).toBeNull();
+    });
+  });
+
+  describe('update', () => {
+    it('updates fields and returns the updated row', async () => {
+      const created = await repo.createAppointmentAtomic({
+        doctorId,
+        patientId,
+        date: TEST_DATE,
+        time: '10:00',
+        reason: 'Checkup',
+      });
+      const apptId = ('appointment' in created && created.appointment?.id) as string;
+
+      const result = await repo.update(apptId, {
+        date: '2099-07-01',
+        time: '14:00',
+        reason: 'Follow-up',
+      });
+
+      expect(result).not.toBeNull();
+      expect(result?.id).toBe(apptId);
+      expect(result?.date).toBe('2099-07-01');
+      expect(result?.time).toBe('14:00');
+      expect(result?.reason).toBe('Follow-up');
+    });
+
+    it('updates only provided fields', async () => {
+      const created = await repo.createAppointmentAtomic({
+        doctorId,
+        patientId,
+        date: TEST_DATE,
+        time: '10:00',
+        reason: 'Checkup',
+      });
+      const apptId = ('appointment' in created && created.appointment?.id) as string;
+
+      const result = await repo.update(apptId, { reason: 'Updated reason' });
+
+      expect(result?.date).toBe(TEST_DATE);
+      expect(result?.time).toBe('10:00');
+      expect(result?.reason).toBe('Updated reason');
+    });
+
+    it('returns null for non-existing id', async () => {
+      const result = await repo.update('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a99', {
+        reason: 'Nope',
+      });
+      expect(result).toBeNull();
+    });
+  });
+
+  describe('deleteById', () => {
+    it('deletes the appointment and returns the deleted row', async () => {
+      const created = await repo.createAppointmentAtomic({
+        doctorId,
+        patientId,
+        date: TEST_DATE,
+        time: '10:00',
+      });
+      const apptId = ('appointment' in created && created.appointment?.id) as string;
+
+      const deleted = await repo.deleteById(apptId);
+
+      expect(deleted).not.toBeNull();
+      expect(deleted?.id).toBe(apptId);
+      expect(deleted?.status).toBe('PENDING');
+
+      // Verify it's actually gone
+      const fetched = await repo.getByIdWithDoctor(apptId);
+      expect(fetched).toBeNull();
+    });
+
+    it('returns null for non-existing id', async () => {
+      const result = await repo.deleteById('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a99');
       expect(result).toBeNull();
     });
   });

@@ -1,0 +1,6 @@
+DROP VIEW IF EXISTS "public"."patient_users_view";--> statement-breakpoint
+ALTER TABLE "patients" ALTER COLUMN "gender" SET DATA TYPE text;--> statement-breakpoint
+DROP TYPE "public"."gender";--> statement-breakpoint
+CREATE TYPE "public"."gender" AS ENUM('MALE', 'FEMALE');--> statement-breakpoint
+ALTER TABLE "patients" ALTER COLUMN "gender" SET DATA TYPE "public"."gender" USING "gender"::"public"."gender";--> statement-breakpoint
+CREATE VIEW "public"."patient_users_view" AS (select "users"."id" as "user_id", "users"."name", "users"."email", "users"."email_verified", "users"."image", "users"."role", "users"."banned", "users"."created_at", "users"."updated_at", "patients"."id" as "patient_id", "patients"."date_of_birth", "patients"."gender", "patients"."phone", "patients"."address" as "patient_address", "patients"."blood_type", "patients"."allergies", "patients"."emergency_contact_name", "patients"."emergency_contact_phone" from "users" inner join "patients" on "patients"."user_id" = "users"."id");

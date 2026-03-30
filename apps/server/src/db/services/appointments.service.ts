@@ -77,6 +77,12 @@ export const ListAppointmentsOutputSchema = z.object({
 });
 
 export const createAppointmentsService = (repo: ReturnType<typeof createAppointmentsRepo>) => ({
+  /**
+   * Récupère le détail d'un rendez-vous avec les infos du médecin.
+   * Vérifie que l'utilisateur est le patient concerné ou un admin.
+   * @throws NOT_FOUND si le rendez-vous n'existe pas.
+   * @throws FORBIDDEN si l'utilisateur n'est ni le patient ni un admin.
+   */
   getAppointmentDetail: async (userId: string, appointmentId: string, isAdmin: boolean) => {
     const appointment = await repo.getByIdWithDoctor(appointmentId);
 
@@ -97,6 +103,12 @@ export const createAppointmentsService = (repo: ReturnType<typeof createAppointm
     return appointment;
   },
 
+  /**
+   * Crée un rendez-vous pour un patient.
+   * Valide le créneau (slot de 30 min, pas dans le passé) puis délègue la création atomique au repo.
+   * @throws UNPROCESSABLE_CONTENT si le créneau est invalide ou dans le passé.
+   * @throws CONFLICT si le créneau est déjà pris ou bloqué par le médecin.
+   */
   createAppointment: async (
     patientId: string,
     input: z.infer<typeof CreateAppointmentInputSchema>,
@@ -105,7 +117,7 @@ export const createAppointmentsService = (repo: ReturnType<typeof createAppointm
     if (!BASE_SLOTS.includes(input.time)) {
       throw new TRPCError({
         code: 'UNPROCESSABLE_CONTENT',
-        message: `Invalid time slot: ${input.time}. Must be a valid 30-minute slot.`,
+        message: `Invalid time slot: ${input.time}. Allowed appointment slots are every 30 minutes from 08:00 to 17:30, excluding the break from 12:00 to 13:00.`,
       });
     }
 
@@ -143,6 +155,11 @@ export const createAppointmentsService = (repo: ReturnType<typeof createAppointm
     return result.appointment;
   },
 
+  /**
+   * Liste les rendez-vous du patient connecté avec pagination.
+   * Supporte le filtrage par statut et plage de dates.
+   * @throws BAD_REQUEST si `from` est postérieur à `to`.
+   */
   listMyAppointments: async (
     patientId: string,
     query: z.infer<typeof ListAppointmentsInputSchema>,
@@ -177,11 +194,15 @@ export const createAppointmentsService = (repo: ReturnType<typeof createAppointm
     return { items, page: query.page, limit: query.limit, total };
   },
 
+  /**
+   * Liste tous les rendez-vous (vue admin) avec pagination.
+   * Supporte le filtrage par statut, plage de dates, médecin et recherche textuelle.
+   */
   listAllAppointments: async (query: {
     page: number;
     perPage: number;
     search?: string;
-    status?: string;
+    status?: string[];
     from?: string;
     to?: string;
     doctorId?: string;
@@ -220,6 +241,123 @@ export const createAppointmentsService = (repo: ReturnType<typeof createAppointm
     };
   },
 
+  /**
+   * Crée un rendez-vous en tant qu'admin (pas de vérification de date passée).
+   * Valide le créneau puis délègue la création atomique au repo.
+   * @throws UNPROCESSABLE_CONTENT si le créneau est invalide.
+   * @throws CONFLICT si le créneau est déjà pris ou bloqué.
+   */
+  adminCreateAppointment: async (
+    input: z.infer<typeof CreateAppointmentInputSchema> & { patientId: string },
+  ) => {
+    if (!BASE_SLOTS.includes(input.time)) {
+      throw new TRPCError({
+        code: 'UNPROCESSABLE_CONTENT',
+        message: `Invalid time slot: ${input.time}. Allowed appointment slots are every 30 minutes from 08:00 to 17:30, excluding the break from 12:00 to 13:00.`,
+      });
+    }
+
+    const result = await repo.createAppointmentAtomic({
+      doctorId: input.doctorId,
+      patientId: input.patientId,
+      date: input.date,
+      time: input.time,
+      reason: input.reason,
+    });
+
+    if ('conflict' in result) {
+      throw new TRPCError({
+        code: 'CONFLICT',
+        message: 'This time slot is already booked',
+      });
+    }
+
+    if ('blocked' in result) {
+      throw new TRPCError({
+        code: 'CONFLICT',
+        message: 'This time slot is blocked by the doctor',
+      });
+    }
+
+    return result.appointment;
+  },
+
+  /**
+   * Met à jour un rendez-vous en tant qu'admin (date, heure, motif, médecin, patient).
+   * @throws NOT_FOUND si le rendez-vous n'existe pas.
+   * @throws UNPROCESSABLE_CONTENT si le nouveau créneau est invalide.
+   */
+  adminUpdateAppointment: async (
+    appointmentId: string,
+    input: {
+      date?: string;
+      time?: string;
+      reason?: string | null;
+      doctorId?: string;
+      patientId?: string;
+    },
+  ) => {
+    const appointment = await repo.getByIdWithDoctor(appointmentId);
+
+    if (!appointment) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'Appointment not found',
+      });
+    }
+
+    if (input.time && !BASE_SLOTS.includes(input.time)) {
+      throw new TRPCError({
+        code: 'UNPROCESSABLE_CONTENT',
+        message: `Invalid time slot: ${input.time}. Allowed appointment slots are every 30 minutes from 08:00 to 17:30, excluding the break from 12:00 to 13:00.`,
+      });
+    }
+
+    const updated = await repo.update(appointmentId, input);
+
+    if (!updated) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Failed to update appointment',
+      });
+    }
+
+    return updated;
+  },
+
+  /**
+   * Supprime un rendez-vous en tant qu'admin.
+   * @throws NOT_FOUND si le rendez-vous n'existe pas.
+   */
+  adminDeleteAppointment: async (appointmentId: string) => {
+    const appointment = await repo.getByIdWithDoctor(appointmentId);
+
+    if (!appointment) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'Appointment not found',
+      });
+    }
+
+    const deleted = await repo.deleteById(appointmentId);
+
+    if (!deleted) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Failed to delete appointment',
+      });
+    }
+
+    return deleted;
+  },
+
+  /**
+   * Change le statut d'un rendez-vous en respectant les transitions autorisées :
+   * PENDING → CONFIRMED | CANCELLED, CONFIRMED → COMPLETED | CANCELLED,
+   * CANCELLED → PENDING, COMPLETED → PENDING (réouverture par un admin).
+   * @throws NOT_FOUND si le rendez-vous n'existe pas.
+   * @throws BAD_REQUEST si la transition de statut est invalide.
+   */
   updateAppointmentStatus: async (appointmentId: string, newStatus: string) => {
     const appointment = await repo.getByIdWithDoctor(appointmentId);
 
@@ -235,8 +373,8 @@ export const createAppointmentsService = (repo: ReturnType<typeof createAppointm
     const validTransitions: Record<string, string[]> = {
       PENDING: ['CONFIRMED', 'CANCELLED'],
       CONFIRMED: ['COMPLETED', 'CANCELLED'],
-      CANCELLED: [],
-      COMPLETED: [],
+      CANCELLED: ['PENDING'],
+      COMPLETED: ['PENDING'],
     };
 
     if (!validTransitions[currentStatus]?.includes(newStatus)) {

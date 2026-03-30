@@ -3,8 +3,10 @@ import { index, pgEnum, pgTable } from 'drizzle-orm/pg-core';
 
 import { users } from './auth';
 
-export const genderEnum = pgEnum('gender', ['MALE', 'FEMALE', 'OTHER']);
+/** Genre du patient. */
+export const genderEnum = pgEnum('gender', ['MALE', 'FEMALE']);
 
+/** Groupe sanguin du patient. */
 export const bloodTypeEnum = pgEnum('blood_type', [
   'A+',
   'A-',
@@ -16,6 +18,11 @@ export const bloodTypeEnum = pgEnum('blood_type', [
   'O-',
 ]);
 
+/**
+ * Profil patient : informations médicales et personnelles liées à un utilisateur ayant le rôle "patient".
+ * Relation 1:1 avec `users` via `userId`. Contient date de naissance, genre, groupe sanguin,
+ * allergies et contact d'urgence.
+ */
 export const patients = pgTable(
   'patients',
   t => ({
@@ -40,6 +47,7 @@ export const patients = pgTable(
   ],
 );
 
+/** Relation Drizzle : chaque profil patient est lié à un seul utilisateur. */
 export const patientsRelations = relations(patients, ({ one }) => ({
   user: one(users, {
     fields: [patients.userId],

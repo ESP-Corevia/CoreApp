@@ -12,7 +12,7 @@ beforeEach(() => {
 const fakeDoctors = [
   {
     id: '00000000-0000-0000-0000-000000000001',
-    userId: null,
+    userId: 'u_0',
     name: 'Dr. Alice Martin',
     specialty: 'Cardiology',
     address: '10 Rue de Paris',

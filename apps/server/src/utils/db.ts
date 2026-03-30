@@ -98,7 +98,7 @@ export const operatorHandlers = {
 
   // special
   isRelativeToToday: (column: any, days: number) =>
-    sql`${column} >= NOW() - INTERVAL '${days} day'`,
+    sql`${column} >= NOW() - (${days} * INTERVAL '1 day')`,
 } as const;
 export const OperatorSchema = z.enum([
   'iLike',

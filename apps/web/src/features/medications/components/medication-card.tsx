@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import MedicationFormIcon from '@/components/medication-form-icon';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
 export interface MedicationData {
@@ -28,7 +27,6 @@ export interface MedicationData {
 
 interface MedicationCardProps {
   medication: MedicationData;
-
   onAdd: (medication: MedicationData) => void;
 }
 
@@ -38,19 +36,20 @@ export default function MedicationCard({ medication, onAdd }: MedicationCardProp
   const isActive = medication.status === 'Commercialisée';
 
   return (
-    <Card
+    <div
       className={cn(
-        'flex h-full flex-col border-l-[3px] transition-shadow hover:shadow-md',
+        'group relative flex h-full flex-col overflow-hidden rounded-xl border bg-card transition-all duration-200 hover:shadow-md',
         isActive
-          ? `border-l-teal-500 dark:border-l-teal-400`
-          : 'border-l-amber-400 dark:border-l-amber-500',
+          ? 'border-l-[3px] border-l-teal-500 dark:border-l-teal-400'
+          : 'border-l-[3px] border-l-amber-400 dark:border-l-amber-500',
       )}
     >
-      <CardHeader className="pb-2">
+      {/* Header */}
+      <div className="space-y-2 p-4 pb-2">
         <div className="flex items-start justify-between gap-2">
-          <div className="flex items-center gap-2">
+          <div className="flex items-start gap-2.5">
             <MedicationFormIcon iconKey={medication.iconKey} withBackground size="sm" />
-            <CardTitle className="font-semibold text-sm leading-snug">{medication.name}</CardTitle>
+            <h3 className="font-semibold text-sm leading-snug">{medication.name}</h3>
           </div>
           {medication.status && (
             <Badge
@@ -71,9 +70,10 @@ export default function MedicationCard({ medication, onAdd }: MedicationCardProp
             {[medication.form, medication.route].filter(Boolean).join(' — ')}
           </p>
         )}
-      </CardHeader>
+      </div>
 
-      <CardContent className="flex-1 space-y-3 pb-2">
+      {/* Body */}
+      <div className="flex-1 space-y-3 px-4 pb-3">
         {/* Active substances */}
         {medication.activeSubstances.length > 0 && (
           <div className="flex flex-wrap gap-1">
@@ -89,25 +89,24 @@ export default function MedicationCard({ medication, onAdd }: MedicationCardProp
           </div>
         )}
 
-        {/* Bottom info row */}
-        <div className="space-y-1.5">
+        {/* Meta info */}
+        <div className="space-y-1.5 text-muted-foreground text-xs">
           {medication.laboratory && (
-            <div className="flex items-center gap-1.5 text-muted-foreground text-xs">
-              <Building2 className="h-3.5 w-3.5 shrink-0" />
+            <div className="flex items-center gap-1.5">
+              <Building2 className="size-3.5 shrink-0" />
               <span className="truncate">{medication.laboratory}</span>
             </div>
           )}
-
           <div className="flex items-center gap-3">
             {medication.reimbursementRate && (
-              <div className="flex items-center gap-1 text-muted-foreground text-xs">
-                <Percent className="h-3.5 w-3.5 shrink-0" />
+              <div className="flex items-center gap-1">
+                <Percent className="size-3.5 shrink-0" />
                 <span>{medication.reimbursementRate}</span>
               </div>
             )}
             {medication.price != null && (
-              <div className="flex items-center gap-1 text-muted-foreground text-xs">
-                <Euro className="h-3.5 w-3.5 shrink-0" />
+              <div className="flex items-center gap-1">
+                <Euro className="size-3.5 shrink-0" />
                 <span>
                   {medication.price} {t('medications.currency', '\u20ac')}
                 </span>
@@ -115,19 +114,20 @@ export default function MedicationCard({ medication, onAdd }: MedicationCardProp
             )}
           </div>
         </div>
-      </CardContent>
+      </div>
 
-      <CardFooter className="pt-0">
+      {/* Footer */}
+      <div className="border-t px-4 py-3">
         <Button
-          variant="outline"
+          variant="ghost"
           size="sm"
-          className="w-full border-teal-200 text-teal-700 hover:bg-teal-50 hover:text-teal-800 dark:border-teal-800 dark:text-teal-300 dark:hover:bg-teal-950/40 dark:hover:text-teal-200"
+          className="w-full text-teal-700 hover:bg-teal-50 hover:text-teal-800 dark:text-teal-300 dark:hover:bg-teal-950/40 dark:hover:text-teal-200"
           onClick={() => onAdd(medication)}
         >
-          <Plus className="mr-2 h-4 w-4" />
+          <Plus className="mr-2 size-4" />
           {t('medications.addToPillbox', 'Ajouter au pilulier')}
         </Button>
-      </CardFooter>
-    </Card>
+      </div>
+    </div>
   );
 }

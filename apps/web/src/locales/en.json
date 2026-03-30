@@ -10,16 +10,76 @@
       "cancel": "Cancel",
       "complete": "Complete",
       "confirm": "Confirm",
+      "create": "Create Appointment",
+      "created": "Appointment created successfully",
+      "createDialog": {
+        "description": "Create a new appointment for a patient with a doctor.",
+        "title": "New Appointment"
+      },
+      "createError": "Failed to create appointment: {{message}}",
+      "creating": "Creating...",
+      "delete": "Delete",
+      "deleted": "Appointment deleted successfully",
+      "deleteDialog": {
+        "description": "Are you sure you want to delete the appointment for {{patient}} with {{doctor}} on {{date}} at {{time}}? This action cannot be undone.",
+        "title": "Delete Appointment"
+      },
+      "deleteError": "Failed to delete appointment: {{message}}",
+      "deleting": "Deleting...",
+      "edit": "Edit",
+      "editDialog": {
+        "description": "Update appointment for {{patient}} with {{doctor}}.",
+        "title": "Edit Appointment"
+      },
+      "form": {
+        "date": "Date",
+        "dateFormat": "Date must be YYYY-MM-DD",
+        "doctorId": "Doctor ID",
+        "doctorIdPlaceholder": "Enter doctor UUID",
+        "doctorIdRequired": "Valid doctor ID is required",
+        "patientId": "Patient ID",
+        "patientIdPlaceholder": "Enter patient UUID",
+        "patientIdRequired": "Valid patient ID is required",
+        "reason": "Reason",
+        "reasonPlaceholder": "Reason for the appointment (optional)",
+        "selectTime": "Select time",
+        "time": "Time",
+        "timeRequired": "Time is required"
+      },
       "loadError": "Failed to load appointments: {{message}}",
       "openMenu": "Open appointment menu",
+      "reopen": "Reopen",
+      "save": "Save Changes",
+      "saving": "Saving...",
+      "search": "Search by patient or doctor name…",
+      "statusActions": {
+        "CANCELLED": "Cancel",
+        "COMPLETED": "Complete",
+        "CONFIRMED": "Confirm",
+        "PENDING": "Reopen"
+      },
+      "statusDescriptions": {
+        "CANCELLED": "cancel this appointment",
+        "COMPLETED": "mark this appointment as completed",
+        "CONFIRMED": "confirm this appointment",
+        "PENDING": "reopen this appointment"
+      },
       "statusDialog": {
         "confirm": "{{action}}",
         "description": "Are you sure you want to {{action}}? Patient: {{patient}}, Doctor: {{doctor}}, Date: {{date}} at {{time}}.",
         "title": "{{action}} Appointment"
       },
+      "statuses": {
+        "CANCELLED": "Cancelled",
+        "COMPLETED": "Completed",
+        "CONFIRMED": "Confirmed",
+        "PENDING": "Pending"
+      },
       "statusUpdated": "Appointment status updated successfully",
       "statusUpdateError": "Failed to update status: {{message}}",
-      "title": "Appointments Management"
+      "title": "Appointments Management",
+      "updated": "Appointment updated successfully",
+      "updateError": "Failed to update appointment: {{message}}"
     },
     "banUserDialog": {
       "banning": "Banning...",
@@ -44,11 +104,16 @@
     },
     "common": {
       "cancel": "Cancel",
+      "loadingMore": "Loading...",
       "next": "Next",
       "pageOf": "Page {{page}} of {{total}}",
       "previous": "Previous",
       "processing": "Processing...",
       "retry": "Retry",
+      "rowCount_one": "{{count}} row",
+      "rowCount_other": "{{count}} rows",
+      "rowsPerPage": "Rows per page",
+      "rowsSelected": "{{selected}} of {{total}} row(s) selected.",
       "save": "Save"
     },
     "dashboard": {
@@ -56,20 +121,61 @@
       "userManagement": "Users Management"
     },
     "dataTable": {
-      "noResults": "No results."
+      "hide": "Hide",
+      "noColumns": "No columns found.",
+      "noResults": "No results.",
+      "resetFilters": "Reset",
+      "searchColumns": "Search columns...",
+      "sortAsc": "Asc",
+      "sortDesc": "Desc",
+      "sortReset": "Reset",
+      "view": "View"
     },
     "doctors": {
+      "created": "Doctor profile created successfully",
+      "createDialog": {
+        "description": "Enter the user UUID and doctor details. The user must already have the role \"doctor\".",
+        "title": "Create Doctor Profile"
+      },
+      "createDoctor": "Create Doctor",
+      "createError": "Failed to create doctor: {{message}}",
+      "createProfile": "Create Doctor Profile",
+      "creating": "Creating...",
+      "edit": "Edit Profile",
+      "editDialog": {
+        "description": "Update profile for {{name}}.",
+        "title": "Edit Doctor Profile"
+      },
+      "form": {
+        "address": "Address",
+        "addressPlaceholder": "e.g. 10 Rue de la Paix",
+        "addressRequired": "Address is required",
+        "city": "City",
+        "cityPlaceholder": "e.g. Paris",
+        "cityRequired": "City is required",
+        "specialty": "Specialty",
+        "specialtyPlaceholder": "e.g. Cardiology",
+        "specialtyRequired": "Specialty is required",
+        "userId": "User UUID",
+        "userIdInvalid": "Must be a valid UUID"
+      },
       "loadError": "Failed to load doctors: {{message}}",
-      "title": "Doctors Management"
+      "openMenu": "Open doctor menu",
+      "save": "Save Changes",
+      "saving": "Saving...",
+      "searchPlaceholder": "Search by name or specialty…",
+      "title": "Doctors Management",
+      "updated": "Doctor profile updated successfully",
+      "updateError": "Failed to update doctor: {{message}}"
     },
     "errorScreen": {
       "permissionDenied": "You do not have permission to access that resource."
     },
     "forbidden": {
       "description": "Access to this resource is forbidden. You don't have the necessary permissions to view this page.",
-      "goBackHome": "Go Back Home"
+      "goBackHome": "Go Back Home",
+      "title": "Forbidden"
     },
-    "Go Back Home": "Go Back Home",
     "HydrateFallback": {
       "loading": "Loading…"
     },
@@ -81,9 +187,12 @@
       "addToPillbox": "Add to pillbox",
       "currency": "€",
       "disclaimer": "The information displayed is for informational purposes only. Always consult a healthcare professional before starting, changing, or stopping a treatment.",
+      "endOfResults": "End of results",
       "minChars": "Enter at least 3 characters to search",
       "noResults": "No medications found",
       "noResultsHint": "Try a different search term",
+      "resultCount_one": "{{count}} result found",
+      "resultCount_other": "{{count}} results found",
       "searchError": "Search error",
       "searchErrorHint": "Check your connection and try again",
       "searchPlaceholder": "Search a medication (min. 3 characters, without accents)...",
@@ -96,8 +205,73 @@
       "system": "System",
       "toggleTheme": "Toggle theme"
     },
+    "nav": {
+      "appointments": "Appointments",
+      "dashboard": "Dashboard",
+      "doctors": "Doctors",
+      "home": "Home",
+      "main": "Main",
+      "medications": "Medications",
+      "myPillbox": "My Pillbox",
+      "page": "Page",
+      "patients": "Patients",
+      "pillbox": "Pillbox",
+      "pillboxDetails": "Pillbox Details",
+      "profile": "Profile",
+      "settings": "Settings",
+      "workspace": "Workspace"
+    },
     "notFound": {
+      "description": "The requested page could not be found.",
       "title": "Page Not Found"
+    },
+    "patients": {
+      "copyId": "Copy ID",
+      "created": "Patient profile created successfully",
+      "createDialog": {
+        "description": "Enter the user UUID and patient details. The user must already have the role \"patient\".",
+        "title": "Create Patient Profile"
+      },
+      "createError": "Failed to create patient: {{message}}",
+      "createPatient": "Create Patient",
+      "createProfile": "Create Patient Profile",
+      "creating": "Creating...",
+      "delete": "Delete",
+      "deleted": "Patient profile deleted successfully",
+      "deleteDialog": {
+        "description": "Are you sure you want to delete the patient profile for {{name}}? This will remove their medical data but not their user account.",
+        "title": "Delete Patient Profile"
+      },
+      "deleteError": "Failed to delete patient: {{message}}",
+      "deleteProfile": "Delete Profile",
+      "deleting": "Deleting...",
+      "edit": "Edit Profile",
+      "editDialog": {
+        "description": "Update profile for {{name}}.",
+        "title": "Edit Patient Profile"
+      },
+      "form": {
+        "address": "Address",
+        "allergies": "Allergies",
+        "bloodType": "Blood Type",
+        "dateOfBirth": "Date of Birth",
+        "emergencyContact": "Emergency Contact",
+        "emergencyPhone": "Emergency Phone",
+        "female": "Female",
+        "gender": "Gender",
+        "male": "Male",
+        "phone": "Phone",
+        "userId": "User UUID",
+        "userIdInvalid": "Must be a valid UUID"
+      },
+      "loadError": "Failed to load patients: {{message}}",
+      "openMenu": "Open patient menu",
+      "save": "Save Changes",
+      "saving": "Saving...",
+      "searchPlaceholder": "Search by name or email…",
+      "title": "Patients Management",
+      "updated": "Patient profile updated successfully",
+      "updateError": "Failed to update patient: {{message}}"
     },
     "pillbox": {
       "active": "Active",
@@ -148,6 +322,8 @@
       },
       "newSchedule": "New reminder",
       "noSchedules": "No reminders configured",
+      "notes": "Notes",
+      "notesPlaceholder": "e.g. Take with meals",
       "notFound": "Treatment not found",
       "notFoundHint": "This treatment does not exist or has been deleted",
       "noTreatmentsAdmin": "No treatments found",
@@ -169,7 +345,18 @@
       "searchPlaceholder": "Search a patient or medication...",
       "startDate": "Start date",
       "startDateRequired": "Start date is required",
-      "unit": "Unit"
+      "unit": "Unit",
+      "weekday": "Day",
+      "weekdays": {
+        "0": "Sunday",
+        "1": "Monday",
+        "2": "Tuesday",
+        "3": "Wednesday",
+        "4": "Thursday",
+        "5": "Friday",
+        "6": "Saturday",
+        "every": "Every day"
+      }
     },
     "profile": {
       "accountStatus": "Account Status",
@@ -287,12 +474,29 @@
         },
         "submit": "Sign Up"
       },
+      "submitting": "Submitting...",
       "success": "Sign up successful",
       "switchToSignIn": "Already have an account? Sign In",
       "title": "Create Account"
     },
-    "The requested page could not be found": {
-      "": "The requested page could not be found."
+    "table": {
+      "address": "Address",
+      "admin": "Admin",
+      "createdAt": "Created At",
+      "date": "Date",
+      "doctor": "Doctor",
+      "email": "Email",
+      "id": "ID",
+      "name": "Name",
+      "no": "No",
+      "patient": "Patient",
+      "phone": "Phone",
+      "reason": "Reason",
+      "role": "Role",
+      "status": "Status",
+      "time": "Time",
+      "updatedAt": "Updated At",
+      "yes": "Yes"
     },
     "useImpersonateUser": {
       "failedToImpersonate": "Failed to impersonate user: {{message}}",
@@ -300,8 +504,10 @@
     },
     "UserActionsMenu": {
       "banUser": "Ban User",
+      "copyId": "Copy ID",
       "deleteUser": "Delete User",
       "editUser": "Edit User",
+      "idCopied": "User ID copied to clipboard",
       "impersonate": "Impersonate",
       "openUserMenu": "Open user menu",
       "revokeSessions": "Revoke all Sessions",
@@ -364,6 +570,9 @@
     "userMenu": {
       "signIn": "Sign In",
       "signOut": "Sign Out"
+    },
+    "users": {
+      "idCopied": "User ID copied to clipboard"
     },
     "userSetPasswordModal": {
       "cancel": "Cancel",

@@ -3,7 +3,7 @@ import { and, asc, desc, eq, gte, ilike, inArray, lte, or, sql } from 'drizzle-o
 import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 
 import type * as schema from '../schema';
-import { appointments, doctorBlocks, doctors, users } from '../schema';
+import { appointments, doctorBlocks, doctorUsersView, patientUsersView } from '../schema';
 
 type DrizzleDB = PostgresJsDatabase<typeof schema>;
 
@@ -12,7 +12,7 @@ export interface CreateAppointmentInput {
   patientId: string;
   date: string;
   time: string;
-  reason?: string;
+  reason?: string | null;
 }
 
 export interface ListByPatientParams {
@@ -26,7 +26,7 @@ export interface ListByPatientParams {
 }
 
 export interface ListAllParams {
-  status?: string;
+  status?: string[];
   from?: string;
   to?: string;
   doctorId?: string;
@@ -39,8 +39,8 @@ export interface ListAllParams {
 function buildAllFilters(params: ListAllParams) {
   const conditions = [];
 
-  if (params.status) {
-    conditions.push(eq(appointments.status, params.status as any));
+  if (params.status && params.status.length > 0) {
+    conditions.push(inArray(appointments.status, params.status as any));
   }
   if (params.from) {
     conditions.push(gte(appointments.date, params.from));
@@ -54,7 +54,7 @@ function buildAllFilters(params: ListAllParams) {
   if (params.search) {
     const pattern = `%${params.search}%`;
     conditions.push(
-      or(ilike(sql`doctor_user.name`, pattern), ilike(sql`patient_user.name`, pattern)),
+      or(ilike(doctorUsersView.name, pattern), ilike(patientUsersView.name, pattern)),
     );
   }
 
@@ -89,6 +89,10 @@ function buildOrderBy(sort: ListByPatientParams['sort']) {
 }
 
 export const createAppointmentsRepo = (db: DrizzleDB) => ({
+  /**
+   * Récupère un rendez-vous par son ID avec les infos du médecin (nom, spécialité, adresse).
+   * @returns Le rendez-vous avec le profil médecin joint, ou `null` si introuvable.
+   */
   getByIdWithDoctor: async (id: string) => {
     const [row] = await db
       .select({
@@ -102,21 +106,24 @@ export const createAppointmentsRepo = (db: DrizzleDB) => ({
         createdAt: appointments.createdAt,
         updatedAt: appointments.updatedAt,
         doctor: {
-          id: doctors.id,
-          name: users.name,
-          specialty: doctors.specialty,
-          address: doctors.address,
+          id: doctorUsersView.doctorId,
+          name: doctorUsersView.name,
+          specialty: doctorUsersView.specialty,
+          address: doctorUsersView.doctorAddress,
         },
       })
       .from(appointments)
-      .innerJoin(doctors, eq(appointments.doctorId, doctors.id))
-      .leftJoin(users, eq(doctors.userId, users.id))
+      .innerJoin(doctorUsersView, eq(appointments.doctorId, doctorUsersView.userId))
       .where(eq(appointments.id, id))
       .limit(1);
 
     return row ?? null;
   },
 
+  /**
+   * Liste les rendez-vous d'un patient avec les infos du médecin.
+   * Supporte le filtrage par statut et plage de dates, le tri et la pagination.
+   */
   listByPatient: async (params: ListByPatientParams) => {
     const where = buildPatientFilters(params);
     const order = buildOrderBy(params.sort);
@@ -131,21 +138,24 @@ export const createAppointmentsRepo = (db: DrizzleDB) => ({
         status: appointments.status,
         reason: appointments.reason,
         doctor: {
-          id: doctors.id,
-          name: users.name,
-          specialty: doctors.specialty,
-          address: doctors.address,
+          id: doctorUsersView.doctorId,
+          name: doctorUsersView.name,
+          specialty: doctorUsersView.specialty,
+          address: doctorUsersView.doctorAddress,
         },
       })
       .from(appointments)
-      .innerJoin(doctors, eq(appointments.doctorId, doctors.id))
-      .leftJoin(users, eq(doctors.userId, users.id))
+      .innerJoin(doctorUsersView, eq(appointments.doctorId, doctorUsersView.userId))
       .where(where)
       .orderBy(...order)
       .limit(params.limit)
       .offset(params.offset);
   },
 
+  /**
+   * Compte le nombre total de rendez-vous d'un patient (mêmes filtres que `listByPatient`, sans pagination).
+   * Utilisé pour calculer le nombre total de pages côté client.
+   */
   countByPatient: async (params: Omit<ListByPatientParams, 'offset' | 'limit' | 'sort'>) => {
     const where = buildPatientFilters({ ...params, offset: 0, limit: 0, sort: 'dateDesc' });
 
@@ -154,13 +164,11 @@ export const createAppointmentsRepo = (db: DrizzleDB) => ({
     return Number(row.count);
   },
 
+  /**
+   * Liste tous les rendez-vous (vue admin) avec les noms du médecin et du patient.
+   * Supporte le filtrage par statut, plage de dates, médecin et recherche textuelle (nom médecin/patient).
+   */
   listAll: async (params: ListAllParams) => {
-    const doctorUser = db.select({ id: users.id, name: users.name }).from(users).as('doctor_user');
-    const patientUser = db
-      .select({ id: users.id, name: users.name })
-      .from(users)
-      .as('patient_user');
-
     const where = buildAllFilters(params);
     const order = buildOrderBy(params.sort);
 
@@ -174,39 +182,39 @@ export const createAppointmentsRepo = (db: DrizzleDB) => ({
         status: appointments.status,
         reason: appointments.reason,
         createdAt: appointments.createdAt,
-        doctorName: doctorUser.name,
-        patientName: patientUser.name,
+        doctorName: doctorUsersView.name,
+        patientName: patientUsersView.name,
       })
       .from(appointments)
-      .innerJoin(doctors, eq(appointments.doctorId, doctors.id))
-      .leftJoin(doctorUser, eq(doctors.userId, doctorUser.id))
-      .leftJoin(patientUser, eq(appointments.patientId, patientUser.id))
+      .innerJoin(doctorUsersView, eq(appointments.doctorId, doctorUsersView.userId))
+      .leftJoin(patientUsersView, eq(appointments.patientId, patientUsersView.userId))
       .where(where)
       .orderBy(...order)
       .limit(params.limit)
       .offset(params.offset);
   },
 
+  /**
+   * Compte le nombre total de rendez-vous (mêmes filtres que `listAll`, sans pagination).
+   * Utilisé pour calculer le nombre total de pages côté admin.
+   */
   countAll: async (params: Omit<ListAllParams, 'offset' | 'limit' | 'sort'>) => {
-    const doctorUser = db.select({ id: users.id, name: users.name }).from(users).as('doctor_user');
-    const patientUser = db
-      .select({ id: users.id, name: users.name })
-      .from(users)
-      .as('patient_user');
-
     const where = buildAllFilters({ ...params, offset: 0, limit: 0, sort: 'dateDesc' });
 
     const [row] = await db
       .select({ count: sql<number>`count(*)` })
       .from(appointments)
-      .innerJoin(doctors, eq(appointments.doctorId, doctors.id))
-      .leftJoin(doctorUser, eq(doctors.userId, doctorUser.id))
-      .leftJoin(patientUser, eq(appointments.patientId, patientUser.id))
+      .innerJoin(doctorUsersView, eq(appointments.doctorId, doctorUsersView.userId))
+      .leftJoin(patientUsersView, eq(appointments.patientId, patientUsersView.userId))
       .where(where);
 
     return Number(row.count);
   },
 
+  /**
+   * Met à jour uniquement le statut d'un rendez-vous (PENDING → CONFIRMED, CANCELLED, etc.).
+   * @returns Le rendez-vous mis à jour, ou `null` si l'ID n'existe pas.
+   */
   updateStatus: async (id: string, status: string) => {
     const [row] = await db
       .update(appointments)
@@ -224,6 +232,57 @@ export const createAppointmentsRepo = (db: DrizzleDB) => ({
     return row ?? null;
   },
 
+  /**
+   * Met à jour partiellement un rendez-vous (médecin, patient, date, heure, motif).
+   * @returns Le rendez-vous mis à jour, ou `null` si l'ID n'existe pas.
+   */
+  update: async (
+    id: string,
+    data: Partial<
+      Pick<CreateAppointmentInput, 'doctorId' | 'patientId' | 'date' | 'time' | 'reason'>
+    >,
+  ) => {
+    const [row] = await db
+      .update(appointments)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(appointments.id, id))
+      .returning({
+        id: appointments.id,
+        doctorId: appointments.doctorId,
+        patientId: appointments.patientId,
+        date: appointments.date,
+        time: appointments.time,
+        status: appointments.status,
+        reason: appointments.reason,
+      });
+
+    return row ?? null;
+  },
+
+  /**
+   * Supprime un rendez-vous par son ID.
+   * @returns Le rendez-vous supprimé, ou `null` si l'ID n'existe pas.
+   */
+  deleteById: async (id: string) => {
+    const [row] = await db.delete(appointments).where(eq(appointments.id, id)).returning({
+      id: appointments.id,
+      doctorId: appointments.doctorId,
+      patientId: appointments.patientId,
+      date: appointments.date,
+      time: appointments.time,
+      status: appointments.status,
+    });
+
+    return row ?? null;
+  },
+
+  /**
+   * Crée un rendez-vous de manière atomique dans une transaction.
+   * Vérifie qu'il n'existe pas déjà un rendez-vous actif (PENDING/CONFIRMED) sur le même créneau,
+   * et qu'aucun bloc d'indisponibilité du médecin ne couvre ce créneau.
+   * @returns `{ appointment }` en cas de succès, `{ conflict: true }` si le créneau est déjà pris,
+   *          ou `{ blocked: true }` si le médecin est indisponible.
+   */
   createAppointmentAtomic: async (input: CreateAppointmentInput) => {
     return await db.transaction(
       async tx => {

@@ -3,10 +3,14 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { mockRepositories } from '../../../test/repositories';
+import { DoctorProfileAlreadyExistsError } from '../repositories/doctors.repository';
 
 import { createDoctorsService } from './doctors.service';
 
-const doctorsService = createDoctorsService(mockRepositories.doctorsRepo);
+const doctorsService = createDoctorsService(
+  mockRepositories.doctorsRepo,
+  mockRepositories.usersRepo,
+);
 
 beforeEach(() => vi.clearAllMocks());
 afterEach(() => vi.restoreAllMocks());
@@ -133,12 +137,12 @@ describe('updateProfile', () => {
     expect(result).toEqual(updated);
   });
 
-  it('throws when the doctor profile does not exist', async () => {
+  it('throws NOT_FOUND when the doctor profile does not exist', async () => {
     mockRepositories.doctorsRepo.getByUserId.mockResolvedValue(null as any);
 
     await expect(
       doctorsService.updateProfile('no-such-user', { specialty: 'Cardiology' }),
-    ).rejects.toThrow('Doctor profile not found');
+    ).rejects.toMatchObject({ code: 'NOT_FOUND', message: 'Doctor profile not found' });
 
     expect(mockRepositories.doctorsRepo.updateByUserId).not.toHaveBeenCalled();
   });
@@ -234,12 +238,60 @@ describe('listAllAdmin', () => {
   });
 });
 
+describe('createProfile', () => {
+  const createData = { specialty: 'Cardiology', address: '10 Rue Test', city: 'Paris' };
+  const fakeCreated = { id: 'doc-new', userId: 'user-1', ...createData };
+
+  it('creates a doctor profile for a user with role doctor', async () => {
+    mockRepositories.usersRepo.findById.mockResolvedValue({ id: 'user-1', role: 'doctor' } as any);
+    mockRepositories.doctorsRepo.createByUserId.mockResolvedValue(fakeCreated as any);
+
+    const result = await doctorsService.createProfile('user-1', createData);
+
+    expect(mockRepositories.usersRepo.findById).toHaveBeenCalledWith({ id: 'user-1' });
+    expect(mockRepositories.doctorsRepo.createByUserId).toHaveBeenCalledWith('user-1', createData);
+    expect(mockRepositories.doctorsRepo.getByUserId).not.toHaveBeenCalled();
+    expect(result).toEqual(fakeCreated);
+  });
+
+  it('throws NOT_FOUND when user does not exist', async () => {
+    mockRepositories.usersRepo.findById.mockResolvedValue(undefined as any);
+
+    await expect(doctorsService.createProfile('no-user', createData)).rejects.toMatchObject({
+      code: 'NOT_FOUND',
+    });
+  });
+
+  it('throws BAD_REQUEST when user role is not doctor', async () => {
+    mockRepositories.usersRepo.findById.mockResolvedValue({ id: 'user-1', role: 'patient' } as any);
+
+    await expect(doctorsService.createProfile('user-1', createData)).rejects.toMatchObject({
+      code: 'BAD_REQUEST',
+    });
+  });
+
+  it('throws CONFLICT when doctor profile already exists', async () => {
+    mockRepositories.usersRepo.findById.mockResolvedValue({ id: 'user-1', role: 'doctor' } as any);
+    mockRepositories.doctorsRepo.createByUserId.mockRejectedValue(
+      new DoctorProfileAlreadyExistsError(),
+    );
+
+    await expect(doctorsService.createProfile('user-1', createData)).rejects.toMatchObject({
+      code: 'CONFLICT',
+      message: 'Doctor profile already exists',
+    });
+
+    expect(mockRepositories.doctorsRepo.getByUserId).not.toHaveBeenCalled();
+  });
+});
+
 describe('service creation', () => {
   it('can be created with required dependencies', () => {
-    const service = createDoctorsService(mockRepositories.doctorsRepo);
+    const service = createDoctorsService(mockRepositories.doctorsRepo, mockRepositories.usersRepo);
     expect(service).toBeDefined();
     expect(typeof service.listBookable).toBe('function');
     expect(typeof service.getByUserId).toBe('function');
     expect(typeof service.updateProfile).toBe('function');
+    expect(typeof service.createProfile).toBe('function');
   });
 });

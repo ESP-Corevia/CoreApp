@@ -1,9 +1,19 @@
-import { and, eq, type InferInsertModel, type InferSelectModel, ne, sql } from 'drizzle-orm';
+import {
+  and,
+  eq,
+  type InferInsertModel,
+  type InferSelectModel,
+  ilike,
+  ne,
+  or,
+  type SQL,
+  sql,
+} from 'drizzle-orm';
 import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
-import type { QueryOptions } from '../../utils/db';
+import { escapeLike, type QueryOptions } from '../../utils/db';
 import { db as DB } from '../index';
 import type * as schema from '../schema';
-import { users } from '../schema';
+import { doctorUsersView, patientUsersView, users } from '../schema';
 
 type DrizzleDB = PostgresJsDatabase<typeof schema>;
 
@@ -76,6 +86,66 @@ export const createUsersRepo = (db: DrizzleDB = DB) => ({
       totalPages,
       page: page,
       perPage: perPage,
+    };
+  },
+
+  /**
+   * Liste les utilisateurs avec leur profil (doctor ou patient) via les vues SQL.
+   * @param role - "doctor" ou "patient" : détermine quelle vue est interrogée.
+   * @param search - Recherche optionnelle sur le nom ou l'email (ilike).
+   * @param id - Filtre optionnel par user ID exact.
+   */
+  listUsersWithDetails: async ({
+    role,
+    search,
+    id,
+    page = 1,
+    perPage = 10,
+  }: {
+    role: 'doctor' | 'patient';
+    search?: string;
+    id?: string;
+    page?: number;
+    perPage?: number;
+  }) => {
+    const view = role === 'doctor' ? doctorUsersView : patientUsersView;
+
+    const conditions: SQL<unknown>[] = [];
+    if (id) {
+      conditions.push(eq(view.userId, id));
+    }
+    if (search) {
+      const escaped = escapeLike(search);
+      const searchCondition = or(
+        ilike(view.name, `%${escaped}%`),
+        ilike(view.email, `%${escaped}%`),
+      );
+      if (searchCondition) conditions.push(searchCondition);
+    }
+
+    const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+
+    const [items, [{ count }]] = await Promise.all([
+      db
+        .select()
+        .from(view)
+        .where(whereClause)
+        .limit(perPage)
+        .offset((page - 1) * perPage),
+      db
+        .select({ count: sql<number>`count(*)` })
+        .from(view)
+        .where(whereClause ?? sql`TRUE`),
+    ]);
+
+    const totalItems = Number(count);
+
+    return {
+      users: items,
+      totalItems,
+      totalPages: Math.ceil(totalItems / perPage),
+      page,
+      perPage,
     };
   },
 });

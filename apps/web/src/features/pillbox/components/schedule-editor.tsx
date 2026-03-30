@@ -61,18 +61,33 @@ const DEFAULT_TIMES: Record<string, string> = {
 };
 
 interface ScheduleForm {
+  weekday: string;
   intakeTime: string;
   intakeMoment: string;
   quantity: string;
   unit: string;
+  notes: string;
 }
+
+const WEEKDAY_OPTIONS = [
+  { value: 'every', label: 'Tous les jours' },
+  { value: '1', label: 'Lundi' },
+  { value: '2', label: 'Mardi' },
+  { value: '3', label: 'Mercredi' },
+  { value: '4', label: 'Jeudi' },
+  { value: '5', label: 'Vendredi' },
+  { value: '6', label: 'Samedi' },
+  { value: '0', label: 'Dimanche' },
+] as const;
 
 function createEmptyForm(): ScheduleForm {
   return {
+    weekday: 'every',
     intakeTime: '08:00',
     intakeMoment: 'MORNING',
     quantity: '1',
     unit: 'comprim\u00e9',
+    notes: '',
   };
 }
 
@@ -91,10 +106,12 @@ export default function ScheduleEditor({ medicationId, schedules }: ScheduleEdit
     addMutation.mutate(
       {
         patientMedicationId: medicationId,
+        weekday: addForm.weekday === 'every' ? null : Number(addForm.weekday),
         intakeTime: addForm.intakeTime,
         intakeMoment: addForm.intakeMoment as 'MORNING' | 'NOON' | 'EVENING' | 'BEDTIME' | 'CUSTOM',
         quantity: addForm.quantity || undefined,
         unit: addForm.unit || undefined,
+        notes: addForm.notes || undefined,
       },
       {
         onSuccess: () => {
@@ -108,10 +125,12 @@ export default function ScheduleEditor({ medicationId, schedules }: ScheduleEdit
   const handleStartEdit = (schedule: Schedule) => {
     setEditingId(schedule.id);
     setEditForm({
+      weekday: schedule.weekday != null ? String(schedule.weekday) : 'every',
       intakeTime: schedule.intakeTime,
       intakeMoment: schedule.intakeMoment,
       quantity: schedule.quantity,
       unit: schedule.unit ?? '',
+      notes: schedule.notes ?? '',
     });
   };
 
@@ -120,6 +139,7 @@ export default function ScheduleEditor({ medicationId, schedules }: ScheduleEdit
     updateMutation.mutate(
       {
         id: editingId,
+        weekday: editForm.weekday === 'every' ? null : Number(editForm.weekday),
         intakeTime: editForm.intakeTime,
         intakeMoment: editForm.intakeMoment as
           | 'MORNING'
@@ -128,7 +148,8 @@ export default function ScheduleEditor({ medicationId, schedules }: ScheduleEdit
           | 'BEDTIME'
           | 'CUSTOM',
         quantity: editForm.quantity || undefined,
-        unit: editForm.unit || undefined,
+        unit: editForm.unit || null,
+        notes: editForm.notes || null,
       },
       {
         onSuccess: () => {
@@ -160,49 +181,75 @@ export default function ScheduleEditor({ medicationId, schedules }: ScheduleEdit
     form: ScheduleForm,
     setter: React.Dispatch<React.SetStateAction<ScheduleForm>>,
   ) => (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+    <div className="space-y-3">
       <div className="space-y-1.5">
-        <Label className="font-medium text-xs">{t('pillbox.intakeMoment', 'Moment')}</Label>
-        <Select
-          value={form.intakeMoment}
-          onValueChange={v => handleFormChange(setter, 'intakeMoment', v)}
-        >
+        <Label className="font-medium text-xs">{t('pillbox.weekday', 'Jour')}</Label>
+        <Select value={form.weekday} onValueChange={v => handleFormChange(setter, 'weekday', v)}>
           <SelectTrigger className="h-9">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {INTAKE_MOMENT_KEYS.map(key => (
-              <SelectItem key={key} value={key}>
-                {getIntakeMomentLabel(t, key)}
+            {WEEKDAY_OPTIONS.map(opt => (
+              <SelectItem key={opt.value} value={opt.value}>
+                {t(`pillbox.weekdays.${opt.value}`, opt.label)}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
       </div>
-      <div className="space-y-1.5">
-        <Label className="font-medium text-xs">{t('pillbox.intakeTime', 'Heure')}</Label>
-        <Input
-          type="time"
-          value={form.intakeTime}
-          onChange={e => handleFormChange(setter, 'intakeTime', e.target.value)}
-          className="h-9"
-        />
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="space-y-1.5">
+          <Label className="font-medium text-xs">{t('pillbox.intakeMoment', 'Moment')}</Label>
+          <Select
+            value={form.intakeMoment}
+            onValueChange={v => handleFormChange(setter, 'intakeMoment', v)}
+          >
+            <SelectTrigger className="h-9">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {INTAKE_MOMENT_KEYS.map(key => (
+                <SelectItem key={key} value={key}>
+                  {getIntakeMomentLabel(t, key)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="space-y-1.5">
+          <Label className="font-medium text-xs">{t('pillbox.intakeTime', 'Heure')}</Label>
+          <Input
+            type="time"
+            value={form.intakeTime}
+            onChange={e => handleFormChange(setter, 'intakeTime', e.target.value)}
+            className="h-9"
+          />
+        </div>
+        <div className="space-y-1.5">
+          <Label className="font-medium text-xs">{t('pillbox.quantity', 'Quantit\u00e9')}</Label>
+          <Input
+            value={form.quantity}
+            onChange={e => handleFormChange(setter, 'quantity', e.target.value)}
+            placeholder="1"
+            className="h-9"
+          />
+        </div>
+        <div className="space-y-1.5">
+          <Label className="font-medium text-xs">{t('pillbox.unit', 'Unit\u00e9')}</Label>
+          <Input
+            value={form.unit}
+            onChange={e => handleFormChange(setter, 'unit', e.target.value)}
+            placeholder="comprim\u00e9"
+            className="h-9"
+          />
+        </div>
       </div>
       <div className="space-y-1.5">
-        <Label className="font-medium text-xs">{t('pillbox.quantity', 'Quantit\u00e9')}</Label>
+        <Label className="font-medium text-xs">{t('pillbox.notes', 'Notes')}</Label>
         <Input
-          value={form.quantity}
-          onChange={e => handleFormChange(setter, 'quantity', e.target.value)}
-          placeholder="1"
-          className="h-9"
-        />
-      </div>
-      <div className="space-y-1.5">
-        <Label className="font-medium text-xs">{t('pillbox.unit', 'Unit\u00e9')}</Label>
-        <Input
-          value={form.unit}
-          onChange={e => handleFormChange(setter, 'unit', e.target.value)}
-          placeholder="comprim\u00e9"
+          value={form.notes}
+          onChange={e => handleFormChange(setter, 'notes', e.target.value)}
+          placeholder={t('pillbox.notesPlaceholder', 'ex: Prendre au cours du repas')}
           className="h-9"
         />
       </div>
@@ -320,6 +367,17 @@ export default function ScheduleEditor({ medicationId, schedules }: ScheduleEdit
                 </div>
               ) : (
                 <div className="flex items-center gap-3">
+                  {/* Weekday */}
+                  <span className="text-muted-foreground text-xs">
+                    {schedule.weekday != null
+                      ? t(
+                          `pillbox.weekdays.${schedule.weekday}`,
+                          WEEKDAY_OPTIONS.find(o => o.value === String(schedule.weekday))?.label ??
+                            '',
+                        )
+                      : t('pillbox.weekdays.every', 'Every day')}
+                  </span>
+
                   {/* Moment badge */}
                   <span
                     className={cn(
@@ -338,6 +396,13 @@ export default function ScheduleEditor({ medicationId, schedules }: ScheduleEdit
                     <span className="text-muted-foreground text-sm">
                       {schedule.quantity}
                       {schedule.unit ? ` ${schedule.unit}` : ''}
+                    </span>
+                  )}
+
+                  {/* Notes */}
+                  {schedule.notes && (
+                    <span className="truncate text-muted-foreground text-xs italic">
+                      {schedule.notes}
                     </span>
                   )}
 

@@ -1,4 +1,12 @@
-import { CheckCircle, CircleCheck, MoreHorizontal, XCircle } from 'lucide-react';
+import {
+  CheckCircle,
+  CircleCheck,
+  MoreHorizontal,
+  Pencil,
+  RotateCcw,
+  Trash2,
+  XCircle,
+} from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -7,9 +15,12 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import type { Appointment } from './appointments-table';
+import { AppointmentDeleteDialog } from './modals/appointment-delete-dialog';
+import { AppointmentEditDialog } from './modals/appointment-edit-dialog';
 import { AppointmentStatusDialog } from './modals/appointment-status-dialog';
 
 interface AppointmentActionsMenuProps {
@@ -19,22 +30,21 @@ interface AppointmentActionsMenuProps {
 export function AppointmentActionsMenu({ appointment }: AppointmentActionsMenuProps) {
   const { t } = useTranslation();
   const [statusDialogOpen, setStatusDialogOpen] = useState(false);
-  const [targetStatus, setTargetStatus] = useState<'CONFIRMED' | 'COMPLETED' | 'CANCELLED'>(
-    'CONFIRMED',
-  );
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [targetStatus, setTargetStatus] = useState<
+    'PENDING' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED'
+  >('CONFIRMED');
 
   const canConfirm = appointment.status === 'PENDING';
   const canComplete = appointment.status === 'CONFIRMED';
   const canCancel = appointment.status === 'PENDING' || appointment.status === 'CONFIRMED';
+  const canReopen = appointment.status === 'COMPLETED' || appointment.status === 'CANCELLED';
 
-  const handleStatusAction = (status: 'CONFIRMED' | 'COMPLETED' | 'CANCELLED') => {
+  const handleStatusAction = (status: 'PENDING' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED') => {
     setTargetStatus(status);
     setStatusDialogOpen(true);
   };
-
-  if (!canConfirm && !canComplete && !canCancel) {
-    return null;
-  }
 
   return (
     <>
@@ -46,6 +56,10 @@ export function AppointmentActionsMenu({ appointment }: AppointmentActionsMenuPr
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-48">
+          <DropdownMenuItem onClick={() => setEditDialogOpen(true)}>
+            <Pencil className="mr-2 h-4 w-4" />
+            {t('appointments.edit', 'Edit')}
+          </DropdownMenuItem>
           {canConfirm && (
             <DropdownMenuItem onClick={() => handleStatusAction('CONFIRMED')}>
               <CheckCircle className="mr-2 h-4 w-4" />
@@ -64,6 +78,17 @@ export function AppointmentActionsMenu({ appointment }: AppointmentActionsMenuPr
               {t('appointments.cancel', 'Cancel')}
             </DropdownMenuItem>
           )}
+          {canReopen && (
+            <DropdownMenuItem onClick={() => handleStatusAction('PENDING')}>
+              <RotateCcw className="mr-2 h-4 w-4" />
+              {t('appointments.reopen', 'Reopen')}
+            </DropdownMenuItem>
+          )}
+          <DropdownMenuSeparator />
+          <DropdownMenuItem variant="destructive" onClick={() => setDeleteDialogOpen(true)}>
+            <Trash2 className="mr-2 h-4 w-4" />
+            {t('appointments.delete', 'Delete')}
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
 
@@ -72,6 +97,18 @@ export function AppointmentActionsMenu({ appointment }: AppointmentActionsMenuPr
         onOpenChange={setStatusDialogOpen}
         appointment={appointment}
         targetStatus={targetStatus}
+      />
+
+      <AppointmentEditDialog
+        open={editDialogOpen}
+        onOpenChange={setEditDialogOpen}
+        appointment={appointment}
+      />
+
+      <AppointmentDeleteDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        appointment={appointment}
       />
     </>
   );

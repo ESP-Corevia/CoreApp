@@ -18,6 +18,10 @@ vi.mock('@/queries', () => ({
   useSetPassword: vi.fn().mockReturnValue({ mutate: vi.fn() }),
 }));
 
+vi.mock('sonner', () => ({
+  toast: { success: vi.fn(), error: vi.fn() },
+}));
+
 describe('UserActionsMenu', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -33,12 +37,26 @@ describe('UserActionsMenu', () => {
     const menu = getByRole('button', { name: 'Open user menu' });
     await userEvent.click(menu);
 
+    expect(getByRole('menuitem', { name: 'Copy ID' })).toBeInTheDocument();
     expect(getByRole('menuitem', { name: 'Edit User' })).toBeInTheDocument();
     expect(getByRole('menuitem', { name: 'Set Password' })).toBeInTheDocument();
     expect(getByRole('menuitem', { name: 'Impersonate' })).toBeInTheDocument();
     expect(getByRole('menuitem', { name: 'Ban User' })).toBeInTheDocument();
     expect(getByRole('menuitem', { name: 'Delete User' })).toBeInTheDocument();
     expect(getByRole('menuitem', { name: 'Revoke all Sessions' })).toBeInTheDocument();
+  });
+
+  it('copies user ID to clipboard and shows toast', async () => {
+    const { toast } = await import('sonner');
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.assign(navigator, { clipboard: { writeText } });
+
+    const { getByRole } = render(<UserActionsMenu user={mockUser} />);
+    await userEvent.click(getByRole('button', { name: 'Open user menu' }));
+    await userEvent.click(getByRole('menuitem', { name: 'Copy ID' }));
+
+    expect(writeText).toHaveBeenCalledWith(mockUser.id);
+    expect(toast.success).toHaveBeenCalledWith('User ID copied to clipboard');
   });
 
   it('opens Edit User dialog', async () => {

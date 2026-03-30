@@ -3,8 +3,6 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { renderHook } from '@/test/renderHook';
 
-import { useSearchMedications } from './useSearchMedications';
-
 vi.mock('sonner', () => ({
   toast: {
     success: vi.fn(),
@@ -12,39 +10,52 @@ vi.mock('sonner', () => ({
   },
 }));
 
+vi.mock('@/providers/trpc', async importOriginal => {
+  const actual = await importOriginal<typeof import('@/providers/trpc')>();
+  return {
+    ...actual,
+    trpcClient: {
+      medications: {
+        search: {
+          query: vi.fn(),
+        },
+      },
+    },
+  };
+});
+
+import { trpcClient } from '@/providers/trpc';
+import { useSearchMedications } from './useSearchMedications';
+
+const mockQuery = trpcClient.medications.search.query as ReturnType<typeof vi.fn>;
+
 beforeEach(() => {
   vi.clearAllMocks();
 });
+
 describe('useSearchMedications', () => {
   it('should fetch medications based on search query', async () => {
-    const handler = vi.fn().mockResolvedValue({
+    mockQuery.mockResolvedValue({
       items: [{ id: '1', name: 'DOLIPRANE 500mg' }],
       total: 1,
       page: 1,
       limit: 12,
     });
 
-    const { result } = renderHook(
-      () =>
-        useSearchMedications({
-          query: 'doli',
-          page: 1,
-          limit: 12,
-          enabled: true,
-        }),
-      {
-        trpcHandlers: {
-          'medications.search': handler,
-        },
-      },
+    const { result } = renderHook(() =>
+      useSearchMedications({
+        query: 'doli',
+        limit: 12,
+        enabled: true,
+      }),
     );
 
     await waitFor(() => {
       expect(result.current.isSuccess).toBe(true);
-      expect(handler).toHaveBeenCalledWith({ query: 'doli', page: 1, limit: 12 });
     });
 
-    expect(result.current.data).toEqual({
+    expect(mockQuery).toHaveBeenCalledWith({ query: 'doli', page: 1, limit: 12 });
+    expect(result.current.data?.pages[0]).toEqual({
       items: [{ id: '1', name: 'DOLIPRANE 500mg' }],
       total: 1,
       page: 1,
@@ -53,48 +64,30 @@ describe('useSearchMedications', () => {
   });
 
   it('should not fetch medications if query is less than 3 characters', async () => {
-    const handler = vi.fn();
-
-    renderHook(
-      () =>
-        useSearchMedications({
-          query: 'do',
-          page: 1,
-          limit: 12,
-          enabled: true,
-        }),
-      {
-        trpcHandlers: {
-          'medications.search': handler,
-        },
-      },
+    renderHook(() =>
+      useSearchMedications({
+        query: 'do',
+        limit: 12,
+        enabled: true,
+      }),
     );
 
     await waitFor(() => {
-      expect(handler).not.toHaveBeenCalled();
+      expect(mockQuery).not.toHaveBeenCalled();
     });
   });
 
   it('should not fetch medications if enabled is false', async () => {
-    const handler = vi.fn();
-
-    renderHook(
-      () =>
-        useSearchMedications({
-          query: 'doli',
-          page: 1,
-          limit: 12,
-          enabled: false,
-        }),
-      {
-        trpcHandlers: {
-          'medications.search': handler,
-        },
-      },
+    renderHook(() =>
+      useSearchMedications({
+        query: 'doli',
+        limit: 12,
+        enabled: false,
+      }),
     );
 
     await waitFor(() => {
-      expect(handler).not.toHaveBeenCalled();
+      expect(mockQuery).not.toHaveBeenCalled();
     });
   });
 });

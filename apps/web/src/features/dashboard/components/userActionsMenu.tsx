@@ -1,6 +1,17 @@
-import { Ban, HatGlasses, Key, MoreHorizontal, Power, Trash2, UserCog, UserX } from 'lucide-react';
+import {
+  Ban,
+  ClipboardCopy,
+  HatGlasses,
+  Key,
+  MoreHorizontal,
+  Power,
+  Trash2,
+  UserCog,
+  UserX,
+} from 'lucide-react';
 import { useState } from 'react';
-import { Trans } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -23,6 +34,7 @@ interface UserActionsMenuProps {
 }
 
 export function UserActionsMenu({ user }: UserActionsMenuProps) {
+  const { t } = useTranslation();
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [banOpen, setBanOpen] = useState(false);
@@ -43,6 +55,16 @@ export function UserActionsMenu({ user }: UserActionsMenuProps) {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-48">
+          <DropdownMenuItem
+            onClick={() => {
+              navigator.clipboard.writeText(user.id);
+              toast.success(t('UserActionsMenu.idCopied', 'User ID copied to clipboard'));
+            }}
+          >
+            <ClipboardCopy className="mr-2 h-4 w-4" />
+            <Trans i18nKey="UserActionsMenu.copyId">Copy ID</Trans>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => setEditOpen(true)}>
             <UserCog className="mr-2 h-4 w-4" />
             <Trans i18nKey="UserActionsMenu.editUser">Edit User</Trans>

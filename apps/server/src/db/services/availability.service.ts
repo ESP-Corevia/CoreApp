@@ -2,6 +2,7 @@ import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
 import type { createAvailabilityRepo } from '../repositories/availability.repository';
+import type { createDoctorsRepo } from '../repositories/doctors.repository';
 
 const SLOT_START_HOUR = 8;
 const SLOT_END_HOUR = 18;
@@ -35,7 +36,10 @@ export const AvailableSlotsOutputSchema = z.object({
   slots: z.array(z.string()),
 });
 
-export const createAvailabilityService = (repo: ReturnType<typeof createAvailabilityRepo>) => ({
+export const createAvailabilityService = (
+  repo: ReturnType<typeof createAvailabilityRepo>,
+  doctorRepo: ReturnType<typeof createDoctorsRepo>,
+) => ({
   getAvailableSlots: async (doctorId: string, date: string) => {
     const today = getParisToday();
     if (date < today) {
@@ -44,9 +48,9 @@ export const createAvailabilityService = (repo: ReturnType<typeof createAvailabi
         message: 'Cannot query slots for a past date',
       });
     }
-
-    const exists = await repo.doctorExists(doctorId);
-    if (!exists) {
+    //ici on va ajouter une fun qui recupere de la view directement avec un role en param meme pour pationt
+    const doctorExist = await doctorRepo.getByUserId(doctorId);
+    if (!doctorExist) {
       throw new TRPCError({
         code: 'NOT_FOUND',
         message: 'Doctor not found',

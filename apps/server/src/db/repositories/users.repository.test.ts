@@ -6,6 +6,8 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { applyMigration, db, resetDb } from '../../../test/db';
 import { users as usersTable } from '../schema/auth';
+import { doctors } from '../schema/doctors';
+import { patients } from '../schema/patients';
 
 import { createUsersRepo } from './users.repository';
 
@@ -169,6 +171,172 @@ describe('listUsers', () => {
     expect(result.users.length).toBe(0);
     expect(result.totalItems).toBe(0);
     expect(result.totalPages).toBe(0);
+  });
+});
+
+describe('listUsersWithDetails', () => {
+  let doctorUserId: string;
+  let patientUserId: string;
+
+  beforeEach(async () => {
+    // Create a doctor user + profile
+    const [docUser] = await db
+      .insert(usersTable)
+      .values({
+        name: 'Dr. House',
+        email: 'house@hospital.com',
+        emailVerified: true,
+        role: 'doctor',
+      })
+      .returning();
+    doctorUserId = docUser.id;
+
+    await db.insert(doctors).values({
+      userId: docUser.id,
+      specialty: 'Cardiology',
+      address: '10 Rue de la Paix',
+      city: 'Paris',
+    });
+
+    // Create a patient user + profile
+    const [patUser] = await db
+      .insert(usersTable)
+      .values({
+        name: 'Alice Dupont',
+        email: 'alice@patient.com',
+        emailVerified: true,
+        role: 'patient',
+      })
+      .returning();
+    patientUserId = patUser.id;
+
+    await db.insert(patients).values({
+      userId: patUser.id,
+      dateOfBirth: '1990-01-15',
+      gender: 'FEMALE',
+    });
+  });
+
+  it('returns doctors from the doctor view', async () => {
+    const result = await usersRepo.listUsersWithDetails({ role: 'doctor' });
+
+    expect(result.users).toHaveLength(1);
+    expect(result.users[0]).toMatchObject({
+      userId: doctorUserId,
+      name: 'Dr. House',
+      specialty: 'Cardiology',
+      city: 'Paris',
+    });
+    expect(result.totalItems).toBe(1);
+  });
+
+  it('returns patients from the patient view', async () => {
+    const result = await usersRepo.listUsersWithDetails({ role: 'patient' });
+
+    expect(result.users).toHaveLength(1);
+    expect(result.users[0]).toMatchObject({
+      userId: patientUserId,
+      name: 'Alice Dupont',
+      dateOfBirth: '1990-01-15',
+      gender: 'FEMALE',
+    });
+    expect(result.totalItems).toBe(1);
+  });
+
+  it('filters by search on name (ilike)', async () => {
+    const result = await usersRepo.listUsersWithDetails({
+      role: 'doctor',
+      search: 'house',
+    });
+    expect(result.users).toHaveLength(1);
+
+    const empty = await usersRepo.listUsersWithDetails({
+      role: 'doctor',
+      search: 'unknown',
+    });
+    expect(empty.users).toHaveLength(0);
+  });
+
+  it('filters by search on email (ilike)', async () => {
+    const result = await usersRepo.listUsersWithDetails({
+      role: 'patient',
+      search: 'alice@',
+    });
+    expect(result.users).toHaveLength(1);
+    expect(result.users[0].email).toBe('alice@patient.com');
+  });
+
+  it('filters by exact user id', async () => {
+    const result = await usersRepo.listUsersWithDetails({
+      role: 'doctor',
+      id: doctorUserId,
+    });
+    expect(result.users).toHaveLength(1);
+
+    const empty = await usersRepo.listUsersWithDetails({
+      role: 'doctor',
+      id: randomUUID(),
+    });
+    expect(empty.users).toHaveLength(0);
+  });
+
+  it('combines search and id filters', async () => {
+    const result = await usersRepo.listUsersWithDetails({
+      role: 'doctor',
+      id: doctorUserId,
+      search: 'house',
+    });
+    expect(result.users).toHaveLength(1);
+
+    const mismatch = await usersRepo.listUsersWithDetails({
+      role: 'doctor',
+      id: doctorUserId,
+      search: 'unknown',
+    });
+    expect(mismatch.users).toHaveLength(0);
+  });
+
+  it('paginates correctly', async () => {
+    // Add a second doctor
+    const [doc2] = await db
+      .insert(usersTable)
+      .values({
+        name: 'Dr. Wilson',
+        email: 'wilson@hospital.com',
+        emailVerified: true,
+        role: 'doctor',
+      })
+      .returning();
+    await db.insert(doctors).values({
+      userId: doc2.id,
+      specialty: 'Oncology',
+      address: '20 Rue Rivoli',
+      city: 'Lyon',
+    });
+
+    const page1 = await usersRepo.listUsersWithDetails({
+      role: 'doctor',
+      page: 1,
+      perPage: 1,
+    });
+    expect(page1.users).toHaveLength(1);
+    expect(page1.totalItems).toBe(2);
+    expect(page1.totalPages).toBe(2);
+
+    const page2 = await usersRepo.listUsersWithDetails({
+      role: 'doctor',
+      page: 2,
+      perPage: 1,
+    });
+    expect(page2.users).toHaveLength(1);
+    expect(page2.page).toBe(2);
+  });
+
+  it('returns empty when no data matches the role view', async () => {
+    await resetDb();
+    const result = await usersRepo.listUsersWithDetails({ role: 'doctor' });
+    expect(result.users).toHaveLength(0);
+    expect(result.totalItems).toBe(0);
   });
 });
 

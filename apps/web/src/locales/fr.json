@@ -10,16 +10,76 @@
       "cancel": "Annuler",
       "complete": "Terminer",
       "confirm": "Confirmer",
+      "create": "Créer un rendez-vous",
+      "created": "Rendez-vous créé avec succès",
+      "createDialog": {
+        "description": "Créer un nouveau rendez-vous pour un patient avec un médecin.",
+        "title": "Nouveau rendez-vous"
+      },
+      "createError": "Échec de la création du rendez-vous : {{message}}",
+      "creating": "Création...",
+      "delete": "Supprimer",
+      "deleted": "Rendez-vous supprimé avec succès",
+      "deleteDialog": {
+        "description": "Êtes-vous sûr de vouloir supprimer le rendez-vous de {{patient}} avec {{doctor}} le {{date}} à {{time}} ? Cette action est irréversible.",
+        "title": "Supprimer le rendez-vous"
+      },
+      "deleteError": "Échec de la suppression du rendez-vous : {{message}}",
+      "deleting": "Suppression...",
+      "edit": "Modifier",
+      "editDialog": {
+        "description": "Modifier le rendez-vous de {{patient}} avec {{doctor}}.",
+        "title": "Modifier le rendez-vous"
+      },
+      "form": {
+        "date": "Date",
+        "dateFormat": "La date doit être au format AAAA-MM-JJ",
+        "doctorId": "ID du médecin",
+        "doctorIdPlaceholder": "Entrez l'UUID du médecin",
+        "doctorIdRequired": "Un ID de médecin valide est requis",
+        "patientId": "ID du patient",
+        "patientIdPlaceholder": "Entrez l'UUID du patient",
+        "patientIdRequired": "Un ID de patient valide est requis",
+        "reason": "Motif",
+        "reasonPlaceholder": "Motif du rendez-vous (optionnel)",
+        "selectTime": "Sélectionner l'heure",
+        "time": "Heure",
+        "timeRequired": "L'heure est requise"
+      },
       "loadError": "Échec du chargement des rendez-vous : {{message}}",
       "openMenu": "Ouvrir le menu du rendez-vous",
+      "reopen": "Réouvrir",
+      "save": "Enregistrer les modifications",
+      "saving": "Enregistrement...",
+      "search": "Rechercher par nom de patient ou médecin…",
+      "statusActions": {
+        "CANCELLED": "Annuler",
+        "COMPLETED": "Terminer",
+        "CONFIRMED": "Confirmer",
+        "PENDING": "Réouvrir"
+      },
+      "statusDescriptions": {
+        "CANCELLED": "annuler ce rendez-vous",
+        "COMPLETED": "marquer ce rendez-vous comme terminé",
+        "CONFIRMED": "confirmer ce rendez-vous",
+        "PENDING": "réouvrir ce rendez-vous"
+      },
       "statusDialog": {
         "confirm": "{{action}}",
         "description": "Êtes-vous sûr de vouloir {{action}} ? Patient : {{patient}}, Médecin : {{doctor}}, Date : {{date}} à {{time}}.",
         "title": "{{action}} le rendez-vous"
       },
+      "statuses": {
+        "CANCELLED": "Annulé",
+        "COMPLETED": "Terminé",
+        "CONFIRMED": "Confirmé",
+        "PENDING": "En attente"
+      },
       "statusUpdated": "Statut du rendez-vous mis à jour avec succès",
       "statusUpdateError": "Échec de la mise à jour du statut : {{message}}",
-      "title": "Gestion des Rendez-vous"
+      "title": "Gestion des Rendez-vous",
+      "updated": "Rendez-vous mis à jour avec succès",
+      "updateError": "Échec de la mise à jour du rendez-vous : {{message}}"
     },
     "banUserDialog": {
       "banning": "Bannissement...",
@@ -44,11 +104,17 @@
     },
     "common": {
       "cancel": "Annuler",
+      "loadingMore": "Chargement...",
       "next": "Suivant",
       "pageOf": "Page {{page}} sur {{total}}",
       "previous": "Précédent",
       "processing": "Traitement...",
       "retry": "Réessayer",
+      "rowCount_one": "{{count}} ligne",
+      "rowCount_many": "",
+      "rowCount_other": "{{count}} lignes",
+      "rowsPerPage": "Lignes par page",
+      "rowsSelected": "{{selected}} sur {{total}} ligne(s) sélectionnée(s).",
       "save": "Enregistrer"
     },
     "dashboard": {
@@ -56,20 +122,61 @@
       "userManagement": "Gestion des utilisateurs"
     },
     "dataTable": {
-      "noResults": "Aucun résultat."
+      "hide": "Masquer",
+      "noColumns": "Aucune colonne trouvée.",
+      "noResults": "Aucun résultat.",
+      "resetFilters": "Réinitialiser",
+      "searchColumns": "Rechercher des colonnes...",
+      "sortAsc": "Croissant",
+      "sortDesc": "Décroissant",
+      "sortReset": "Réinitialiser",
+      "view": "Vue"
     },
     "doctors": {
+      "created": "Profil médecin créé avec succès",
+      "createDialog": {
+        "description": "Entrez l'UUID de l'utilisateur et les informations du médecin. L'utilisateur doit déjà avoir le rôle \"doctor\".",
+        "title": "Créer un profil médecin"
+      },
+      "createDoctor": "Créer un médecin",
+      "createError": "Échec de la création du médecin : {{message}}",
+      "createProfile": "Créer le profil médecin",
+      "creating": "Création...",
+      "edit": "Modifier le profil",
+      "editDialog": {
+        "description": "Modifier le profil de {{name}}.",
+        "title": "Modifier le profil médecin"
+      },
+      "form": {
+        "address": "Adresse",
+        "addressPlaceholder": "ex. 10 Rue de la Paix",
+        "addressRequired": "L'adresse est requise",
+        "city": "Ville",
+        "cityPlaceholder": "ex. Paris",
+        "cityRequired": "La ville est requise",
+        "specialty": "Spécialité",
+        "specialtyPlaceholder": "ex. Cardiologie",
+        "specialtyRequired": "La spécialité est requise",
+        "userId": "UUID de l'utilisateur",
+        "userIdInvalid": "Doit être un UUID valide"
+      },
       "loadError": "Échec du chargement des médecins : {{message}}",
-      "title": "Gestion des Médecins"
+      "openMenu": "Ouvrir le menu du médecin",
+      "save": "Enregistrer les modifications",
+      "saving": "Enregistrement...",
+      "searchPlaceholder": "Rechercher par nom ou spécialité…",
+      "title": "Gestion des Médecins",
+      "updated": "Profil médecin mis à jour avec succès",
+      "updateError": "Échec de la mise à jour du médecin : {{message}}"
     },
     "errorScreen": {
       "permissionDenied": "Vous n'avez pas l'autorisation d'accéder à cette ressource."
     },
     "forbidden": {
       "description": "L'accès à cette ressource est interdit. Vous n'avez pas les permissions nécessaires pour voir cette page.",
-      "goBackHome": "Retour à l'accueil"
+      "goBackHome": "Retour à l'accueil",
+      "title": "Interdit"
     },
-    "Go Back Home": "Retour à l'accueil",
     "HydrateFallback": {
       "loading": "Chargement…"
     },
@@ -81,9 +188,13 @@
       "addToPillbox": "Ajouter au pilulier",
       "currency": "€",
       "disclaimer": "Les informations affichées sont fournies à titre informatif. Demandez toujours conseil à un professionnel de santé avant de débuter, modifier ou arrêter un traitement.",
+      "endOfResults": "Fin des résultats",
       "minChars": "Saisissez au moins 3 caractères pour lancer la recherche",
       "noResults": "Aucun médicament trouvé",
       "noResultsHint": "Essayez avec un autre terme de recherche",
+      "resultCount_one": "{{count}} résultat trouvé",
+      "resultCount_many": "",
+      "resultCount_other": "{{count}} résultats trouvés",
       "searchError": "Erreur lors de la recherche",
       "searchErrorHint": "Vérifiez votre connexion et réessayez",
       "searchPlaceholder": "Rechercher un médicament (min. 3 caractères, sans accents)...",
@@ -96,8 +207,73 @@
       "system": "Système",
       "toggleTheme": "Changer de thème"
     },
+    "nav": {
+      "appointments": "Rendez-vous",
+      "dashboard": "Tableau de bord",
+      "doctors": "Médecins",
+      "home": "Accueil",
+      "main": "Principal",
+      "medications": "Médicaments",
+      "myPillbox": "Mon pilulier",
+      "page": "Page",
+      "patients": "Patients",
+      "pillbox": "Pilulier",
+      "pillboxDetails": "Détails du pilulier",
+      "profile": "Profil",
+      "settings": "Paramètres",
+      "workspace": "Espace de travail"
+    },
     "notFound": {
+      "description": "La page demandée est introuvable.",
       "title": "Page introuvable"
+    },
+    "patients": {
+      "copyId": "Copier l'ID",
+      "created": "Profil patient créé avec succès",
+      "createDialog": {
+        "description": "Entrez l'UUID de l'utilisateur et les informations du patient. L'utilisateur doit déjà avoir le rôle \"patient\".",
+        "title": "Créer un profil patient"
+      },
+      "createError": "Échec de la création du patient : {{message}}",
+      "createPatient": "Créer un patient",
+      "createProfile": "Créer le profil patient",
+      "creating": "Création...",
+      "delete": "Supprimer",
+      "deleted": "Profil patient supprimé avec succès",
+      "deleteDialog": {
+        "description": "Êtes-vous sûr de vouloir supprimer le profil patient de {{name}} ? Les données médicales seront supprimées mais pas le compte utilisateur.",
+        "title": "Supprimer le profil patient"
+      },
+      "deleteError": "Échec de la suppression du patient : {{message}}",
+      "deleteProfile": "Supprimer le profil",
+      "deleting": "Suppression...",
+      "edit": "Modifier le profil",
+      "editDialog": {
+        "description": "Modifier le profil de {{name}}.",
+        "title": "Modifier le profil patient"
+      },
+      "form": {
+        "address": "Adresse",
+        "allergies": "Allergies",
+        "bloodType": "Groupe sanguin",
+        "dateOfBirth": "Date de naissance",
+        "emergencyContact": "Contact d'urgence",
+        "emergencyPhone": "Téléphone d'urgence",
+        "female": "Femme",
+        "gender": "Genre",
+        "male": "Homme",
+        "phone": "Téléphone",
+        "userId": "UUID de l'utilisateur",
+        "userIdInvalid": "Doit être un UUID valide"
+      },
+      "loadError": "Échec du chargement des patients : {{message}}",
+      "openMenu": "Ouvrir le menu du patient",
+      "save": "Enregistrer les modifications",
+      "saving": "Enregistrement...",
+      "searchPlaceholder": "Rechercher par nom ou email…",
+      "title": "Gestion des Patients",
+      "updated": "Profil patient mis à jour avec succès",
+      "updateError": "Échec de la mise à jour du patient : {{message}}"
     },
     "pillbox": {
       "active": "Actif",
@@ -148,6 +324,8 @@
       },
       "newSchedule": "Nouveau rappel",
       "noSchedules": "Aucun rappel configuré",
+      "notes": "Notes",
+      "notesPlaceholder": "ex: Prendre au cours du repas",
       "notFound": "Traitement introuvable",
       "notFoundHint": "Ce traitement n'existe pas ou a été supprimé",
       "noTreatmentsAdmin": "Aucun traitement trouvé",
@@ -157,7 +335,7 @@
       "patientIdRequired": "L'identifiant du patient est requis",
       "quantity": "Quantité",
       "resultsCount_one": "{{count}} traitement trouvé",
-      "resultsCount_many": "",
+      "resultsCount_many": "{{count}} traitements trouvés",
       "resultsCount_other": "{{count}} traitements trouvés",
       "scheduleAdded": "Rappel ajouté avec succès",
       "scheduleAddError": "Erreur lors de l'ajout du rappel : {{message}}",
@@ -170,7 +348,18 @@
       "searchPlaceholder": "Rechercher un patient ou médicament...",
       "startDate": "Date de début",
       "startDateRequired": "La date de début est requise",
-      "unit": "Unité"
+      "unit": "Unité",
+      "weekday": "Jour",
+      "weekdays": {
+        "0": "Dimanche",
+        "1": "Lundi",
+        "2": "Mardi",
+        "3": "Mercredi",
+        "4": "Jeudi",
+        "5": "Vendredi",
+        "6": "Samedi",
+        "every": "Tous les jours"
+      }
     },
     "profile": {
       "accountStatus": "Statut du compte",
@@ -288,12 +477,29 @@
         },
         "submit": "S'inscrire"
       },
+      "submitting": "Inscription...",
       "success": "Inscription réussie",
       "switchToSignIn": "Vous avez déjà un compte ? Connectez-vous",
       "title": "Créer un compte"
     },
-    "The requested page could not be found": {
-      "": "La page demandée est introuvable."
+    "table": {
+      "address": "Adresse",
+      "admin": "Admin",
+      "createdAt": "Créé le",
+      "date": "Date",
+      "doctor": "Médecin",
+      "email": "Email",
+      "id": "ID",
+      "name": "Nom",
+      "no": "Non",
+      "patient": "Patient",
+      "phone": "Téléphone",
+      "reason": "Motif",
+      "role": "Rôle",
+      "status": "Statut",
+      "time": "Heure",
+      "updatedAt": "Modifié le",
+      "yes": "Oui"
     },
     "useImpersonateUser": {
       "failedToImpersonate": "Échec de l'usurpation de l'utilisateur : {{message}}",
@@ -301,8 +507,10 @@
     },
     "UserActionsMenu": {
       "banUser": "Bannir l'utilisateur",
+      "copyId": "Copier l'ID",
       "deleteUser": "Supprimer l'utilisateur",
       "editUser": "Modifier l'utilisateur",
+      "idCopied": "ID utilisateur copié dans le presse-papiers",
       "impersonate": "Usurper",
       "openUserMenu": "Ouvrir le menu utilisateur",
       "revokeSessions": "Révoquer toutes les sessions",
@@ -365,6 +573,9 @@
     "userMenu": {
       "signIn": "Se connecter",
       "signOut": "Se déconnecter"
+    },
+    "users": {
+      "idCopied": "ID utilisateur copié dans le presse-papiers"
     },
     "userSetPasswordModal": {
       "cancel": "Annuler",

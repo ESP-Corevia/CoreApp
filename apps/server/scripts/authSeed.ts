@@ -3,6 +3,7 @@ import { eq } from 'drizzle-orm';
 
 import { db } from '../src/db';
 import {
+  appointments,
   doctors,
   patientMedicationSchedules,
   patientMedications,
@@ -16,6 +17,7 @@ import { logger } from '../src/lib/logger';
 const PATIENT_COUNT = 80;
 const DOCTOR_COUNT = 50;
 const PILLBOX_MEDS_PER_PATIENT = 3;
+const APPOINTMENTS_PER_PATIENT = 4;
 
 const SEED_MEDICATIONS = [
   {
@@ -270,6 +272,79 @@ async function seedPatient() {
   }
 }
 
+const APPOINTMENT_REASONS = [
+  'Consultation de routine',
+  'Suivi traitement',
+  'Douleurs persistantes',
+  'Renouvellement ordonnance',
+  'Bilan de santé annuel',
+  'Résultats examens',
+  'Première consultation',
+  'Contrôle post-opératoire',
+  null,
+];
+
+const BASE_SLOTS = [
+  '08:00',
+  '08:30',
+  '09:00',
+  '09:30',
+  '10:00',
+  '10:30',
+  '11:00',
+  '11:30',
+  '13:30',
+  '14:00',
+  '14:30',
+  '15:00',
+  '15:30',
+  '16:00',
+  '16:30',
+  '17:00',
+  '17:30',
+];
+
+async function seedAppointments(patientUserIds: string[], doctorUserIds: string[]) {
+  let total = 0;
+
+  const rows = [];
+  for (const patientId of patientUserIds) {
+    const selectedDoctors = faker.helpers.arrayElements(
+      doctorUserIds,
+      Math.min(APPOINTMENTS_PER_PATIENT, doctorUserIds.length),
+    );
+
+    for (const doctorId of selectedDoctors) {
+      const isPast = faker.datatype.boolean();
+      const date = isPast
+        ? faker.date.past({ years: 1 }).toISOString().split('T')[0]
+        : faker.date.future({ years: 1 }).toISOString().split('T')[0];
+
+      const status = isPast
+        ? faker.helpers.arrayElement(['COMPLETED', 'CANCELLED'] as const)
+        : faker.helpers.arrayElement(['PENDING', 'CONFIRMED'] as const);
+
+      rows.push({
+        doctorId,
+        patientId,
+        date,
+        time: faker.helpers.arrayElement(BASE_SLOTS),
+        status,
+        reason: faker.helpers.arrayElement(APPOINTMENT_REASONS),
+        createdAt: faker.date.past(),
+      });
+      total++;
+    }
+  }
+
+  // Insert in batches of 500
+  for (let i = 0; i < rows.length; i += 500) {
+    await db.insert(appointments).values(rows.slice(i, i + 500));
+  }
+
+  logger.info(`✔ Seeded ${total} appointments across ${patientUserIds.length} patients`);
+}
+
 async function seedPillbox(patientIds: string[]) {
   let totalMeds = 0;
   let totalSchedules = 0;
@@ -326,6 +401,19 @@ async function seedPillbox(patientIds: string[]) {
         intakeMoment: moment as 'MORNING' | 'NOON' | 'EVENING' | 'BEDTIME',
         quantity: String(faker.number.int({ min: 1, max: 3 })),
         unit: med.form === 'gelule' ? 'gelule' : 'comprime',
+        notes:
+          faker.helpers.maybe(
+            () =>
+              faker.helpers.arrayElement([
+                'Prendre au cours du repas',
+                'Prendre à jeun le matin',
+                "Avec un grand verre d'eau",
+                'Ne pas croquer, avaler entier',
+                'Éviter les produits laitiers',
+                'Attendre 30 min avant de manger',
+              ]),
+            { probability: 0.4 },
+          ) ?? null,
       }));
 
       await db.insert(patientMedicationSchedules).values(scheduleRows);
@@ -448,12 +536,20 @@ async function main() {
 
   await seedPillbox(pillboxPatientIds);
 
+  // Seed appointments using user IDs (not profile IDs)
+  const appointmentPatientIds = [
+    ...(dedicatedPatient ? [dedicatedPatient.id] : []),
+    ...insertedPatientsUsers.slice(0, 20).map(p => p.id),
+  ];
+  const doctorUserIds = insertedDoctorUsers.map(d => d.id);
+  await seedAppointments(appointmentPatientIds, doctorUserIds);
+
   logger.info('\n🌳 Seeding completed.');
 }
 
 main()
   .then(() => process.exit(0))
   .catch(err => {
-    logger.error('❌ Seed error:', err);
+    logger.error(err, '❌ Seed error');
     process.exit(1);
   });

@@ -5,41 +5,24 @@ import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { applyMigration, db, resetDb } from '../../../test/db';
 import { doctors, users } from '../schema';
 
-import { createDoctorsRepo } from './doctors.repository';
+import { createDoctorsRepo, DoctorProfileAlreadyExistsError } from './doctors.repository';
 
 const repo = createDoctorsRepo(db as any);
 
 const SEED_DOCTORS = [
-  {
-    specialty: 'Cardiology',
-    address: '10 Rue de Rivoli, Paris',
-    city: 'Paris',
-    imageUrl: null,
-  },
-  {
-    specialty: 'Dermatology',
-    address: '5 Avenue Foch, Lyon',
-    city: 'Lyon',
-    imageUrl: 'https://example.com/bob.jpg',
-  },
-  {
-    specialty: 'Cardiology',
-    address: '22 Rue Victor Hugo, Marseille',
-    city: 'Marseille',
-    imageUrl: null,
-  },
-  {
-    specialty: 'Pediatrics',
-    address: '8 Rue de la Paix, Paris',
-    city: 'Paris',
-    imageUrl: null,
-  },
-  {
-    specialty: 'Dermatology',
-    address: '15 Boulevard Haussmann, Paris',
-    city: 'Paris',
-    imageUrl: 'https://example.com/eva.jpg',
-  },
+  { specialty: 'Cardiology', address: '10 Rue de Rivoli, Paris', city: 'Paris' },
+  { specialty: 'Dermatology', address: '5 Avenue Foch, Lyon', city: 'Lyon' },
+  { specialty: 'Cardiology', address: '22 Rue Victor Hugo, Marseille', city: 'Marseille' },
+  { specialty: 'Pediatrics', address: '8 Rue de la Paix, Paris', city: 'Paris' },
+  { specialty: 'Dermatology', address: '15 Boulevard Haussmann, Paris', city: 'Paris' },
+];
+
+const SEED_USERS = [
+  { name: 'Dr. Alpha', email: 'alpha@test.com' },
+  { name: 'Dr. Beta', email: 'beta@test.com' },
+  { name: 'Dr. Gamma', email: 'gamma@test.com' },
+  { name: 'Dr. Delta', email: 'delta@test.com' },
+  { name: 'Dr. Epsilon', email: 'epsilon@test.com' },
 ];
 
 beforeAll(async () => {
@@ -48,7 +31,17 @@ beforeAll(async () => {
 
 beforeEach(async () => {
   await resetDb();
-  await db.insert(doctors).values(SEED_DOCTORS);
+
+  // Create users for each doctor
+  const insertedUsers = await db
+    .insert(users)
+    .values(SEED_USERS.map(u => ({ ...u, emailVerified: true, createdAt: new Date() })))
+    .returning({ id: users.id });
+
+  // Create doctors linked to users
+  await db
+    .insert(doctors)
+    .values(SEED_DOCTORS.map((d, i) => ({ ...d, userId: insertedUsers[i].id })));
 });
 
 describe('doctors.repository', () => {
@@ -173,6 +166,67 @@ describe('doctors.repository', () => {
     });
   });
 
+  describe('createByUserId', () => {
+    let userId: string;
+
+    beforeEach(async () => {
+      const [user] = await db
+        .insert(users)
+        .values({
+          name: 'Dr. New',
+          email: 'new@example.com',
+          emailVerified: true,
+          createdAt: new Date(),
+        })
+        .returning({ id: users.id });
+      userId = user.id;
+    });
+
+    it('creates a doctor profile and returns it', async () => {
+      const result = await repo.createByUserId(userId, {
+        specialty: 'Oncology',
+        address: '3 Rue Neuve, Nantes',
+        city: 'Nantes',
+      });
+
+      expect(result).toMatchObject({
+        userId,
+        specialty: 'Oncology',
+        address: '3 Rue Neuve, Nantes',
+        city: 'Nantes',
+      });
+      expect(result.id).toBeDefined();
+    });
+
+    it('persists the doctor in the database', async () => {
+      await repo.createByUserId(userId, {
+        specialty: 'Oncology',
+        address: '3 Rue Neuve, Nantes',
+        city: 'Nantes',
+      });
+
+      const [row] = await db.select().from(doctors).where(eq(doctors.userId, userId));
+      expect(row).toBeDefined();
+      expect(row.specialty).toBe('Oncology');
+    });
+
+    it('throws on duplicate userId (unique constraint)', async () => {
+      await repo.createByUserId(userId, {
+        specialty: 'Oncology',
+        address: '3 Rue Neuve, Nantes',
+        city: 'Nantes',
+      });
+
+      await expect(
+        repo.createByUserId(userId, {
+          specialty: 'Cardiology',
+          address: '1 Rue Test',
+          city: 'Paris',
+        }),
+      ).rejects.toBeInstanceOf(DoctorProfileAlreadyExistsError);
+    });
+  });
+
   describe('updateByUserId', () => {
     let userId: string;
 
@@ -233,34 +287,13 @@ describe('doctors.repository', () => {
   });
 
   describe('listAllAdmin', () => {
-    let linkedUserId: string;
-
-    beforeEach(async () => {
-      // Link one doctor to a user so we get name/email in results
-      const [user] = await db
-        .insert(users)
-        .values({
-          name: 'Dr. Alice',
-          email: 'alice@example.com',
-          emailVerified: true,
-          createdAt: new Date(),
-        })
-        .returning({ id: users.id });
-      linkedUserId = user.id;
-
-      // Update the first seeded doctor to link to this user
-      const [firstDoc] = await db.select({ id: doctors.id }).from(doctors).limit(1);
-      await db.update(doctors).set({ userId: linkedUserId }).where(eq(doctors.id, firstDoc.id));
-    });
-
     it('returns all doctors with user info', async () => {
       const items = await repo.listAllAdmin({ offset: 0, limit: 10 });
 
       expect(items).toHaveLength(5);
-      const linked = items.find(d => d.userId === linkedUserId);
-      expect(linked).toBeDefined();
-      expect(linked?.name).toBe('Dr. Alice');
-      expect(linked?.email).toBe('alice@example.com');
+      // All doctors are now linked to users
+      expect(items[0].name).toBeDefined();
+      expect(items[0].email).toBeDefined();
     });
 
     it('filters by specialty', async () => {
@@ -277,10 +310,10 @@ describe('doctors.repository', () => {
     });
 
     it('filters by search on user name', async () => {
-      const items = await repo.listAllAdmin({ search: 'Alice', offset: 0, limit: 10 });
+      const items = await repo.listAllAdmin({ search: 'Alpha', offset: 0, limit: 10 });
 
       expect(items).toHaveLength(1);
-      expect(items[0].name).toBe('Dr. Alice');
+      expect(items[0].name).toBe('Dr. Alpha');
     });
 
     it('paginates correctly', async () => {

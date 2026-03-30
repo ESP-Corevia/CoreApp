@@ -9,6 +9,9 @@ import * as schema from './schema';
 const { Pool } = pg;
 const pool = new Pool({
   connectionString: env.DATABASE_URL,
+  max: env.DB_POOL_MAX,
+  idleTimeoutMillis: env.DB_IDLE_TIMEOUT_MS,
+  connectionTimeoutMillis: env.DB_CONNECTION_TIMEOUT_MS,
 });
 
 pool.on('error', err => {
@@ -21,6 +24,6 @@ pool.on('connect', () => {
 
 export const db = drizzle(pool, {
   schema,
-  logger: true,
+  logger: env.NODE_ENV !== 'production',
 });
 export { pool, schema };

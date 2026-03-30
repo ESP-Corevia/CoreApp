@@ -4,6 +4,7 @@ import type { Column, Table } from '@tanstack/react-table';
 import { useDebounce } from '@uidotdev/usehooks';
 import { X } from 'lucide-react';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { DataTableDateFilter } from '@/components/data-table/data-table-date-filter';
 import { DataTableFacetedFilter } from '@/components/data-table/data-table-faceted-filter';
 import { DataTableSliderFilter } from '@/components/data-table/data-table-slider-filter';
@@ -17,6 +18,7 @@ import { cn } from '@/lib/utils';
 interface DataTableToolbarProps<TData> extends React.ComponentProps<'div'> {
   table: Table<TData>;
   isLoading?: boolean;
+  searchPlaceholder?: string;
 }
 
 export function DataTableToolbar<TData>({
@@ -24,8 +26,10 @@ export function DataTableToolbar<TData>({
   children,
   className,
   isLoading,
+  searchPlaceholder = 'Search…',
   ...props
 }: DataTableToolbarProps<TData>) {
+  const { t } = useTranslation();
   const isFiltered = table.getState().columnFilters.length > 0;
 
   const columns = React.useMemo(
@@ -60,7 +64,7 @@ export function DataTableToolbar<TData>({
       <div className="flex flex-1 flex-wrap items-center gap-2">
         <InputGroup className="h-8 w-64 lg:w-80">
           <InputGroupInput
-            placeholder="Search by name or email…"
+            placeholder={searchPlaceholder}
             value={inputValue}
             onChange={e => setInputValue(e.target.value)}
             disabled={isLoading}
@@ -85,7 +89,7 @@ export function DataTableToolbar<TData>({
             onClick={onReset}
           >
             <X />
-            Reset
+            {t('dataTable.resetFilters', 'Reset')}
           </Button>
         )}
       </div>

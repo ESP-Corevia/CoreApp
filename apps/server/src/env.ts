@@ -5,7 +5,11 @@ dotenv.config();
 
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production', 'preview']).default('production'),
+  PORT: z.coerce.number().int().positive().default(3000),
   DATABASE_URL: z.url().default('postgres://postgres:postgres@localhost:5432/postgres'),
+  DB_POOL_MAX: z.coerce.number().int().positive().default(10),
+  DB_IDLE_TIMEOUT_MS: z.coerce.number().int().positive().default(30000),
+  DB_CONNECTION_TIMEOUT_MS: z.coerce.number().int().positive().default(10000),
   BASE_URL: z.url().default('http://localhost:3000'),
   SESSION_SECRET: z.string(),
   CORS_ORIGIN: z.url().default('http://localhost:5173'),

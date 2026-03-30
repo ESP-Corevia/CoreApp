@@ -3,8 +3,10 @@
 import { SiGithub, SiGoogle } from '@icons-pack/react-simple-icons';
 
 import type { ColumnDef } from '@tanstack/react-table';
-import { Ban, CalendarClock, History, Mail, Shield, Text } from 'lucide-react';
+import { Ban, CalendarClock, ClipboardCopy, History, Mail, Shield, Text } from 'lucide-react';
 import { useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 
 import { DataTable } from '@/components/data-table/data-table';
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
@@ -47,8 +49,36 @@ export default function DataTableUsers({
   const users = useMemo(() => data, [data]);
   const pageCount = providedPageCount ?? Math.ceil((users.length || 1) / 10);
 
+  const { t } = useTranslation();
+
   const columns = useMemo<ColumnDef<User>[]>(
     () => [
+      {
+        id: 'id',
+        accessorKey: 'id',
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} label={t('table.id', 'ID')} />
+        ),
+        cell: ({ cell }) => {
+          const id = cell.getValue<string>();
+          return (
+            <button
+              type="button"
+              className="inline-flex cursor-pointer items-center gap-1 font-mono text-muted-foreground text-xs transition-colors hover:text-foreground"
+              title={id}
+              onClick={() => {
+                navigator.clipboard.writeText(id);
+                toast.success(t('users.idCopied', 'User ID copied to clipboard'));
+              }}
+            >
+              <ClipboardCopy className="h-3 w-3" />
+              {id.slice(0, 8)}...
+            </button>
+          );
+        },
+        enableSorting: false,
+        enableHiding: true,
+      },
       // {
       //   id: 'select',
       //   header: ({ table }) => (
@@ -75,7 +105,9 @@ export default function DataTableUsers({
       {
         id: 'name',
         accessorKey: 'name',
-        header: ({ column }) => <DataTableColumnHeader column={column} label="Name" />,
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} label={t('table.name', 'Name')} />
+        ),
         cell: ({ row }) => (
           <div className="flex items-center gap-2">
             <Avatar className="h-8 w-8">
@@ -86,7 +118,7 @@ export default function DataTableUsers({
           </div>
         ),
         meta: {
-          label: 'Name',
+          label: t('table.name', 'Name'),
           variant: 'text',
           icon: Text,
         },
@@ -96,7 +128,9 @@ export default function DataTableUsers({
       {
         id: 'email',
         accessorKey: 'email',
-        header: ({ column }) => <DataTableColumnHeader column={column} label="Email" />,
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} label={t('table.email', 'Email')} />
+        ),
         cell: ({ cell }) => {
           const email = cell.getValue<User['email']>();
           return (
@@ -107,7 +141,7 @@ export default function DataTableUsers({
           );
         },
         meta: {
-          label: 'Email',
+          label: t('table.email', 'Email'),
           variant: 'text',
           icon: Mail,
         },
@@ -115,7 +149,9 @@ export default function DataTableUsers({
       {
         id: 'role',
         accessorKey: 'role',
-        header: ({ column }) => <DataTableColumnHeader column={column} label="Role" />,
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} label={t('table.role', 'Role')} />
+        ),
         cell: ({ cell }) => {
           const role = cell.getValue<User['role']>() ?? 'patient';
           return (
@@ -126,12 +162,12 @@ export default function DataTableUsers({
           );
         },
         meta: {
-          label: 'Role',
+          label: t('table.role', 'Role'),
           variant: 'multiSelect',
           options: [
-            { label: 'Patient', value: 'patient', icon: Shield },
-            { label: 'Doctor', value: 'doctor', icon: Shield },
-            { label: 'Admin', value: 'admin', icon: Shield },
+            { label: t('table.patient', 'Patient'), value: 'patient', icon: Shield },
+            { label: t('table.doctor', 'Doctor'), value: 'doctor', icon: Shield },
+            { label: t('table.admin', 'Admin'), value: 'admin', icon: Shield },
           ],
           operator: 'inArray',
         },
@@ -140,7 +176,9 @@ export default function DataTableUsers({
       {
         id: 'createdAt',
         accessorKey: 'createdAt',
-        header: ({ column }) => <DataTableColumnHeader column={column} label="Created At" />,
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} label={t('table.createdAt', 'Created At')} />
+        ),
         cell: ({ cell }) => {
           const created = cell.getValue<User['createdAt']>();
           return (
@@ -153,7 +191,7 @@ export default function DataTableUsers({
         sortingFn: 'datetime',
         enableColumnFilter: true,
         meta: {
-          label: 'Created At',
+          label: t('table.createdAt', 'Created At'),
           variant: 'dateRange',
           icon: CalendarClock,
           operator: 'isBetween',
@@ -162,7 +200,9 @@ export default function DataTableUsers({
       {
         id: 'updatedAt',
         accessorKey: 'updatedAt',
-        header: ({ column }) => <DataTableColumnHeader column={column} label="Updated At" />,
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} label={t('table.updatedAt', 'Updated At')} />
+        ),
         cell: ({ cell }) => {
           const updated = cell.getValue<User['updatedAt']>();
           return (
@@ -175,7 +215,7 @@ export default function DataTableUsers({
         sortingFn: 'datetime',
         enableColumnFilter: true,
         meta: {
-          label: 'Updated At',
+          label: t('table.updatedAt', 'Updated At'),
           variant: 'dateRange',
           icon: CalendarClock,
           operator: 'isBetween',
@@ -216,7 +256,7 @@ export default function DataTableUsers({
           const banned = cell.getValue<User['banned']>();
           return (
             <span className={`text-sm ${banned ? 'text-red-600' : 'text-green-600'}`}>
-              {banned ? 'Yes' : 'No'}
+              {banned ? t('table.yes', 'Yes') : t('table.no', 'No')}
             </span>
           );
         },
@@ -225,8 +265,8 @@ export default function DataTableUsers({
           variant: 'select',
           icon: Ban,
           options: [
-            { label: 'Yes', value: 'true', icon: Ban },
-            { label: 'No', value: 'false', icon: Ban },
+            { label: t('table.yes', 'Yes'), value: 'true', icon: Ban },
+            { label: t('table.no', 'No'), value: 'false', icon: Ban },
           ],
           operator: 'eq',
         },
@@ -276,7 +316,7 @@ export default function DataTableUsers({
           const emailVerified = cell.getValue<User['emailVerified']>();
           return (
             <span className={`text-sm ${emailVerified ? 'text-green-600' : 'text-red-600'}`}>
-              {emailVerified ? 'Yes' : 'No'}
+              {emailVerified ? t('table.yes', 'Yes') : t('table.no', 'No')}
             </span>
           );
         },
@@ -297,7 +337,7 @@ export default function DataTableUsers({
         enableHiding: false,
       },
     ],
-    [],
+    [t],
   );
 
   const { table, filters } = useDataTable<User>({
@@ -305,6 +345,7 @@ export default function DataTableUsers({
     data: users,
     columns,
     pageCount,
+    enableRowSelection: false,
     initialState: {
       sorting: [{ id: 'createdAt', desc: true }],
       columnPinning: { right: ['actions'] /*left: ['select']*/ },
