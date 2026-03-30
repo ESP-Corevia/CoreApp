@@ -4,12 +4,28 @@
   "lockFileMaintenance": { "enabled": false },
   "rangeStrategy": "bump",
   "prCreation": "approval",
+  "enabledManagers": ["npm", "github-actions"],
+  "ignorePaths": ["apps/native/**", "apps/tauri/**"],
   "dependencyDashboard": true,
-  "prConcurrentLimit": 5,
-  "prHourlyLimit": 2,
+  "prConcurrentLimit": 1,
+  "prHourlyLimit": 1,
   "schedule": ["at any time"],
   "labels": ["deps"],
+  "postUpgradeTasks": {
+    "commands": ["biome check --write ."],
+    "fileFilters": ["**/*"],
+    "executionMode": "branch"
+  },
   "packageRules": [
+    {
+      "description": "Auto-merge patch updates only when merge confidence is high enough",
+      "matchUpdateTypes": ["patch"],
+
+      "automerge": true,
+      "automergeType": "pr",
+      "prCreation": "immediate",
+      "addLabels": ["auto-merge"]
+    },
     {
       "matchFileNames": ["pnpm-workspace.yaml"],
       "groupName": "catalogs & pnpm config",
@@ -26,7 +42,11 @@
       ],
       "groupName": "repo toolchain",
       "groupSlug": "toolchain",
-      "addLabels": ["scope:tooling"]
+
+      "automerge": true,
+      "automergeType": "pr",
+      "prCreation": "immediate",
+      "addLabels": ["scope:tooling", "auto-merge"]
     },
     {
       "matchPackageNames": [
@@ -37,7 +57,11 @@
       ],
       "groupName": "typescript",
       "groupSlug": "typescript",
-      "addLabels": ["scope:shared", "scope:tooling"]
+
+      "automerge": true,
+      "automergeType": "pr",
+      "prCreation": "immediate",
+      "addLabels": ["scope:shared", "scope:tooling", "auto-merge"]
     },
     {
       "groupName": "linting (eslint)",
@@ -66,7 +90,11 @@
       ],
       "groupName": "testing (vitest)",
       "groupSlug": "test-vitest",
-      "addLabels": ["scope:tooling", "scope:test"]
+
+      "automerge": true,
+      "automergeType": "pr",
+      "prCreation": "immediate",
+      "addLabels": ["scope:tooling", "scope:test", "auto-merge"]
     },
     {
       "matchPackageNames": [
@@ -79,7 +107,21 @@
       ],
       "groupName": "testing (dom & testing-library)",
       "groupSlug": "test-dom",
-      "addLabels": ["scope:tooling", "scope:test"]
+
+      "automerge": true,
+      "automergeType": "pr",
+      "prCreation": "immediate",
+      "addLabels": ["scope:tooling", "scope:test", "auto-merge"]
+    },
+    {
+      "groupName": "types",
+      "groupSlug": "types",
+      "matchPackageNames": ["/^@types\\//"],
+
+      "automerge": true,
+      "automergeType": "pr",
+      "prCreation": "immediate",
+      "addLabels": ["scope:shared", "auto-merge"]
     },
     {
       "groupName": "routing (react-router)",
@@ -179,6 +221,16 @@
       "groupName": "repo hygiene (knip/depcheck)",
       "groupSlug": "hygiene",
       "addLabels": ["scope:tooling"]
+    },
+    {
+      "matchUpdateTypes": ["lockFileMaintenance"],
+      "groupName": "lockfile maintenance",
+      "groupSlug": "lockfile-maintenance",
+
+      "automerge": true,
+      "automergeType": "pr",
+      "prCreation": "immediate",
+      "addLabels": ["auto-merge"]
     }
   ]
 }
