@@ -67,6 +67,19 @@ describe('operatorHandlers', () => {
   it('handles isRelativeToToday', () => {
     const cond = operatorHandlers.isRelativeToToday(users.createdAt, 7);
     expect(cond).toBeDefined();
+    const chunks = cond.getSQL().queryChunks;
+    expect(chunks).toContain(7);
+    expect(chunks.some(chunk => String(chunk).includes("INTERVAL '7 day'"))).toBe(false);
+    expect(
+      chunks.some(
+        chunk =>
+          typeof chunk === 'object' &&
+          chunk !== null &&
+          'value' in chunk &&
+          Array.isArray(chunk.value) &&
+          chunk.value.some(value => String(value).includes("INTERVAL '1 day'")),
+      ),
+    ).toBe(true);
   });
   it('throws on unknown operator', () => {
     expect(() => {

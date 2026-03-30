@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import { adminProcedure } from '../../middlewares';
+import { MAX_ADMIN_PER_PAGE } from './constants';
 
 export const listAppointments = adminProcedure
   .meta({
@@ -16,7 +17,7 @@ export const listAppointments = adminProcedure
   .input(
     z.object({
       page: z.number().int().positive(),
-      perPage: z.number().int().positive(),
+      perPage: z.number().int().positive().max(MAX_ADMIN_PER_PAGE),
       search: z.string().optional(),
       status: z.array(z.enum(['PENDING', 'CONFIRMED', 'CANCELLED', 'COMPLETED'])).optional(),
       from: z

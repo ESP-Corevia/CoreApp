@@ -2,6 +2,7 @@ import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
 import { adminProcedure } from '../../middlewares';
+import { MAX_ADMIN_PER_PAGE } from './constants';
 
 const genderEnum = z.enum(['MALE', 'FEMALE']);
 const bloodTypeEnum = z.enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']);
@@ -33,7 +34,7 @@ export const listPatients = adminProcedure
   .input(
     z.object({
       page: z.number().int().positive(),
-      perPage: z.number().int().positive(),
+      perPage: z.number().int().positive().max(MAX_ADMIN_PER_PAGE),
       search: z.string().optional(),
       gender: genderEnum.optional(),
     }),

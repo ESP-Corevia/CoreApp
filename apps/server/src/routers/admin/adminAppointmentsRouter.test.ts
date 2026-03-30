@@ -79,6 +79,14 @@ describe('adminAppointmentsRouter', () => {
 
       expect(result).toEqual(emptyResponse);
     });
+
+    it('rejects perPage above the admin max', async () => {
+      const caller = createTestCaller({ customSession: fakeSession });
+
+      await expect(caller.admin.listAppointments({ page: 1, perPage: 101 })).rejects.toThrow();
+
+      expect(mockServices.appointmentsService.listAllAppointments).not.toHaveBeenCalled();
+    });
   });
 
   describe('updateAppointmentStatus', () => {

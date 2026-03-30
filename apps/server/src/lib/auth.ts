@@ -28,7 +28,7 @@ export const auth = betterAuth({
   user: {
     changeEmail: {
       enabled: true,
-      updateEmailWithoutVerification: true,
+      updateEmailWithoutVerification: false,
     },
   },
   session: {
@@ -56,7 +56,6 @@ export const auth = betterAuth({
     database: {
       generateId: false,
     },
-    disableOriginCheck: true,
     useSecureCookies: env.NODE_ENV !== 'development',
     ipAddress: {
       ipAddressHeaders: ['x-client-ip', 'x-forwarded-for'],

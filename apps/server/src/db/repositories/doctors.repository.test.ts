@@ -5,7 +5,7 @@ import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { applyMigration, db, resetDb } from '../../../test/db';
 import { doctors, users } from '../schema';
 
-import { createDoctorsRepo } from './doctors.repository';
+import { createDoctorsRepo, DoctorProfileAlreadyExistsError } from './doctors.repository';
 
 const repo = createDoctorsRepo(db as any);
 
@@ -223,7 +223,7 @@ describe('doctors.repository', () => {
           address: '1 Rue Test',
           city: 'Paris',
         }),
-      ).rejects.toThrow();
+      ).rejects.toBeInstanceOf(DoctorProfileAlreadyExistsError);
     });
   });
 

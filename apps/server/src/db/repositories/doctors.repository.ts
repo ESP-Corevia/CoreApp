@@ -7,6 +7,38 @@ import { doctors, doctorUsersView, users } from '../schema';
 
 type DrizzleDB = PostgresJsDatabase<typeof schema>;
 
+const DOCTORS_USER_ID_UNIQUE_CONSTRAINT = 'doctors_user_id_unique';
+
+export class DoctorProfileAlreadyExistsError extends Error {
+  constructor() {
+    super('Doctor profile already exists');
+    this.name = 'DoctorProfileAlreadyExistsError';
+  }
+}
+
+function isDoctorUserIdUniqueViolation(error: unknown) {
+  let current: unknown = error;
+
+  while (typeof current === 'object' && current !== null) {
+    if (
+      'code' in current &&
+      current.code === '23505' &&
+      'constraint' in current &&
+      current.constraint === DOCTORS_USER_ID_UNIQUE_CONSTRAINT
+    ) {
+      return true;
+    }
+
+    if (!('cause' in current)) {
+      return false;
+    }
+
+    current = current.cause;
+  }
+
+  return false;
+}
+
 export interface ListBookableParams {
   specialty?: string;
   city?: string;
@@ -120,11 +152,19 @@ export const createDoctorsRepo = (db: DrizzleDB = DB) => ({
     userId: string,
     data: { specialty: string; address: string; city: string },
   ) => {
-    const [row] = await db
-      .insert(doctors)
-      .values({ userId, ...data })
-      .returning();
-    return row;
+    try {
+      const [row] = await db
+        .insert(doctors)
+        .values({ userId, ...data })
+        .returning();
+      return row;
+    } catch (error) {
+      if (isDoctorUserIdUniqueViolation(error)) {
+        throw new DoctorProfileAlreadyExistsError();
+      }
+
+      throw error;
+    }
   },
 
   /**

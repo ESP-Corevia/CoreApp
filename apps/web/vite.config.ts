@@ -28,10 +28,10 @@ export default defineConfig({
       ? { cert: fs.readFileSync(certPath), key: fs.readFileSync(keyPath) }
       : undefined,
     proxy: {
-      '/docs': {
+      '/reference': {
         target: serverTarget,
         changeOrigin: true,
-        rewrite: p => p.replace(/^\/docs/, '/reference'),
+        rewrite: p => p.replace(/^\/reference/, '/reference'),
         secure: false,
       },
       '/openapi.json': {

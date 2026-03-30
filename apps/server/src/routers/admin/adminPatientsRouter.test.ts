@@ -80,6 +80,14 @@ describe('adminPatientsRouter', () => {
 
       expect(result).toEqual(emptyResponse);
     });
+
+    it('rejects perPage above the admin max', async () => {
+      const caller = createTestCaller({ customSession: fakeSession });
+
+      await expect(caller.admin.listPatients({ page: 1, perPage: 101 })).rejects.toThrow();
+
+      expect(mockServices.patientsService.listAllAdmin).not.toHaveBeenCalled();
+    });
   });
 
   describe('createPatient', () => {

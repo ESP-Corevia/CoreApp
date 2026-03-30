@@ -153,5 +153,20 @@ describe('adminRouter', () => {
         userId: 'admin-user',
       });
     });
+
+    it('rejects perPage above the admin max', async () => {
+      const caller = createTestCaller({
+        customSession: { ...fakeSession, userId: 'admin-user' },
+      });
+
+      await expect(
+        caller.admin.listUsers({
+          page: 1,
+          perPage: 101,
+        }),
+      ).rejects.toThrow();
+
+      expect(mockServices.usersService.listUsers).not.toHaveBeenCalled();
+    });
   });
 });

@@ -3,6 +3,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { mockRepositories } from '../../../test/repositories';
+import { DoctorProfileAlreadyExistsError } from '../repositories/doctors.repository';
 
 import { createDoctorsService } from './doctors.service';
 
@@ -243,13 +244,13 @@ describe('createProfile', () => {
 
   it('creates a doctor profile for a user with role doctor', async () => {
     mockRepositories.usersRepo.findById.mockResolvedValue({ id: 'user-1', role: 'doctor' } as any);
-    mockRepositories.doctorsRepo.getByUserId.mockResolvedValue(null as any);
     mockRepositories.doctorsRepo.createByUserId.mockResolvedValue(fakeCreated as any);
 
     const result = await doctorsService.createProfile('user-1', createData);
 
     expect(mockRepositories.usersRepo.findById).toHaveBeenCalledWith({ id: 'user-1' });
     expect(mockRepositories.doctorsRepo.createByUserId).toHaveBeenCalledWith('user-1', createData);
+    expect(mockRepositories.doctorsRepo.getByUserId).not.toHaveBeenCalled();
     expect(result).toEqual(fakeCreated);
   });
 
@@ -271,11 +272,16 @@ describe('createProfile', () => {
 
   it('throws CONFLICT when doctor profile already exists', async () => {
     mockRepositories.usersRepo.findById.mockResolvedValue({ id: 'user-1', role: 'doctor' } as any);
-    mockRepositories.doctorsRepo.getByUserId.mockResolvedValue(fakeDoctor as any);
+    mockRepositories.doctorsRepo.createByUserId.mockRejectedValue(
+      new DoctorProfileAlreadyExistsError(),
+    );
 
     await expect(doctorsService.createProfile('user-1', createData)).rejects.toMatchObject({
       code: 'CONFLICT',
+      message: 'Doctor profile already exists',
     });
+
+    expect(mockRepositories.doctorsRepo.getByUserId).not.toHaveBeenCalled();
   });
 });
 

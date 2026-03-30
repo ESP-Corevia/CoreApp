@@ -1,7 +1,10 @@
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
-import type { createDoctorsRepo } from '../repositories/doctors.repository';
+import {
+  type createDoctorsRepo,
+  DoctorProfileAlreadyExistsError,
+} from '../repositories/doctors.repository';
 import type { createUsersRepo } from '../repositories/users.repository';
 
 export const DoctorProfileSchema = z.object({
@@ -67,11 +70,15 @@ export const createDoctorsService = (
         message: `User role is "${user.role ?? 'none'}", expected "doctor"`,
       });
     }
-    const existing = await repo.getByUserId(userId);
-    if (existing) {
-      throw new TRPCError({ code: 'CONFLICT', message: 'Doctor profile already exists' });
+    try {
+      return await repo.createByUserId(userId, data);
+    } catch (error) {
+      if (error instanceof DoctorProfileAlreadyExistsError) {
+        throw new TRPCError({ code: 'CONFLICT', message: 'Doctor profile already exists' });
+      }
+
+      throw error;
     }
-    return repo.createByUserId(userId, data);
   },
 
   /**

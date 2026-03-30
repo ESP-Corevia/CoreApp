@@ -2,6 +2,7 @@ import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
 import { adminProcedure } from '../../middlewares';
+import { MAX_ADMIN_PER_PAGE } from './constants';
 
 export const createDoctor = adminProcedure
   .meta({
@@ -96,7 +97,7 @@ export const listDoctors = adminProcedure
   .input(
     z.object({
       page: z.number().int().positive(),
-      perPage: z.number().int().positive(),
+      perPage: z.number().int().positive().max(MAX_ADMIN_PER_PAGE),
       search: z.string().optional(),
       specialty: z.string().optional(),
       city: z.string().optional(),

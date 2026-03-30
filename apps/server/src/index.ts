@@ -2,13 +2,14 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import fastifyCors from '@fastify/cors';
+import helmet from '@fastify/helmet';
 import ScalarApiReference from '@scalar/fastify-api-reference';
 import { type FastifyTRPCPluginOptions, fastifyTRPCPlugin } from '@trpc/server/adapters/fastify';
 import Fastify from 'fastify';
 import { fastifyTRPCOpenApiPlugin, generateOpenApiDocument } from 'trpc-to-openapi';
-
 import pkg from '../package.json';
 
+import { pool } from './db';
 import { services } from './db/services';
 import { env } from './env';
 import { auth } from './lib/auth';
@@ -38,17 +39,22 @@ const baseCorsConfig = {
   exposedHeaders: ['Set-Cookie'],
 };
 
+const isProduction = env.NODE_ENV === 'production';
+
 const fastify = Fastify({
-  logger: {
-    transport: {
-      target: 'pino-pretty',
-      options: {
-        colorize: true,
-        levelFirst: true,
-        translateTime: 'HH:MM:ss Z',
+  logger: isProduction
+    ? { level: env.LOG_LEVEL }
+    : {
+        level: env.LOG_LEVEL,
+        transport: {
+          target: 'pino-pretty',
+          options: {
+            colorize: true,
+            levelFirst: true,
+            translateTime: 'HH:MM:ss Z',
+          },
+        },
       },
-    },
-  },
   ...(hasCerts && {
     https: {
       key: fs.readFileSync(keyPath),
@@ -58,6 +64,10 @@ const fastify = Fastify({
 });
 
 fastify.register(fastifyCors, baseCorsConfig);
+await fastify.register(helmet, {
+  global: true,
+  contentSecurityPolicy: false,
+});
 
 fastify.route({
   method: ['GET', 'POST'],
@@ -136,18 +146,45 @@ fastify.register(ScalarApiReference, {
     darkMode: true,
   },
 });
+
 const protocol = hasCerts ? 'https' : 'http';
-fastify.listen({ port: 3000, host: '0.0.0.0' }, err => {
+
+let isShuttingDown = false;
+
+async function shutdown(signal: NodeJS.Signals) {
+  if (isShuttingDown) {
+    return;
+  }
+
+  isShuttingDown = true;
+  fastify.log.info({ signal }, 'Shutting down server');
+
+  try {
+    await fastify.close();
+    await pool.end();
+    fastify.log.info('Server shutdown complete');
+    process.exit(0);
+  } catch (error) {
+    fastify.log.error({ err: error, signal }, 'Failed to shutdown cleanly');
+    process.exit(1);
+  }
+}
+
+process.once('SIGINT', () => void shutdown('SIGINT'));
+process.once('SIGTERM', () => void shutdown('SIGTERM'));
+
+fastify.listen({ port: env.PORT, host: '0.0.0.0' }, err => {
   if (err) {
     fastify.log.error(err);
-    process.exit(1);
+    void pool.end().finally(() => process.exit(1));
+    return;
   }
   const addr = fastify.server.address();
   const url =
     addr && typeof addr === 'object'
       ? `${protocol}://${addr.address}:${addr.port}`
-      : `${protocol}://localhost:3000`;
+      : `${protocol}://localhost:${env.PORT}`;
   printBanner('CoreviaBackend', `Corevia API listening at ${url}`);
 
-  fastify.log.info(`Server running on port 3000 (${protocol})`);
+  fastify.log.info(`Server running on port ${env.PORT} (${protocol})`);
 });
