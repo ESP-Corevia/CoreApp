@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.1.2 (2026-03-30)
+
+## What's Changed
+* fix(deps): update dependency pino to v10 by @renovate[bot] in https://github.com/ESP-Corevia/CoreApp/pull/116
+* chore(deps): update pnpm/action-setup action to v5 by @renovate[bot] in https://github.com/ESP-Corevia/CoreApp/pull/115
+* chore(deps): update dorny/paths-filter action to v4 by @renovate[bot] in https://github.com/ESP-Corevia/CoreApp/pull/114
+* Pnpm docker by @Yasser5711 in https://github.com/ESP-Corevia/CoreApp/pull/118
+* Admin appointments by @Yasser5711 in https://github.com/ESP-Corevia/CoreApp/pull/119
+
+
+**Full Changelog**: https://github.com/ESP-Corevia/CoreApp/compare/server-v1.1.1...server-v1.1.2
+
 ## 1.1.1 (2026-03-25)
 
 ## What's Changed
