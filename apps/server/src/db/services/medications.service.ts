@@ -404,6 +404,42 @@ export const createMedicationsService = (repo: MedicationsRepo, provider: Medica
       return await repo.updateIntakeStatus(intakeId, 'SKIPPED', notes);
     },
 
+    // ─── Doctor Operations ──────────────────────────────
+
+    /**
+     * Liste les médicaments d'un patient (vue médecin). Read-only.
+     */
+    doctorListPatientPillbox: async (
+      patientId: string,
+      query: z.infer<typeof ListPillboxInputSchema>,
+    ) => {
+      const offset = (query.page - 1) * query.limit;
+      const [items, total] = await Promise.all([
+        repo.listByPatient({ patientId, isActive: query.isActive, offset, limit: query.limit }),
+        repo.countByPatient({ patientId, isActive: query.isActive }),
+      ]);
+      return { items, page: query.page, limit: query.limit, total };
+    },
+
+    /**
+     * Récupère les prises du jour d'un patient (vue médecin). Read-only.
+     */
+    doctorViewPatientToday: (patientId: string) => {
+      return generateAndFetchTodayIntakes(patientId);
+    },
+
+    /**
+     * Récupère le détail d'un médicament d'un patient (vue médecin). Read-only.
+     * @throws NOT_FOUND si le médicament n'existe pas.
+     */
+    doctorViewMedicationDetail: async (medicationId: string) => {
+      const med = await repo.getDetailById(medicationId);
+      if (!med) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Medication not found' });
+      }
+      return med;
+    },
+
     //Admin Operations
 
     /**

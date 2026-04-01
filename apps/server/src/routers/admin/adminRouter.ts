@@ -10,6 +10,13 @@ import {
 } from './adminAppointmentsRouter';
 import { createDoctor, listDoctors, updateDoctor } from './adminDoctorsRouter';
 import { createPatient, deletePatient, listPatients, updatePatient } from './adminPatientsRouter';
+import {
+  adminCreateMedication,
+  adminDeleteMedication,
+  adminListPillbox,
+  adminTodayByPatient,
+  adminUpdateMedication,
+} from './adminPillboxRouter';
 import { MAX_ADMIN_PER_PAGE } from './constants';
 
 export const adminRouter = router({
@@ -108,4 +115,9 @@ export const adminRouter = router({
   updateAppointment,
   deleteAppointment,
   updateAppointmentStatus,
+  adminListPillbox,
+  adminCreateMedication,
+  adminUpdateMedication,
+  adminDeleteMedication,
+  adminTodayByPatient,
 });

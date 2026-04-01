@@ -25,6 +25,16 @@ export interface ListByPatientParams {
   sort: 'dateAsc' | 'dateDesc' | 'createdAtDesc';
 }
 
+export interface ListByDoctorParams {
+  doctorId: string;
+  status?: string;
+  from?: string;
+  to?: string;
+  offset: number;
+  limit: number;
+  sort: 'dateAsc' | 'dateDesc' | 'createdAtDesc';
+}
+
 export interface ListAllParams {
   status?: string[];
   from?: string;
@@ -59,6 +69,22 @@ function buildAllFilters(params: ListAllParams) {
   }
 
   return conditions.length > 0 ? and(...conditions) : undefined;
+}
+
+function buildDoctorFilters(params: ListByDoctorParams) {
+  const conditions = [eq(appointments.doctorId, params.doctorId)];
+
+  if (params.status) {
+    conditions.push(eq(appointments.status, params.status as any));
+  }
+  if (params.from) {
+    conditions.push(gte(appointments.date, params.from));
+  }
+  if (params.to) {
+    conditions.push(lte(appointments.date, params.to));
+  }
+
+  return and(...conditions);
 }
 
 function buildPatientFilters(params: ListByPatientParams) {
@@ -162,6 +188,65 @@ export const createAppointmentsRepo = (db: DrizzleDB) => ({
     const [row] = await db.select({ count: sql<number>`count(*)` }).from(appointments).where(where);
 
     return Number(row.count);
+  },
+
+  /**
+   * Liste les rendez-vous d'un médecin avec les infos du patient.
+   * Supporte le filtrage par statut et plage de dates, le tri et la pagination.
+   */
+  listByDoctor: async (params: ListByDoctorParams) => {
+    const where = buildDoctorFilters(params);
+    const order = buildOrderBy(params.sort);
+
+    return await db
+      .select({
+        id: appointments.id,
+        doctorId: appointments.doctorId,
+        patientId: appointments.patientId,
+        date: appointments.date,
+        time: appointments.time,
+        status: appointments.status,
+        reason: appointments.reason,
+        createdAt: appointments.createdAt,
+        patient: {
+          name: patientUsersView.name,
+          email: patientUsersView.email,
+          phone: patientUsersView.phone,
+          dateOfBirth: patientUsersView.dateOfBirth,
+          gender: patientUsersView.gender,
+        },
+      })
+      .from(appointments)
+      .innerJoin(patientUsersView, eq(appointments.patientId, patientUsersView.userId))
+      .where(where)
+      .orderBy(...order)
+      .limit(params.limit)
+      .offset(params.offset);
+  },
+
+  /**
+   * Compte le nombre total de rendez-vous d'un médecin (mêmes filtres que `listByDoctor`, sans pagination).
+   */
+  countByDoctor: async (params: Omit<ListByDoctorParams, 'offset' | 'limit' | 'sort'>) => {
+    const where = buildDoctorFilters({ ...params, offset: 0, limit: 0, sort: 'dateDesc' });
+
+    const [row] = await db.select({ count: sql<number>`count(*)` }).from(appointments).where(where);
+
+    return Number(row.count);
+  },
+
+  /**
+   * Vérifie si un patient a au moins un rendez-vous avec un médecin donné.
+   * Utilisé pour autoriser l'accès d'un médecin au dossier d'un patient.
+   */
+  hasPatientRelationship: async (doctorId: string, patientId: string) => {
+    const [row] = await db
+      .select({ id: appointments.id })
+      .from(appointments)
+      .where(and(eq(appointments.doctorId, doctorId), eq(appointments.patientId, patientId)))
+      .limit(1);
+
+    return !!row;
   },
 
   /**

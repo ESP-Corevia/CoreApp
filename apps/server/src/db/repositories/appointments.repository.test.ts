@@ -585,4 +585,183 @@ describe('appointments.repository', () => {
       expect(result).toBeNull();
     });
   });
+
+  describe('listByDoctor', () => {
+    beforeEach(async () => {
+      await db.insert(appointments).values([
+        {
+          doctorId,
+          patientId,
+          date: '2099-06-10',
+          time: '10:00',
+          status: 'PENDING',
+          reason: 'Checkup',
+        },
+        {
+          doctorId,
+          patientId,
+          date: '2099-06-15',
+          time: '14:00',
+          status: 'CONFIRMED',
+        },
+        {
+          doctorId,
+          patientId,
+          date: '2099-06-20',
+          time: '09:00',
+          status: 'CANCELLED',
+        },
+      ]);
+    });
+
+    it('returns all appointments for a doctor with patient info', async () => {
+      const items = await repo.listByDoctor({
+        doctorId,
+        offset: 0,
+        limit: 10,
+        sort: 'dateAsc',
+      });
+
+      expect(items).toHaveLength(3);
+      expect(items[0].date).toBe('2099-06-10');
+      expect(items[0].patient.name).toBe('Patient Test');
+      expect(items[0].patient.dateOfBirth).toBe('1990-01-01');
+      expect(items[0].patient.gender).toBe('MALE');
+    });
+
+    it('filters by status', async () => {
+      const items = await repo.listByDoctor({
+        doctorId,
+        status: 'PENDING',
+        offset: 0,
+        limit: 10,
+        sort: 'dateAsc',
+      });
+
+      expect(items).toHaveLength(1);
+      expect(items[0].status).toBe('PENDING');
+    });
+
+    it('filters by date range', async () => {
+      const items = await repo.listByDoctor({
+        doctorId,
+        from: '2099-06-12',
+        to: '2099-06-18',
+        offset: 0,
+        limit: 10,
+        sort: 'dateAsc',
+      });
+
+      expect(items).toHaveLength(1);
+      expect(items[0].date).toBe('2099-06-15');
+    });
+
+    it('sorts dateDesc', async () => {
+      const items = await repo.listByDoctor({
+        doctorId,
+        offset: 0,
+        limit: 10,
+        sort: 'dateDesc',
+      });
+
+      expect(items[0].date).toBe('2099-06-20');
+      expect(items[2].date).toBe('2099-06-10');
+    });
+
+    it('paginates with offset/limit', async () => {
+      const items = await repo.listByDoctor({
+        doctorId,
+        offset: 1,
+        limit: 1,
+        sort: 'dateAsc',
+      });
+
+      expect(items).toHaveLength(1);
+      expect(items[0].date).toBe('2099-06-15');
+    });
+
+    it('isolates by doctor - other doctor sees nothing', async () => {
+      const [otherDoctor] = await db
+        .insert(users)
+        .values({
+          name: 'Other Doctor',
+          email: 'other-doc@test.com',
+          emailVerified: true,
+          createdAt: new Date(),
+        })
+        .returning({ id: users.id });
+
+      await db.insert(doctors).values({
+        userId: otherDoctor.id,
+        specialty: 'Dermatology',
+        address: '5 Rue Other',
+        city: 'Lyon',
+      });
+
+      const items = await repo.listByDoctor({
+        doctorId: otherDoctor.id,
+        offset: 0,
+        limit: 10,
+        sort: 'dateAsc',
+      });
+
+      expect(items).toHaveLength(0);
+    });
+  });
+
+  describe('countByDoctor', () => {
+    beforeEach(async () => {
+      await db.insert(appointments).values([
+        { doctorId, patientId, date: '2099-06-10', time: '10:00', status: 'PENDING' },
+        { doctorId, patientId, date: '2099-06-15', time: '14:00', status: 'CONFIRMED' },
+        { doctorId, patientId, date: '2099-06-20', time: '09:00', status: 'CANCELLED' },
+      ]);
+    });
+
+    it('counts all appointments for a doctor', async () => {
+      const count = await repo.countByDoctor({ doctorId });
+      expect(count).toBe(3);
+    });
+
+    it('counts with status filter', async () => {
+      const count = await repo.countByDoctor({ doctorId, status: 'PENDING' });
+      expect(count).toBe(1);
+    });
+
+    it('counts with date range', async () => {
+      const count = await repo.countByDoctor({
+        doctorId,
+        from: '2099-06-12',
+        to: '2099-06-18',
+      });
+      expect(count).toBe(1);
+    });
+  });
+
+  describe('hasPatientRelationship', () => {
+    it('returns true when doctor has an appointment with patient', async () => {
+      await repo.createAppointmentAtomic({
+        doctorId,
+        patientId,
+        date: TEST_DATE,
+        time: '10:00',
+      });
+
+      const result = await repo.hasPatientRelationship(doctorId, patientId);
+      expect(result).toBe(true);
+    });
+
+    it('returns false when doctor has no appointment with patient', async () => {
+      const result = await repo.hasPatientRelationship(doctorId, patientId);
+      expect(result).toBe(false);
+    });
+
+    it('returns false for non-existing doctor', async () => {
+      const result = await repo.hasPatientRelationship(
+        'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a99',
+        patientId,
+      );
+      expect(result).toBe(false);
+    });
+  });
 });

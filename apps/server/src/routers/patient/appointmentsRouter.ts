@@ -5,10 +5,10 @@ import {
   CreateAppointmentInputSchema,
   ListAppointmentsInputSchema,
   ListAppointmentsOutputSchema,
-} from '../db/services/appointments.service';
-import { patientProcedure, router } from '../middlewares';
+} from '../../db/services/appointments.service';
+import { patientProcedure, router } from '../../middlewares';
 
-export const appointmentsRouter = router({
+export const patientAppointmentsRouter = router({
   detail: patientProcedure
     .meta({
       openapi: {

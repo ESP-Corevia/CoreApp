@@ -635,4 +635,305 @@ describe('appointmentsService', () => {
       expect(mockAppointmentsRepo.countByPatient).toHaveBeenCalledTimes(1);
     });
   });
+
+  describe('getDoctorAppointmentDetail', () => {
+    const APPT_ID = 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a22';
+    const fakeDetail = {
+      ...fakeAppointment,
+      id: APPT_ID,
+      reason: null,
+      createdAt: new Date('2099-06-15T08:00:00Z'),
+      updatedAt: null,
+      doctor: {
+        id: DOCTOR_ID,
+        name: 'Dr. Smith',
+        specialty: 'Cardiology',
+        address: '1 Rue Test',
+      },
+    };
+
+    it('returns appointment when doctor is the assigned doctor', async () => {
+      mockAppointmentsRepo.getByIdWithDoctor.mockResolvedValue(fakeDetail);
+
+      const result = await service.getDoctorAppointmentDetail(DOCTOR_ID, APPT_ID);
+
+      expect(result).toEqual(fakeDetail);
+      expect(mockAppointmentsRepo.getByIdWithDoctor).toHaveBeenCalledWith(APPT_ID);
+    });
+
+    it('throws NOT_FOUND when appointment does not exist', async () => {
+      mockAppointmentsRepo.getByIdWithDoctor.mockResolvedValue(null as any);
+
+      await expect(service.getDoctorAppointmentDetail(DOCTOR_ID, APPT_ID)).rejects.toThrow(
+        expect.objectContaining({ code: 'NOT_FOUND' }),
+      );
+    });
+
+    it('throws FORBIDDEN when doctor is not the assigned doctor', async () => {
+      mockAppointmentsRepo.getByIdWithDoctor.mockResolvedValue(fakeDetail);
+
+      await expect(service.getDoctorAppointmentDetail('other-doctor-id', APPT_ID)).rejects.toThrow(
+        expect.objectContaining({ code: 'FORBIDDEN' }),
+      );
+    });
+  });
+
+  describe('listDoctorAppointments', () => {
+    const fakeItems = [
+      {
+        ...fakeAppointment,
+        reason: null,
+        createdAt: new Date('2099-06-01'),
+        patient: {
+          name: 'John Doe',
+          email: 'john@test.com',
+          phone: '0612345678',
+          dateOfBirth: '1990-01-01',
+          gender: 'MALE',
+        },
+      },
+    ];
+
+    beforeEach(() => {
+      mockAppointmentsRepo.listByDoctor.mockResolvedValue(fakeItems);
+      mockAppointmentsRepo.countByDoctor.mockResolvedValue(1);
+    });
+
+    it('returns paginated results with defaults', async () => {
+      const result = await service.listDoctorAppointments(DOCTOR_ID, {
+        page: 1,
+        limit: 20,
+        sort: 'dateDesc',
+      });
+
+      expect(result).toEqual({
+        items: fakeItems,
+        page: 1,
+        limit: 20,
+        total: 1,
+      });
+      expect(mockAppointmentsRepo.listByDoctor).toHaveBeenCalledWith({
+        doctorId: DOCTOR_ID,
+        status: undefined,
+        from: undefined,
+        to: undefined,
+        offset: 0,
+        limit: 20,
+        sort: 'dateDesc',
+      });
+    });
+
+    it('computes offset from page', async () => {
+      await service.listDoctorAppointments(DOCTOR_ID, {
+        page: 3,
+        limit: 10,
+        sort: 'dateDesc',
+      });
+
+      expect(mockAppointmentsRepo.listByDoctor).toHaveBeenCalledWith(
+        expect.objectContaining({ offset: 20, limit: 10 }),
+      );
+    });
+
+    it('passes filters to the repo', async () => {
+      await service.listDoctorAppointments(DOCTOR_ID, {
+        status: 'PENDING',
+        from: '2099-01-01',
+        to: '2099-12-31',
+        page: 1,
+        limit: 20,
+        sort: 'dateAsc',
+      });
+
+      expect(mockAppointmentsRepo.listByDoctor).toHaveBeenCalledWith(
+        expect.objectContaining({
+          doctorId: DOCTOR_ID,
+          status: 'PENDING',
+          from: '2099-01-01',
+          to: '2099-12-31',
+          sort: 'dateAsc',
+        }),
+      );
+    });
+
+    it('throws BAD_REQUEST when from > to', async () => {
+      await expect(
+        service.listDoctorAppointments(DOCTOR_ID, {
+          from: '2099-12-31',
+          to: '2099-01-01',
+          page: 1,
+          limit: 20,
+          sort: 'dateDesc',
+        }),
+      ).rejects.toThrow(expect.objectContaining({ code: 'BAD_REQUEST' }));
+    });
+
+    it('fetches items and count in parallel', async () => {
+      await service.listDoctorAppointments(DOCTOR_ID, {
+        page: 1,
+        limit: 20,
+        sort: 'dateDesc',
+      });
+
+      expect(mockAppointmentsRepo.listByDoctor).toHaveBeenCalledTimes(1);
+      expect(mockAppointmentsRepo.countByDoctor).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('updateDoctorAppointmentStatus', () => {
+    const fakeDetail = {
+      ...fakeAppointment,
+      reason: null,
+      createdAt: new Date('2099-06-15T08:00:00Z'),
+      updatedAt: null,
+      doctor: {
+        id: DOCTOR_ID,
+        name: 'Dr. Smith',
+        specialty: 'Cardiology',
+        address: '1 Rue Test',
+      },
+    };
+
+    const fakeUpdated = {
+      id: fakeAppointment.id,
+      doctorId: DOCTOR_ID,
+      patientId: PATIENT_ID,
+      date: FUTURE_DATE,
+      time: VALID_TIME,
+      status: 'CONFIRMED' as const,
+    };
+
+    it('transitions PENDING to CONFIRMED', async () => {
+      mockAppointmentsRepo.getByIdWithDoctor.mockResolvedValue({
+        ...fakeDetail,
+        status: 'PENDING',
+      });
+      mockAppointmentsRepo.updateStatus.mockResolvedValue(fakeUpdated);
+
+      const result = await service.updateDoctorAppointmentStatus(
+        DOCTOR_ID,
+        fakeAppointment.id,
+        'CONFIRMED',
+      );
+
+      expect(result).toEqual(fakeUpdated);
+      expect(mockAppointmentsRepo.updateStatus).toHaveBeenCalledWith(
+        fakeAppointment.id,
+        'CONFIRMED',
+      );
+    });
+
+    it('transitions CONFIRMED to COMPLETED', async () => {
+      mockAppointmentsRepo.getByIdWithDoctor.mockResolvedValue({
+        ...fakeDetail,
+        status: 'CONFIRMED',
+      });
+      mockAppointmentsRepo.updateStatus.mockResolvedValue({
+        ...fakeUpdated,
+        status: 'COMPLETED',
+      });
+
+      const result = await service.updateDoctorAppointmentStatus(
+        DOCTOR_ID,
+        fakeAppointment.id,
+        'COMPLETED',
+      );
+
+      expect(result.status).toBe('COMPLETED');
+    });
+
+    it('transitions PENDING to CANCELLED', async () => {
+      mockAppointmentsRepo.getByIdWithDoctor.mockResolvedValue({
+        ...fakeDetail,
+        status: 'PENDING',
+      });
+      mockAppointmentsRepo.updateStatus.mockResolvedValue({
+        ...fakeUpdated,
+        status: 'CANCELLED',
+      });
+
+      const result = await service.updateDoctorAppointmentStatus(
+        DOCTOR_ID,
+        fakeAppointment.id,
+        'CANCELLED',
+      );
+
+      expect(result.status).toBe('CANCELLED');
+    });
+
+    it('throws NOT_FOUND when appointment does not exist', async () => {
+      mockAppointmentsRepo.getByIdWithDoctor.mockResolvedValue(null as any);
+
+      await expect(
+        service.updateDoctorAppointmentStatus(DOCTOR_ID, 'non-existent', 'CONFIRMED'),
+      ).rejects.toThrow(expect.objectContaining({ code: 'NOT_FOUND' }));
+    });
+
+    it('throws FORBIDDEN when doctor is not the assigned doctor', async () => {
+      mockAppointmentsRepo.getByIdWithDoctor.mockResolvedValue({
+        ...fakeDetail,
+        status: 'PENDING',
+      });
+
+      await expect(
+        service.updateDoctorAppointmentStatus('other-doctor', fakeAppointment.id, 'CONFIRMED'),
+      ).rejects.toThrow(expect.objectContaining({ code: 'FORBIDDEN' }));
+    });
+
+    it('throws BAD_REQUEST for invalid transition COMPLETED to CONFIRMED', async () => {
+      mockAppointmentsRepo.getByIdWithDoctor.mockResolvedValue({
+        ...fakeDetail,
+        status: 'COMPLETED',
+      });
+
+      await expect(
+        service.updateDoctorAppointmentStatus(DOCTOR_ID, fakeAppointment.id, 'CONFIRMED'),
+      ).rejects.toThrow(expect.objectContaining({ code: 'BAD_REQUEST' }));
+    });
+
+    it('throws BAD_REQUEST for invalid transition CANCELLED to COMPLETED', async () => {
+      mockAppointmentsRepo.getByIdWithDoctor.mockResolvedValue({
+        ...fakeDetail,
+        status: 'CANCELLED',
+      });
+
+      await expect(
+        service.updateDoctorAppointmentStatus(DOCTOR_ID, fakeAppointment.id, 'COMPLETED'),
+      ).rejects.toThrow(expect.objectContaining({ code: 'BAD_REQUEST' }));
+    });
+
+    it('throws INTERNAL_SERVER_ERROR when updateStatus returns null', async () => {
+      mockAppointmentsRepo.getByIdWithDoctor.mockResolvedValue({
+        ...fakeDetail,
+        status: 'PENDING',
+      });
+      mockAppointmentsRepo.updateStatus.mockResolvedValue(null as any);
+
+      await expect(
+        service.updateDoctorAppointmentStatus(DOCTOR_ID, fakeAppointment.id, 'CONFIRMED'),
+      ).rejects.toThrow(expect.objectContaining({ code: 'INTERNAL_SERVER_ERROR' }));
+    });
+  });
+
+  describe('hasPatientRelationship', () => {
+    it('returns true when relationship exists', async () => {
+      mockAppointmentsRepo.hasPatientRelationship.mockResolvedValue(true);
+
+      const result = await service.hasPatientRelationship(DOCTOR_ID, PATIENT_ID);
+
+      expect(result).toBe(true);
+      expect(mockAppointmentsRepo.hasPatientRelationship).toHaveBeenCalledWith(
+        DOCTOR_ID,
+        PATIENT_ID,
+      );
+    });
+
+    it('returns false when no relationship', async () => {
+      mockAppointmentsRepo.hasPatientRelationship.mockResolvedValue(false);
+
+      const result = await service.hasPatientRelationship(DOCTOR_ID, PATIENT_ID);
+
+      expect(result).toBe(false);
+    });
+  });
 });

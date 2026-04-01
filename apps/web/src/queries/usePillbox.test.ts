@@ -32,6 +32,8 @@ vi.mock('@/providers/trpc', async importOriginal => {
         addSchedule: { mutate: vi.fn() },
         updateSchedule: { mutate: vi.fn() },
         deleteSchedule: { mutate: vi.fn() },
+      },
+      admin: {
         adminUpdateMedication: { mutate: vi.fn() },
         adminDeleteMedication: { mutate: vi.fn() },
         adminCreateMedication: { mutate: vi.fn() },
@@ -67,7 +69,7 @@ describe('useAdminPillboxList', () => {
         }),
       {
         trpcHandlers: {
-          'pillbox.adminListAll': handler,
+          'admin.adminListPillbox': handler,
         },
       },
     );
@@ -97,7 +99,7 @@ describe('useAdminPillboxList', () => {
         }),
       {
         trpcHandlers: {
-          'pillbox.adminListAll': handler,
+          'admin.adminListPillbox': handler,
         },
       },
     );
@@ -111,7 +113,7 @@ describe('useAdminPillboxList', () => {
 
     const { result } = renderHook(() => useAdminPillboxList({ page: 1, limit: 12 }), {
       trpcHandlers: {
-        'pillbox.adminListAll': handler,
+        'admin.adminListPillbox': handler,
       },
     });
 
@@ -311,7 +313,7 @@ describe('useDeleteSchedule', () => {
 
 describe('useAdminUpdateMedication', () => {
   it('calls mutate and shows success toast', async () => {
-    const mutate = (trpcClient as any).pillbox.adminUpdateMedication.mutate;
+    const mutate = (trpcClient as any).admin.adminUpdateMedication.mutate;
     mutate.mockResolvedValueOnce({ id: 'med_1' });
 
     const { result } = renderHook(() => useAdminUpdateMedication());
@@ -327,7 +329,7 @@ describe('useAdminUpdateMedication', () => {
   });
 
   it('shows error toast on failure', async () => {
-    const mutate = (trpcClient as any).pillbox.adminUpdateMedication.mutate;
+    const mutate = (trpcClient as any).admin.adminUpdateMedication.mutate;
     mutate.mockRejectedValueOnce(new Error('Update failed'));
 
     const { result } = renderHook(() => useAdminUpdateMedication());
@@ -339,7 +341,7 @@ describe('useAdminUpdateMedication', () => {
   });
 
   it('shows fallback error message for non-Error values', async () => {
-    const mutate = (trpcClient as any).pillbox.adminUpdateMedication.mutate;
+    const mutate = (trpcClient as any).admin.adminUpdateMedication.mutate;
     mutate.mockRejectedValueOnce('string error');
 
     const { result } = renderHook(() => useAdminUpdateMedication());
@@ -353,7 +355,7 @@ describe('useAdminUpdateMedication', () => {
 
 describe('useAdminDeleteMedication', () => {
   it('calls mutate and shows success toast', async () => {
-    const mutate = (trpcClient as any).pillbox.adminDeleteMedication.mutate;
+    const mutate = (trpcClient as any).admin.adminDeleteMedication.mutate;
     mutate.mockResolvedValueOnce({ id: 'med_1' });
 
     const { result } = renderHook(() => useAdminDeleteMedication());
@@ -367,7 +369,7 @@ describe('useAdminDeleteMedication', () => {
   });
 
   it('shows error toast on failure', async () => {
-    const mutate = (trpcClient as any).pillbox.adminDeleteMedication.mutate;
+    const mutate = (trpcClient as any).admin.adminDeleteMedication.mutate;
     mutate.mockRejectedValueOnce(new Error('Delete failed'));
 
     const { result } = renderHook(() => useAdminDeleteMedication());
@@ -379,7 +381,7 @@ describe('useAdminDeleteMedication', () => {
   });
 
   it('shows fallback error message for non-Error values', async () => {
-    const mutate = (trpcClient as any).pillbox.adminDeleteMedication.mutate;
+    const mutate = (trpcClient as any).admin.adminDeleteMedication.mutate;
     mutate.mockRejectedValueOnce(42);
 
     const { result } = renderHook(() => useAdminDeleteMedication());
@@ -401,7 +403,7 @@ describe('useAdminCreateMedication', () => {
   };
 
   it('calls mutate and shows success toast', async () => {
-    const mutate = (trpcClient as any).pillbox.adminCreateMedication.mutate;
+    const mutate = (trpcClient as any).admin.adminCreateMedication.mutate;
     mutate.mockResolvedValueOnce({ id: 'med_1', schedules: [] });
 
     const { result } = renderHook(() => useAdminCreateMedication());
@@ -417,7 +419,7 @@ describe('useAdminCreateMedication', () => {
   });
 
   it('shows error toast on failure', async () => {
-    const mutate = (trpcClient as any).pillbox.adminCreateMedication.mutate;
+    const mutate = (trpcClient as any).admin.adminCreateMedication.mutate;
     mutate.mockRejectedValueOnce(new Error('Create failed'));
 
     const { result } = renderHook(() => useAdminCreateMedication());
@@ -429,7 +431,7 @@ describe('useAdminCreateMedication', () => {
   });
 
   it('shows fallback error message for non-Error values', async () => {
-    const mutate = (trpcClient as any).pillbox.adminCreateMedication.mutate;
+    const mutate = (trpcClient as any).admin.adminCreateMedication.mutate;
     mutate.mockRejectedValueOnce(123);
 
     const { result } = renderHook(() => useAdminCreateMedication());

@@ -1,11 +1,14 @@
 import { protectedProcedure, publicProcedure, router } from '../middlewares';
 
 import { adminRouter } from './admin/adminRouter';
-import { appointmentsRouter } from './appointments';
-import { doctorsRouter } from './doctors';
+import { doctorRouter } from './doctor/doctorRouter';
 import { helloWorldRouter } from './helloworld';
-import { medicationsRouter, pillboxRouter } from './medications';
+import { patientAppointmentsRouter } from './patient/appointmentsRouter';
+import { patientDoctorsRouter } from './patient/doctorsRouter';
+import { patientMedicationsRouter } from './patient/medicationsRouter';
+import { patientPillboxRouter } from './patient/pillboxRouter';
 import { userRouter } from './user/userRouter';
+
 export const appRouter = router({
   healthCheck: publicProcedure.query(() => {
     return 'OK';
@@ -19,9 +22,10 @@ export const appRouter = router({
   helloWorld: helloWorldRouter,
   user: userRouter,
   admin: adminRouter,
-  doctors: doctorsRouter,
-  appointments: appointmentsRouter,
-  medications: medicationsRouter,
-  pillbox: pillboxRouter,
+  doctors: patientDoctorsRouter,
+  appointments: patientAppointmentsRouter,
+  medications: patientMedicationsRouter,
+  pillbox: patientPillboxRouter,
+  doctor: doctorRouter,
 });
 export type AppRouter = typeof appRouter;

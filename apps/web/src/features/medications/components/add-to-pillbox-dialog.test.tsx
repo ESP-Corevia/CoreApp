@@ -15,7 +15,7 @@ vi.mock('@/providers/trpc', async importOriginal => {
   return {
     ...original,
     trpcClient: {
-      pillbox: {
+      admin: {
         adminCreateMedication: { mutate: vi.fn() },
       },
     },
@@ -84,13 +84,13 @@ describe('AddToPillboxDialog', () => {
       expect(screen.getByText(/l'identifiant du patient est requis/i)).toBeInTheDocument();
     });
 
-    const mutate = (trpcClient as any).pillbox.adminCreateMedication.mutate;
+    const mutate = (trpcClient as any).admin.adminCreateMedication.mutate;
     expect(mutate).not.toHaveBeenCalled();
   });
 
   it('calls adminCreateMedication with correct payload on submit', async () => {
     const user = userEvent.setup();
-    const mutate = (trpcClient as any).pillbox.adminCreateMedication.mutate;
+    const mutate = (trpcClient as any).admin.adminCreateMedication.mutate;
     mutate.mockResolvedValueOnce({ id: 'med_1', schedules: [] });
     const onOpenChange = vi.fn();
 
