@@ -100,6 +100,7 @@ const ROUTES_WITH_LAYOUT = [
   '/pillbox',
   '/profile',
   '/settings',
+  '/ai',
 ];
 
 function ThemedShell() {

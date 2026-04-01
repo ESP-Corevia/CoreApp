@@ -1,6 +1,7 @@
 /* stylelint-disable at-rule-no-unknown */
 @import "tailwindcss";
 @import "tw-animate-css";
+@plugin "@tailwindcss/typography"; /* stylelint-disable-line */
 
 @custom-variant dark (&:where(.dark, .dark *));
 

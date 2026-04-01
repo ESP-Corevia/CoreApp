@@ -15,6 +15,7 @@ import { env } from './env';
 import { auth } from './lib/auth';
 import printBanner from './lib/banner';
 import { createContext } from './lib/context';
+import { createChatHandler } from './ai/chat';
 import { type AppRouter, appRouter } from './routers/index';
 import { mergeOpenApiDocs } from './utils/functions';
 
@@ -100,6 +101,9 @@ fastify.route({
     }
   },
 });
+
+// --- AI Chat POC endpoint ---
+fastify.post('/chat', createChatHandler({ auth, services }));
 
 fastify.register(fastifyTRPCPlugin, {
   prefix: '/trpc',
