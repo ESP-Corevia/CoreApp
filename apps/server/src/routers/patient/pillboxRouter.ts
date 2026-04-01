@@ -2,14 +2,8 @@ import { z } from 'zod';
 
 import {
   AddScheduleInputSchema,
-  AdminCreateMedicationInputSchema,
-  AdminListPillboxInputSchema,
-  AdminListPillboxOutputSchema,
-  AdminTodayInputSchema,
   CreatePatientMedicationInputSchema,
   DeleteScheduleInputSchema,
-  GetByCodeInputSchema,
-  GetByCodeOutputSchema,
   IntakeOutputSchema,
   ListPillboxInputSchema,
   ListPillboxOutputSchema,
@@ -17,50 +11,13 @@ import {
   PatientMedicationDetailOutputSchema,
   PatientMedicationOutputSchema,
   ScheduleOutputSchema,
-  SearchMedicationsInputSchema,
-  SearchMedicationsOutputSchema,
   TodayPillboxOutputSchema,
   UpdatePatientMedicationInputSchema,
   UpdateScheduleInputSchema,
-} from '../lib/medications/medications.schemas';
-import { adminProcedure, patientProcedure, router } from '../middlewares';
+} from '../../lib/medications/medications.schemas';
+import { patientProcedure, router } from '../../middlewares';
 
-export const medicationsRouter = router({
-  search: patientProcedure
-    .meta({
-      openapi: {
-        method: 'GET',
-        path: '/medications/search',
-        summary: 'Search medications',
-        description: 'Search the external medications database (BDPM) by name or active substance.',
-        tags: ['Medications'],
-      },
-    })
-    .input(SearchMedicationsInputSchema)
-    .output(SearchMedicationsOutputSchema)
-    .query(async ({ input, ctx: { services } }) => {
-      return await services.medicationsService.search(input);
-    }),
-
-  getByCode: patientProcedure
-    .meta({
-      openapi: {
-        method: 'GET',
-        path: '/medications/by-code',
-        summary: 'Get medication by code',
-        description:
-          'Retrieve a specific medication from the external database by CIS, CIP, or external ID.',
-        tags: ['Medications'],
-      },
-    })
-    .input(GetByCodeInputSchema)
-    .output(GetByCodeOutputSchema)
-    .query(async ({ input, ctx: { services } }) => {
-      return await services.medicationsService.getByCode(input);
-    }),
-});
-
-export const pillboxRouter = router({
+export const patientPillboxRouter = router({
   listMine: patientProcedure
     .meta({
       openapi: {
@@ -262,88 +219,5 @@ export const pillboxRouter = router({
         input.id,
         input.notes,
       );
-    }),
-
-  // ─── Admin Procedures ──────────────────────────────
-
-  adminListAll: adminProcedure
-    .meta({
-      openapi: {
-        method: 'GET',
-        path: '/admin/pillbox',
-        summary: 'List all patient medications (admin)',
-        description: 'Admin endpoint to list all patient medications with optional filters.',
-        tags: ['Pillbox Admin'],
-      },
-    })
-    .input(AdminListPillboxInputSchema)
-    .output(AdminListPillboxOutputSchema)
-    .query(async ({ input, ctx: { services } }) => {
-      return await services.medicationsService.adminListAll(input);
-    }),
-
-  adminCreateMedication: adminProcedure
-    .meta({
-      openapi: {
-        method: 'POST',
-        path: '/admin/pillbox',
-        summary: 'Create medication for a patient (admin)',
-        description: 'Admin endpoint to add a medication to a specific patient pillbox.',
-        tags: ['Pillbox Admin'],
-      },
-    })
-    .input(AdminCreateMedicationInputSchema)
-    .output(PatientMedicationDetailOutputSchema)
-    .mutation(async ({ input, ctx: { services } }) => {
-      const { patientId, ...medicationInput } = input;
-      return await services.medicationsService.adminCreateMedication(patientId, medicationInput);
-    }),
-
-  adminUpdateMedication: adminProcedure
-    .meta({
-      openapi: {
-        method: 'PATCH',
-        path: '/admin/pillbox/{id}',
-        summary: 'Update medication (admin)',
-        description: 'Admin endpoint to update any patient medication.',
-        tags: ['Pillbox Admin'],
-      },
-    })
-    .input(UpdatePatientMedicationInputSchema)
-    .output(PatientMedicationOutputSchema)
-    .mutation(async ({ input, ctx: { services } }) => {
-      return await services.medicationsService.adminUpdateMedication(input);
-    }),
-
-  adminDeleteMedication: adminProcedure
-    .meta({
-      openapi: {
-        method: 'DELETE',
-        path: '/admin/pillbox/{id}',
-        summary: 'Delete medication (admin)',
-        description: 'Admin endpoint to remove any patient medication.',
-        tags: ['Pillbox Admin'],
-      },
-    })
-    .input(z.object({ id: z.uuid() }))
-    .output(z.object({ id: z.uuid() }))
-    .mutation(async ({ input, ctx: { services } }) => {
-      return await services.medicationsService.adminDeleteMedication(input.id);
-    }),
-
-  adminTodayByPatient: adminProcedure
-    .meta({
-      openapi: {
-        method: 'GET',
-        path: '/admin/pillbox/today/{patientId}',
-        summary: 'Get patient today pillbox (admin)',
-        description: 'Admin endpoint to view a specific patient today schedule.',
-        tags: ['Pillbox Admin'],
-      },
-    })
-    .input(AdminTodayInputSchema)
-    .output(TodayPillboxOutputSchema)
-    .query(async ({ input, ctx: { services } }) => {
-      return await services.medicationsService.adminTodayByPatient(input.patientId);
     }),
 });

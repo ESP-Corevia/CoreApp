@@ -1,8 +1,8 @@
 import { TRPCError } from '@trpc/server';
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { createTestCaller, fakeDoctorSession, fakeSession } from '../../test/caller';
-import { mockServices } from '../../test/services';
+import { createTestCaller, fakeDoctorSession, fakeSession } from '../../../test/caller';
+import { mockServices } from '../../../test/services';
 
 beforeEach(() => {
   mockServices.doctorsService.listBookable.mockReset();

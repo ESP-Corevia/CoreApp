@@ -7,8 +7,8 @@ import {
   fakeAdminSession,
   fakeDoctorSession,
   fakeSession,
-} from '../../test/caller';
-import { mockServices } from '../../test/services';
+} from '../../../test/caller';
+import { mockServices } from '../../../test/services';
 
 beforeEach(() => {
   mockServices.appointmentsService.createAppointment.mockReset();

@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
-import { AvailableSlotsOutputSchema } from '../db/services/availability.service';
-import { DoctorsListOutputSchema } from '../db/services/doctors.service';
-import { patientProcedure, router } from '../middlewares';
+import { AvailableSlotsOutputSchema } from '../../db/services/availability.service';
+import { DoctorsListOutputSchema } from '../../db/services/doctors.service';
+import { patientProcedure, router } from '../../middlewares';
 
 const DoctorsListInputSchema = z.object({
   specialty: z.string().optional(),
@@ -17,7 +17,7 @@ const AvailableSlotsInputSchema = z.object({
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'date must be YYYY-MM-DD'),
 });
 
-export const doctorsRouter = router({
+export const patientDoctorsRouter = router({
   list: patientProcedure
     .meta({
       openapi: {

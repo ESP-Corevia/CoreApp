@@ -970,3 +970,96 @@ describe('adminDeleteMedication', () => {
     });
   });
 });
+
+// ─── Doctor Operations ──────────────────────────────────────
+
+describe('doctorListPatientPillbox', () => {
+  it('returns paginated medications for a patient', async () => {
+    const fakeItems = [{ id: 'med_1', patientId: 'u_1' }];
+    repo.listByPatient.mockResolvedValue(fakeItems as any);
+    repo.countByPatient.mockResolvedValue(1);
+
+    const result = await service.doctorListPatientPillbox('u_1', {
+      page: 1,
+      limit: 20,
+    });
+
+    expect(result).toEqual({ items: fakeItems, page: 1, limit: 20, total: 1 });
+    expect(repo.listByPatient).toHaveBeenCalledWith({
+      patientId: 'u_1',
+      isActive: undefined,
+      offset: 0,
+      limit: 20,
+    });
+  });
+
+  it('passes isActive filter', async () => {
+    repo.listByPatient.mockResolvedValue([]);
+    repo.countByPatient.mockResolvedValue(0);
+
+    await service.doctorListPatientPillbox('u_1', {
+      isActive: true,
+      page: 1,
+      limit: 20,
+    });
+
+    expect(repo.listByPatient).toHaveBeenCalledWith(expect.objectContaining({ isActive: true }));
+  });
+
+  it('computes offset from page', async () => {
+    repo.listByPatient.mockResolvedValue([]);
+    repo.countByPatient.mockResolvedValue(0);
+
+    await service.doctorListPatientPillbox('u_1', {
+      page: 3,
+      limit: 10,
+    });
+
+    expect(repo.listByPatient).toHaveBeenCalledWith(
+      expect.objectContaining({ offset: 20, limit: 10 }),
+    );
+  });
+});
+
+describe('doctorViewPatientToday', () => {
+  it('generates and fetches today intakes for a patient', async () => {
+    repo.listByPatient.mockResolvedValue([]);
+    repo.listIntakesByDate.mockResolvedValue([]);
+
+    const result = await service.doctorViewPatientToday('u_1');
+
+    expect(result).toHaveProperty('date');
+    expect(result).toHaveProperty('intakes');
+    expect(result.intakes).toEqual([]);
+    expect(repo.listByPatient).toHaveBeenCalled();
+    expect(repo.listIntakesByDate).toHaveBeenCalledWith('u_1', expect.any(String));
+  });
+});
+
+describe('doctorViewMedicationDetail', () => {
+  const fakeDetail = {
+    id: 'med_1',
+    patientId: 'u_1',
+    medicationName: 'Doliprane',
+    schedules: [],
+    patientName: 'John',
+    patientEmail: 'john@test.com',
+  };
+
+  it('returns medication detail', async () => {
+    repo.getDetailById.mockResolvedValue(fakeDetail as any);
+
+    const result = await service.doctorViewMedicationDetail('med_1');
+
+    expect(result).toEqual(fakeDetail);
+    expect(repo.getDetailById).toHaveBeenCalledWith('med_1');
+  });
+
+  it('throws NOT_FOUND when medication does not exist', async () => {
+    repo.getDetailById.mockResolvedValue(null);
+
+    await expect(service.doctorViewMedicationDetail('med_1')).rejects.toMatchObject({
+      code: 'NOT_FOUND',
+    });
+  });
+});

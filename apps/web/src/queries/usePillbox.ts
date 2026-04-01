@@ -15,7 +15,7 @@ export function useAdminPillboxList(params: {
   const trpc = useTrpc();
 
   return useQuery({
-    ...trpc.pillbox.adminListAll.queryOptions({
+    ...trpc.admin.adminListPillbox.queryOptions({
       search: params.search,
       isActive: params.isActive,
       page: params.page,
@@ -154,11 +154,11 @@ export function useAdminUpdateMedication() {
       endDate?: string | null;
       isActive?: boolean;
     }) => {
-      return trpcClient.pillbox.adminUpdateMedication.mutate(input);
+      return trpcClient.admin.adminUpdateMedication.mutate(input);
     },
     onSuccess: () => {
       toast.success(t('pillbox.medicationUpdated', 'Traitement mis à jour'));
-      void queryClient.invalidateQueries(trpc.pillbox.adminListAll.queryFilter());
+      void queryClient.invalidateQueries(trpc.admin.adminListPillbox.queryFilter());
       void queryClient.invalidateQueries(trpc.pillbox.detail.queryFilter());
     },
     onError: error => {
@@ -178,11 +178,11 @@ export function useAdminDeleteMedication() {
 
   return useMutation({
     mutationFn: (input: { id: string }) => {
-      return trpcClient.pillbox.adminDeleteMedication.mutate(input);
+      return trpcClient.admin.adminDeleteMedication.mutate(input);
     },
     onSuccess: () => {
       toast.success(t('pillbox.medicationDeleted', 'Traitement supprimé'));
-      void queryClient.invalidateQueries(trpc.pillbox.adminListAll.queryFilter());
+      void queryClient.invalidateQueries(trpc.admin.adminListPillbox.queryFilter());
     },
     onError: error => {
       toast.error(
@@ -201,11 +201,11 @@ export function useAdminCreateMedication() {
 
   return useMutation({
     mutationFn: (input: UseAdminCreateMedicationParams) => {
-      return trpcClient.pillbox.adminCreateMedication.mutate(input);
+      return trpcClient.admin.adminCreateMedication.mutate(input);
     },
     onSuccess: () => {
       toast.success(t('pillbox.medicationCreated', 'Médicament ajouté au pilulier avec succès'));
-      void queryClient.invalidateQueries(trpc.pillbox.adminListAll.queryFilter());
+      void queryClient.invalidateQueries(trpc.admin.adminListPillbox.queryFilter());
     },
     onError: error => {
       toast.error(

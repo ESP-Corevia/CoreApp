@@ -23,10 +23,10 @@ const merged = mergeConfig(baseConfig, {
       reportsDirectory: './coverage',
       reportOnFailure: true,
       thresholds: {
-        branches: 80,
-        functions: 90,
-        lines: 90,
-        statements: 90,
+        branches: 90,
+        functions: 95,
+        lines: 95,
+        statements: 95,
       },
       include: ['src/**/*.ts', 'test/**/*.ts'],
       exclude: [

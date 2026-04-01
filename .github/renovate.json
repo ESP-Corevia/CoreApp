@@ -7,21 +7,13 @@
   "enabledManagers": ["npm", "github-actions"],
   "ignorePaths": ["apps/native/**", "apps/tauri/**"],
   "dependencyDashboard": true,
-  "prConcurrentLimit": 1,
-  "prHourlyLimit": 1,
+  "prConcurrentLimit": 5,
   "schedule": ["at any time"],
   "labels": ["deps"],
-  "postUpgradeTasks": {
-    "commands": ["biome check --write ."],
-    "fileFilters": ["**/*"],
-    "executionMode": "branch"
-  },
   "packageRules": [
     {
       "description": "Auto-merge patch updates only when merge confidence is high enough",
       "matchUpdateTypes": ["patch"],
-
-      "automerge": true,
       "automergeType": "pr",
       "prCreation": "immediate",
       "addLabels": ["auto-merge"]
@@ -42,8 +34,6 @@
       ],
       "groupName": "repo toolchain",
       "groupSlug": "toolchain",
-
-      "automerge": true,
       "automergeType": "pr",
       "prCreation": "immediate",
       "addLabels": ["scope:tooling", "auto-merge"]
@@ -57,8 +47,6 @@
       ],
       "groupName": "typescript",
       "groupSlug": "typescript",
-
-      "automerge": true,
       "automergeType": "pr",
       "prCreation": "immediate",
       "addLabels": ["scope:shared", "scope:tooling", "auto-merge"]
@@ -90,8 +78,6 @@
       ],
       "groupName": "testing (vitest)",
       "groupSlug": "test-vitest",
-
-      "automerge": true,
       "automergeType": "pr",
       "prCreation": "immediate",
       "addLabels": ["scope:tooling", "scope:test", "auto-merge"]
@@ -107,8 +93,6 @@
       ],
       "groupName": "testing (dom & testing-library)",
       "groupSlug": "test-dom",
-
-      "automerge": true,
       "automergeType": "pr",
       "prCreation": "immediate",
       "addLabels": ["scope:tooling", "scope:test", "auto-merge"]
@@ -117,8 +101,6 @@
       "groupName": "types",
       "groupSlug": "types",
       "matchPackageNames": ["/^@types\\//"],
-
-      "automerge": true,
       "automergeType": "pr",
       "prCreation": "immediate",
       "addLabels": ["scope:shared", "auto-merge"]
@@ -226,8 +208,6 @@
       "matchUpdateTypes": ["lockFileMaintenance"],
       "groupName": "lockfile maintenance",
       "groupSlug": "lockfile-maintenance",
-
-      "automerge": true,
       "automergeType": "pr",
       "prCreation": "immediate",
       "addLabels": ["auto-merge"]

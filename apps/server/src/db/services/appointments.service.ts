@@ -54,6 +54,27 @@ export const AppointmentDetailInputSchema = z.object({
   id: z.uuid(),
 });
 
+const PatientSummarySchema = z.object({
+  name: z.string().nullable(),
+  email: z.string().nullable(),
+  phone: z.string().nullable(),
+  dateOfBirth: z.string().nullable(),
+  gender: z.string().nullable(),
+});
+
+const AppointmentWithPatientSchema = AppointmentOutputSchema.extend({
+  reason: z.string().nullable(),
+  createdAt: z.coerce.date(),
+  patient: PatientSummarySchema,
+});
+
+export const ListDoctorAppointmentsOutputSchema = z.object({
+  items: z.array(AppointmentWithPatientSchema),
+  page: z.number(),
+  limit: z.number(),
+  total: z.number(),
+});
+
 export const ListAppointmentsInputSchema = z.object({
   status: z.enum(['PENDING', 'CONFIRMED', 'CANCELLED', 'COMPLETED']).optional(),
   from: z
@@ -192,6 +213,132 @@ export const createAppointmentsService = (repo: ReturnType<typeof createAppointm
     ]);
 
     return { items, page: query.page, limit: query.limit, total };
+  },
+
+  /**
+   * Récupère le détail d'un rendez-vous pour un médecin.
+   * Vérifie que le médecin est bien le praticien de ce rendez-vous.
+   * @throws NOT_FOUND si le rendez-vous n'existe pas.
+   * @throws FORBIDDEN si le médecin n'est pas le praticien de ce rendez-vous.
+   */
+  getDoctorAppointmentDetail: async (doctorId: string, appointmentId: string) => {
+    const appointment = await repo.getByIdWithDoctor(appointmentId);
+
+    if (!appointment) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'Appointment not found',
+      });
+    }
+
+    if (appointment.doctorId !== doctorId) {
+      throw new TRPCError({
+        code: 'FORBIDDEN',
+        message: 'You do not have access to this appointment',
+      });
+    }
+
+    return appointment;
+  },
+
+  /**
+   * Liste les rendez-vous d'un médecin avec les infos patient et pagination.
+   * Supporte le filtrage par statut et plage de dates.
+   * @throws BAD_REQUEST si `from` est postérieur à `to`.
+   */
+  listDoctorAppointments: async (
+    doctorId: string,
+    query: z.infer<typeof ListAppointmentsInputSchema>,
+  ) => {
+    if (query.from && query.to && query.from > query.to) {
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message: '"from" must be before or equal to "to"',
+      });
+    }
+
+    const offset = (query.page - 1) * query.limit;
+
+    const [items, total] = await Promise.all([
+      repo.listByDoctor({
+        doctorId,
+        status: query.status,
+        from: query.from,
+        to: query.to,
+        offset,
+        limit: query.limit,
+        sort: query.sort,
+      }),
+      repo.countByDoctor({
+        doctorId,
+        status: query.status,
+        from: query.from,
+        to: query.to,
+      }),
+    ]);
+
+    return { items, page: query.page, limit: query.limit, total };
+  },
+
+  /**
+   * Met à jour le statut d'un rendez-vous par un médecin.
+   * Le médecin ne peut que confirmer (PENDING→CONFIRMED) ou compléter (CONFIRMED→COMPLETED).
+   * @throws NOT_FOUND si le rendez-vous n'existe pas.
+   * @throws FORBIDDEN si le médecin n'est pas le praticien.
+   * @throws BAD_REQUEST si la transition est invalide pour un médecin.
+   */
+  updateDoctorAppointmentStatus: async (
+    doctorId: string,
+    appointmentId: string,
+    newStatus: string,
+  ) => {
+    const appointment = await repo.getByIdWithDoctor(appointmentId);
+
+    if (!appointment) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'Appointment not found',
+      });
+    }
+
+    if (appointment.doctorId !== doctorId) {
+      throw new TRPCError({
+        code: 'FORBIDDEN',
+        message: 'You do not have access to this appointment',
+      });
+    }
+
+    const currentStatus = appointment.status;
+
+    const validTransitions: Record<string, string[]> = {
+      PENDING: ['CONFIRMED', 'CANCELLED'],
+      CONFIRMED: ['COMPLETED', 'CANCELLED'],
+    };
+
+    if (!validTransitions[currentStatus]?.includes(newStatus)) {
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message: `Cannot transition from ${currentStatus} to ${newStatus}`,
+      });
+    }
+
+    const updated = await repo.updateStatus(appointmentId, newStatus);
+
+    if (!updated) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Failed to update appointment status',
+      });
+    }
+
+    return updated;
+  },
+
+  /**
+   * Vérifie si un médecin a une relation avec un patient (au moins un rendez-vous).
+   */
+  hasPatientRelationship: async (doctorId: string, patientId: string) => {
+    return repo.hasPatientRelationship(doctorId, patientId);
   },
 
   /**
