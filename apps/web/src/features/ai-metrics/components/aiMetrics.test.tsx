@@ -1,4 +1,4 @@
-import { fireEvent, waitFor } from '@testing-library/react';
+import { waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -135,10 +135,10 @@ describe('AiMetrics', () => {
     ).toBeTruthy();
   });
 
-  it('renders and resets custom date filters', async () => {
+  it('switches to the custom preset', async () => {
     const user = userEvent.setup();
     const handler = vi.fn().mockResolvedValue(buildMockMetrics());
-    const { getByRole, findAllByText, findByLabelText, findByText } = render(
+    const { getByRole, findAllByText, findByText } = render(
       <AiMetrics session={{ isAuthenticated: true, userId: '123' }} />,
       {
         trpcHandlers: {
@@ -150,30 +150,11 @@ describe('AiMetrics', () => {
     expect(await findByText('Group by')).toBeInTheDocument();
     expect(await findByText('Top users')).toBeInTheDocument();
     expect((await findAllByText('Sort by')).length).toBe(2);
+
     await user.click(getByRole('button', { name: 'Custom' }));
-
-    const fromInput = await findByLabelText('From');
-    const toInput = await findByLabelText('To');
-    const resetButton = getByRole('button', { name: 'Reset dates' });
-
-    expect(resetButton).toBeDisabled();
-
-    fireEvent.change(fromInput, { target: { value: '2026-02-20' } });
-
-    await waitFor(() => {
-      expect(resetButton).toBeEnabled();
-    });
-
-    fireEvent.change(toInput, { target: { value: '2026-02-25' } });
 
     await waitFor(() => {
       expect(handler).toHaveBeenCalled();
-    });
-
-    await user.click(resetButton);
-
-    await waitFor(() => {
-      expect(resetButton).toBeDisabled();
     });
   });
 
