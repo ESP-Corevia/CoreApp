@@ -9,6 +9,7 @@
     "typecheck": "react-router typegen && tsc"
   },
   "dependencies": {
+    "@gsap/react": "^2.1.2",
     "@react-router/fs-routes": "catalog:",
     "@react-router/node": "catalog:",
     "@react-router/serve": "catalog:",
@@ -16,8 +17,10 @@
     "@tanstack/react-query": "catalog:",
     "class-variance-authority": "catalog:",
     "clsx": "catalog:",
+    "gsap": "^3.13.0",
     "isbot": "catalog:",
     "lucide-react": "catalog:",
+    "motion": "12.23.25",
     "next-themes": "catalog:",
     "radix-ui": "catalog:",
     "react": "catalog:",

@@ -137,6 +137,9 @@ importers:
 
   apps/home:
     dependencies:
+      '@gsap/react':
+        specifier: ^2.1.2
+        version: 2.1.2(gsap@3.13.0)(react@19.2.3)
       '@react-router/fs-routes':
         specifier: 'catalog:'
         version: 7.12.0(@react-router/dev@7.12.0(@react-router/serve@7.12.0(react-router@7.12.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(typescript@5.9.3))(@types/node@24.3.1)(babel-plugin-macros@3.1.0)(jiti@2.6.1)(lightningcss@1.30.2)(react-router@7.12.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(tsx@4.21.0)(typescript@5.9.3)(vite@6.3.5(@types/node@24.3.1)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)(yaml@2.8.3))(yaml@2.8.3))(typescript@5.9.3)
@@ -158,12 +161,18 @@ importers:
       clsx:
         specifier: 'catalog:'
         version: 2.1.1
+      gsap:
+        specifier: ^3.13.0
+        version: 3.13.0
       isbot:
         specifier: 'catalog:'
         version: 5.1.32
       lucide-react:
         specifier: 'catalog:'
         version: 0.556.0(react@19.2.3)
+      motion:
+        specifier: 12.23.25
+        version: 12.23.25(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       next-themes:
         specifier: 'catalog:'
         version: 0.4.6(react-dom@19.2.3(react@19.2.3))(react@19.2.3)

@@ -1,61 +1,95 @@
 import { Link } from 'react-router';
-
-const quickLinks = [
-  { label: 'Home', href: '/' },
-  { label: 'Download', href: 'https://play.google.com/' },
-  { label: 'Login', href: `${import.meta.env.VITE_BACKOFFICE_DOMAIN}/login`, target: '_blank' },
-  { label: 'Contact', href: '/' },
-];
+import { Heart } from 'lucide-react';
+import { Separator } from '@/components/ui/separator';
+import { footerNav, footerLegal } from '../data/navigation';
 
 export default function Footer() {
   const year = new Date().getFullYear();
-  const brandColor = '#008000';
 
   return (
-    <footer className="border-border/60 bg-white px-6 py-10 text-slate-700">
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 md:flex-row md:items-start md:justify-between">
-        <div className="max-w-sm space-y-3">
-          <p className="font-black text-4xl uppercase tracking-wide" style={{ color: brandColor }}>
-            Corevia
-          </p>
-          <p className="text-slate-500 text-sm leading-relaxed">
-            A minimalist health companion to follow your vitals, coordinate with clinicians, and
-            stay centered on what matters.
-          </p>
-        </div>
-
-        <nav
-          className="flex flex-col justify-center gap-6 font-semibold text-sm"
-          aria-label="Quick navigation"
-        >
-          {quickLinks.map(({ label, href, target }) => (
-            <Link
-              key={label}
-              target={target}
-              to={href}
-              className="hover:opacity-80"
-              style={{ color: brandColor }}
-            >
-              {label}
+    <footer className="bg-foreground text-background">
+      <div className="mx-auto max-w-6xl px-6 py-14">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+          {/* Brand */}
+          <div className="sm:col-span-2 lg:col-span-1">
+            <Link to="/" className="flex items-center gap-2.5">
+              <img src="/logo.png" alt="Corevia" className="size-9 brightness-0 invert" />
+              <span className="font-display text-xl font-extrabold tracking-tight">
+                Corevia
+              </span>
             </Link>
-          ))}
-        </nav>
+            <p className="mt-3 max-w-xs text-sm leading-relaxed text-background/60">
+              Votre compagnon santé intelligent. Suivi des constantes, rappels, assistant IA et
+              téléconsultation — le tout dans une application simple et sécurisée.
+            </p>
+          </div>
 
-        <div className="min-w-[12rem] space-y-2 text-sm">
-          <p className="font-semibold text-slate-900">Write to us</p>
-          <a
-            href="mailto:hello@corevia.health"
-            className="hover:underline"
-            style={{ color: brandColor }}
-          >
-            hello@corevia.health
-          </a>
-          <p className="text-slate-500">+33 1 86 95 32 10</p>
+          {/* Navigation */}
+          <div>
+            <p className="mb-4 text-sm font-semibold uppercase tracking-wider text-background/40">
+              Navigation
+            </p>
+            <ul className="space-y-2.5">
+              {footerNav.map((link) => (
+                <li key={link.href}>
+                  <a
+                    href={link.href}
+                    className="text-sm text-background/70 transition-colors hover:text-background"
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Legal */}
+          <div>
+            <p className="mb-4 text-sm font-semibold uppercase tracking-wider text-background/40">
+              Légal
+            </p>
+            <ul className="space-y-2.5">
+              {footerLegal.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    to={link.href}
+                    className="text-sm text-background/70 transition-colors hover:text-background"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Contact */}
+          <div>
+            <p className="mb-4 text-sm font-semibold uppercase tracking-wider text-background/40">
+              Contact
+            </p>
+            <ul className="space-y-2.5 text-sm">
+              <li>
+                <a
+                  href="mailto:hello@corevia.health"
+                  className="text-background/70 transition-colors hover:text-background"
+                >
+                  hello@corevia.health
+                </a>
+              </li>
+              <li className="text-background/70">+33 1 86 95 32 10</li>
+              <li className="text-background/70">Rennes, France</li>
+            </ul>
+          </div>
         </div>
-      </div>
 
-      <div className="mx-auto mt-10 flex w-full max-w-5xl flex-col gap-2 text-slate-400 text-xs md:flex-row md:items-center md:justify-between">
-        <span>© {year} Corevia. All rights reserved.</span>
+        <Separator className="my-8 bg-background/10" />
+
+        <div className="flex flex-col items-center justify-between gap-3 text-xs text-background/40 sm:flex-row">
+          <span>© {year} Corevia. Tous droits réservés.</span>
+          <span className="flex items-center gap-1">
+            Fait avec <Heart className="size-3 fill-red-400 text-red-400" /> pour votre santé
+          </span>
+        </div>
       </div>
     </footer>
   );
