@@ -50,7 +50,7 @@ function isFeatureSort(value: string): value is FeatureSort {
   return FEATURE_SORTS.includes(value as FeatureSort);
 }
 
-function parseDateInput(value: string) {
+export function parseDateInput(value: string) {
   if (!value) return undefined;
   const date = new Date(`${value}T00:00:00.000Z`);
   return Number.isNaN(date.getTime()) ? undefined : date;

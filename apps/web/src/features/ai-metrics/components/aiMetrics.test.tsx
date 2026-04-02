@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { render } from '@/test/render';
 
-import AiMetrics from './aiMetrics';
+import AiMetrics, { parseDateInput } from './aiMetrics';
 
 function buildMockMetrics() {
   return {
@@ -88,6 +88,12 @@ function buildMockMetrics() {
 }
 
 describe('AiMetrics', () => {
+  it('parses ISO-like date input for custom filters', () => {
+    expect(parseDateInput('')).toBeUndefined();
+    expect(parseDateInput('not-a-date')).toBeUndefined();
+    expect(parseDateInput('2026-02-20')).toEqual(new Date('2026-02-20T00:00:00.000Z'));
+  });
+
   it('renders metrics cards and data sections', async () => {
     const handler = vi.fn().mockResolvedValue(buildMockMetrics());
 
