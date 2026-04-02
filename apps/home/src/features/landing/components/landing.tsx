@@ -1,5 +1,6 @@
 import Header from './header';
 import Footer from './footer';
+import ScrollProgressBar from './scroll-progress-bar';
 import HeroSection from './sections/hero-section';
 import ProblemSolutionSection from './sections/problem-solution-section';
 import FeaturesSection from './sections/features-section';
@@ -12,7 +13,9 @@ import FaqSection from './sections/faq-section';
 export default function Landing() {
   return (
     <div className="min-h-svh bg-background">
+      <ScrollProgressBar />
       <Header />
+
       <main>
         <HeroSection />
         <ProblemSolutionSection />

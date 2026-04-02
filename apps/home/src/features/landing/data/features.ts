@@ -14,48 +14,48 @@ export const features: Feature[] = [
     icon: Activity,
     title: 'Suivi des constantes',
     description:
-      'Glycémie, tension artérielle, saturation en oxygène... Suivez vos indicateurs de santé en temps réel et visualisez vos tendances.',
-    color: 'text-primary',
-    bgColor: 'bg-health-green-50',
+      'Glycemie, tension arterielle, saturation en oxygene... Suivez vos indicateurs de sante en temps reel et visualisez vos tendances.',
+    color: 'text-health-blue-500',
+    bgColor: 'bg-health-blue-50',
   },
   {
     icon: Bell,
     title: 'Rappels intelligents',
     description:
-      'Ne manquez plus jamais un traitement. Des rappels personnalisés qui s\'adaptent à votre rythme de vie et à vos habitudes.',
-    color: 'text-secondary',
-    bgColor: 'bg-health-emerald-50',
+      "Ne manquez plus jamais un traitement. Des rappels personnalises qui s'adaptent a votre rythme de vie et a vos habitudes.",
+    color: 'text-primary',
+    bgColor: 'bg-health-green-50',
   },
   {
     icon: Brain,
     title: 'Assistant IA',
     description:
-      'Posez vos questions sur vos symptômes et recevez des pistes de compréhension claires. Une aide intelligente, pas un diagnostic.',
-    color: 'text-primary',
-    bgColor: 'bg-health-green-50',
+      'Posez vos questions sur vos symptomes et recevez des pistes de comprehension claires. Une aide intelligente, pas un diagnostic.',
+    color: 'text-health-blue-500',
+    bgColor: 'bg-health-blue-50',
   },
   {
     icon: CalendarCheck,
     title: 'Prise de rendez-vous',
     description:
-      'Trouvez un professionnel de santé et réservez votre consultation en quelques clics, selon vos disponibilités.',
-    color: 'text-secondary',
-    bgColor: 'bg-health-emerald-50',
-  },
-  {
-    icon: Video,
-    title: 'Téléconsultation',
-    description:
-      'Consultez un médecin depuis chez vous, en toute sécurité. Vidéo, audio ou chat — à vous de choisir.',
+      'Trouvez un professionnel de sante et reservez votre consultation en quelques clics, selon vos disponibilites.',
     color: 'text-primary',
     bgColor: 'bg-health-green-50',
   },
   {
-    icon: Heart,
-    title: 'Conseils bien-être',
+    icon: Video,
+    title: 'Teleconsultation',
     description:
-      'Des recommandations personnalisées pour améliorer votre quotidien : alimentation, activité physique, sommeil.',
-    color: 'text-secondary',
-    bgColor: 'bg-health-emerald-50',
+      'Consultez un medecin depuis chez vous, en toute securite. Video, audio ou chat — a vous de choisir.',
+    color: 'text-health-blue-500',
+    bgColor: 'bg-health-blue-50',
+  },
+  {
+    icon: Heart,
+    title: 'Conseils bien-etre',
+    description:
+      'Des recommandations personnalisees pour ameliorer votre quotidien : alimentation, activite physique, sommeil.',
+    color: 'text-primary',
+    bgColor: 'bg-health-green-50',
   },
 ];

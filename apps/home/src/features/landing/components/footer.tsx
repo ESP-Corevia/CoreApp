@@ -8,6 +8,8 @@ export default function Footer() {
 
   return (
     <footer className="bg-foreground text-background">
+      {/* Gradient separator line */}
+      <div className="h-px gradient-line" />
       <div className="mx-auto max-w-6xl px-6 py-14">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}

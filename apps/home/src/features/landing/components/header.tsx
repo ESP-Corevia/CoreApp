@@ -7,7 +7,7 @@ export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/40 bg-white/90 backdrop-blur-md">
+    <header className="sticky top-0 z-50 border-b border-white/20 bg-white/70 backdrop-blur-xl dark:bg-gray-950/70">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2.5">
@@ -18,7 +18,7 @@ export default function Header() {
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden items-center gap-8 md:flex" aria-label="Navigation principale">
+        <nav className="hidden items-center gap-6 md:flex" aria-label="Navigation principale">
           {navLinks.map((link) => (
             <a
               key={link.href}
@@ -28,6 +28,12 @@ export default function Header() {
               {link.label}
             </a>
           ))}
+          <a
+            href="#cta"
+            className="rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white shadow-sm transition-all hover:shadow-md hover:bg-primary/90"
+          >
+            Commencer
+          </a>
         </nav>
 
         {/* Mobile hamburger */}
