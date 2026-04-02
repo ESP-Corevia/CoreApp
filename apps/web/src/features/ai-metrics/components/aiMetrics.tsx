@@ -1,7 +1,6 @@
-import { type ComponentType, useEffect, useMemo } from 'react';
-
-import { Brain, Coins, MessageSquare, Users, Waypoints, AlertTriangle } from 'lucide-react';
+import { AlertTriangle, Brain, Coins, MessageSquare, Users, Waypoints } from 'lucide-react';
 import { parseAsInteger, parseAsString, useQueryStates } from 'nuqs';
+import { type ComponentType, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
@@ -103,11 +102,11 @@ function MetricCard({
   return (
     <Card className="gap-4">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
-        <Icon className="text-muted-foreground h-4 w-4" />
+        <CardTitle className="font-medium text-sm">{title}</CardTitle>
+        <Icon className="h-4 w-4 text-muted-foreground" />
       </CardHeader>
       <CardContent className="space-y-1">
-        <p className="text-2xl font-bold">{value}</p>
+        <p className="font-bold text-2xl">{value}</p>
         <p className="text-muted-foreground text-xs">{description}</p>
       </CardContent>
     </Card>
@@ -181,7 +180,7 @@ export default function AiMetrics({
       toast.error(
         t('aiMetrics.loadError', 'Failed to load AI metrics: {{message}}', {
           message: error instanceof Error ? error.message : 'Unknown error',
-        })
+        }),
       );
     }
   }, [data, error, t]);
@@ -241,7 +240,7 @@ export default function AiMetrics({
             <CardDescription>
               {t(
                 'aiMetrics.description',
-                'Measure AI API consumption by user and by mobile feature.'
+                'Measure AI API consumption by user and by mobile feature.',
               )}
             </CardDescription>
           </div>
@@ -261,7 +260,7 @@ export default function AiMetrics({
                 size="sm"
                 onClick={() => {
                   void setQueryParams(
-                    value === 'custom' ? { preset: value } : { preset: value, from: '', to: '' }
+                    value === 'custom' ? { preset: value } : { preset: value, from: '', to: '' },
                   );
                 }}
               >
@@ -278,7 +277,7 @@ export default function AiMetrics({
 
           <div className="grid gap-3 md:grid-cols-3">
             <div className="space-y-2">
-              <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+              <p className="font-medium text-muted-foreground text-xs uppercase tracking-wide">
                 {t('aiMetrics.filters.groupBy', 'Group by')}
               </p>
               <Select
@@ -299,7 +298,7 @@ export default function AiMetrics({
             </div>
 
             <div className="space-y-2">
-              <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+              <p className="font-medium text-muted-foreground text-xs uppercase tracking-wide">
                 {t('aiMetrics.filters.topUsers', 'Top users')}
               </p>
               <Select
@@ -326,7 +325,7 @@ export default function AiMetrics({
             <>
               <div className="grid gap-3 md:grid-cols-2">
                 <div className="space-y-2">
-                  <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+                  <p className="font-medium text-muted-foreground text-xs uppercase tracking-wide">
                     {t('aiMetrics.filters.from', 'From')}
                   </p>
                   <Input
@@ -340,7 +339,7 @@ export default function AiMetrics({
                   />
                 </div>
                 <div className="space-y-2">
-                  <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+                  <p className="font-medium text-muted-foreground text-xs uppercase tracking-wide">
                     {t('aiMetrics.filters.to', 'To')}
                   </p>
                   <Input
@@ -457,8 +456,8 @@ export default function AiMetrics({
                           </span>
                           <span className="font-medium">{formatCurrency(point.costUsd)}</span>
                         </div>
-                        <div className="bg-muted h-2 rounded-full">
-                          <div className="bg-primary h-2 rounded-full" style={{ width }} />
+                        <div className="h-2 rounded-full bg-muted">
+                          <div className="h-2 rounded-full bg-primary" style={{ width }} />
                         </div>
                       </div>
                     );
@@ -478,12 +477,12 @@ export default function AiMetrics({
                   <CardDescription>
                     {t(
                       'aiMetrics.byFeature.description',
-                      'API usage and costs by mobile capability'
+                      'API usage and costs by mobile capability',
                     )}
                   </CardDescription>
                 </div>
                 <div className="w-full max-w-52 space-y-2">
-                  <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+                  <p className="font-medium text-muted-foreground text-xs uppercase tracking-wide">
                     {t('aiMetrics.sort.label', 'Sort by')}
                   </p>
                   <Select
@@ -537,7 +536,7 @@ export default function AiMetrics({
                       ))
                     ) : (
                       <TableRow>
-                        <TableCell colSpan={5} className="text-muted-foreground text-center">
+                        <TableCell colSpan={5} className="text-center text-muted-foreground">
                           {t('aiMetrics.empty.byFeature', 'No feature usage data for this period.')}
                         </TableCell>
                       </TableRow>
@@ -555,12 +554,12 @@ export default function AiMetrics({
                 <CardDescription>
                   {t(
                     'aiMetrics.byUser.description',
-                    'Top users consuming AI APIs in the mobile app'
+                    'Top users consuming AI APIs in the mobile app',
                   )}
                 </CardDescription>
               </div>
               <div className="w-full max-w-52 space-y-2">
-                <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+                <p className="font-medium text-muted-foreground text-xs uppercase tracking-wide">
                   {t('aiMetrics.sort.label', 'Sort by')}
                 </p>
                 <Select
@@ -621,7 +620,7 @@ export default function AiMetrics({
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-muted-foreground text-center">
+                      <TableCell colSpan={6} className="text-center text-muted-foreground">
                         {t('aiMetrics.empty.byUser', 'No user usage data for this period.')}
                       </TableCell>
                     </TableRow>
@@ -639,7 +638,7 @@ export default function AiMetrics({
                   'Generated at {{date}} (mock backend data for this first iteration).',
                   {
                     date: formatDateInput(data.generatedAt),
-                  }
+                  },
                 )}
               </p>
             </CardContent>

@@ -96,7 +96,7 @@ describe('AiMetrics', () => {
         trpcHandlers: {
           'admin.getAiMetrics': handler,
         },
-      }
+      },
     );
 
     expect(await findByText('AI Metrics')).toBeInTheDocument();
@@ -118,13 +118,13 @@ describe('AiMetrics', () => {
     const alexName = await findByText('Alex Martin');
     const leaName = await findByText('Lea Dubois');
     expect(
-      alexName.compareDocumentPosition(leaName) & Node.DOCUMENT_POSITION_FOLLOWING
+      alexName.compareDocumentPosition(leaName) & Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
 
     const chatFeature = await findByText('chat');
     const summaryFeature = await findByText('summary');
     expect(
-      chatFeature.compareDocumentPosition(summaryFeature) & Node.DOCUMENT_POSITION_FOLLOWING
+      chatFeature.compareDocumentPosition(summaryFeature) & Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
   });
 
@@ -137,7 +137,7 @@ describe('AiMetrics', () => {
         trpcHandlers: {
           'admin.getAiMetrics': handler,
         },
-      }
+      },
     );
 
     expect(await findByText('Group by')).toBeInTheDocument();
@@ -160,7 +160,7 @@ describe('AiMetrics', () => {
         trpcHandlers: {
           'admin.getAiMetrics': handler,
         },
-      }
+      },
     );
 
     expect(await findByText('No trend data for this period.')).toBeInTheDocument();
@@ -176,7 +176,7 @@ describe('AiMetrics', () => {
         trpcHandlers: {
           'admin.getAiMetrics': handler,
         },
-      }
+      },
     );
 
     expect(await findByText('Unable to load AI metrics')).toBeInTheDocument();

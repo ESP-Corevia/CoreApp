@@ -45,7 +45,7 @@ describe('useGetAiMetrics', () => {
         trpcHandlers: {
           'admin.getAiMetrics': handler,
         },
-      }
+      },
     );
 
     await waitFor(() => {
@@ -77,7 +77,7 @@ describe('useGetAiMetrics', () => {
         trpcHandlers: {
           'admin.getAiMetrics': handler,
         },
-      }
+      },
     );
 
     expect(handler).not.toHaveBeenCalled();
