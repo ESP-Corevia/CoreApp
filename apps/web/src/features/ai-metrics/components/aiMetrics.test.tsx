@@ -1,3 +1,4 @@
+import { fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -128,23 +129,91 @@ describe('AiMetrics', () => {
     ).toBeTruthy();
   });
 
-  it('renders period filter controls', async () => {
+  it('updates filters and custom dates', async () => {
     const user = userEvent.setup();
     const handler = vi.fn().mockResolvedValue(buildMockMetrics());
-    const { getByRole, findByText, findAllByText } = render(
-      <AiMetrics session={{ isAuthenticated: true, userId: '123' }} />,
-      {
+    const { getAllByRole, getByRole, findAllByText, findByLabelText, findByRole, findByText } =
+      render(<AiMetrics session={{ isAuthenticated: true, userId: '123' }} />, {
         trpcHandlers: {
           'admin.getAiMetrics': handler,
         },
-      },
-    );
+      });
 
     expect(await findByText('Group by')).toBeInTheDocument();
     expect(await findByText('Top users')).toBeInTheDocument();
     expect((await findAllByText('Sort by')).length).toBe(2);
+
+    const [groupBySelect, topUsersSelect] = getAllByRole('combobox');
+
+    await user.click(groupBySelect);
+    await user.click(await findByRole('option', { name: 'Week' }));
+
+    await waitFor(() => {
+      expect(handler).toHaveBeenLastCalledWith({
+        preset: '30d',
+        groupBy: 'week',
+        limit: 10,
+        from: undefined,
+        to: undefined,
+      });
+    });
+
+    await user.click(topUsersSelect);
+    await user.click(await findByRole('option', { name: '5' }));
+
+    await waitFor(() => {
+      expect(handler).toHaveBeenLastCalledWith({
+        preset: '30d',
+        groupBy: 'week',
+        limit: 5,
+        from: undefined,
+        to: undefined,
+      });
+    });
+
     await user.click(getByRole('button', { name: 'Custom' }));
-    expect(handler).toHaveBeenCalled();
+
+    const fromInput = await findByLabelText('From');
+    const toInput = await findByLabelText('To');
+
+    fireEvent.change(fromInput, { target: { value: '2026-02-20' } });
+
+    await waitFor(() => {
+      expect(handler).toHaveBeenLastCalledWith({
+        preset: 'custom',
+        groupBy: 'week',
+        limit: 5,
+        from: new Date('2026-02-20T00:00:00.000Z'),
+        to: undefined,
+      });
+    });
+
+    fireEvent.change(toInput, { target: { value: '2026-02-25' } });
+
+    await waitFor(() => {
+      expect(handler).toHaveBeenLastCalledWith({
+        preset: 'custom',
+        groupBy: 'week',
+        limit: 5,
+        from: new Date('2026-02-20T00:00:00.000Z'),
+        to: new Date('2026-02-25T00:00:00.000Z'),
+      });
+    });
+
+    const resetButton = getByRole('button', { name: 'Reset dates' });
+    expect(resetButton).toBeEnabled();
+
+    await user.click(resetButton);
+
+    await waitFor(() => {
+      expect(handler).toHaveBeenLastCalledWith({
+        preset: 'custom',
+        groupBy: 'week',
+        limit: 5,
+        from: undefined,
+        to: undefined,
+      });
+    });
   });
 
   it('renders empty states for trend, user and feature sections', async () => {
@@ -169,6 +238,7 @@ describe('AiMetrics', () => {
   });
 
   it('renders error state when metrics query fails', async () => {
+    const user = userEvent.setup();
     const handler = vi.fn().mockRejectedValue(new Error('network unavailable'));
     const { findByText, findByRole } = render(
       <AiMetrics session={{ isAuthenticated: true, userId: '123' }} />,
@@ -181,7 +251,15 @@ describe('AiMetrics', () => {
 
     expect(await findByText('Unable to load AI metrics')).toBeInTheDocument();
     expect(await findByText('Try again. Reason: network unavailable')).toBeInTheDocument();
-    expect(await findByRole('button', { name: 'Retry' })).toBeInTheDocument();
+    const retryButton = await findByRole('button', { name: 'Retry' });
+    expect(retryButton).toBeInTheDocument();
+    expect(handler).toHaveBeenCalledTimes(1);
+
+    await user.click(retryButton);
+
+    await waitFor(() => {
+      expect(handler).toHaveBeenCalledTimes(2);
+    });
   });
 
   it('returns null when session is not authenticated', () => {
