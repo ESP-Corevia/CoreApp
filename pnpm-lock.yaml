@@ -137,6 +137,9 @@ importers:
 
   apps/home:
     dependencies:
+      '@gsap/react':
+        specifier: ^2.1.2
+        version: 2.1.2(gsap@3.13.0)(react@19.2.3)
       '@react-router/fs-routes':
         specifier: 'catalog:'
         version: 7.12.0(@react-router/dev@7.12.0(@react-router/serve@7.12.0(react-router@7.12.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(typescript@5.9.3))(@types/node@24.3.1)(babel-plugin-macros@3.1.0)(jiti@2.6.1)(lightningcss@1.30.2)(react-router@7.12.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(tsx@4.21.0)(typescript@5.9.3)(vite@6.3.5(@types/node@24.3.1)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)(yaml@2.8.3))(yaml@2.8.3))(typescript@5.9.3)
@@ -146,24 +149,24 @@ importers:
       '@react-router/serve':
         specifier: 'catalog:'
         version: 7.12.0(react-router@7.12.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(typescript@5.9.3)
-      '@tanstack/react-form':
-        specifier: 'catalog:'
-        version: 1.27.7(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      '@tanstack/react-query':
-        specifier: 'catalog:'
-        version: 5.90.17(react@19.2.3)
       class-variance-authority:
         specifier: 'catalog:'
         version: 0.7.1
       clsx:
         specifier: 'catalog:'
         version: 2.1.1
+      gsap:
+        specifier: ^3.13.0
+        version: 3.13.0
       isbot:
         specifier: 'catalog:'
         version: 5.1.32
       lucide-react:
         specifier: 'catalog:'
         version: 0.556.0(react@19.2.3)
+      motion:
+        specifier: 12.23.25
+        version: 12.23.25(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       next-themes:
         specifier: 'catalog:'
         version: 0.4.6(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -179,9 +182,6 @@ importers:
       react-router:
         specifier: 'catalog:'
         version: 7.12.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      shadcn:
-        specifier: 'catalog:'
-        version: 3.6.3(@types/node@24.3.1)(babel-plugin-macros@3.1.0)(typescript@5.9.3)
       sonner:
         specifier: 'catalog:'
         version: 2.0.7(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -191,9 +191,6 @@ importers:
       tw-animate-css:
         specifier: 'catalog:'
         version: 1.4.0
-      zod:
-        specifier: 'catalog:'
-        version: 4.3.5
     devDependencies:
       '@react-router/dev':
         specifier: 'catalog:'
@@ -201,9 +198,6 @@ importers:
       '@tailwindcss/vite':
         specifier: 4.1.8
         version: 4.1.8(vite@6.3.5(@types/node@24.3.1)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)(yaml@2.8.3))
-      '@tanstack/react-query-devtools':
-        specifier: 'catalog:'
-        version: 5.91.1(@tanstack/react-query@5.90.17(react@19.2.3))(react@19.2.3)
       '@types/node':
         specifier: 'catalog:'
         version: 24.3.1
@@ -213,9 +207,18 @@ importers:
       '@types/react-dom':
         specifier: 19.0.4
         version: 19.0.4(@types/react@19.1.17)
+      depcheck:
+        specifier: 'catalog:'
+        version: 1.4.7
+      knip:
+        specifier: 'catalog:'
+        version: 5.64.1(@types/node@24.3.1)(typescript@5.9.3)
       react-router-devtools:
         specifier: 6.2.0
         version: 6.2.0(@types/react-dom@19.0.4(@types/react@19.1.17))(@types/react@19.1.17)(csstype@3.2.3)(react-dom@19.2.3(react@19.2.3))(react-router@7.12.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(solid-js@1.9.11)(vite@6.3.5(@types/node@24.3.1)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)(yaml@2.8.3))
+      shadcn:
+        specifier: 'catalog:'
+        version: 3.6.3(@types/node@24.3.1)(babel-plugin-macros@3.1.0)(typescript@5.9.3)
       tailwindcss:
         specifier: 4.1.8
         version: 4.1.8
