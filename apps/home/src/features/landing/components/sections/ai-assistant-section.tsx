@@ -1,10 +1,10 @@
-import { useRef } from 'react';
-import { motion, useMotionValue, useSpring, useTransform } from 'motion/react';
 import { Bot, Info, User } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
+import { motion, useMotionValue, useSpring, useTransform } from 'motion/react';
+import { useRef } from 'react';
 import FadeContent from '@/components/FadeContent';
 import ShinyText from '@/components/ShinyText';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
 const chatMessages = [
@@ -15,7 +15,7 @@ const chatMessages = [
   {
     role: 'assistant' as const,
     message:
-      "Je comprends, ces symptomes peuvent etre lies a plusieurs facteurs : stress, deshydratation, manque de sommeil ou tension elevee. Je vous recommande de verifier votre tension arterielle et de bien vous hydrater. Si les symptomes persistent au-dela de 5 jours, consultez votre medecin.",
+      'Je comprends, ces symptomes peuvent etre lies a plusieurs facteurs : stress, deshydratation, manque de sommeil ou tension elevee. Je vous recommande de verifier votre tension arterielle et de bien vous hydrater. Si les symptomes persistent au-dela de 5 jours, consultez votre medecin.',
   },
   {
     role: 'user' as const,
@@ -63,7 +63,7 @@ function Tilt3DCard({ children }: { children: React.ReactNode }) {
 
 export default function AiAssistantSection() {
   return (
-    <section id="assistant-ia" className="relative bg-muted/30 py-20 md:py-28 overflow-hidden">
+    <section id="assistant-ia" className="relative overflow-hidden bg-muted/30 py-20 md:py-28">
       {/* Background orbs */}
       <div className="pointer-events-none absolute top-20 -right-20 h-48 w-48 rounded-full bg-health-blue-400/5 blur-3xl" />
 
@@ -75,19 +75,19 @@ export default function AiAssistantSection() {
               <Badge className="mb-4 rounded-full border border-health-blue-200/40 bg-health-blue-50/60 px-4 py-1.5 text-health-blue-600 hover:bg-health-blue-50/60">
                 Intelligence Artificielle
               </Badge>
-              <h2 className="font-display text-3xl font-bold tracking-tight text-foreground md:text-4xl">
+              <h2 className="font-bold font-display text-3xl text-foreground tracking-tight md:text-4xl">
                 Un assistant qui vous{' '}
                 <ShinyText
                   text="comprend"
                   speed={4}
                   color="#3B82F6"
                   shineColor="#60A5FA"
-                  className="font-display text-3xl font-bold tracking-tight md:text-4xl"
+                  className="font-bold font-display text-3xl tracking-tight md:text-4xl"
                 />
               </h2>
-              <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
-                Posez vos questions a tout moment. L'assistant IA de Corevia analyse vos
-                symptomes, croise vos donnees de sante et vous oriente avec des reponses claires et
+              <p className="mt-4 text-lg text-muted-foreground leading-relaxed">
+                Posez vos questions a tout moment. L'assistant IA de Corevia analyse vos symptomes,
+                croise vos donnees de sante et vous oriente avec des reponses claires et
                 personnalisees.
               </p>
 
@@ -97,19 +97,19 @@ export default function AiAssistantSection() {
                   'Reponses personnalisees selon votre profil',
                   "Suggestions de consultation quand c'est necessaire",
                   'Disponible 24h/24, 7j/7',
-                ].map((item) => (
+                ].map(item => (
                   <li key={item} className="flex items-start gap-3">
                     <div className="mt-1 flex size-5 shrink-0 items-center justify-center rounded-full bg-health-blue-500/20">
                       <div className="size-2 rounded-full bg-health-blue-500" />
                     </div>
-                    <span className="text-sm text-foreground">{item}</span>
+                    <span className="text-foreground text-sm">{item}</span>
                   </li>
                 ))}
               </ul>
 
               <div className="mt-8 flex items-start gap-3 rounded-xl border border-amber-200/60 bg-amber-50/50 p-4">
                 <Info className="mt-0.5 size-5 shrink-0 text-amber-600" />
-                <p className="text-sm leading-relaxed text-amber-800">
+                <p className="text-amber-800 text-sm leading-relaxed">
                   <strong>Important :</strong> L'assistant IA de Corevia est un outil d'aide a la
                   comprehension. Il ne remplace en aucun cas l'avis d'un professionnel de sante.
                 </p>
@@ -120,20 +120,20 @@ export default function AiAssistantSection() {
           {/* Chat mockup with 3D tilt */}
           <FadeContent blur duration={700} delay={200}>
             <Tilt3DCard>
-              <Card className="glassmorphism overflow-hidden !border-white/30 !shadow-xl">
+              <Card className="glassmorphism !border-white/30 !shadow-xl overflow-hidden">
                 {/* Chat header — blue-green gradient */}
-                <div className="flex items-center gap-3 border-b border-white/20 bg-gradient-to-r from-health-blue-500 to-primary px-5 py-3">
+                <div className="flex items-center gap-3 border-white/20 border-b bg-gradient-to-r from-health-blue-500 to-primary px-5 py-3">
                   <div className="flex size-8 items-center justify-center rounded-full bg-white/20">
                     <Bot className="size-4 text-white" />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-white">Assistant Corevia</p>
+                    <p className="font-semibold text-sm text-white">Assistant Corevia</p>
                     <div className="flex items-center gap-1.5">
                       <span className="relative flex size-2">
                         <span className="absolute inline-flex size-full animate-ping rounded-full bg-white opacity-75" />
                         <span className="relative inline-flex size-2 rounded-full bg-white" />
                       </span>
-                      <p className="text-xs text-white/70">En ligne</p>
+                      <p className="text-white/70 text-xs">En ligne</p>
                     </div>
                   </div>
                 </div>
@@ -148,7 +148,9 @@ export default function AiAssistantSection() {
                       <div
                         className={cn(
                           'flex size-7 shrink-0 items-center justify-center rounded-full',
-                          msg.role === 'user' ? 'bg-muted' : 'bg-gradient-to-br from-health-blue-500 to-primary',
+                          msg.role === 'user'
+                            ? 'bg-muted'
+                            : 'bg-gradient-to-br from-health-blue-500 to-primary',
                         )}
                       >
                         {msg.role === 'user' ? (
@@ -176,9 +178,9 @@ export default function AiAssistantSection() {
                       <Bot className="size-3.5 text-white" />
                     </div>
                     <div className="flex items-center gap-1 rounded-2xl rounded-tl-md bg-muted/80 px-4 py-3">
-                      <div className="size-1.5 rounded-full bg-muted-foreground/50 typing-dot" />
-                      <div className="size-1.5 rounded-full bg-muted-foreground/50 typing-dot" />
-                      <div className="size-1.5 rounded-full bg-muted-foreground/50 typing-dot" />
+                      <div className="typing-dot size-1.5 rounded-full bg-muted-foreground/50" />
+                      <div className="typing-dot size-1.5 rounded-full bg-muted-foreground/50" />
+                      <div className="typing-dot size-1.5 rounded-full bg-muted-foreground/50" />
                     </div>
                   </div>
                 </CardContent>

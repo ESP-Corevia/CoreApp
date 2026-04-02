@@ -1,5 +1,5 @@
-import { useState, useCallback, useEffect, useRef, ReactNode } from 'react';
-import { motion, useMotionValue, useAnimationFrame, useTransform } from 'motion/react';
+import { motion, useAnimationFrame, useMotionValue, useTransform } from 'motion/react';
+import { type ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 
 interface GradientTextProps {
   children: ReactNode;
@@ -20,7 +20,7 @@ export default function GradientText({
   showBorder = false,
   direction = 'horizontal',
   pauseOnHover = false,
-  yoyo = true
+  yoyo = true,
 }: GradientTextProps) {
   const [isPaused, setIsPaused] = useState(false);
   const progress = useMotionValue(0);
@@ -62,7 +62,7 @@ export default function GradientText({
   useEffect(() => {
     elapsedRef.current = 0;
     progress.set(0);
-  }, [animationSpeed, yoyo]);
+  }, [progress.set]);
 
   const backgroundPosition = useTransform(progress, p => {
     if (direction === 'horizontal') {
@@ -84,41 +84,50 @@ export default function GradientText({
   }, [pauseOnHover]);
 
   const gradientAngle =
-    direction === 'horizontal' ? 'to right' : direction === 'vertical' ? 'to bottom' : 'to bottom right';
+    direction === 'horizontal'
+      ? 'to right'
+      : direction === 'vertical'
+        ? 'to bottom'
+        : 'to bottom right';
   // Duplicate first color at the end for seamless looping
   const gradientColors = [...colors, colors[0]].join(', ');
 
   const gradientStyle = {
     backgroundImage: `linear-gradient(${gradientAngle}, ${gradientColors})`,
-    backgroundSize: direction === 'horizontal' ? '300% 100%' : direction === 'vertical' ? '100% 300%' : '300% 300%',
-    backgroundRepeat: 'repeat'
+    backgroundSize:
+      direction === 'horizontal'
+        ? '300% 100%'
+        : direction === 'vertical'
+          ? '100% 300%'
+          : '300% 300%',
+    backgroundRepeat: 'repeat',
   };
 
   return (
     <motion.div
-      className={`relative mx-auto flex max-w-fit flex-row items-center justify-center rounded-[1.25rem] font-medium backdrop-blur transition-shadow duration-500 overflow-hidden cursor-pointer ${showBorder ? 'py-1 px-2' : ''} ${className}`}
+      className={`relative mx-auto flex max-w-fit cursor-pointer flex-row items-center justify-center overflow-hidden rounded-[1.25rem] font-medium backdrop-blur transition-shadow duration-500 ${showBorder ? 'px-2 py-1' : ''} ${className}`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
       {showBorder && (
         <motion.div
-          className="absolute inset-0 z-0 pointer-events-none rounded-[1.25rem]"
+          className="pointer-events-none absolute inset-0 z-0 rounded-[1.25rem]"
           style={{ ...gradientStyle, backgroundPosition }}
         >
           <div
-            className="absolute bg-black rounded-[1.25rem] z-[-1]"
+            className="absolute z-[-1] rounded-[1.25rem] bg-black"
             style={{
               width: 'calc(100% - 2px)',
               height: 'calc(100% - 2px)',
               left: '50%',
               top: '50%',
-              transform: 'translate(-50%, -50%)'
+              transform: 'translate(-50%, -50%)',
             }}
           />
         </motion.div>
       )}
       <motion.div
-        className="inline-block relative z-2 text-transparent bg-clip-text"
+        className="relative z-2 inline-block bg-clip-text text-transparent"
         style={{ ...gradientStyle, backgroundPosition, WebkitBackgroundClip: 'text' }}
       >
         {children}

@@ -3,6 +3,7 @@
 This project was created with [Better-T-Stack](https://github.com/AmanVarshney01/create-better-t-stack), a modern TypeScript stack that combines React, React Router, Fastify, TRPC, and more.
 
 [![🎨 Frontend CI (Web)](https://github.com/ESP-Corevia/CoreApp/actions/workflows/web.yml/badge.svg)](https://github.com/ESP-Corevia/CoreApp/actions/workflows/web.yml)
+[![🏠 Frontend CI (Home)](https://github.com/ESP-Corevia/CoreApp/actions/workflows/home.yml/badge.svg)](https://github.com/ESP-Corevia/CoreApp/actions/workflows/home.yml)
 [![🧩 Backend CI (Server)](https://github.com/ESP-Corevia/CoreApp/actions/workflows/server.yml/badge.svg)](https://github.com/ESP-Corevia/CoreApp/actions/workflows/server.yml)
 [![Build and Push Web Docker Image to DigitalOcean](https://github.com/ESP-Corevia/CoreApp/actions/workflows/deployment_web.yml/badge.svg)](https://github.com/ESP-Corevia/CoreApp/actions/workflows/deployment_web.yml)
 [![Build and Push Docker Server Image to DigitalOcean](https://github.com/ESP-Corevia/CoreApp/actions/workflows/deployment_server.yml/badge.svg)](https://github.com/ESP-Corevia/CoreApp/actions/workflows/deployment_server.yml)
@@ -71,6 +72,7 @@ mkcert -install
 Add-Content -Path "C:\Windows\System32\drivers\etc\hosts" -Value @"
 127.0.0.1 back-office.corevia.local
 127.0.0.1 api.corevia.local
+127.0.0.1 home.corevia.local
 "@
 ```
 
@@ -87,6 +89,7 @@ mkcert -install
 # Add custom domains to hosts file
 echo "127.0.0.1 back-office.corevia.local" | sudo tee -a /etc/hosts
 echo "127.0.0.1 api.corevia.local" | sudo tee -a /etc/hosts
+echo "127.0.0.1 home.corevia.local" | sudo tee -a /etc/hosts
 ```
 
 #### Generate Certificates (all platforms)
@@ -96,7 +99,7 @@ From the project root:
 ```bash
 mkdir -p certs
 mkcert -cert-file certs/cert.pem -key-file certs/key.pem \
-  back-office.corevia.local api.corevia.local localhost 127.0.0.1
+  back-office.corevia.local api.corevia.local home.corevia.local localhost 127.0.0.1
 ```
 
 ### 2. Configure Environment
@@ -144,6 +147,7 @@ docker compose logs -f server
 
 | Service | URL |
 |---------|-----|
+| Home | https://home.corevia.local |
 | Back-office | https://back-office.corevia.local |
 | API | https://api.corevia.local |
 | API reference | https://api.corevia.local/reference |
@@ -158,26 +162,27 @@ docker compose logs -f server
                     │   :80 / :443    │
                     └────────┬────────┘
                              │
-              ┌──────────────┼──────────────┐
-              │ back-office. │ api.          │
-              │ corevia.local│ corevia.local │
-              ▼              ▼               │
-        ┌───────────┐ ┌───────────┐         │
-        │ web(nginx) │ │  server   │         │
-        │   :8080    │ │  :3000    │         │
-        └───────────┘ └─────┬─────┘         │
-                            │               │
-                      ┌─────▼─────┐         │
-                      │ postgres  │         │
-                      │  :5432    │         │
-                      └───────────┘         │
+         ┌───────────────────┼───────────────────┐
+         │ home.             │ back-office.       │ api.
+         │ corevia.local     │ corevia.local      │ corevia.local
+         ▼                   ▼                    ▼
+   ┌───────────┐      ┌───────────┐       ┌───────────┐
+   │home(nginx)│      │ web(nginx)│       │  server   │
+   │   :8080   │      │   :8080   │       │  :3000    │
+   └───────────┘      └───────────┘       └─────┬─────┘
+                                                │
+                                          ┌─────▼─────┐
+                                          │ postgres  │
+                                          │  :5432    │
+                                          └───────────┘
 ```
 
 ### Docker Profiles
 
 | Profile | Services started |
 |---------|-----------------|
-| `web` | postgres, migrate, server, web, proxy |
+| `web` | postgres, migrate, server, web, home, proxy |
+| `home` | home |
 | `server` | postgres, migrate, server |
 | `seed` | postgres, migrate, seed |
 

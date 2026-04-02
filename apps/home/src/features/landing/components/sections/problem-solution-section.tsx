@@ -1,7 +1,7 @@
 import { ArrowRight, Check, X } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
-import FadeContent from '@/components/FadeContent';
 import CountUp from '@/components/CountUp';
+import FadeContent from '@/components/FadeContent';
+import { Card, CardContent } from '@/components/ui/card';
 
 const problems = [
   {
@@ -32,7 +32,7 @@ const stats = [
 
 export default function ProblemSolutionSection() {
   return (
-    <section id="probleme" className="relative bg-muted/30 py-20 md:py-28 overflow-hidden">
+    <section id="probleme" className="relative overflow-hidden bg-muted/30 py-20 md:py-28">
       {/* Background orbs */}
       <div className="pointer-events-none absolute top-10 right-10 h-48 w-48 rounded-full bg-health-blue-400/5 blur-3xl" />
       <div className="pointer-events-none absolute bottom-10 left-10 h-40 w-40 rounded-full bg-primary/5 blur-3xl" />
@@ -40,11 +40,11 @@ export default function ProblemSolutionSection() {
       <div className="mx-auto max-w-6xl px-6">
         <FadeContent blur duration={600}>
           <div className="mb-4 text-center">
-            <span className="inline-block rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-semibold text-primary">
+            <span className="inline-block rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 font-semibold text-primary text-sm">
               Le probleme
             </span>
           </div>
-          <h2 className="mx-auto max-w-3xl text-center font-display text-3xl font-bold tracking-tight text-foreground md:text-4xl">
+          <h2 className="mx-auto max-w-3xl text-center font-bold font-display text-3xl text-foreground tracking-tight md:text-4xl">
             Gerer sa sante ne devrait pas etre{' '}
             <span className="bg-gradient-to-r from-health-blue-500 to-primary bg-clip-text text-transparent">
               complique
@@ -58,20 +58,20 @@ export default function ProblemSolutionSection() {
         <div className="mt-14 grid gap-6 md:grid-cols-3">
           {problems.map((item, i) => (
             <FadeContent key={item.pain} blur duration={700} delay={i * 150}>
-              <Card className="glassmorphism h-full overflow-hidden !border-white/30 !shadow-lg transition-all duration-500 hover:!shadow-xl hover:-translate-y-1">
+              <Card className="glassmorphism !border-white/30 !shadow-lg hover:!shadow-xl h-full overflow-hidden transition-all duration-500 hover:-translate-y-1">
                 <CardContent className="p-0">
                   {/* Pain */}
-                  <div className="border-b border-white/20 bg-red-50/60 p-6">
+                  <div className="border-white/20 border-b bg-red-50/60 p-6">
                     <div className="mb-3 flex items-center gap-2">
                       <div className="flex size-7 items-center justify-center rounded-full bg-red-100">
                         <X className="size-4 text-red-500" />
                       </div>
-                      <span className="text-xs font-semibold uppercase tracking-wider text-red-400">
+                      <span className="font-semibold text-red-400 text-xs uppercase tracking-wider">
                         Avant
                       </span>
                     </div>
                     <p className="font-semibold text-foreground">{item.pain}</p>
-                    <p className="mt-1 text-sm text-muted-foreground">{item.painDetail}</p>
+                    <p className="mt-1 text-muted-foreground text-sm">{item.painDetail}</p>
                   </div>
 
                   {/* Arrow — blue-green gradient */}
@@ -87,12 +87,12 @@ export default function ProblemSolutionSection() {
                       <div className="flex size-7 items-center justify-center rounded-full bg-health-blue-100">
                         <Check className="size-4 text-health-blue-500" />
                       </div>
-                      <span className="text-xs font-semibold uppercase tracking-wider text-health-blue-500">
+                      <span className="font-semibold text-health-blue-500 text-xs uppercase tracking-wider">
                         Avec Corevia
                       </span>
                     </div>
                     <p className="font-semibold text-foreground">{item.solution}</p>
-                    <p className="mt-1 text-sm text-muted-foreground">{item.solutionDetail}</p>
+                    <p className="mt-1 text-muted-foreground text-sm">{item.solutionDetail}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -105,11 +105,11 @@ export default function ProblemSolutionSection() {
           {stats.map((stat, i) => (
             <FadeContent key={stat.label} blur duration={600} delay={500 + i * 150}>
               <div className="text-center">
-                <div className="font-display text-3xl font-extrabold bg-gradient-to-r from-health-blue-500 to-primary bg-clip-text text-transparent md:text-4xl">
+                <div className="bg-gradient-to-r from-health-blue-500 to-primary bg-clip-text font-display font-extrabold text-3xl text-transparent md:text-4xl">
                   <CountUp to={stat.value} duration={2.5} separator=" " />
                   {stat.suffix}
                 </div>
-                <p className="mt-1 text-sm text-muted-foreground">{stat.label}</p>
+                <p className="mt-1 text-muted-foreground text-sm">{stat.label}</p>
               </div>
             </FadeContent>
           ))}

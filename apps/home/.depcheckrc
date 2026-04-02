@@ -1,0 +1,8 @@
+ignores:
+  - '@react-router/node'
+  - 'isbot'
+  - 'tw-animate-css'
+  - 'tailwindcss'
+  - 'react-router-devtools'
+  - 'shadcn'
+  - 'vite-tsconfig-paths'

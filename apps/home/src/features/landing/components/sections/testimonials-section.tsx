@@ -1,24 +1,24 @@
-import { Star, Quote } from 'lucide-react';
+import { Quote, Star } from 'lucide-react';
 import { motion } from 'motion/react';
+import FadeContent from '@/components/FadeContent';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { testimonials } from '../../data/testimonials';
-import FadeContent from '@/components/FadeContent';
 
 const ringColors = ['ring-health-blue-200', 'ring-primary/30', 'ring-health-blue-300'];
 
 export default function TestimonialsSection() {
   return (
-    <section id="temoignages" className="relative bg-muted/30 py-20 md:py-28 overflow-hidden">
-      <div className="pointer-events-none absolute bottom-20 right-10 h-48 w-48 rounded-full bg-health-blue-400/5 blur-3xl" />
+    <section id="temoignages" className="relative overflow-hidden bg-muted/30 py-20 md:py-28">
+      <div className="pointer-events-none absolute right-10 bottom-20 h-48 w-48 rounded-full bg-health-blue-400/5 blur-3xl" />
 
       <div className="mx-auto max-w-6xl px-6">
         <FadeContent blur duration={600}>
           <div className="mb-4 text-center">
-            <span className="inline-block rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-semibold text-primary">
+            <span className="inline-block rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 font-semibold text-primary text-sm">
               Temoignages
             </span>
           </div>
-          <h2 className="mx-auto max-w-3xl text-center font-display text-3xl font-bold tracking-tight text-foreground md:text-4xl">
+          <h2 className="mx-auto max-w-3xl text-center font-bold font-display text-3xl text-foreground tracking-tight md:text-4xl">
             Ils nous font{' '}
             <span className="bg-gradient-to-r from-health-blue-500 to-primary bg-clip-text text-transparent">
               confiance
@@ -35,10 +35,10 @@ export default function TestimonialsSection() {
               <motion.div
                 whileHover={{ y: -6, scale: 1.01 }}
                 transition={{ type: 'spring', damping: 20, stiffness: 300 }}
-                className="glassmorphism h-full p-6 relative"
+                className="glassmorphism relative h-full p-6"
               >
                 {/* Quotation mark decoration */}
-                <Quote className="absolute top-4 right-4 size-8 text-health-blue-200/30 rotate-180" />
+                <Quote className="absolute top-4 right-4 size-8 rotate-180 text-health-blue-200/30" />
 
                 {/* Stars */}
                 <div className="mb-4 flex gap-0.5">
@@ -48,20 +48,20 @@ export default function TestimonialsSection() {
                 </div>
 
                 {/* Quote */}
-                <blockquote className="text-sm leading-relaxed text-foreground">
+                <blockquote className="text-foreground text-sm leading-relaxed">
                   "{testimonial.quote}"
                 </blockquote>
 
                 {/* Author */}
-                <div className="mt-5 flex items-center gap-3 border-t border-white/20 pt-4">
+                <div className="mt-5 flex items-center gap-3 border-white/20 border-t pt-4">
                   <Avatar className={`ring-2 ${ringColors[i % ringColors.length]}`}>
-                    <AvatarFallback className="bg-gradient-to-br from-health-blue-100 to-health-green-100 text-sm font-semibold text-foreground">
+                    <AvatarFallback className="bg-gradient-to-br from-health-blue-100 to-health-green-100 font-semibold text-foreground text-sm">
                       {testimonial.initials}
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <p className="text-sm font-semibold text-foreground">{testimonial.name}</p>
-                    <p className="text-xs text-muted-foreground">{testimonial.role}</p>
+                    <p className="font-semibold text-foreground text-sm">{testimonial.name}</p>
+                    <p className="text-muted-foreground text-xs">{testimonial.role}</p>
                   </div>
                 </div>
               </motion.div>

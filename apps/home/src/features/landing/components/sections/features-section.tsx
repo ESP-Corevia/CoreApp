@@ -1,22 +1,22 @@
-import { features } from '../../data/features';
 import FadeContent from '@/components/FadeContent';
+import { features } from '../../data/features';
 import FeatureCard3D from '../feature-card-3d';
 
 export default function FeaturesSection() {
   return (
-    <section id="fonctionnalites" className="relative py-20 md:py-28 overflow-hidden">
+    <section id="fonctionnalites" className="relative overflow-hidden py-20 md:py-28">
       {/* Subtle background orbs */}
       <div className="pointer-events-none absolute top-20 -left-32 h-64 w-64 rounded-full bg-health-blue-400/5 blur-3xl" />
-      <div className="pointer-events-none absolute bottom-20 -right-32 h-56 w-56 rounded-full bg-primary/5 blur-3xl" />
+      <div className="pointer-events-none absolute -right-32 bottom-20 h-56 w-56 rounded-full bg-primary/5 blur-3xl" />
 
       <div className="mx-auto max-w-6xl px-6">
         <FadeContent blur duration={600}>
           <div className="mb-4 text-center">
-            <span className="inline-block rounded-full border border-health-blue-200/40 bg-health-blue-50/60 px-4 py-1.5 text-sm font-semibold text-health-blue-600">
+            <span className="inline-block rounded-full border border-health-blue-200/40 bg-health-blue-50/60 px-4 py-1.5 font-semibold text-health-blue-600 text-sm">
               Fonctionnalites
             </span>
           </div>
-          <h2 className="mx-auto max-w-3xl text-center font-display text-3xl font-bold tracking-tight text-foreground md:text-4xl">
+          <h2 className="mx-auto max-w-3xl text-center font-bold font-display text-3xl text-foreground tracking-tight md:text-4xl">
             Tout ce dont vous avez besoin,{' '}
             <span className="bg-gradient-to-r from-health-blue-500 to-primary bg-clip-text text-transparent">
               au meme endroit

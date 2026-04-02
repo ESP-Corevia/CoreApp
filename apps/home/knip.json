@@ -1,0 +1,32 @@
+{
+  "$schema": "https://unpkg.com/knip@latest/schema.json",
+  "entry": ["src/routes/**/*.tsx", "src/features/**/routes/**/*.tsx"],
+  "project": ["src/**/*.{ts,tsx}"],
+  "ignore": [
+    "**/*.test.{ts,tsx}",
+    "**/*.spec.{ts,tsx}",
+    ".react-router/**",
+    "coverage/**",
+    "src/components/loader.tsx",
+    "src/components/mode-toggle.tsx",
+    "src/components/SplitText.tsx",
+    "src/components/SpotlightCard.tsx",
+    "src/components/TiltedCard.tsx",
+    "src/components/ui/checkbox.tsx",
+    "src/components/ui/dropdown-menu.tsx",
+    "src/components/ui/input.tsx",
+    "src/components/ui/label.tsx",
+    "src/components/ui/skeleton.tsx",
+    "src/features/landing/hooks/use-parallax.ts"
+  ],
+  "ignoreDependencies": [
+    "@gsap/react",
+    "shadcn",
+    "tw-animate-css",
+    "tailwindcss",
+    "react-router-devtools",
+    "vite-tsconfig-paths"
+  ],
+  "ignoreExportsUsedInFile": true,
+  "ignoreBinaries": ["biome"]
+}

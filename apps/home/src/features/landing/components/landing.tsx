@@ -1,14 +1,14 @@
-import Header from './header';
 import Footer from './footer';
+import Header from './header';
 import ScrollProgressBar from './scroll-progress-bar';
-import HeroSection from './sections/hero-section';
-import ProblemSolutionSection from './sections/problem-solution-section';
-import FeaturesSection from './sections/features-section';
 import AiAssistantSection from './sections/ai-assistant-section';
-import SecuritySection from './sections/security-section';
-import TestimonialsSection from './sections/testimonials-section';
 import CtaSection from './sections/cta-section';
 import FaqSection from './sections/faq-section';
+import FeaturesSection from './sections/features-section';
+import HeroSection from './sections/hero-section';
+import ProblemSolutionSection from './sections/problem-solution-section';
+import SecuritySection from './sections/security-section';
+import TestimonialsSection from './sections/testimonials-section';
 
 export default function Landing() {
   return (

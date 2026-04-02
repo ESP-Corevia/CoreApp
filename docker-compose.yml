@@ -120,6 +120,26 @@ services:
         limits:
           memory: 128M
 
+  home:
+    profiles:
+      - home
+      - web
+    build:
+      context: .
+      dockerfile: ./apps/home/Dockerfile
+      args:
+        VITE_BACKOFFICE_DOMAIN: ${VITE_BACKOFFICE_DOMAIN:-https://back-office.corevia.local}
+    container_name: Corevia-home
+    environment:
+      NODE_ENV: production
+    networks:
+      - frontend
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+
   proxy:
     profiles:
       - web
@@ -134,6 +154,7 @@ services:
     depends_on:
       - web
       - server
+      - home
     networks:
       - frontend
     restart: unless-stopped
