@@ -7,9 +7,8 @@ import {
   patientsRepo,
   usersRepo,
 } from '../repositories';
-
-import { createAppointmentsService } from './appointments.service';
 import { createAiMetricsService } from './aiMetrics.service';
+import { createAppointmentsService } from './appointments.service';
 import { createAvailabilityService } from './availability.service';
 import { createDoctorsService } from './doctors.service';
 import { createMedicationsService } from './medications.service';

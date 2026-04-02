@@ -6,6 +6,90 @@
       "connected": "Connecté",
       "disconnected": "Déconnecté"
     },
+    "aiMetrics": {
+      "byFeature": {
+        "activeUsers": "Utilisateurs actifs",
+        "cost": "Coût",
+        "description": "Usage API et coûts par capacité mobile",
+        "feature": "Fonctionnalité",
+        "requests": "Requêtes",
+        "title": "Par fonctionnalité mobile",
+        "tokens": "Tokens"
+      },
+      "byUser": {
+        "conversations": "Conversations",
+        "cost": "Coût",
+        "description": "Top utilisateurs qui consomment les API IA mobile",
+        "errorRate": "Taux d'erreur",
+        "requests": "Requêtes",
+        "title": "Par utilisateur",
+        "tokens": "Tokens",
+        "user": "Utilisateur"
+      },
+      "description": "Mesurer la consommation d'API IA par utilisateur et par fonctionnalité mobile.",
+      "empty": {
+        "byFeature": "Aucune donnée d'usage par fonctionnalité pour cette période.",
+        "byUser": "Aucune donnée d'usage par utilisateur pour cette période.",
+        "trend": "Aucune donnée de tendance pour cette période."
+      },
+      "error": {
+        "description": "Réessayez. Raison : {{message}}",
+        "retry": "Réessayer",
+        "title": "Impossible de charger les métriques IA",
+        "unknown": "Erreur inconnue"
+      },
+      "filters": {
+        "custom": "Personnalisé",
+        "day": "Jour",
+        "from": "Du",
+        "groupBy": "Grouper par",
+        "ninetyDays": "90 jours",
+        "resetDates": "Réinitialiser les dates",
+        "sevenDays": "7 jours",
+        "thirtyDays": "30 jours",
+        "to": "Au",
+        "topUsers": "Top utilisateurs",
+        "week": "Semaine"
+      },
+      "generatedAt": "Généré le {{date}} (données mockées backend pour cette première itération).",
+      "loadError": "Échec du chargement des métriques IA : {{message}}",
+      "mockedData": "Données mockées backend",
+      "refreshing": "Actualisation",
+      "sort": {
+        "feature": {
+          "activeUsersDesc": "Utilisateurs actifs (décroissant)",
+          "costDesc": "Coût (décroissant)",
+          "requestsDesc": "Requêtes (décroissant)",
+          "tokensDesc": "Tokens (décroissant)"
+        },
+        "label": "Trier par",
+        "user": {
+          "conversationsDesc": "Conversations (décroissant)",
+          "costDesc": "Coût (décroissant)",
+          "requestsDesc": "Requêtes (décroissant)",
+          "tokensDesc": "Tokens (décroissant)"
+        }
+      },
+      "summary": {
+        "activeUsers": "Utilisateurs actifs",
+        "activeUsersDesc": "Utilisateurs uniques des fonctions IA",
+        "errorRate": "Taux d'erreur",
+        "errorRateDesc": "Ratio des requêtes en erreur",
+        "totalConversations": "Conversations",
+        "totalConversationsDesc": "Conversations IA mobile",
+        "totalCost": "Coût total",
+        "totalCostDesc": "Dépense OpenAI estimée",
+        "totalRequests": "Requêtes totales",
+        "totalRequestsDesc": "Appels API sur la période",
+        "totalTokens": "Tokens totaux",
+        "totalTokensDesc": "Tokens prompt + completion"
+      },
+      "title": "Métriques IA",
+      "trend": {
+        "description": "Évolution des coûts IA dans le temps",
+        "title": "Tendance d'usage"
+      }
+    },
     "appointments": {
       "cancel": "Annuler",
       "complete": "Terminer",
@@ -208,6 +292,7 @@
       "toggleTheme": "Changer de thème"
     },
     "nav": {
+      "aiMetrics": "Métriques IA",
       "appointments": "Rendez-vous",
       "dashboard": "Tableau de bord",
       "doctors": "Médecins",
@@ -599,104 +684,6 @@
     "useUnbanUser": {
       "error": "Échec du débannissement : {{message}}",
       "success": "Utilisateur débanni avec succès"
-    },
-    "aiMetrics": {
-      "title": "M\u00e9triques IA",
-      "description": "Mesurer la consommation d'API IA par utilisateur et par fonctionnalit\u00e9 mobile.",
-      "mockedData": "Donn\u00e9es mock\u00e9es backend",
-      "refreshing": "Actualisation",
-      "loadError": "\u00c9chec du chargement des m\u00e9triques IA : {{message}}",
-      "generatedAt": "G\u00e9n\u00e9r\u00e9 le {{date}} (donn\u00e9es mock\u00e9es backend pour cette premi\u00e8re it\u00e9ration).",
-      "filters": {
-        "sevenDays": "7 jours",
-        "thirtyDays": "30 jours",
-        "ninetyDays": "90 jours",
-        "custom": "Personnalis\u00e9",
-        "groupBy": "Grouper par",
-        "topUsers": "Top utilisateurs",
-        "day": "Jour",
-        "week": "Semaine",
-        "from": "Du",
-        "to": "Au",
-        "resetDates": "R\u00e9initialiser les dates"
-      },
-      "summary": {
-        "totalCost": "Co\u00fbt total",
-        "totalCostDesc": "D\u00e9pense OpenAI estim\u00e9e",
-        "totalTokens": "Tokens totaux",
-        "totalTokensDesc": "Tokens prompt + completion",
-        "totalRequests": "Requ\u00eates totales",
-        "totalRequestsDesc": "Appels API sur la p\u00e9riode",
-        "totalConversations": "Conversations",
-        "totalConversationsDesc": "Conversations IA mobile",
-        "activeUsers": "Utilisateurs actifs",
-        "activeUsersDesc": "Utilisateurs uniques des fonctions IA",
-        "errorRate": "Taux d'erreur",
-        "errorRateDesc": "Ratio des requ\u00eates en erreur"
-      },
-      "trend": {
-        "title": "Tendance d'usage",
-        "description": "\u00c9volution des co\u00fbts IA dans le temps"
-      },
-      "byFeature": {
-        "title": "Par fonctionnalit\u00e9 mobile",
-        "description": "Usage API et co\u00fbts par capacit\u00e9 mobile",
-        "feature": "Fonctionnalit\u00e9",
-        "requests": "Requ\u00eates",
-        "tokens": "Tokens",
-        "cost": "Co\u00fbt",
-        "activeUsers": "Utilisateurs actifs"
-      },
-      "byUser": {
-        "title": "Par utilisateur",
-        "description": "Top utilisateurs qui consomment les API IA mobile",
-        "user": "Utilisateur",
-        "requests": "Requ\u00eates",
-        "tokens": "Tokens",
-        "conversations": "Conversations",
-        "cost": "Co\u00fbt",
-        "errorRate": "Taux d'erreur"
-      },
-      "sort": {
-        "label": "Trier par",
-        "feature": {
-          "costDesc": "Co\u00fbt (d\u00e9croissant)",
-          "requestsDesc": "Requ\u00eates (d\u00e9croissant)",
-          "tokensDesc": "Tokens (d\u00e9croissant)",
-          "activeUsersDesc": "Utilisateurs actifs (d\u00e9croissant)"
-        },
-        "user": {
-          "costDesc": "Co\u00fbt (d\u00e9croissant)",
-          "requestsDesc": "Requ\u00eates (d\u00e9croissant)",
-          "tokensDesc": "Tokens (d\u00e9croissant)",
-          "conversationsDesc": "Conversations (d\u00e9croissant)"
-        }
-      },
-      "empty": {
-        "trend": "Aucune donn\u00e9e de tendance pour cette p\u00e9riode.",
-        "byFeature": "Aucune donn\u00e9e d'usage par fonctionnalit\u00e9 pour cette p\u00e9riode.",
-        "byUser": "Aucune donn\u00e9e d'usage par utilisateur pour cette p\u00e9riode."
-      },
-      "error": {
-        "title": "Impossible de charger les m\u00e9triques IA",
-        "description": "R\u00e9essayez. Raison : {{message}}",
-        "retry": "R\u00e9essayer",
-        "unknown": "Erreur inconnue"
-      }
-    },
-    "navigation": {
-      "home": "Accueil",
-      "dashboard": "Dashboard",
-      "aiMetrics": "M\u00e9triques IA",
-      "settings": "Param\u00e8tres"
-    },
-    "header": {
-      "home": "Accueil",
-      "dashboard": "Dashboard",
-      "aiMetrics": "M\u00e9triques IA",
-      "settings": "Param\u00e8tres",
-      "profile": "Profil",
-      "page": "Page"
     }
   }
 }

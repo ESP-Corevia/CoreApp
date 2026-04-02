@@ -106,13 +106,13 @@ function createSeededRandom(seed: number) {
 /** Distributes an integer total across buckets while preserving the exact sum. */
 function distributeInt(total: number, weights: number[]) {
   const sumWeights = weights.reduce((acc, w) => acc + w, 0);
-  const raw = weights.map((w) => (total * w) / sumWeights);
-  const floorValues = raw.map((v) => Math.floor(v));
-  let remaining = total - floorValues.reduce((acc, v) => acc + v, 0);
+  const raw = weights.map(w => (total * w) / sumWeights);
+  const floorValues = raw.map(v => Math.floor(v));
+  const remaining = total - floorValues.reduce((acc, v) => acc + v, 0);
   const order = raw
     .map((v, idx) => ({ idx, frac: v - floorValues[idx] }))
     .sort((a, b) => b.frac - a.frac)
-    .map((x) => x.idx);
+    .map(x => x.idx);
 
   for (let i = 0; i < remaining; i += 1) {
     floorValues[order[i % order.length]] += 1;
@@ -123,7 +123,7 @@ function distributeInt(total: number, weights: number[]) {
 /** Distributes a float total across buckets while preserving a 2-decimal total. */
 function distributeFloat(total: number, weights: number[]) {
   const sumWeights = weights.reduce((acc, w) => acc + w, 0);
-  const values = weights.map((w) => round2((total * w) / sumWeights));
+  const values = weights.map(w => round2((total * w) / sumWeights));
   const current = round2(values.reduce((acc, v) => acc + v, 0));
   const delta = round2(total - current);
   values[values.length - 1] = round2(values[values.length - 1] + delta);

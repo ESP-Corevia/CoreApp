@@ -1,7 +1,6 @@
 import { type DeepMockProxy, mockDeep } from 'vitest-mock-extended';
-
-import type { createAppointmentsService } from '../src/db/services/appointments.service';
 import type { createAiMetricsService } from '../src/db/services/aiMetrics.service';
+import type { createAppointmentsService } from '../src/db/services/appointments.service';
 import type { createAvailabilityService } from '../src/db/services/availability.service';
 import type { createDoctorsService } from '../src/db/services/doctors.service';
 import type { createMedicationsService } from '../src/db/services/medications.service';
