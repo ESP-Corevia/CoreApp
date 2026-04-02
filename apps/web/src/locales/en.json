@@ -296,9 +296,11 @@
     "nav": {
       "aiMetrics": "AI Metrics",
       "appointments": "Appointments",
+      "beta": "Beta",
       "dashboard": "Dashboard",
       "doctors": "Doctors",
       "home": "Home",
+      "ia": "IA",
       "main": "Main",
       "medications": "Medications",
       "myPillbox": "My Pillbox",
@@ -681,6 +683,19 @@
       "showConfirmedPassword": "Show confirmed password",
       "showPassword": "Show password",
       "title": "Set Password"
+    },
+    "ai": {
+      "debug": "Debug",
+      "debugLastMessage": "Debug — last message",
+      "emptyChat": "Send a message to start the conversation.",
+      "hideDebug": "Hide",
+      "inputPlaceholder": "Ask something...",
+      "loggedInAs": "Logged in as <strong>{{userId}}</strong> — role:",
+      "send": "Send",
+      "showDebug": "Show",
+      "thinking": "Thinking",
+      "thoughtProcess": "Thought process",
+      "title": "AI Assistant"
     },
     "useUnbanUser": {
       "error": "Failed to unban user: {{message}}",

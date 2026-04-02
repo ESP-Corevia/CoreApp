@@ -1,26 +1,26 @@
 import { Readable } from 'node:stream';
 import { chat, maxIterations, toServerSentEventsStream } from '@tanstack/ai';
 import { fromNodeHeaders } from 'better-auth/node';
-import type { FastifyReply, FastifyRequest } from 'fastify';
-import type { Services } from '../db/services';
-import type { auth as Auth } from '../lib/auth';
-import { createAICaller } from './createCaller';
-import { aiLogger } from './logger';
-import { ollamaAdapter } from './ollama';
-import { getSystemPromptForRole, getToolsForRole } from './tools/registry';
+import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+import { nvidiaAdapter } from '../../ai/adapter';
+import { createAICaller } from '../../ai/caller';
+import { aiLogger } from '../../ai/logger';
+import { getSystemPromptForRole, getToolsForRole } from '../../ai/tools/registry';
+import type { Services } from '../../db/services';
+import type { auth as Auth } from '../../lib/auth';
 
 interface ChatBody {
-  messages: Array<{ role: string; content?: string; parts?: Array<{ type: string; content: string }> }>;
+  messages: Array<{
+    role: string;
+    content?: string;
+    parts?: Array<{ type: string; content: string }>;
+  }>;
 }
 
 /**
  * Wraps a TanStack AI stream to log events without consuming it.
- * Yields every chunk through, logging tool calls and run lifecycle.
  */
-async function* withLogging(
-  stream: AsyncIterable<Record<string, unknown>>,
-  reqId: string,
-) {
+async function* withLogging(stream: AsyncIterable<Record<string, unknown>>, reqId: string) {
   const startTime = Date.now();
 
   for await (const chunk of stream) {
@@ -65,7 +65,6 @@ async function* withLogging(
         );
         break;
       case 'TEXT_MESSAGE_CONTENT':
-        // Too noisy at info — log at debug
         aiLogger.debug({ reqId }, '[ai:text] chunk');
         break;
     }
@@ -74,17 +73,14 @@ async function* withLogging(
   }
 }
 
-export function createChatHandler({
-  auth,
-  services,
-}: {
-  auth: typeof Auth;
-  services: Services;
-}) {
-  return async (req: FastifyRequest<{ Body: ChatBody }>, res: FastifyReply) => {
+export function chatRoutePlugin(
+  fastify: FastifyInstance,
+  { auth, services }: { auth: typeof Auth; services: Services },
+  done: () => void,
+) {
+  fastify.post('/chat', async (req: FastifyRequest<{ Body: ChatBody }>, res: FastifyReply) => {
     const reqId = req.id;
 
-    // 1. Resolve session from Better Auth
     const session = await auth.api.getSession({
       headers: fromNodeHeaders(req.headers),
     });
@@ -99,25 +95,22 @@ export function createChatHandler({
       return res.status(400).send({ error: 'messages is required' });
     }
 
-    // 2. Normalize messages — useChat may send parts-based or content-based
-    const messages = rawMessages.map((m) => {
+    const messages = rawMessages.map(m => {
       const content =
         m.content ??
         m.parts
-          ?.filter((p) => p.type === 'text')
-          .map((p) => p.content)
+          ?.filter(p => p.type === 'text')
+          .map(p => p.content)
           .join('') ??
         '';
       return { role: m.role as 'user' | 'assistant', content };
     });
 
-    // 3. Create server-side tRPC caller with the real session context
     const caller = createAICaller({ session, req, res, auth, services });
-
-    // 4. Get role-based tools and system prompt
     const role = (session as { role?: string }).role ?? 'patient';
-    const tools = getToolsForRole(role, caller);
-    const toolNames = tools.map((t) => (t as { name?: string }).name ?? 'unknown');
+    const headers = fromNodeHeaders(req.headers);
+    const tools = getToolsForRole(role, { caller, auth, headers });
+    const toolNames = tools.map(t => (t as { name?: string }).name ?? 'unknown');
     const systemPrompt = getSystemPromptForRole(role);
 
     aiLogger.info(
@@ -130,17 +123,17 @@ export function createChatHandler({
     try {
       const abortController = new AbortController();
 
-      // 5. Call TanStack AI chat with Ollama + role-based tools
       const stream = chat({
-        adapter: ollamaAdapter,
+        adapter: nvidiaAdapter,
         messages,
         tools,
         systemPrompts: [systemPrompt],
-        agentLoopStrategy: maxIterations(2),
+        temperature: 0.7,
+        agentLoopStrategy: maxIterations(5),
         abortController,
+        middleware: [],
       });
 
-      // 6. Wrap with logging, convert to SSE, stream to client
       const logged = withLogging(stream as AsyncIterable<Record<string, unknown>>, reqId);
       const sseStream = toServerSentEventsStream(logged as never, abortController);
       const nodeStream = Readable.fromWeb(sseStream as never);
@@ -162,5 +155,7 @@ export function createChatHandler({
         details: error instanceof Error ? error.message : 'Unknown error',
       });
     }
-  };
+  });
+
+  done();
 }

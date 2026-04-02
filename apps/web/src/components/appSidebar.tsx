@@ -9,6 +9,7 @@ import {
   LayoutDashboard,
   Pill,
   Settings,
+  Sparkles,
   Stethoscope,
   Users,
 } from 'lucide-react';
@@ -104,7 +105,10 @@ export function AppSidebar() {
     [t],
   );
 
-  const secondaryItems = useMemo<NavigationItem[]>(() => [], []);
+  const secondaryItems = useMemo<NavigationItem[]>(
+    () => [{ title: t('nav.ia', 'IA'), url: '/ai', icon: Sparkles, badge: t('nav.beta', 'Beta') }],
+    [t],
+  );
 
   const settingsItems = useMemo<NavigationItem[]>(
     () => [{ title: t('nav.settings', 'Settings'), url: '/settings', icon: Settings }],

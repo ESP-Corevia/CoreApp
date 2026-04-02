@@ -1,16 +1,89 @@
 import { fetchServerSentEvents, useChat } from '@tanstack/ai-react';
-import { useState } from 'react';
+import { Brain, ChevronRight } from 'lucide-react';
+import { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Markdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { authClient } from '@/lib/auth-client';
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL || '';
 
+// ---------------------------------------------------------------------------
+// Thinking indicator — animated brain + pulsing dots
+// ---------------------------------------------------------------------------
+
+function ThinkingIndicator() {
+  const { t } = useTranslation();
+
+  return (
+    <div className="flex justify-start">
+      <div className="flex items-center gap-2.5 rounded-lg border border-border/60 bg-background px-4 py-2.5 shadow-sm">
+        <Brain className="size-4 animate-pulse text-primary" />
+        <span className="text-muted-foreground text-sm">{t('ai.thinking')}</span>
+        <span className="flex gap-0.5" aria-hidden>
+          <span className="size-1.5 animate-bounce rounded-full bg-primary/60 [animation-delay:0ms]" />
+          <span className="size-1.5 animate-bounce rounded-full bg-primary/60 [animation-delay:150ms]" />
+          <span className="size-1.5 animate-bounce rounded-full bg-primary/60 [animation-delay:300ms]" />
+        </span>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Thought process — collapsible block with smooth height transition
+// ---------------------------------------------------------------------------
+
+function ThinkingBlock({ content }: { content: string }) {
+  const { t } = useTranslation();
+  const [open, setOpen] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  return (
+    <div className="my-2 overflow-hidden rounded-md border border-border/40 bg-muted/20">
+      <button
+        type="button"
+        onClick={() => setOpen(o => !o)}
+        className="group flex w-full items-center gap-2 px-3 py-2 text-left text-muted-foreground text-xs transition-colors hover:bg-muted/40"
+      >
+        <Brain className="size-3 text-primary/60" />
+        <span className="font-medium">{t('ai.thoughtProcess')}</span>
+        <span
+          className="ml-auto transition-transform duration-200"
+          style={{ transform: open ? 'rotate(90deg)' : 'rotate(0deg)' }}
+        >
+          <ChevronRight className="size-3" />
+        </span>
+      </button>
+      <div
+        className="transition-[max-height,opacity] duration-300 ease-in-out"
+        style={{
+          maxHeight: open ? `${contentRef.current?.scrollHeight ?? 500}px` : '0px',
+          opacity: open ? 1 : 0,
+        }}
+      >
+        <div
+          ref={contentRef}
+          className="whitespace-pre-wrap border-border/30 border-t px-3 py-2 text-muted-foreground/80 text-xs leading-relaxed"
+        >
+          {content}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Main chat route
+// ---------------------------------------------------------------------------
+
 export default function AITestRoute() {
+  const { t } = useTranslation();
   const [input, setInput] = useState('');
   const [showDebug, setShowDebug] = useState(false);
 
   const { data: session } = authClient.useSession();
-  const role = (session as Record<string, unknown>)?.role as string | undefined;
+  const role = session?.role as string | undefined;
 
   const { messages, sendMessage, isLoading, error } = useChat({
     connection: fetchServerSentEvents(`${SERVER_URL}/chat`),
@@ -29,40 +102,36 @@ export default function AITestRoute() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-bold text-2xl">AI Assistant (POC)</h1>
+          <h1 className="font-bold text-2xl">{t('ai.title')}</h1>
           {session && (
             <p className="text-muted-foreground text-sm">
-              Logged in as <strong>{session.userId}</strong>{' '}
-              — role: <code className="rounded bg-muted px-1">{role ?? 'unknown'}</code>
+              Logged in as <strong>{session.userId}</strong> — role:{' '}
+              <code className="rounded bg-muted px-1">{role ?? 'unknown'}</code>
             </p>
           )}
         </div>
         <button
           type="button"
-          onClick={() => setShowDebug((d) => !d)}
+          onClick={() => setShowDebug(d => !d)}
           className="rounded border px-3 py-1 text-xs hover:bg-muted"
         >
-          {showDebug ? 'Hide' : 'Show'} Debug
+          {showDebug ? t('ai.hideDebug') : t('ai.showDebug')} {t('ai.debug')}
         </button>
       </div>
 
       {/* Messages */}
       <div className="flex-1 space-y-3 overflow-y-auto rounded-lg border bg-muted/30 p-4">
         {messages.length === 0 && (
-          <p className="text-center text-muted-foreground text-sm">
-            Send a message to start the conversation.
-          </p>
+          <p className="text-center text-muted-foreground text-sm">{t('ai.emptyChat')}</p>
         )}
-        {messages.map((msg) => (
+        {messages.map(msg => (
           <div
             key={msg.id}
             className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
           >
             <div
               className={`max-w-[80%] rounded-lg px-4 py-2 text-sm ${
-                msg.role === 'user'
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-background border'
+                msg.role === 'user' ? 'bg-primary text-primary-foreground' : 'border bg-background'
               }`}
             >
               {msg.parts.map((part, idx) => {
@@ -70,9 +139,9 @@ export default function AITestRoute() {
                   return msg.role === 'assistant' ? (
                     <div
                       key={idx}
-                      className="prose prose-sm dark:prose-invert max-w-none [&_table]:w-full [&_th]:text-left [&_th]:px-2 [&_th]:py-1 [&_td]:px-2 [&_td]:py-1 [&_table]:border-collapse [&_th]:border [&_th]:border-border [&_td]:border [&_td]:border-border"
+                      className="prose prose-sm dark:prose-invert max-w-none [&_table]:w-full [&_table]:border-collapse [&_td]:border [&_td]:border-border [&_td]:px-2 [&_td]:py-1 [&_th]:border [&_th]:border-border [&_th]:px-2 [&_th]:py-1 [&_th]:text-left"
                     >
-                      <Markdown>{part.content}</Markdown>
+                      <Markdown remarkPlugins={[remarkGfm]}>{part.content}</Markdown>
                     </div>
                   ) : (
                     <p key={idx} className="whitespace-pre-wrap">
@@ -80,25 +149,15 @@ export default function AITestRoute() {
                     </p>
                   );
                 }
-                if (part.type === 'thinking') {
-                  return (
-                    <p key={idx} className="text-xs italic text-muted-foreground">
-                      Thinking: {part.content}
-                    </p>
-                  );
+                if (part.type === 'thinking' && part.content) {
+                  return <ThinkingBlock key={idx} content={part.content} />;
                 }
                 return null;
               })}
             </div>
           </div>
         ))}
-        {isLoading && (
-          <div className="flex justify-start">
-            <div className="rounded-lg border bg-background px-4 py-2 text-sm text-muted-foreground">
-              Thinking...
-            </div>
-          </div>
-        )}
+        {isLoading && <ThinkingIndicator />}
       </div>
 
       {/* Error */}
@@ -113,8 +172,8 @@ export default function AITestRoute() {
         <input
           type="text"
           value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask something..."
+          onChange={e => setInput(e.target.value)}
+          placeholder={t('ai.inputPlaceholder')}
           disabled={isLoading}
           className="flex-1 rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
         />
@@ -123,7 +182,7 @@ export default function AITestRoute() {
           disabled={isLoading || !input.trim()}
           className="rounded-lg bg-primary px-4 py-2 font-medium text-primary-foreground text-sm hover:bg-primary/90 disabled:opacity-50"
         >
-          Send
+          {t('ai.send')}
         </button>
       </form>
 
@@ -131,7 +190,7 @@ export default function AITestRoute() {
       {showDebug && messages.length > 0 && (
         <details open className="rounded-lg border p-3">
           <summary className="cursor-pointer font-medium text-sm">
-            Debug — last message
+            {t('ai.debugLastMessage')}
           </summary>
           <pre className="mt-2 max-h-60 overflow-auto rounded bg-muted p-2 text-xs">
             {JSON.stringify(messages[messages.length - 1], null, 2)}

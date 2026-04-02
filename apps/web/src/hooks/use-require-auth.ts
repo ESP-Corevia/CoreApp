@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router';
@@ -9,24 +9,25 @@ import { authClient } from '@/lib/auth-client';
 function usePermission(resource: string, permission: string) {
   const [allowed, setAllowed] = useState<boolean | null>(null);
   const [isChecking, setIsChecking] = useState(true);
-  const [error, setError] = useState<unknown>(null);
+  const checkedRef = useRef(false);
+
   useEffect(() => {
+    // Only check once — permission doesn't change during the session
+    if (checkedRef.current) return;
+
     let cancelled = false;
     void (async () => {
       setIsChecking(true);
-      setError(null);
       try {
-        // If your client has a hook, use that instead.
         const { data } = await authClient.admin.hasPermission({
           permissions: { [resource]: [permission] },
         });
-
-        if (!cancelled) setAllowed(!!data?.success);
-      } catch (e) {
         if (!cancelled) {
-          setAllowed(false);
-          setError(e);
+          setAllowed(!!data?.success);
+          checkedRef.current = true;
         }
+      } catch {
+        if (!cancelled) setAllowed(false);
       } finally {
         if (!cancelled) setIsChecking(false);
       }
@@ -36,7 +37,7 @@ function usePermission(resource: string, permission: string) {
     };
   }, [resource, permission]);
 
-  return { allowed, isChecking, error };
+  return { allowed, isChecking };
 }
 
 export function useRequireAuth() {
@@ -48,11 +49,14 @@ export function useRequireAuth() {
     isPending: isSessionPending,
     error: sessionError,
   } = authClient.useSession();
-  const {
-    allowed,
-    isChecking: isPermChecking,
-    error: permError,
-  } = usePermission('panel', 'access');
+  const { allowed, isChecking: isPermChecking } = usePermission('panel', 'access');
+
+  // Track whether the user was ever authenticated in this mount.
+  // Prevents redirect during refetches where session is briefly null.
+  const wasAuthenticatedRef = useRef(false);
+  if (session?.isAuthenticated) {
+    wasAuthenticatedRef.current = true;
+  }
 
   const redirectTo = useMemo(() => {
     const full = location.pathname + (location.search || '');
@@ -60,27 +64,29 @@ export function useRequireAuth() {
   }, [location.pathname, location.search]);
 
   useEffect(() => {
-    void (async () => {
-      if (isSessionPending || isPermChecking) return;
+    // Wait for both checks to complete before making any redirect decision
+    if (isSessionPending || isPermChecking) return;
 
-      if (!session?.isAuthenticated) {
-        await navigate(`/login?redirectTo=${redirectTo}`, { replace: true });
-        return;
+    // If session is gone but user was previously authenticated, it's likely
+    // a transient refetch — don't redirect.
+    if (!session?.isAuthenticated) {
+      if (!wasAuthenticatedRef.current) {
+        void navigate(`/login?redirectTo=${redirectTo}`, { replace: true });
       }
+      return;
+    }
 
-      if (allowed === false) {
-        await navigate('/403', {
-          replace: true,
-          state: { from: location.pathname + (location.search || '') },
-        });
-        toast.error(
-          t('errorScreen.permissionDenied', 'You do not have permission to access that resource.'),
-        );
-        return;
-      }
-    })();
+    if (allowed === false) {
+      void navigate('/403', {
+        replace: true,
+        state: { from: location.pathname + (location.search || '') },
+      });
+      toast.error(
+        t('errorScreen.permissionDenied', 'You do not have permission to access that resource.'),
+      );
+    }
   }, [
-    session,
+    session?.isAuthenticated,
     isSessionPending,
     isPermChecking,
     allowed,
@@ -94,7 +100,7 @@ export function useRequireAuth() {
   return {
     session: allowed === true ? session : null,
     isLoading: isSessionPending || isPermChecking,
-    error: sessionError ?? permError ?? null,
+    error: sessionError ?? null,
     isAuthorized: !!session?.isAuthenticated && allowed === true,
   };
 }
@@ -113,7 +119,7 @@ export function useGuestOnly() {
         '/';
       void navigate(to, { replace: true });
     }
-  }, [session, isPending, navigate, location.state]);
+  }, [session?.isAuthenticated, isPending, navigate, location.state]);
 
   return { isLoading: isPending };
 }

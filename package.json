@@ -26,7 +26,7 @@
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
     "husky": "^9.1.7",
-    "turbo": "^2.8.20",
+    "turbo": "^2.9.3",
     "typescript": "^5.9.3",
     "vitest": "^3.2.4"
   },
