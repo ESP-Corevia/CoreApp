@@ -248,6 +248,7 @@ describe('adminRouter', () => {
           to: undefined,
           groupBy: 'day',
           limit: 10,
+          userSort: 'costDesc',
         },
         requesterUserId: 'admin-user',
       });
@@ -291,6 +292,7 @@ describe('adminRouter', () => {
         to,
         groupBy: 'week',
         limit: 5,
+        userSort: 'requestsDesc',
       });
 
       expect(result).toEqual(mockResponse);
@@ -301,6 +303,7 @@ describe('adminRouter', () => {
           to,
           groupBy: 'week',
           limit: 5,
+          userSort: 'requestsDesc',
         },
         requesterUserId: 'admin-user',
       });

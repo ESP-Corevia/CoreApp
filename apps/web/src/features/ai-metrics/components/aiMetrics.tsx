@@ -25,11 +25,20 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { useGetAiMetrics } from '@/queries';
-import type { AiMetricsGroupBy, AiMetricsPreset } from '@/queries/useGetAiMetrics';
+import type {
+  AiMetricsGroupBy,
+  AiMetricsPreset,
+  AiMetricsUserSort,
+} from '@/queries/useGetAiMetrics';
 
 const PRESETS: AiMetricsPreset[] = ['7d', '30d', '90d', 'custom'];
 const GROUP_BY_VALUES: AiMetricsGroupBy[] = ['day', 'week'];
-const USER_SORTS = ['costDesc', 'requestsDesc', 'tokensDesc', 'conversationsDesc'] as const;
+const USER_SORTS: AiMetricsUserSort[] = [
+  'costDesc',
+  'requestsDesc',
+  'tokensDesc',
+  'conversationsDesc',
+];
 const FEATURE_SORTS = ['costDesc', 'requestsDesc', 'tokensDesc', 'activeUsersDesc'] as const;
 type UserSort = (typeof USER_SORTS)[number];
 type FeatureSort = (typeof FEATURE_SORTS)[number];
@@ -165,14 +174,16 @@ export default function AiMetrics({
 
   const from = isCustomPreset ? parseDateInput(queryParams.from) : undefined;
   const to = isCustomPreset ? parseDateInput(queryParams.to) : undefined;
+  const isWaitingForCustomRange = isCustomPreset && (!from || !to);
 
   const { data, isLoading, error, isFetching, refetch } = useGetAiMetrics({
     preset,
     groupBy,
     limit,
+    userSort,
     from,
     to,
-    enabled: !!session?.isAuthenticated,
+    enabled: !!session?.isAuthenticated && !isWaitingForCustomRange,
   });
 
   useEffect(() => {
@@ -188,23 +199,7 @@ export default function AiMetrics({
   const maxTrendCost = data?.trend.length
     ? Math.max(...data.trend.map(point => point.costUsd), 1)
     : 1;
-  const sortedUsers = useMemo(() => {
-    if (!data) return [];
-    const rows = [...data.byUser];
-    const comparator = (() => {
-      if (userSort === 'requestsDesc')
-        return (a: (typeof rows)[number], b: (typeof rows)[number]) => b.requests - a.requests;
-      if (userSort === 'tokensDesc')
-        return (a: (typeof rows)[number], b: (typeof rows)[number]) => b.tokens - a.tokens;
-      if (userSort === 'conversationsDesc') {
-        return (a: (typeof rows)[number], b: (typeof rows)[number]) =>
-          b.conversations - a.conversations;
-      }
-      return (a: (typeof rows)[number], b: (typeof rows)[number]) => b.costUsd - a.costUsd;
-    })();
-    rows.sort(comparator);
-    return rows;
-  }, [data, userSort]);
+  const sortedUsers = useMemo(() => data?.byUser ?? [], [data]);
   const sortedFeatures = useMemo(() => {
     if (!data) return [];
     const rows = [...data.byFeature];
@@ -370,7 +365,19 @@ export default function AiMetrics({
         </CardContent>
       </Card>
 
-      {isLoading && !data ? (
+      {isWaitingForCustomRange ? (
+        <Card>
+          <CardHeader>
+            <CardTitle>{t('aiMetrics.customRange.title', 'Custom range pending')}</CardTitle>
+            <CardDescription>
+              {t(
+                'aiMetrics.customRange.description',
+                'Choose a valid start and end date to load custom metrics.',
+              )}
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      ) : isLoading && !data ? (
         <LoadingState />
       ) : hasLoadError ? (
         <Card>
@@ -635,7 +642,7 @@ export default function AiMetrics({
               <p className="text-muted-foreground text-xs">
                 {t(
                   'aiMetrics.generatedAt',
-                  'Generated at {{date}} (mock backend data for this first iteration).',
+                  'Data available through {{date}} (mock backend data for this first iteration).',
                   {
                     date: formatDateInput(data.generatedAt),
                   },

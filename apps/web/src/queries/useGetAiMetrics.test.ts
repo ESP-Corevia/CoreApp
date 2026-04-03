@@ -38,6 +38,7 @@ describe('useGetAiMetrics', () => {
           preset: '30d',
           groupBy: 'day',
           limit: 10,
+          userSort: 'costDesc',
           from,
           to,
         }),
@@ -56,6 +57,7 @@ describe('useGetAiMetrics', () => {
       preset: '30d',
       groupBy: 'day',
       limit: 10,
+      userSort: 'costDesc',
       from,
       to,
     });
@@ -71,6 +73,7 @@ describe('useGetAiMetrics', () => {
           preset: '30d',
           groupBy: 'day',
           limit: 10,
+          userSort: 'costDesc',
           enabled: false,
         }),
       {

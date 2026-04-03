@@ -2,6 +2,12 @@ import { z } from 'zod';
 
 export const AiMetricsPresetSchema = z.enum(['7d', '30d', '90d', 'custom']);
 export const AiMetricsGroupBySchema = z.enum(['day', 'week']);
+export const AiMetricsUserSortSchema = z.enum([
+  'costDesc',
+  'requestsDesc',
+  'tokensDesc',
+  'conversationsDesc',
+]);
 const MAX_MOCK_USERS = 100;
 
 export const AiMetricsInputSchema = z.object({
@@ -10,6 +16,7 @@ export const AiMetricsInputSchema = z.object({
   to: z.coerce.date().optional(),
   groupBy: AiMetricsGroupBySchema.default('day'),
   limit: z.number().int().positive().max(MAX_MOCK_USERS).default(10),
+  userSort: AiMetricsUserSortSchema.default('costDesc'),
 });
 
 export const AiMetricsSummarySchema = z.object({
@@ -199,19 +206,43 @@ function buildTrend({
   return trend;
 }
 
-/** Builds deterministic per-user aggregates honoring the requested limit. */
+/** Sorts user aggregates according to the requested dashboard sort. */
+function sortUsers(
+  users: z.infer<typeof AiMetricsByUserSchema>[],
+  userSort: z.infer<typeof AiMetricsUserSortSchema>,
+) {
+  const rows = [...users];
+  const comparator = (() => {
+    if (userSort === 'requestsDesc')
+      return (a: (typeof rows)[number], b: (typeof rows)[number]) => b.requests - a.requests;
+    if (userSort === 'tokensDesc')
+      return (a: (typeof rows)[number], b: (typeof rows)[number]) => b.tokens - a.tokens;
+    if (userSort === 'conversationsDesc') {
+      return (a: (typeof rows)[number], b: (typeof rows)[number]) =>
+        b.conversations - a.conversations;
+    }
+    return (a: (typeof rows)[number], b: (typeof rows)[number]) => b.costUsd - a.costUsd;
+  })();
+
+  rows.sort(comparator);
+  return rows;
+}
+
+/** Builds deterministic per-user aggregates before any user-facing sorting or limiting is applied. */
 function buildUsers({
-  limit,
+  totalUsers,
   totalRequests,
   totalTokens,
   totalCostUsd,
   totalConversations,
+  seed,
 }: {
-  limit: number;
+  totalUsers: number;
   totalRequests: number;
   totalTokens: number;
   totalCostUsd: number;
   totalConversations: number;
+  seed: number;
 }) {
   const templates = [
     { userId: 'mobile-u-001', userName: 'Alex Martin', userEmail: 'alex.martin@corevia.app' },
@@ -226,7 +257,7 @@ function buildUsers({
     { userId: 'mobile-u-010', userName: 'Lea Moreau', userEmail: 'lea.moreau@corevia.app' },
   ];
 
-  const selected = Array.from({ length: limit }, (_, index) => {
+  const selected = Array.from({ length: totalUsers }, (_, index) => {
     const existing = templates[index];
     if (existing) return existing;
     const userIndex = index + 1;
@@ -237,11 +268,26 @@ function buildUsers({
       userEmail: `mobile.user.${userIndex}@corevia.app`,
     };
   });
-  const weights = selected.map((_, i) => Math.max(1, 16 - i));
-  const requestsByUser = distributeInt(totalRequests, weights);
-  const tokensByUser = distributeInt(totalTokens, weights);
-  const conversationsByUser = distributeInt(totalConversations, weights);
-  const costByUser = distributeFloat(totalCostUsd, weights);
+  const random = createSeededRandom(seed ^ 0xa11ce);
+  const requestWeights = selected.map(
+    (_, index) => 1 + random() * 6 + (selected.length - index) * 0.09,
+  );
+  const tokenWeights = selected.map((_, index) => 1 + random() * 5 + ((index % 7) + 1) * 0.45);
+  const conversationWeights = selected.map(
+    (_, index) => 1 + random() * 4 + ((selected.length - index + 3) % 9) * 0.4,
+  );
+  const costWeights = selected.map(
+    (_, index) =>
+      requestWeights[index] * 0.45 +
+      tokenWeights[index] * 0.4 +
+      conversationWeights[index] * 0.15 +
+      random(),
+  );
+
+  const requestsByUser = distributeInt(totalRequests, requestWeights);
+  const tokensByUser = distributeInt(totalTokens, tokenWeights);
+  const conversationsByUser = distributeInt(totalConversations, conversationWeights);
+  const costByUser = distributeFloat(totalCostUsd, costWeights);
 
   return selected.map((user, index) => ({
     ...user,
@@ -295,13 +341,7 @@ export const createAiMetricsService = () => ({
     requesterUserId: string;
   }): Promise<AiMetricsOutput> => {
     const { from, to } = resolvePeriod(params);
-    const seed = buildSeed([
-      from.toISOString(),
-      to.toISOString(),
-      params.groupBy,
-      params.limit,
-      params.preset,
-    ]);
+    const seed = buildSeed([from.toISOString(), to.toISOString(), params.groupBy, params.preset]);
     const trend = buildTrend({ from, to, groupBy: params.groupBy, seed });
 
     const summary = {
@@ -312,6 +352,14 @@ export const createAiMetricsService = () => ({
       activeUsers: 520,
       errorRate: round2(trend.reduce((acc, point) => acc + point.errorRate, 0) / trend.length),
     };
+    const users = buildUsers({
+      totalUsers: MAX_MOCK_USERS,
+      totalRequests: summary.totalRequests,
+      totalTokens: summary.totalTokens,
+      totalCostUsd: summary.totalCostUsd,
+      totalConversations: summary.totalConversations,
+      seed,
+    });
 
     return Promise.resolve({
       isMock: true,
@@ -324,13 +372,7 @@ export const createAiMetricsService = () => ({
       },
       summary,
       trend,
-      byUser: buildUsers({
-        limit: params.limit,
-        totalRequests: summary.totalRequests,
-        totalTokens: summary.totalTokens,
-        totalCostUsd: summary.totalCostUsd,
-        totalConversations: summary.totalConversations,
-      }),
+      byUser: sortUsers(users, params.userSort).slice(0, params.limit),
       byFeature: buildFeatures({
         totalRequests: summary.totalRequests,
         totalTokens: summary.totalTokens,

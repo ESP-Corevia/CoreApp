@@ -4,12 +4,14 @@ import { useTrpc } from '@/providers/trpc';
 
 export type AiMetricsPreset = '7d' | '30d' | '90d' | 'custom';
 export type AiMetricsGroupBy = 'day' | 'week';
+export type AiMetricsUserSort = 'costDesc' | 'requestsDesc' | 'tokensDesc' | 'conversationsDesc';
 
 /** Query params used to fetch admin AI metrics from the backend mock API. */
 interface UseGetAiMetricsParams {
   preset: AiMetricsPreset;
   groupBy: AiMetricsGroupBy;
   limit: number;
+  userSort: AiMetricsUserSort;
   from?: Date;
   to?: Date;
   enabled?: boolean;
@@ -24,6 +26,7 @@ export function useGetAiMetrics({
   preset,
   groupBy,
   limit,
+  userSort,
   from,
   to,
   enabled = true,
@@ -35,6 +38,7 @@ export function useGetAiMetrics({
       preset,
       groupBy,
       limit,
+      userSort,
       from,
       to,
     }),

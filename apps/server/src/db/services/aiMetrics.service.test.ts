@@ -13,6 +13,7 @@ describe('aiMetrics.service', () => {
         to: undefined,
         groupBy: 'day',
         limit: 10,
+        userSort: 'costDesc',
       },
       requesterUserId: 'admin-user',
     });
@@ -40,6 +41,7 @@ describe('aiMetrics.service', () => {
         to,
         groupBy: 'week',
         limit: 5,
+        userSort: 'costDesc',
       },
       requesterUserId: 'admin-user',
     });
@@ -63,6 +65,7 @@ describe('aiMetrics.service', () => {
         to,
         groupBy: 'day',
         limit: 3,
+        userSort: 'costDesc',
       },
       requesterUserId: 'admin-user',
     });
@@ -79,7 +82,8 @@ describe('aiMetrics.service', () => {
         from: undefined,
         to: undefined,
         groupBy: 'day',
-        limit: 6,
+        limit: 100,
+        userSort: 'costDesc',
       },
       requesterUserId: 'admin-user',
     });
@@ -90,7 +94,8 @@ describe('aiMetrics.service', () => {
         from: undefined,
         to: undefined,
         groupBy: 'week',
-        limit: 6,
+        limit: 100,
+        userSort: 'costDesc',
       },
       requesterUserId: 'admin-user',
     });
@@ -122,6 +127,7 @@ describe('aiMetrics.service', () => {
       to: new Date('2026-02-28T00:00:00.000Z'),
       groupBy: 'day' as const,
       limit: 8,
+      userSort: 'costDesc' as const,
     };
 
     const first = await service.getMetrics({
@@ -144,6 +150,7 @@ describe('aiMetrics.service', () => {
         to: undefined,
         groupBy: 'day',
         limit: 2,
+        userSort: 'costDesc',
       },
       requesterUserId: 'admin-user',
     });
@@ -154,18 +161,63 @@ describe('aiMetrics.service', () => {
   });
 
   it('supports top users limits above 10', async () => {
-    const result = await service.getMetrics({
+    const full = await service.getMetrics({
+      params: {
+        preset: '30d',
+        from: undefined,
+        to: undefined,
+        groupBy: 'day',
+        limit: 100,
+        userSort: 'costDesc',
+      },
+      requesterUserId: 'admin-user',
+    });
+
+    const limited = await service.getMetrics({
       params: {
         preset: '30d',
         from: undefined,
         to: undefined,
         groupBy: 'day',
         limit: 20,
+        userSort: 'costDesc',
       },
       requesterUserId: 'admin-user',
     });
 
-    expect(result.byUser).toHaveLength(20);
-    expect(result.byUser[19]?.userId).toBe('mobile-u-020');
+    expect(limited.byUser).toHaveLength(20);
+    expect(limited.byUser).toEqual(full.byUser.slice(0, 20));
+  });
+
+  it('applies user sorting before limiting the result set', async () => {
+    const full = await service.getMetrics({
+      params: {
+        preset: '30d',
+        from: undefined,
+        to: undefined,
+        groupBy: 'day',
+        limit: 100,
+        userSort: 'requestsDesc',
+      },
+      requesterUserId: 'admin-user',
+    });
+
+    const limited = await service.getMetrics({
+      params: {
+        preset: '30d',
+        from: undefined,
+        to: undefined,
+        groupBy: 'day',
+        limit: 5,
+        userSort: 'requestsDesc',
+      },
+      requesterUserId: 'admin-user',
+    });
+
+    expect(limited.byUser).toEqual(full.byUser.slice(0, 5));
+    expect(limited.byUser).toHaveLength(5);
+    expect(limited.byUser[0]?.requests ?? 0).toBeGreaterThanOrEqual(
+      limited.byUser[4]?.requests ?? 0,
+    );
   });
 });

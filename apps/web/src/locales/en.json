@@ -27,6 +27,10 @@
         "user": "User"
       },
       "description": "Measure AI API consumption by user and by mobile feature.",
+      "customRange": {
+        "description": "Choose a valid start and end date to load custom metrics.",
+        "title": "Custom range pending"
+      },
       "empty": {
         "byFeature": "No feature usage data for this period.",
         "byUser": "No user usage data for this period.",
@@ -51,7 +55,7 @@
         "topUsers": "Top users",
         "week": "Week"
       },
-      "generatedAt": "Generated at {{date}} (mock backend data for this first iteration).",
+      "generatedAt": "Data available through {{date}} (mock backend data for this first iteration).",
       "loadError": "Failed to load AI metrics: {{message}}",
       "mockedData": "Mocked backend data",
       "refreshing": "Refreshing",

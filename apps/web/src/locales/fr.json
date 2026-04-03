@@ -27,6 +27,10 @@
         "user": "Utilisateur"
       },
       "description": "Mesurer la consommation d'API IA par utilisateur et par fonctionnalité mobile.",
+      "customRange": {
+        "description": "Choisissez une date de début et de fin valides pour charger les métriques personnalisées.",
+        "title": "Plage personnalisée en attente"
+      },
       "empty": {
         "byFeature": "Aucune donnée d'usage par fonctionnalité pour cette période.",
         "byUser": "Aucune donnée d'usage par utilisateur pour cette période.",
@@ -51,7 +55,7 @@
         "topUsers": "Top utilisateurs",
         "week": "Semaine"
       },
-      "generatedAt": "Généré le {{date}} (données mockées backend pour cette première itération).",
+      "generatedAt": "Données disponibles jusqu'au {{date}} (données mockées backend pour cette première itération).",
       "loadError": "Échec du chargement des métriques IA : {{message}}",
       "mockedData": "Données mockées backend",
       "refreshing": "Actualisation",

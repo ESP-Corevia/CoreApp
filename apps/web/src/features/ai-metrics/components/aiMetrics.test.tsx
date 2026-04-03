@@ -118,6 +118,7 @@ describe('AiMetrics', () => {
       preset: '30d',
       groupBy: 'day',
       limit: 10,
+      userSort: 'costDesc',
       from: undefined,
       to: undefined,
     });
@@ -154,8 +155,12 @@ describe('AiMetrics', () => {
     await user.click(getByRole('button', { name: 'Custom' }));
 
     await waitFor(() => {
-      expect(handler).toHaveBeenCalled();
+      expect(handler).toHaveBeenCalledTimes(1);
     });
+
+    expect(
+      await findByText('Choose a valid start and end date to load custom metrics.'),
+    ).toBeInTheDocument();
   });
 
   it('renders empty states for trend, user and feature sections', async () => {
