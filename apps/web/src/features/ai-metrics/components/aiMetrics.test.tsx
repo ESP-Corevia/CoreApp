@@ -44,16 +44,6 @@ function buildMockMetrics() {
     ],
     byUser: [
       {
-        userId: 'mobile-u-002',
-        userName: 'Lea Dubois',
-        userEmail: 'lea.dubois@corevia.app',
-        costUsd: 12.8,
-        tokens: 42_000,
-        requests: 610,
-        conversations: 220,
-        errorRate: 0.82,
-      },
-      {
         userId: 'mobile-u-001',
         userName: 'Alex Martin',
         userEmail: 'alex.martin@corevia.app',
@@ -62,6 +52,16 @@ function buildMockMetrics() {
         requests: 910,
         conversations: 290,
         errorRate: 1.05,
+      },
+      {
+        userId: 'mobile-u-002',
+        userName: 'Lea Dubois',
+        userEmail: 'lea.dubois@corevia.app',
+        costUsd: 12.8,
+        tokens: 42_000,
+        requests: 610,
+        conversations: 220,
+        errorRate: 0.82,
       },
     ],
     byFeature: [
