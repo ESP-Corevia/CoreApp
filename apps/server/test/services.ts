@@ -1,5 +1,5 @@
 import { type DeepMockProxy, mockDeep } from 'vitest-mock-extended';
-
+import type { createAiMetricsService } from '../src/db/services/aiMetrics.service';
 import type { createAppointmentsService } from '../src/db/services/appointments.service';
 import type { createAvailabilityService } from '../src/db/services/availability.service';
 import type { createDoctorsService } from '../src/db/services/doctors.service';
@@ -7,6 +7,7 @@ import type { createMedicationsService } from '../src/db/services/medications.se
 import type { createPatientsService } from '../src/db/services/patients.service';
 import type { createUsersService } from '../src/db/services/users.service';
 
+type AiMetricsService = ReturnType<typeof createAiMetricsService>;
 type UsersService = ReturnType<typeof createUsersService>;
 type DoctorsService = ReturnType<typeof createDoctorsService>;
 type PatientsService = ReturnType<typeof createPatientsService>;
@@ -15,6 +16,7 @@ type AppointmentsService = ReturnType<typeof createAppointmentsService>;
 type MedicationsService = ReturnType<typeof createMedicationsService>;
 
 export const mockUsersService: DeepMockProxy<UsersService> = mockDeep<UsersService>();
+export const mockAiMetricsService: DeepMockProxy<AiMetricsService> = mockDeep<AiMetricsService>();
 export const mockDoctorsService: DeepMockProxy<DoctorsService> = mockDeep<DoctorsService>();
 export const mockPatientsService: DeepMockProxy<PatientsService> = mockDeep<PatientsService>();
 export const mockAvailabilityService: DeepMockProxy<AvailabilityService> =
@@ -26,6 +28,7 @@ export const mockMedicationsService: DeepMockProxy<MedicationsService> =
 
 export const mockServices = {
   usersService: mockUsersService,
+  aiMetricsService: mockAiMetricsService,
   doctorsService: mockDoctorsService,
   patientsService: mockPatientsService,
   availabilityService: mockAvailabilityService,

@@ -106,6 +106,8 @@ catalogs:
 overrides:
   h3: '>=1.15.6'
   glob: '>=11.1.0'
+  lodash: 4.18.1
+  lodash-es: 4.18.1
   path-to-regexp: '>=8.4.0'
   picomatch: '>=4.0.4'
 
@@ -5747,8 +5749,8 @@ packages:
     resolution: {integrity: sha512-gvVijfZvn7R+2qyPX8mAuKcFGDf6Nc61GdvGafQsHL0sBIxfKzA+usWn4GFC/bk+QdwPUD4kWFJLhElipq+0VA==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
-  lodash-es@4.17.23:
-    resolution: {integrity: sha512-kVI48u3PZr38HdYz98UmfPnXl2DXrpdctLrFLCd3kOx1xUkOmpFPx7gCWWM5MPkL/fD8zb+Ph0QzjGFs4+hHWg==}
+  lodash-es@4.18.1:
+    resolution: {integrity: sha512-J8xewKD/Gk22OZbhpOVSwcs60zhd95ESDwezOFuA3/099925PdHJ7OFHNTGtajL3AlZkykD32HykiMo+BIBI8A==}
 
   lodash.camelcase@4.3.0:
     resolution: {integrity: sha512-TwuEnCnxbc3rAvhf/LbG7tJUDzhqXyFnv3dtzLOPgCG/hODL7WFnsbwktkD7yUV0RrreP/l1PALq/YSg6VvjlA==}
@@ -5777,8 +5779,8 @@ packages:
   lodash.upperfirst@4.3.1:
     resolution: {integrity: sha512-sReKOYJIJf74dhJONhU4e0/shzi1trVbSWDOhKYE5XV2O+H7Sb2Dihwuc7xWxVl+DgFPyTqIN3zMfT9cq5iWDg==}
 
-  lodash@4.17.23:
-    resolution: {integrity: sha512-LgVTMpQtIopCi79SJeDiP0TfWi5CNEc/L/aRdTh3yIvmZXTnheWpKjSZhnvMl8iXbC1tFg9gdHHDMLoV7CnG+w==}
+  lodash@4.18.1:
+    resolution: {integrity: sha512-dMInicTPVE8d1e5otfwmmjlxkZoUpiVLwyeTdUsi/Caj/gfzzblBcCE5sRHV/AsjuCmxWrte2TNGSYuCeCq+0Q==}
 
   log-symbols@6.0.0:
     resolution: {integrity: sha512-i24m8rpwhmPIS4zscNzK6MSEhk0DUWa/8iYQWxhffV8jkI4Phvs3F+quL5xvS0gdQR0FyTCMMH33Y78dDTzzIw==}
@@ -9806,7 +9808,7 @@ snapshots:
       exit-hook: 2.2.1
       isbot: 5.1.32
       jsesc: 3.0.2
-      lodash: 4.17.23
+      lodash: 4.18.1
       p-map: 7.0.4
       pathe: 1.1.2
       picocolors: 1.1.1
@@ -9856,7 +9858,7 @@ snapshots:
       exit-hook: 2.2.1
       isbot: 5.1.32
       jsesc: 3.0.2
-      lodash: 4.17.23
+      lodash: 4.18.1
       p-map: 7.0.4
       pathe: 1.1.2
       picocolors: 1.1.1
@@ -11580,7 +11582,7 @@ snapshots:
       is-core-module: 2.16.1
       js-yaml: 3.14.2
       json5: 2.2.3
-      lodash: 4.17.23
+      lodash: 4.18.1
       minimatch: 7.4.9
       multimatch: 5.0.0
       please-upgrade-node: 3.2.0
@@ -12426,7 +12428,7 @@ snapshots:
       cli-width: 2.2.1
       external-editor: 3.1.0
       figures: 2.0.0
-      lodash: 4.17.23
+      lodash: 4.18.1
       mute-stream: 0.0.7
       run-async: 2.4.1
       rxjs: 6.6.7
@@ -12738,7 +12740,7 @@ snapshots:
       js-library-detector: 6.7.0
       lighthouse-logger: 2.0.2
       lighthouse-stack-packs: 1.12.2
-      lodash-es: 4.17.23
+      lodash-es: 4.18.1
       lookup-closest-locale: 6.2.0
       metaviewport-parser: 0.3.0
       open: 8.4.2
@@ -12870,7 +12872,7 @@ snapshots:
     dependencies:
       p-locate: 6.0.0
 
-  lodash-es@4.17.23: {}
+  lodash-es@4.18.1: {}
 
   lodash.camelcase@4.3.0: {}
 
@@ -12890,7 +12892,7 @@ snapshots:
 
   lodash.upperfirst@4.3.1: {}
 
-  lodash@4.17.23: {}
+  lodash@4.18.1: {}
 
   log-symbols@6.0.0:
     dependencies:

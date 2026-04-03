@@ -2,6 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import {
+  Bot,
   Calendar,
   ClipboardList,
   Home,
@@ -38,7 +39,6 @@ interface NavigationItem {
   icon: typeof Home;
   badge?: string;
 }
-
 export default function FooterDateTime({ onlyYear = false }: { onlyYear?: boolean }) {
   const { i18n } = useTranslation();
   const locale = i18n.language;
@@ -97,6 +97,7 @@ export function AppSidebar() {
     () => [
       { title: t('nav.home', 'Home'), url: '/', icon: Home },
       { title: t('nav.dashboard', 'Dashboard'), url: '/dashboard', icon: LayoutDashboard },
+      { title: t('nav.aiMetrics', 'AI Metrics'), url: '/ai-metrics', icon: Bot },
       { title: t('nav.doctors', 'Doctors'), url: '/doctors', icon: Stethoscope },
       { title: t('nav.appointments', 'Appointments'), url: '/appointments', icon: Calendar },
     ],
@@ -135,7 +136,7 @@ export function AppSidebar() {
 
   const renderMenuItems = (items: NavigationItem[]) => {
     return items.map(item => (
-      <SidebarMenuItem key={item.title}>
+      <SidebarMenuItem key={item.url}>
         <SidebarMenuButton asChild isActive={isActive(item.url)} className="group relative">
           <button
             type="button"

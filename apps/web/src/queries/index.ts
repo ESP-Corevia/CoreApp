@@ -4,6 +4,7 @@ export { useCreatePatient } from './useCreatePatient';
 export { useDeleteAppointment } from './useDeleteAppointment';
 export { useDeletePatient } from './useDeletePatient';
 export { useDeleteUser } from './useDeleteUser';
+export { useGetAiMetrics } from './useGetAiMetrics';
 export { useImpersonateUser } from './useImpersonateUser';
 export { useListAppointments } from './useListAppointments';
 export { useListDoctors } from './useListDoctors';
