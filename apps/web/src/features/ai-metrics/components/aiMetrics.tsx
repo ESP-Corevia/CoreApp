@@ -187,7 +187,7 @@ export default function AiMetrics({
   });
 
   useEffect(() => {
-    if (error && data) {
+    if (error) {
       toast.error(
         t('aiMetrics.loadError', 'Failed to load AI metrics: {{message}}', {
           message: error instanceof Error ? error.message : 'Unknown error',

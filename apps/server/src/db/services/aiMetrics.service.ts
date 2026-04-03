@@ -113,6 +113,9 @@ function createSeededRandom(seed: number) {
 /** Distributes an integer total across buckets while preserving the exact sum. */
 function distributeInt(total: number, weights: number[]) {
   const sumWeights = weights.reduce((acc, w) => acc + w, 0);
+  if (weights.length === 0 || sumWeights === 0) {
+    return Array.from({ length: weights.length }, () => 0);
+  }
   const raw = weights.map(w => (total * w) / sumWeights);
   const floorValues = raw.map(v => Math.floor(v));
   const remaining = total - floorValues.reduce((acc, v) => acc + v, 0);
@@ -336,6 +339,8 @@ export const createAiMetricsService = () => ({
   /** Returns mock AI usage metrics with stable output for identical filter inputs. */
   getMetrics: ({
     params,
+    // Reserved for future audit/log enrichment once the metrics stop being fully mocked.
+    requesterUserId: _requesterUserId,
   }: {
     params: AiMetricsInput;
     requesterUserId: string;
