@@ -1,3 +1,4 @@
+import type { ToolSet } from 'ai';
 import type { auth as Auth } from '../../lib/auth';
 import type { AICaller } from '../caller';
 import { createAdminTools } from './admin.tools';
@@ -10,7 +11,7 @@ export interface ToolContext {
   headers: Headers;
 }
 
-export function getToolsForRole(role: string, ctx: ToolContext) {
+export function getToolsForRole(role: string, ctx: ToolContext): ToolSet {
   switch (role) {
     case 'patient':
       return createPatientTools(ctx.caller);
@@ -19,7 +20,7 @@ export function getToolsForRole(role: string, ctx: ToolContext) {
     case 'admin':
       return createAdminTools(ctx);
     default:
-      return [];
+      return {};
   }
 }
 

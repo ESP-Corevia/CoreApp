@@ -1,9 +1,8 @@
+import type { ToolExecutionOptions } from 'ai';
 import { describe, expect, it, vi } from 'vitest';
 import { createAdminTools } from './admin.tools';
 
-function mapTools<T extends { name: string }>(tools: T[]) {
-  return Object.fromEntries(tools.map(tool => [tool.name, tool]));
-}
+const execOpts = {} as ToolExecutionOptions;
 
 describe('createAdminTools', () => {
   it('exposes all admin tools and forwards arguments to the right caller/auth method', async () => {
@@ -38,7 +37,7 @@ describe('createAdminTools', () => {
     };
     const headers = new Headers([['x-test', '1']]);
 
-    const tools = mapTools(createAdminTools({ caller, auth, headers } as never));
+    const tools = createAdminTools({ caller, auth, headers } as never);
 
     expect(Object.keys(tools)).toEqual([
       'list_users',
@@ -64,7 +63,7 @@ describe('createAdminTools', () => {
       'set_user_password',
     ]);
 
-    await expect(tools.list_users.execute?.({})).resolves.toEqual({ ok: 'listUsers' });
+    await expect(tools.list_users.execute?.({}, execOpts)).resolves.toEqual({ ok: 'listUsers' });
     expect(caller.admin.listUsers).toHaveBeenCalledWith({
       page: 1,
       perPage: 10,
@@ -72,16 +71,19 @@ describe('createAdminTools', () => {
     });
 
     await expect(
-      tools.list_appointments.execute?.({
-        page: 2,
-        perPage: 5,
-        search: 'alice',
-        status: ['CONFIRMED'],
-        from: '2026-01-01',
-        to: '2026-01-31',
-        doctorId: 'doctor-1',
-        sort: 'dateAsc',
-      }),
+      tools.list_appointments.execute?.(
+        {
+          page: 2,
+          perPage: 5,
+          search: 'alice',
+          status: ['CONFIRMED'],
+          from: '2026-01-01',
+          to: '2026-01-31',
+          doctorId: 'doctor-1',
+          sort: 'dateAsc',
+        },
+        execOpts,
+      ),
     ).resolves.toEqual({ ok: 'listAppointments' });
     expect(caller.admin.listAppointments).toHaveBeenCalledWith({
       page: 2,
@@ -94,7 +96,9 @@ describe('createAdminTools', () => {
       sort: 'dateAsc',
     });
 
-    await expect(tools.list_doctors.execute?.({})).resolves.toEqual({ ok: 'listDoctors' });
+    await expect(tools.list_doctors.execute?.({}, execOpts)).resolves.toEqual({
+      ok: 'listDoctors',
+    });
     expect(caller.admin.listDoctors).toHaveBeenCalledWith({
       page: 1,
       perPage: 10,
@@ -104,10 +108,7 @@ describe('createAdminTools', () => {
     });
 
     await expect(
-      tools.list_patients.execute?.({
-        search: 'bob',
-        gender: 'MALE',
-      }),
+      tools.list_patients.execute?.({ search: 'bob', gender: 'MALE' }, execOpts),
     ).resolves.toEqual({ ok: 'listPatients' });
     expect(caller.admin.listPatients).toHaveBeenCalledWith({
       page: 1,
@@ -117,11 +118,10 @@ describe('createAdminTools', () => {
     });
 
     await expect(
-      tools.list_medications.execute?.({
-        patientId: 'patient-1',
-        search: 'ibuprofen',
-        isActive: true,
-      }),
+      tools.list_medications.execute?.(
+        { patientId: 'patient-1', search: 'ibuprofen', isActive: true },
+        execOpts,
+      ),
     ).resolves.toEqual({ ok: 'adminListPillbox' });
     expect(caller.admin.adminListPillbox).toHaveBeenCalledWith({
       patientId: 'patient-1',
@@ -132,35 +132,28 @@ describe('createAdminTools', () => {
     });
 
     await expect(
-      tools.get_patient_today_pillbox.execute?.({
-        patientId: 'patient-1',
-      }),
+      tools.get_patient_today_pillbox.execute?.({ patientId: 'patient-1' }, execOpts),
     ).resolves.toEqual({ ok: 'adminTodayByPatient' });
     expect(caller.admin.adminTodayByPatient).toHaveBeenCalledWith({
       patientId: 'patient-1',
     });
 
     await expect(
-      tools.check_user_permission.execute?.({
-        userId: 'user-1',
-        permissions: { panel: ['access'] },
-      }),
+      tools.check_user_permission.execute?.(
+        { userId: 'user-1', permissions: { panel: ['access'] } },
+        execOpts,
+      ),
     ).resolves.toEqual({ ok: 'userHasPermission' });
     expect(auth.api.userHasPermission).toHaveBeenCalledWith({
-      body: {
-        userId: 'user-1',
-        permissions: { panel: ['access'] },
-      },
+      body: { userId: 'user-1', permissions: { panel: ['access'] } },
       headers,
     });
 
     await expect(
-      tools.create_appointment.execute?.({
-        doctorId: 'doctor-1',
-        patientId: 'patient-1',
-        date: '2026-05-05',
-        time: '09:30',
-      }),
+      tools.create_appointment.execute?.(
+        { doctorId: 'doctor-1', patientId: 'patient-1', date: '2026-05-05', time: '09:30' },
+        execOpts,
+      ),
     ).resolves.toEqual({ ok: 'createAppointment' });
     expect(caller.admin.createAppointment).toHaveBeenCalledWith({
       doctorId: 'doctor-1',
@@ -171,10 +164,7 @@ describe('createAdminTools', () => {
     });
 
     await expect(
-      tools.update_appointment.execute?.({
-        id: 'appt-1',
-        time: '10:00',
-      }),
+      tools.update_appointment.execute?.({ id: 'appt-1', time: '10:00' }, execOpts),
     ).resolves.toEqual({ ok: 'updateAppointment' });
     expect(caller.admin.updateAppointment).toHaveBeenCalledWith({
       id: 'appt-1',
@@ -185,18 +175,13 @@ describe('createAdminTools', () => {
       patientId: undefined,
     });
 
-    await expect(
-      tools.delete_appointment.execute?.({
-        id: 'appt-1',
-      }),
-    ).resolves.toEqual({ ok: 'deleteAppointment' });
+    await expect(tools.delete_appointment.execute?.({ id: 'appt-1' }, execOpts)).resolves.toEqual({
+      ok: 'deleteAppointment',
+    });
     expect(caller.admin.deleteAppointment).toHaveBeenCalledWith({ id: 'appt-1' });
 
     await expect(
-      tools.update_appointment_status.execute?.({
-        id: 'appt-1',
-        status: 'CANCELLED',
-      }),
+      tools.update_appointment_status.execute?.({ id: 'appt-1', status: 'CANCELLED' }, execOpts),
     ).resolves.toEqual({ ok: 'updateAppointmentStatus' });
     expect(caller.admin.updateAppointmentStatus).toHaveBeenCalledWith({
       id: 'appt-1',
@@ -209,16 +194,13 @@ describe('createAdminTools', () => {
       address: '1 Main St',
       city: 'Paris',
     };
-    await expect(tools.create_doctor.execute?.(createDoctorInput)).resolves.toEqual({
+    await expect(tools.create_doctor.execute?.(createDoctorInput, execOpts)).resolves.toEqual({
       ok: 'createDoctor',
     });
     expect(caller.admin.createDoctor).toHaveBeenCalledWith(createDoctorInput);
 
     await expect(
-      tools.update_doctor.execute?.({
-        userId: 'doctor-1',
-        city: 'Lyon',
-      }),
+      tools.update_doctor.execute?.({ userId: 'doctor-1', city: 'Lyon' }, execOpts),
     ).resolves.toEqual({ ok: 'updateDoctor' });
     expect(caller.admin.updateDoctor).toHaveBeenCalledWith({
       userId: 'doctor-1',
@@ -230,24 +212,21 @@ describe('createAdminTools', () => {
     const createPatientInput = {
       userId: 'patient-1',
       dateOfBirth: '1990-02-03',
-      gender: 'FEMALE',
+      gender: 'FEMALE' as const,
       phone: '123',
       address: '2 Main St',
-      bloodType: 'A+',
+      bloodType: 'A+' as const,
       allergies: 'Peanuts',
       emergencyContactName: 'Jane',
       emergencyContactPhone: '456',
     };
-    await expect(tools.create_patient.execute?.(createPatientInput)).resolves.toEqual({
+    await expect(tools.create_patient.execute?.(createPatientInput, execOpts)).resolves.toEqual({
       ok: 'createPatient',
     });
     expect(caller.admin.createPatient).toHaveBeenCalledWith(createPatientInput);
 
     await expect(
-      tools.update_patient.execute?.({
-        userId: 'patient-1',
-        allergies: 'Pollen',
-      }),
+      tools.update_patient.execute?.({ userId: 'patient-1', allergies: 'Pollen' }, execOpts),
     ).resolves.toEqual({ ok: 'updatePatient' });
     expect(caller.admin.updatePatient).toHaveBeenCalledWith({
       userId: 'patient-1',
@@ -262,67 +241,47 @@ describe('createAdminTools', () => {
     });
 
     await expect(
-      tools.delete_patient.execute?.({
-        userId: 'patient-1',
-      }),
+      tools.delete_patient.execute?.({ userId: 'patient-1' }, execOpts),
     ).resolves.toEqual({ ok: 'deletePatient' });
     expect(caller.admin.deletePatient).toHaveBeenCalledWith({ userId: 'patient-1' });
 
     await expect(
-      tools.update_user.execute?.({
-        userId: 'user-1',
-        data: { role: 'doctor' },
-      }),
+      tools.update_user.execute?.({ userId: 'user-1', data: { role: 'doctor' } }, execOpts),
     ).resolves.toEqual({ ok: 'adminUpdateUser' });
     expect(auth.api.adminUpdateUser).toHaveBeenCalledWith({
-      body: {
-        userId: 'user-1',
-        data: { role: 'doctor' },
-      },
+      body: { userId: 'user-1', data: { role: 'doctor' } },
       headers,
     });
 
     await expect(
-      tools.ban_user.execute?.({
-        userId: 'user-2',
-        banReason: 'abuse',
-        banExpiresIn: 3600,
-      }),
+      tools.ban_user.execute?.(
+        { userId: 'user-2', banReason: 'abuse', banExpiresIn: 3600 },
+        execOpts,
+      ),
     ).resolves.toEqual({ ok: 'banUser' });
     expect(auth.api.banUser).toHaveBeenCalledWith({
-      body: {
-        userId: 'user-2',
-        banReason: 'abuse',
-        banExpiresIn: 3600,
-      },
+      body: { userId: 'user-2', banReason: 'abuse', banExpiresIn: 3600 },
       headers,
     });
 
-    await expect(
-      tools.unban_user.execute?.({
-        userId: 'user-2',
-      }),
-    ).resolves.toEqual({ ok: 'unbanUser' });
+    await expect(tools.unban_user.execute?.({ userId: 'user-2' }, execOpts)).resolves.toEqual({
+      ok: 'unbanUser',
+    });
     expect(auth.api.unbanUser).toHaveBeenCalledWith({
       body: { userId: 'user-2' },
       headers,
     });
 
-    await expect(
-      tools.remove_user.execute?.({
-        userId: 'user-3',
-      }),
-    ).resolves.toEqual({ ok: 'removeUser' });
+    await expect(tools.remove_user.execute?.({ userId: 'user-3' }, execOpts)).resolves.toEqual({
+      ok: 'removeUser',
+    });
     expect(auth.api.removeUser).toHaveBeenCalledWith({
       body: { userId: 'user-3' },
       headers,
     });
 
     await expect(
-      tools.set_user_password.execute?.({
-        userId: 'user-4',
-        newPassword: 'secret',
-      }),
+      tools.set_user_password.execute?.({ userId: 'user-4', newPassword: 'secret' }, execOpts),
     ).resolves.toEqual({ ok: 'setUserPassword' });
     expect(auth.api.setUserPassword).toHaveBeenCalledWith({
       body: { userId: 'user-4', newPassword: 'secret' },

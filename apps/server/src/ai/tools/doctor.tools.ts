@@ -1,4 +1,4 @@
-import { toolDefinition } from '@tanstack/ai';
+import { tool } from 'ai';
 import { z } from 'zod';
 import type { AICaller } from '../caller';
 
@@ -19,40 +19,37 @@ const updateStatusSchema = z.object({
 });
 
 export function createDoctorTools(caller: AICaller) {
-  const getMyAppointments = toolDefinition({
-    name: 'get_my_appointments',
-    description: 'Get the list of my appointments as a doctor. Optionally filter by status.',
-    inputSchema: appointmentsSchema,
-  }).server(async args => {
-    const input = args as z.infer<typeof appointmentsSchema>;
-    return await caller.doctor.appointments.listMine({
-      status: input.status ?? undefined,
-      page: 1,
-      limit: 10,
-      sort: 'dateDesc',
-    });
-  });
+  return {
+    get_my_appointments: tool({
+      description: 'Get the list of my appointments as a doctor. Optionally filter by status.',
+      inputSchema: appointmentsSchema,
+      execute: async args => {
+        return await caller.doctor.appointments.listMine({
+          status: args.status ?? undefined,
+          page: 1,
+          limit: 10,
+          sort: 'dateDesc',
+        });
+      },
+    }),
 
-  const getAppointmentDetail = toolDefinition({
-    name: 'get_appointment_detail',
-    description: 'Get the full details of a specific appointment by its ID.',
-    inputSchema: appointmentDetailSchema,
-  }).server(async args => {
-    const input = args as z.infer<typeof appointmentDetailSchema>;
-    return await caller.doctor.appointments.detail({ id: input.id });
-  });
+    get_appointment_detail: tool({
+      description: 'Get the full details of a specific appointment by its ID.',
+      inputSchema: appointmentDetailSchema,
+      execute: async args => {
+        return await caller.doctor.appointments.detail({ id: args.id });
+      },
+    }),
 
-  const updateAppointmentStatus = toolDefinition({
-    name: 'update_appointment_status',
-    description: 'Update the status of an appointment (confirm, complete, or cancel it).',
-    inputSchema: updateStatusSchema,
-  }).server(async args => {
-    const input = args as z.infer<typeof updateStatusSchema>;
-    return await caller.doctor.appointments.updateStatus({
-      id: input.id,
-      status: input.status,
-    });
-  });
-
-  return [getMyAppointments, getAppointmentDetail, updateAppointmentStatus];
+    update_appointment_status: tool({
+      description: 'Update the status of an appointment (confirm, complete, or cancel it).',
+      inputSchema: updateStatusSchema,
+      execute: async args => {
+        return await caller.doctor.appointments.updateStatus({
+          id: args.id,
+          status: args.status,
+        });
+      },
+    }),
+  };
 }

@@ -1,9 +1,9 @@
-import { fetchServerSentEvents, useChat } from '@tanstack/ai-react';
+import { useChat } from '@ai-sdk/react';
+import { DefaultChatTransport } from 'ai';
 import { Brain, ChevronRight } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import Markdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import { Streamdown } from 'streamdown';
 import { authClient } from '@/lib/auth-client';
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL || '';
@@ -85,14 +85,19 @@ export default function AITestRoute() {
   const { data: session } = authClient.useSession();
   const role = session?.role as string | undefined;
 
-  const { messages, sendMessage, isLoading, error } = useChat({
-    connection: fetchServerSentEvents(`${SERVER_URL}/chat`),
+  const { messages, sendMessage, status, error } = useChat({
+    transport: new DefaultChatTransport({
+      api: `${SERVER_URL}/chat`,
+      credentials: 'include',
+    }),
   });
+
+  const isLoading = status === 'submitted' || status === 'streaming';
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (input.trim() && !isLoading) {
-      sendMessage(input);
+      sendMessage({ text: input });
       setInput('');
     }
   };
@@ -137,20 +142,21 @@ export default function AITestRoute() {
               {msg.parts.map((part, idx) => {
                 if (part.type === 'text') {
                   return msg.role === 'assistant' ? (
-                    <div
+                    <Streamdown
                       key={idx}
-                      className="prose prose-sm dark:prose-invert max-w-none [&_table]:w-full [&_table]:border-collapse [&_td]:border [&_td]:border-border [&_td]:px-2 [&_td]:py-1 [&_th]:border [&_th]:border-border [&_th]:px-2 [&_th]:py-1 [&_th]:text-left"
+                      className="max-w-none text-sm"
+                      isAnimating={status === 'streaming'}
                     >
-                      <Markdown remarkPlugins={[remarkGfm]}>{part.content}</Markdown>
-                    </div>
+                      {part.text}
+                    </Streamdown>
                   ) : (
                     <p key={idx} className="whitespace-pre-wrap">
-                      {part.content}
+                      {part.text}
                     </p>
                   );
                 }
-                if (part.type === 'thinking' && part.content) {
-                  return <ThinkingBlock key={idx} content={part.content} />;
+                if (part.type === 'reasoning' && part.text) {
+                  return <ThinkingBlock key={idx} content={part.text} />;
                 }
                 return null;
               })}

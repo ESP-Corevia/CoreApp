@@ -1,4 +1,4 @@
-import { toolDefinition } from '@tanstack/ai';
+import { tool } from 'ai';
 import { z } from 'zod';
 import type { ToolContext } from './registry';
 
@@ -150,326 +150,283 @@ const patientTodayPillboxSchema = z.object({
 // ---------------------------------------------------------------------------
 
 export function createAdminTools({ caller, auth, headers }: ToolContext) {
-  // ── Queries ──────────────────────────────────────────────────────────────
+  return {
+    // ── Queries ────────────────────────────────────────────────────────────
 
-  const listUsers = toolDefinition({
-    name: 'list_users',
-    description: 'List all users with optional search and pagination.',
-    inputSchema: listUsersSchema,
-  }).server(async args => {
-    const input = args as z.infer<typeof listUsersSchema>;
-    return await caller.admin.listUsers({
-      page: input.page ?? 1,
-      perPage: input.perPage ?? 10,
-      search: input.search ?? undefined,
-    });
-  });
-
-  const listAppointments = toolDefinition({
-    name: 'list_appointments',
-    description: 'List all appointments with filters for status, date range, doctor.',
-    inputSchema: listAppointmentsSchema,
-  }).server(async args => {
-    const input = args as z.infer<typeof listAppointmentsSchema>;
-    return await caller.admin.listAppointments({
-      page: input.page ?? 1,
-      perPage: input.perPage ?? 10,
-      search: input.search ?? undefined,
-      status: input.status ?? undefined,
-      from: input.from ?? undefined,
-      to: input.to ?? undefined,
-      doctorId: input.doctorId ?? undefined,
-      sort: input.sort ?? 'dateDesc',
-    });
-  });
-
-  const listDoctors = toolDefinition({
-    name: 'list_doctors',
-    description: 'List all doctors with optional search by name, specialty, or city.',
-    inputSchema: listDoctorsSchema,
-  }).server(async args => {
-    const input = args as z.infer<typeof listDoctorsSchema>;
-    return await caller.admin.listDoctors({
-      page: input.page ?? 1,
-      perPage: input.perPage ?? 10,
-      search: input.search ?? undefined,
-      specialty: input.specialty ?? undefined,
-      city: input.city ?? undefined,
-    });
-  });
-
-  const listPatients = toolDefinition({
-    name: 'list_patients',
-    description: 'List all patients with optional search and gender filter.',
-    inputSchema: listPatientsSchema,
-  }).server(async args => {
-    const input = args as z.infer<typeof listPatientsSchema>;
-    return await caller.admin.listPatients({
-      page: input.page ?? 1,
-      perPage: input.perPage ?? 10,
-      search: input.search ?? undefined,
-      gender: input.gender ?? undefined,
-    });
-  });
-
-  const listMedications = toolDefinition({
-    name: 'list_medications',
-    description: 'List all medication prescriptions (pillbox entries) with optional filters.',
-    inputSchema: listMedicationsSchema,
-  }).server(async args => {
-    const input = args as z.infer<typeof listMedicationsSchema>;
-    return await caller.admin.adminListPillbox({
-      patientId: input.patientId ?? undefined,
-      search: input.search ?? undefined,
-      isActive: input.isActive ?? undefined,
-      page: input.page ?? 1,
-      limit: input.limit ?? 20,
-    });
-  });
-
-  const getPatientTodayPillbox = toolDefinition({
-    name: 'get_patient_today_pillbox',
-    description: "Get a specific patient's medication schedule for today.",
-    inputSchema: patientTodayPillboxSchema,
-  }).server(async args => {
-    const input = args as z.infer<typeof patientTodayPillboxSchema>;
-    return await caller.admin.adminTodayByPatient({ patientId: input.patientId });
-  });
-
-  // ── Mutations (all require approval) ─────────────────────────────────────
-
-  const createAppointment = toolDefinition({
-    name: 'create_appointment',
-    description: 'Create a new appointment for a patient with a doctor.',
-    inputSchema: createAppointmentSchema,
-  }).server(async args => {
-    const input = args as z.infer<typeof createAppointmentSchema>;
-    return await caller.admin.createAppointment({
-      doctorId: input.doctorId,
-      patientId: input.patientId,
-      date: input.date,
-      time: input.time,
-      reason: input.reason ?? undefined,
-    });
-  });
-
-  const updateAppointment = toolDefinition({
-    name: 'update_appointment',
-    description: 'Update appointment details (date, time, reason, reassign doctor/patient).',
-    inputSchema: updateAppointmentSchema,
-  }).server(async args => {
-    const input = args as z.infer<typeof updateAppointmentSchema>;
-    return await caller.admin.updateAppointment({
-      id: input.id,
-      date: input.date ?? undefined,
-      time: input.time ?? undefined,
-      reason: input.reason ?? undefined,
-      doctorId: input.doctorId ?? undefined,
-      patientId: input.patientId ?? undefined,
-    });
-  });
-
-  const deleteAppointment = toolDefinition({
-    name: 'delete_appointment',
-    description: 'Permanently delete an appointment.',
-    inputSchema: uuidSchema,
-  }).server(async args => {
-    const input = args as z.infer<typeof uuidSchema>;
-    return await caller.admin.deleteAppointment({ id: input.id });
-  });
-
-  const updateAppointmentStatus = toolDefinition({
-    name: 'update_appointment_status',
-    description:
-      'Update appointment status. Valid transitions: PENDING→CONFIRMED/CANCELLED, CONFIRMED→COMPLETED/CANCELLED, CANCELLED/COMPLETED→PENDING (reopen).',
-    inputSchema: updateAppointmentStatusSchema,
-  }).server(async args => {
-    const input = args as z.infer<typeof updateAppointmentStatusSchema>;
-    return await caller.admin.updateAppointmentStatus({
-      id: input.id,
-      status: input.status,
-    });
-  });
-
-  const createDoctor = toolDefinition({
-    name: 'create_doctor',
-    description: 'Create a doctor profile for an existing user with doctor role.',
-    inputSchema: createDoctorSchema,
-  }).server(async args => {
-    const input = args as z.infer<typeof createDoctorSchema>;
-    return await caller.admin.createDoctor(input);
-  });
-
-  const updateDoctor = toolDefinition({
-    name: 'update_doctor',
-    description: 'Update a doctor profile (specialty, address, city).',
-    inputSchema: updateDoctorSchema,
-  }).server(async args => {
-    const input = args as z.infer<typeof updateDoctorSchema>;
-    return await caller.admin.updateDoctor({
-      userId: input.userId,
-      specialty: input.specialty ?? undefined,
-      address: input.address ?? undefined,
-      city: input.city ?? undefined,
-    });
-  });
-
-  const createPatient = toolDefinition({
-    name: 'create_patient',
-    description: 'Create a patient profile for an existing user with patient role.',
-    inputSchema: createPatientSchema,
-  }).server(async args => {
-    const input = args as z.infer<typeof createPatientSchema>;
-    return await caller.admin.createPatient(input);
-  });
-
-  const updatePatient = toolDefinition({
-    name: 'update_patient',
-    description: 'Update patient profile details.',
-    inputSchema: updatePatientSchema,
-  }).server(async args => {
-    const input = args as z.infer<typeof updatePatientSchema>;
-    return await caller.admin.updatePatient({
-      userId: input.userId,
-      dateOfBirth: input.dateOfBirth ?? undefined,
-      gender: input.gender ?? undefined,
-      phone: input.phone ?? undefined,
-      address: input.address ?? undefined,
-      bloodType: input.bloodType ?? undefined,
-      allergies: input.allergies ?? undefined,
-      emergencyContactName: input.emergencyContactName ?? undefined,
-      emergencyContactPhone: input.emergencyContactPhone ?? undefined,
-    });
-  });
-
-  const deletePatient = toolDefinition({
-    name: 'delete_patient',
-    description: 'Permanently delete a patient profile.',
-    inputSchema: z.object({ userId: z.string().describe('Patient user UUID') }),
-  }).server(async args => {
-    const input = args as { userId: string };
-    return await caller.admin.deletePatient({ userId: input.userId });
-  });
-
-  // ── Better Auth admin API tools (all require approval) ────────────────
-
-  const updateUser = toolDefinition({
-    name: 'update_user',
-    description: 'Update user fields (name, email, role, image, etc.).',
-    inputSchema: z.object({
-      userId: z.string().describe('User UUID'),
-      data: z
-        .record(z.string(), z.unknown())
-        .describe('Fields to update, e.g. { "name": "New Name", "role": "doctor" }'),
-    }),
-  }).server(async args => {
-    const input = args as { userId: string; data: Record<string, unknown> };
-    return await auth.api.adminUpdateUser({
-      body: { userId: input.userId, data: input.data },
-      headers,
-    });
-  });
-
-  const banUser = toolDefinition({
-    name: 'ban_user',
-    description: 'Ban a user from the platform. Optionally provide a reason and expiry duration.',
-    inputSchema: z.object({
-      userId: z.string().describe('User UUID to ban'),
-      banReason: z.string().nullish().describe('Reason for the ban'),
-      banExpiresIn: z
-        .number()
-        .nullish()
-        .describe('Ban duration in milliseconds (omit for permanent)'),
-    }),
-  }).server(async args => {
-    const input = args as { userId: string; banReason?: string; banExpiresIn?: number };
-    return await auth.api.banUser({
-      body: {
-        userId: input.userId,
-        banReason: input.banReason,
-        banExpiresIn: input.banExpiresIn,
+    list_users: tool({
+      description: 'List all users with optional search and pagination.',
+      inputSchema: listUsersSchema,
+      execute: async args => {
+        return await caller.admin.listUsers({
+          page: args.page ?? 1,
+          perPage: args.perPage ?? 10,
+          search: args.search ?? undefined,
+        });
       },
-      headers,
-    });
-  });
-
-  const unbanUser = toolDefinition({
-    name: 'unban_user',
-    description: 'Remove the ban from a user.',
-    inputSchema: z.object({
-      userId: z.string().describe('User UUID to unban'),
     }),
-  }).server(async args => {
-    const input = args as { userId: string };
-    return await auth.api.unbanUser({ body: { userId: input.userId }, headers });
-  });
 
-  const removeUser = toolDefinition({
-    name: 'remove_user',
-    description: 'Permanently delete a user account and all associated data.',
-    inputSchema: z.object({
-      userId: z.string().describe('User UUID to delete'),
+    list_appointments: tool({
+      description: 'List all appointments with filters for status, date range, doctor.',
+      inputSchema: listAppointmentsSchema,
+      execute: async args => {
+        return await caller.admin.listAppointments({
+          page: args.page ?? 1,
+          perPage: args.perPage ?? 10,
+          search: args.search ?? undefined,
+          status: args.status ?? undefined,
+          from: args.from ?? undefined,
+          to: args.to ?? undefined,
+          doctorId: args.doctorId ?? undefined,
+          sort: args.sort ?? 'dateDesc',
+        });
+      },
     }),
-  }).server(async args => {
-    const input = args as { userId: string };
-    return await auth.api.removeUser({ body: { userId: input.userId }, headers });
-  });
 
-  const setUserPassword = toolDefinition({
-    name: 'set_user_password',
-    description: "Set or reset a user's password.",
-    inputSchema: z.object({
-      userId: z.string().describe('User UUID'),
-      newPassword: z.string().describe('The new password'),
+    list_doctors: tool({
+      description: 'List all doctors with optional search by name, specialty, or city.',
+      inputSchema: listDoctorsSchema,
+      execute: async args => {
+        return await caller.admin.listDoctors({
+          page: args.page ?? 1,
+          perPage: args.perPage ?? 10,
+          search: args.search ?? undefined,
+          specialty: args.specialty ?? undefined,
+          city: args.city ?? undefined,
+        });
+      },
     }),
-  }).server(async args => {
-    const input = args as { userId: string; newPassword: string };
-    return await auth.api.setUserPassword({
-      body: { userId: input.userId, newPassword: input.newPassword },
-      headers,
-    });
-  });
 
-  const checkUserPermission = toolDefinition({
-    name: 'check_user_permission',
-    description: 'Check if a user has a specific permission. Returns { success: true/false }.',
-    inputSchema: z.object({
-      userId: z.string().describe('User UUID to check'),
-      permissions: z
-        .record(z.string(), z.array(z.string()))
-        .describe('Permission map, e.g. { "panel": ["access"] }'),
+    list_patients: tool({
+      description: 'List all patients with optional search and gender filter.',
+      inputSchema: listPatientsSchema,
+      execute: async args => {
+        return await caller.admin.listPatients({
+          page: args.page ?? 1,
+          perPage: args.perPage ?? 10,
+          search: args.search ?? undefined,
+          gender: args.gender ?? undefined,
+        });
+      },
     }),
-  }).server(async args => {
-    const input = args as { userId: string; permissions: Record<string, string[]> };
-    return await auth.api.userHasPermission({
-      body: { userId: input.userId, permissions: input.permissions },
-      headers,
-    });
-  });
 
-  return [
-    // Queries
-    listUsers,
-    listAppointments,
-    listDoctors,
-    listPatients,
-    listMedications,
-    getPatientTodayPillbox,
-    checkUserPermission,
-    // Mutations (all need approval)
-    createAppointment,
-    updateAppointment,
-    deleteAppointment,
-    updateAppointmentStatus,
-    createDoctor,
-    updateDoctor,
-    createPatient,
-    updatePatient,
-    deletePatient,
-    updateUser,
-    banUser,
-    unbanUser,
-    removeUser,
-    setUserPassword,
-  ];
+    list_medications: tool({
+      description: 'List all medication prescriptions (pillbox entries) with optional filters.',
+      inputSchema: listMedicationsSchema,
+      execute: async args => {
+        return await caller.admin.adminListPillbox({
+          patientId: args.patientId ?? undefined,
+          search: args.search ?? undefined,
+          isActive: args.isActive ?? undefined,
+          page: args.page ?? 1,
+          limit: args.limit ?? 20,
+        });
+      },
+    }),
+
+    get_patient_today_pillbox: tool({
+      description: "Get a specific patient's medication schedule for today.",
+      inputSchema: patientTodayPillboxSchema,
+      execute: async args => {
+        return await caller.admin.adminTodayByPatient({ patientId: args.patientId });
+      },
+    }),
+
+    check_user_permission: tool({
+      description: 'Check if a user has a specific permission. Returns { success: true/false }.',
+      inputSchema: z.object({
+        userId: z.string().describe('User UUID to check'),
+        permissions: z
+          .record(z.string(), z.array(z.string()))
+          .describe('Permission map, e.g. { "panel": ["access"] }'),
+      }),
+      execute: async args => {
+        return await auth.api.userHasPermission({
+          body: { userId: args.userId, permissions: args.permissions },
+          headers,
+        });
+      },
+    }),
+
+    // ── Mutations (all require approval) ───────────────────────────────────
+
+    create_appointment: tool({
+      description: 'Create a new appointment for a patient with a doctor.',
+      inputSchema: createAppointmentSchema,
+      execute: async args => {
+        return await caller.admin.createAppointment({
+          doctorId: args.doctorId,
+          patientId: args.patientId,
+          date: args.date,
+          time: args.time,
+          reason: args.reason ?? undefined,
+        });
+      },
+    }),
+
+    update_appointment: tool({
+      description: 'Update appointment details (date, time, reason, reassign doctor/patient).',
+      inputSchema: updateAppointmentSchema,
+      execute: async args => {
+        return await caller.admin.updateAppointment({
+          id: args.id,
+          date: args.date ?? undefined,
+          time: args.time ?? undefined,
+          reason: args.reason ?? undefined,
+          doctorId: args.doctorId ?? undefined,
+          patientId: args.patientId ?? undefined,
+        });
+      },
+    }),
+
+    delete_appointment: tool({
+      description: 'Permanently delete an appointment.',
+      inputSchema: uuidSchema,
+      execute: async args => {
+        return await caller.admin.deleteAppointment({ id: args.id });
+      },
+    }),
+
+    update_appointment_status: tool({
+      description:
+        'Update appointment status. Valid transitions: PENDING→CONFIRMED/CANCELLED, CONFIRMED→COMPLETED/CANCELLED, CANCELLED/COMPLETED→PENDING (reopen).',
+      inputSchema: updateAppointmentStatusSchema,
+      execute: async args => {
+        return await caller.admin.updateAppointmentStatus({
+          id: args.id,
+          status: args.status,
+        });
+      },
+    }),
+
+    create_doctor: tool({
+      description: 'Create a doctor profile for an existing user with doctor role.',
+      inputSchema: createDoctorSchema,
+      execute: async args => {
+        return await caller.admin.createDoctor(args);
+      },
+    }),
+
+    update_doctor: tool({
+      description: 'Update a doctor profile (specialty, address, city).',
+      inputSchema: updateDoctorSchema,
+      execute: async args => {
+        return await caller.admin.updateDoctor({
+          userId: args.userId,
+          specialty: args.specialty ?? undefined,
+          address: args.address ?? undefined,
+          city: args.city ?? undefined,
+        });
+      },
+    }),
+
+    create_patient: tool({
+      description: 'Create a patient profile for an existing user with patient role.',
+      inputSchema: createPatientSchema,
+      execute: async args => {
+        return await caller.admin.createPatient(args);
+      },
+    }),
+
+    update_patient: tool({
+      description: 'Update patient profile details.',
+      inputSchema: updatePatientSchema,
+      execute: async args => {
+        return await caller.admin.updatePatient({
+          userId: args.userId,
+          dateOfBirth: args.dateOfBirth ?? undefined,
+          gender: args.gender ?? undefined,
+          phone: args.phone ?? undefined,
+          address: args.address ?? undefined,
+          bloodType: args.bloodType ?? undefined,
+          allergies: args.allergies ?? undefined,
+          emergencyContactName: args.emergencyContactName ?? undefined,
+          emergencyContactPhone: args.emergencyContactPhone ?? undefined,
+        });
+      },
+    }),
+
+    delete_patient: tool({
+      description: 'Permanently delete a patient profile.',
+      inputSchema: z.object({ userId: z.string().describe('Patient user UUID') }),
+      execute: async args => {
+        return await caller.admin.deletePatient({ userId: args.userId });
+      },
+    }),
+
+    // ── Better Auth admin API tools ────────────────────────────────────────
+
+    update_user: tool({
+      description: 'Update user fields (name, email, role, image, etc.).',
+      inputSchema: z.object({
+        userId: z.string().describe('User UUID'),
+        data: z
+          .record(z.string(), z.unknown())
+          .describe('Fields to update, e.g. { "name": "New Name", "role": "doctor" }'),
+      }),
+      execute: async args => {
+        return await auth.api.adminUpdateUser({
+          body: { userId: args.userId, data: args.data },
+          headers,
+        });
+      },
+    }),
+
+    ban_user: tool({
+      needsApproval: true,
+      description: 'Ban a user from the platform. Optionally provide a reason and expiry duration.',
+      inputSchema: z.object({
+        userId: z.string().describe('User UUID to ban'),
+        banReason: z.string().nullish().describe('Reason for the ban'),
+        banExpiresIn: z
+          .number()
+          .nullish()
+          .describe('Ban duration in milliseconds (omit for permanent)'),
+      }),
+      execute: async args => {
+        return await auth.api.banUser({
+          body: {
+            userId: args.userId,
+            banReason: args.banReason ?? undefined,
+            banExpiresIn: args.banExpiresIn ?? undefined,
+          },
+          headers,
+        });
+      },
+    }),
+
+    unban_user: tool({
+      needsApproval: true,
+      description: 'Remove the ban from a user.',
+      inputSchema: z.object({
+        userId: z.string().describe('User UUID to unban'),
+      }),
+      execute: async args => {
+        return await auth.api.unbanUser({ body: { userId: args.userId }, headers });
+      },
+    }),
+
+    remove_user: tool({
+      description: 'Permanently delete a user account and all associated data.',
+      inputSchema: z.object({
+        userId: z.string().describe('User UUID to delete'),
+      }),
+      execute: async args => {
+        return await auth.api.removeUser({ body: { userId: args.userId }, headers });
+      },
+    }),
+
+    set_user_password: tool({
+      description: "Set or reset a user's password.",
+      inputSchema: z.object({
+        userId: z.string().describe('User UUID'),
+        newPassword: z.string().describe('The new password'),
+      }),
+      execute: async args => {
+        return await auth.api.setUserPassword({
+          body: { userId: args.userId, newPassword: args.newPassword },
+          headers,
+        });
+      },
+    }),
+  };
 }

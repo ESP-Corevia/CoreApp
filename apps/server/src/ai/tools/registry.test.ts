@@ -80,36 +80,30 @@ describe('getSystemPromptForRole', () => {
 
 describe('getToolsForRole', () => {
   it('returns patient tools for patient sessions', () => {
-    const tools = getToolsForRole(
-      'patient',
-      {
-        caller: {
-          appointments: { listMine: async () => [] },
-          pillbox: { today: async () => [] },
-        },
-      } as never,
-    );
+    const tools = getToolsForRole('patient', {
+      caller: {
+        appointments: { listMine: async () => [] },
+        pillbox: { today: async () => [] },
+      },
+    } as never);
 
-    expect(tools.map(tool => tool.name)).toEqual(['get_my_appointments', 'get_my_today_pillbox']);
+    expect(Object.keys(tools)).toEqual(['get_my_appointments', 'get_my_today_pillbox']);
   });
 
   it('returns doctor tools for doctor sessions', () => {
-    const tools = getToolsForRole(
-      'doctor',
-      {
-        caller: {
-          doctor: {
-            appointments: {
-              listMine: async () => [],
-              detail: async () => ({}),
-              updateStatus: async () => ({}),
-            },
+    const tools = getToolsForRole('doctor', {
+      caller: {
+        doctor: {
+          appointments: {
+            listMine: async () => [],
+            detail: async () => ({}),
+            updateStatus: async () => ({}),
           },
         },
-      } as never,
-    );
+      },
+    } as never);
 
-    expect(tools.map(tool => tool.name)).toEqual([
+    expect(Object.keys(tools)).toEqual([
       'get_my_appointments',
       'get_appointment_detail',
       'update_appointment_status',
@@ -117,45 +111,42 @@ describe('getToolsForRole', () => {
   });
 
   it('returns admin tools for admin sessions', () => {
-    const tools = getToolsForRole(
-      'admin',
-      {
-        caller: {
-          admin: {
-            listUsers: async () => [],
-            listAppointments: async () => [],
-            listDoctors: async () => [],
-            listPatients: async () => [],
-            adminListPillbox: async () => [],
-            adminTodayByPatient: async () => [],
-            createAppointment: async () => ({}),
-            updateAppointment: async () => ({}),
-            deleteAppointment: async () => ({}),
-            updateAppointmentStatus: async () => ({}),
-            createDoctor: async () => ({}),
-            updateDoctor: async () => ({}),
-            createPatient: async () => ({}),
-            updatePatient: async () => ({}),
-            deletePatient: async () => ({}),
-          },
-          auth: {},
-          headers: new Headers(),
+    const tools = getToolsForRole('admin', {
+      caller: {
+        admin: {
+          listUsers: async () => [],
+          listAppointments: async () => [],
+          listDoctors: async () => [],
+          listPatients: async () => [],
+          adminListPillbox: async () => [],
+          adminTodayByPatient: async () => [],
+          createAppointment: async () => ({}),
+          updateAppointment: async () => ({}),
+          deleteAppointment: async () => ({}),
+          updateAppointmentStatus: async () => ({}),
+          createDoctor: async () => ({}),
+          updateDoctor: async () => ({}),
+          createPatient: async () => ({}),
+          updatePatient: async () => ({}),
+          deletePatient: async () => ({}),
         },
-        auth: {
-          api: {
-            adminUpdateUser: async () => ({}),
-            banUser: async () => ({}),
-            unbanUser: async () => ({}),
-            removeUser: async () => ({}),
-            setUserPassword: async () => ({}),
-            userHasPermission: async () => ({}),
-          },
-        },
+        auth: {},
         headers: new Headers(),
-      } as never,
-    );
+      },
+      auth: {
+        api: {
+          adminUpdateUser: async () => ({}),
+          banUser: async () => ({}),
+          unbanUser: async () => ({}),
+          removeUser: async () => ({}),
+          setUserPassword: async () => ({}),
+          userHasPermission: async () => ({}),
+        },
+      },
+      headers: new Headers(),
+    } as never);
 
-    expect(tools.map(tool => tool.name)).toEqual([
+    expect(Object.keys(tools)).toEqual([
       'list_users',
       'list_appointments',
       'list_doctors',
@@ -181,6 +172,6 @@ describe('getToolsForRole', () => {
   });
 
   it('returns no tools for unknown roles', () => {
-    expect(getToolsForRole('visitor', {} as never)).toEqual([]);
+    expect(getToolsForRole('visitor', {} as never)).toEqual({});
   });
 });
