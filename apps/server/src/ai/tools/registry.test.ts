@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
-import { getSystemPromptForRole, ROLES } from './registry';
+import { getSystemPromptForRole, getToolsForRole, ROLES } from './registry';
 
 // ---------------------------------------------------------------------------
 // Hash-based snapshot for role definitions.
@@ -75,5 +75,112 @@ describe('getSystemPromptForRole', () => {
     const prompt = getSystemPromptForRole('patient');
     expect(prompt).toContain('same language');
     expect(prompt).toContain('French');
+  });
+});
+
+describe('getToolsForRole', () => {
+  it('returns patient tools for patient sessions', () => {
+    const tools = getToolsForRole(
+      'patient',
+      {
+        caller: {
+          appointments: { listMine: async () => [] },
+          pillbox: { today: async () => [] },
+        },
+      } as never,
+    );
+
+    expect(tools.map(tool => tool.name)).toEqual(['get_my_appointments', 'get_my_today_pillbox']);
+  });
+
+  it('returns doctor tools for doctor sessions', () => {
+    const tools = getToolsForRole(
+      'doctor',
+      {
+        caller: {
+          doctor: {
+            appointments: {
+              listMine: async () => [],
+              detail: async () => ({}),
+              updateStatus: async () => ({}),
+            },
+          },
+        },
+      } as never,
+    );
+
+    expect(tools.map(tool => tool.name)).toEqual([
+      'get_my_appointments',
+      'get_appointment_detail',
+      'update_appointment_status',
+    ]);
+  });
+
+  it('returns admin tools for admin sessions', () => {
+    const tools = getToolsForRole(
+      'admin',
+      {
+        caller: {
+          admin: {
+            listUsers: async () => [],
+            listAppointments: async () => [],
+            listDoctors: async () => [],
+            listPatients: async () => [],
+            adminListPillbox: async () => [],
+            adminTodayByPatient: async () => [],
+            createAppointment: async () => ({}),
+            updateAppointment: async () => ({}),
+            deleteAppointment: async () => ({}),
+            updateAppointmentStatus: async () => ({}),
+            createDoctor: async () => ({}),
+            updateDoctor: async () => ({}),
+            createPatient: async () => ({}),
+            updatePatient: async () => ({}),
+            deletePatient: async () => ({}),
+          },
+          auth: {},
+          headers: new Headers(),
+        },
+        auth: {
+          api: {
+            adminUpdateUser: async () => ({}),
+            banUser: async () => ({}),
+            unbanUser: async () => ({}),
+            removeUser: async () => ({}),
+            setUserPassword: async () => ({}),
+            userHasPermission: async () => ({}),
+          },
+        },
+        headers: new Headers(),
+      } as never,
+    );
+
+    expect(tools.map(tool => tool.name)).toEqual([
+      'list_users',
+      'list_appointments',
+      'list_doctors',
+      'list_patients',
+      'list_medications',
+      'get_patient_today_pillbox',
+      'check_user_permission',
+      'create_appointment',
+      'update_appointment',
+      'delete_appointment',
+      'update_appointment_status',
+      'create_doctor',
+      'update_doctor',
+      'create_patient',
+      'update_patient',
+      'delete_patient',
+      'update_user',
+      'ban_user',
+      'unban_user',
+      'remove_user',
+      'set_user_password',
+    ]);
+  });
+
+  it('returns no tools for unknown roles', () => {
+    expect(getToolsForRole('visitor', {} as never)).toEqual([]);
   });
 });
