@@ -9,6 +9,7 @@ import {
   LayoutDashboard,
   Pill,
   Settings,
+  Sparkles,
   Stethoscope,
   Users,
 } from 'lucide-react';
@@ -31,6 +32,7 @@ import {
 } from '@/components/ui/sidebar';
 import { Skeleton } from '@/components/ui/skeleton';
 import { authClient } from '@/lib/auth-client';
+
 import { useTrpc } from '@/providers/trpc';
 
 interface NavigationItem {
@@ -100,6 +102,7 @@ export function AppSidebar() {
       { title: t('nav.aiMetrics', 'AI Metrics'), url: '/ai-metrics', icon: Bot },
       { title: t('nav.doctors', 'Doctors'), url: '/doctors', icon: Stethoscope },
       { title: t('nav.appointments', 'Appointments'), url: '/appointments', icon: Calendar },
+      { title: t('nav.ia', 'IA'), url: '/ai', icon: Sparkles, badge: t('nav.beta', 'Beta') },
     ],
     [t],
   );
@@ -148,9 +151,9 @@ export function AppSidebar() {
             <item.icon className="mr-2 h-4 w-4" />
             <span className="flex-1 text-left">{item.title}</span>
             {item.badge && (
-              <div className="ml-2 inline-flex items-center justify-center rounded-full bg-red-600 px-2 py-0 font-medium text-white text-xs">
+              <span className="ml-auto inline-flex items-center rounded-full bg-gradient-to-r from-violet-500/90 to-fuchsia-500/90 px-2 py-0.5 font-semibold text-[10px] text-white leading-none tracking-wide shadow-sm">
                 {item.badge}
-              </div>
+              </span>
             )}
           </button>
         </SidebarMenuButton>

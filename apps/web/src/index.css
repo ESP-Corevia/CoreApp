@@ -1,6 +1,9 @@
 /* stylelint-disable at-rule-no-unknown */
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "streamdown/styles.css";
+
+@source "../../node_modules/streamdown/dist/*.js";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -136,11 +139,11 @@ body {
   }
 }
 
-* {
+/* * {
   user-select: none;
 }
 
 input,
 textarea {
   user-select: text;
-}
+} */

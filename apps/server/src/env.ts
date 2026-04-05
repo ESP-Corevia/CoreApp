@@ -21,6 +21,7 @@ const envSchema = z.object({
   API_MEDICAMENTS_URL: z.url().default('https://medicaments-api.giygas.dev'),
   API_MEDICAMENTS_TIMEOUT: z.coerce.number().default(5000),
   API_MEDICAMENTS_CACHE_TTL: z.coerce.number().default(900000),
+  NVIDIA_API_KEY: z.string(),
 });
 
 const parsed = envSchema.safeParse(process.env);

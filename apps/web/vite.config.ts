@@ -48,6 +48,7 @@ export default defineConfig({
       '/css': { target: serverTarget, changeOrigin: true, secure: false },
       '/scalar': { target: serverTarget, changeOrigin: true, secure: false },
       '/trpc': { target: serverTarget, changeOrigin: true, secure: false },
+      '/chat': { target: serverTarget, changeOrigin: true, secure: false },
       '/favicon.ico': { target: serverTarget, changeOrigin: true, secure: false },
     },
   },

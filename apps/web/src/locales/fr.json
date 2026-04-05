@@ -6,6 +6,48 @@
       "connected": "Connecté",
       "disconnected": "Déconnecté"
     },
+    "ai": {
+      "approvalRequired": "Approbation requise",
+      "approve": "Approuver",
+      "approved": "approuvé",
+      "chatDescription": "Posez une demande ou partez d'une des actions d'administration proposées.",
+      "debug": "Débogage",
+      "debugLastMessage": "Dernier message de débogage",
+      "denied": "refusé",
+      "deny": "Refuser",
+      "emptyChat": "Commencez par une demande ou choisissez l'une des actions proposées ci-dessous.",
+      "hideDebug": "Masquer",
+      "inputLabel": "Message",
+      "inputPlaceholder": "Demandez de lister des utilisateurs, modifier un profil, supprimer un utilisateur...",
+      "showDebug": "Afficher",
+      "suggestions": {
+        "createDoctor": {
+          "prompt": "Crée un profil médecin pour un utilisateur existant et dis-moi quelles informations sont nécessaires.",
+          "title": "Créer un profil médecin"
+        },
+        "deleteUser": {
+          "prompt": "Supprime un utilisateur en toute sécurité et explique quelles données seront supprimées.",
+          "title": "Supprimer un utilisateur"
+        },
+        "listUsers": {
+          "prompt": "Liste les utilisateurs et résume les informations de compte les plus importantes.",
+          "title": "Lister les utilisateurs"
+        },
+        "updateUser": {
+          "prompt": "Modifie le rôle ou les informations d'un utilisateur et montre-moi la manière la plus sûre de le faire.",
+          "title": "Modifier un utilisateur"
+        }
+      },
+      "thinking": "Réflexion en cours",
+      "thoughtProcess": "Processus de réflexion",
+      "title": "Assistant IA",
+      "tool": "Outil",
+      "toolDone": "terminé",
+      "toolError": "erreur",
+      "toolInput": "Entrée",
+      "toolOutput": "Sortie",
+      "toolRunning": "en cours…"
+    },
     "aiMetrics": {
       "byFeature": {
         "activeUsers": "Utilisateurs actifs",
@@ -199,7 +241,7 @@
       "processing": "Traitement...",
       "retry": "Réessayer",
       "rowCount_one": "{{count}} ligne",
-      "rowCount_many": "",
+      "rowCount_many": "{{count}} lignes",
       "rowCount_other": "{{count}} lignes",
       "rowsPerPage": "Lignes par page",
       "rowsSelected": "{{selected}} sur {{total}} ligne(s) sélectionnée(s).",
@@ -281,7 +323,7 @@
       "noResults": "Aucun médicament trouvé",
       "noResultsHint": "Essayez avec un autre terme de recherche",
       "resultCount_one": "{{count}} résultat trouvé",
-      "resultCount_many": "",
+      "resultCount_many": "{{count}} résultats trouvés",
       "resultCount_other": "{{count}} résultats trouvés",
       "searchError": "Erreur lors de la recherche",
       "searchErrorHint": "Vérifiez votre connexion et réessayez",
@@ -298,9 +340,11 @@
     "nav": {
       "aiMetrics": "Métriques IA",
       "appointments": "Rendez-vous",
+      "beta": "Bêta",
       "dashboard": "Tableau de bord",
       "doctors": "Médecins",
       "home": "Accueil",
+      "ia": "IA",
       "main": "Principal",
       "medications": "Médicaments",
       "myPillbox": "Mon pilulier",

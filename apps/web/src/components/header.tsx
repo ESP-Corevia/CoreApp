@@ -19,6 +19,7 @@ export default function Header() {
       '/doctors': t('nav.doctors', 'Doctors'),
       '/patients': t('nav.patients', 'Patients'),
       '/appointments': t('nav.appointments', 'Appointments'),
+      '/ai': t('ai.title', 'AI Assistant'),
     };
     if (titles[pathname]) return titles[pathname];
     if (pathname.startsWith('/pillbox/')) return t('nav.pillboxDetails', 'Pillbox Details');

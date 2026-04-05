@@ -8,13 +8,13 @@ import { type FastifyTRPCPluginOptions, fastifyTRPCPlugin } from '@trpc/server/a
 import Fastify from 'fastify';
 import { fastifyTRPCOpenApiPlugin, generateOpenApiDocument } from 'trpc-to-openapi';
 import pkg from '../package.json';
-
 import { pool } from './db';
 import { services } from './db/services';
 import { env } from './env';
 import { auth } from './lib/auth';
 import printBanner from './lib/banner';
 import { createContext } from './lib/context';
+import { chatRoutePlugin } from './routers/ai/chatRoute';
 import { type AppRouter, appRouter } from './routers/index';
 import { mergeOpenApiDocs } from './utils/functions';
 
@@ -100,6 +100,9 @@ fastify.route({
     }
   },
 });
+
+// --- AI Chat route ---
+fastify.register(chatRoutePlugin, { auth, services });
 
 fastify.register(fastifyTRPCPlugin, {
   prefix: '/trpc',

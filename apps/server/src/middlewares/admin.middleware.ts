@@ -12,7 +12,7 @@ export const isAdmin = isAuthed.unstable_pipe(async ({ ctx, next }) => {
     body: {
       userId,
       role: 'admin',
-      permission: ALL_PERMISSIONS,
+      permissions: ALL_PERMISSIONS,
     },
   });
   if (!isAdmin.success) {

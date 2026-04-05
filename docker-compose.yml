@@ -49,7 +49,13 @@ services:
       migrate:
         condition: service_completed_successfully
     healthcheck:
-      test: ["CMD", "node", "-e", "fetch('http://localhost:3000/health').then(r=>{if(!r.ok)throw r;process.exit(0)}).catch(()=>process.exit(1))"]
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://localhost:3000/health').then(r=>{if(!r.ok)throw r;process.exit(0)}).catch(()=>process.exit(1))",
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -160,6 +166,8 @@ services:
     restart: unless-stopped
 
   drizzle-gateway:
+    profiles:
+      - tools
     image: ghcr.io/drizzle-team/gateway:latest
     container_name: Corevia-drizzle-gateway
     restart: unless-stopped
@@ -173,6 +181,25 @@ services:
       - drizzle-gateway:/data
     networks:
       - backend
+
+  ai-devtools:
+    profiles:
+      - tools
+    image: node:22-alpine
+    container_name: Corevia-ai-devtools
+    working_dir: /app
+    command: ["npx", "@ai-sdk/devtools"]
+    ports:
+      - "${AI_SDK_DEVTOOLS_PORT:-4984}:4984"
+    environment:
+      AI_SDK_DEVTOOLS_PORT: 4984
+    volumes:
+      - ./apps/server/.devtools:/app/.devtools:ro
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 128M
 
 networks:
   frontend:

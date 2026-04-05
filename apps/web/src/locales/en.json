@@ -6,6 +6,48 @@
       "connected": "Connected",
       "disconnected": "Disconnected"
     },
+    "ai": {
+      "approvalRequired": "Approval required",
+      "approve": "Approve",
+      "approved": "approved",
+      "chatDescription": "Ask something or start from one of the suggested admin actions.",
+      "debug": "Debug",
+      "debugLastMessage": "Last debug message",
+      "denied": "denied",
+      "deny": "Deny",
+      "emptyChat": "Start with a request or pick one of the suggested actions below.",
+      "hideDebug": "Hide",
+      "inputLabel": "Message",
+      "inputPlaceholder": "Ask to list users, update a profile, delete a user...",
+      "showDebug": "Show",
+      "suggestions": {
+        "createDoctor": {
+          "prompt": "Create a doctor profile for an existing user and tell me what information is required.",
+          "title": "Create doctor profile"
+        },
+        "deleteUser": {
+          "prompt": "Delete a user safely and explain what data will be removed.",
+          "title": "Delete user"
+        },
+        "listUsers": {
+          "prompt": "List users and summarize the most important account details.",
+          "title": "List users"
+        },
+        "updateUser": {
+          "prompt": "Update a user role or account information and show me the safest way to do it.",
+          "title": "Update user"
+        }
+      },
+      "thinking": "Thinking...",
+      "thoughtProcess": "Thought process",
+      "title": "AI Assistant",
+      "tool": "Tool",
+      "toolDone": "done",
+      "toolError": "error",
+      "toolInput": "Input",
+      "toolOutput": "Output",
+      "toolRunning": "running…"
+    },
     "aiMetrics": {
       "byFeature": {
         "activeUsers": "Active Users",
@@ -296,9 +338,11 @@
     "nav": {
       "aiMetrics": "AI Metrics",
       "appointments": "Appointments",
+      "beta": "Beta",
       "dashboard": "Dashboard",
       "doctors": "Doctors",
       "home": "Home",
+      "ia": "IA",
       "main": "Main",
       "medications": "Medications",
       "myPillbox": "My Pillbox",
