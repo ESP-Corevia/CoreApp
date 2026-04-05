@@ -1,5 +1,28 @@
 # Changelog
 
+## 1.2.0 (2026-04-05)
+
+## What's Changed
+* fix(deps): update server (drizzle) by @renovate[bot] in https://github.com/ESP-Corevia/CoreApp/pull/111
+* fix(deps): update server (postgres) to v8.20.0 by @renovate[bot] in https://github.com/ESP-Corevia/CoreApp/pull/112
+* chore: release master by @Yasser5711 in https://github.com/ESP-Corevia/CoreApp/pull/113
+* fix(deps): update dependency pino to v10 by @renovate[bot] in https://github.com/ESP-Corevia/CoreApp/pull/116
+* chore(deps): update pnpm/action-setup action to v5 by @renovate[bot] in https://github.com/ESP-Corevia/CoreApp/pull/115
+* chore(deps): update dorny/paths-filter action to v4 by @renovate[bot] in https://github.com/ESP-Corevia/CoreApp/pull/114
+* Pnpm docker by @Yasser5711 in https://github.com/ESP-Corevia/CoreApp/pull/118
+* Admin appointments by @Yasser5711 in https://github.com/ESP-Corevia/CoreApp/pull/119
+* chore: release master by @Yasser5711 in https://github.com/ESP-Corevia/CoreApp/pull/117
+* feat(server): add doctor router and reorganize route structure by @Yasser5711 in https://github.com/ESP-Corevia/CoreApp/pull/122
+* Homepage by @Yasser5711 in https://github.com/ESP-Corevia/CoreApp/pull/124
+* chore(deps): update dependency @biomejs/biome to ^2.4.10 by @renovate[bot] in https://github.com/ESP-Corevia/CoreApp/pull/121
+* feat: add AI metrics KPI page and admin API [KAN-25] by @MatteoCogan in https://github.com/ESP-Corevia/CoreApp/pull/125
+* Poc chat by @Yasser5711 in https://github.com/ESP-Corevia/CoreApp/pull/126
+
+## New Contributors
+* @MatteoCogan made their first contribution in https://github.com/ESP-Corevia/CoreApp/pull/125
+
+**Full Changelog**: https://github.com/ESP-Corevia/CoreApp/compare/web-v1.1.0...web-v1.2.0
+
 ## [1.1.0](https://github.com/ESP-Corevia/CoreApp/compare/web-v1.0.0...web-v1.1.0) (2026-03-25)
 
 

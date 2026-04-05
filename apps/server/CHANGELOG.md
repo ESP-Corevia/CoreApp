@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.2.0 (2026-04-05)
+
+## What's Changed
+* feat(server): add doctor router and reorganize route structure by @Yasser5711 in https://github.com/ESP-Corevia/CoreApp/pull/122
+* Homepage by @Yasser5711 in https://github.com/ESP-Corevia/CoreApp/pull/124
+* chore(deps): update dependency @biomejs/biome to ^2.4.10 by @renovate[bot] in https://github.com/ESP-Corevia/CoreApp/pull/121
+* feat: add AI metrics KPI page and admin API [KAN-25] by @MatteoCogan in https://github.com/ESP-Corevia/CoreApp/pull/125
+* Poc chat by @Yasser5711 in https://github.com/ESP-Corevia/CoreApp/pull/126
+
+## New Contributors
+* @MatteoCogan made their first contribution in https://github.com/ESP-Corevia/CoreApp/pull/125
+
+**Full Changelog**: https://github.com/ESP-Corevia/CoreApp/compare/server-v1.1.2...server-v1.2.0
+
 ## 1.1.2 (2026-03-30)
 
 ## What's Changed
