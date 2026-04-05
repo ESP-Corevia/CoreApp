@@ -9,7 +9,7 @@ const certPath = path.resolve(__dirname, '../../certs/cert.pem');
 const keyPath = path.resolve(__dirname, '../../certs/key.pem');
 const hasCerts = fs.existsSync(certPath) && fs.existsSync(keyPath);
 
-const serverTarget = hasCerts ? 'https://localhost:3000' : 'http://localhost:3000';
+const serverTarget = hasCerts ? 'https://127.0.0.1:3000' : 'http://127.0.0.1:3000';
 
 export default defineConfig({
   plugins: [tailwindcss(), reactRouter(), devtoolsJson()],
