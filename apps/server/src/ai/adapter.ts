@@ -1,4 +1,6 @@
+import { devToolsMiddleware } from '@ai-sdk/devtools';
 import { createOpenAI } from '@ai-sdk/openai';
+import { type LanguageModel, wrapLanguageModel } from 'ai';
 import { env } from '../env';
 
 // ---------------------------------------------------------------------------
@@ -16,4 +18,9 @@ const nvidia = createOpenAI({
 // NVIDIA NIM only supports Chat Completions (/v1/chat/completions), not the
 // OpenAI Responses API (/v1/responses) which is the default since AI SDK 5.
 // Use .chat() to explicitly select the Chat Completions endpoint.
-export const nvidiaModel: ReturnType<typeof nvidia.chat> = nvidia.chat('qwen/qwen3.5-397b-a17b');
+const baseModel = nvidia.chat('qwen/qwen3.5-397b-a17b');
+
+export const nvidiaModel: LanguageModel = wrapLanguageModel({
+  model: baseModel,
+  middleware: devToolsMiddleware(),
+});

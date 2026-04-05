@@ -1,11 +1,8 @@
-import AITestRoute from '@/features/ai/routes';
+import AiRoute from '@/features/ai/routes';
 import type { Route } from './+types/_index';
 
 export function meta(_: Route.MetaArgs) {
-  return [
-    { title: 'AI Assistant (POC)' },
-    { name: 'description', content: 'Test the AI chat assistant' },
-  ];
+  return [{ title: 'AI Assistant' }, { name: 'description', content: 'Corevia AI assistant' }];
 }
 
-export default AITestRoute;
+export default AiRoute;

@@ -36,7 +36,7 @@ export function chatRoutePlugin(
     }
 
     const caller = createAICaller({ session, req, res, auth, services });
-    const role = (session as { role?: string }).role ?? 'patient';
+    const role = session.role ?? 'patient';
     const headers = fromNodeHeaders(req.headers);
     const tools = getToolsForRole(role, { caller, auth, headers });
     const toolNames = Object.keys(tools);

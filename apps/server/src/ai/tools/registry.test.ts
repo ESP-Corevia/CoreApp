@@ -2,41 +2,37 @@ import { createHash } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
 import { getSystemPromptForRole, getToolsForRole, ROLES } from './registry';
 
-// ---------------------------------------------------------------------------
-// Hash-based snapshot for role definitions.
-// If a role's tools, scope, refusal, or extra text changes, the hash changes
-// and this test will fail — signaling that the system prompt needs review.
-// To update: run `pnpm test -- --update` or replace the hash below.
-// ---------------------------------------------------------------------------
-
-function hashRole(role: string): string {
+function hashRole(role: 'patient' | 'doctor' | 'admin'): string {
   const def = ROLES[role];
   if (!def) return '';
   return createHash('sha256').update(JSON.stringify(def)).digest('hex').slice(0, 12);
 }
 
-const EXPECTED_HASHES: Record<string, string> = {
+const EXPECTED_HASHES: Record<'patient' | 'doctor' | 'admin', string> = {
   patient: 'bec1a987092f',
   doctor: '7609623714ba',
-  admin: '23bec7a4d03b',
+  admin: '6c24c7d6ab80',
 };
 
 describe('AI registry — role definitions', () => {
   it.each(Object.keys(EXPECTED_HASHES))('role "%s" definition matches expected hash', role => {
-    expect(hashRole(role)).toBe(EXPECTED_HASHES[role]);
+    expect(hashRole(role as 'patient' | 'doctor' | 'admin')).toBe(
+      EXPECTED_HASHES[role as 'patient' | 'doctor' | 'admin'],
+    );
   });
 });
 
 describe('getSystemPromptForRole', () => {
   it('returns a fallback prompt for unknown roles', () => {
-    const prompt = getSystemPromptForRole('unknown');
+    // biome-ignore lint/suspicious/noExplicitAny: pass
+    const prompt = getSystemPromptForRole('unknown' as any);
     expect(prompt).toContain('no tools');
     expect(prompt).toContain('Refuse all requests');
   });
 
   it.each(['patient', 'doctor', 'admin'])('generates a prompt for role "%s"', role => {
-    const prompt = getSystemPromptForRole(role);
-    const def = ROLES[role];
+    const prompt = getSystemPromptForRole(role as 'patient' | 'doctor' | 'admin');
+    const def = ROLES[role as 'patient' | 'doctor' | 'admin'];
 
     // Contains the role's tool names
     for (const tool of def.tools) {
@@ -172,6 +168,7 @@ describe('getToolsForRole', () => {
   });
 
   it('returns no tools for unknown roles', () => {
-    expect(getToolsForRole('visitor', {} as never)).toEqual({});
+    // biome-ignore lint/suspicious/noExplicitAny: pass
+    expect(getToolsForRole('visitor' as any, {} as never)).toEqual({});
   });
 });

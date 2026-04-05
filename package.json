@@ -10,7 +10,7 @@
     "dev:home": "turbo -F home dev",
     "dev:web": "turbo -F web dev",
     "dev:server": "turbo -F server dev",
-    "dev:backoffice": "turbo -F web -F server dev",
+    "dev:backoffice": "turbo dev dev:devtools -F web -F server",
     "db:push": "turbo -F server db:push",
     "db:studio": "turbo -F server db:studio",
     "db:generate": "turbo -F server db:generate",
@@ -18,6 +18,7 @@
     "db:migrate": "turbo -F server db:migrate",
     "db:seed": "turbo -F server db:seed",
     "db:check": "turbo -F server db:check",
+    "ai:registry:hash": "turbo -F server registry:hash",
     "format": "biome check --write .",
     "prepare": "husky || true"
   },
@@ -37,7 +38,10 @@
       "lodash": "4.18.1",
       "lodash-es": "4.18.1",
       "path-to-regexp": ">=8.4.0",
-      "picomatch": ">=4.0.4"
+      "picomatch": ">=4.0.4",
+      "lodash": ">=4.18.0",
+      "lodash-es": ">=4.18.0",
+      "defu": ">=6.1.5"
     }
   },
   "engines": {

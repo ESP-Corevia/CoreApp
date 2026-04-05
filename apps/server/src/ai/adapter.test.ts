@@ -7,16 +7,24 @@ vi.mock('../env', () => ({
 }));
 
 const chatMock = vi.fn().mockReturnValue('chat-model-instance');
-const createOpenAIMock = vi.fn().mockReturnValue(
-  Object.assign(vi.fn(), { chat: chatMock }),
-);
+const createOpenAIMock = vi.fn().mockReturnValue(Object.assign(vi.fn(), { chat: chatMock }));
 
 vi.mock('@ai-sdk/openai', () => ({
   createOpenAI: createOpenAIMock,
 }));
 
+const wrapLanguageModelMock = vi.fn().mockReturnValue('wrapped-model-instance');
+
+vi.mock('ai', () => ({
+  wrapLanguageModel: wrapLanguageModelMock,
+}));
+
+vi.mock('@ai-sdk/devtools', () => ({
+  devToolsMiddleware: vi.fn().mockReturnValue('devtools-middleware'),
+}));
+
 describe('nvidiaModel', () => {
-  it('creates an OpenAI-compatible provider targeting the Chat Completions API', async () => {
+  it('creates an OpenAI-compatible provider with devtools middleware', async () => {
     const { nvidiaModel } = await import('./adapter');
 
     expect(createOpenAIMock).toHaveBeenCalledWith({
@@ -25,6 +33,10 @@ describe('nvidiaModel', () => {
       name: 'nvidia',
     });
     expect(chatMock).toHaveBeenCalledWith('qwen/qwen3.5-397b-a17b');
-    expect(nvidiaModel).toBe('chat-model-instance');
+    expect(wrapLanguageModelMock).toHaveBeenCalledWith({
+      model: 'chat-model-instance',
+      middleware: 'devtools-middleware',
+    });
+    expect(nvidiaModel).toBe('wrapped-model-instance');
   });
 });

@@ -11,7 +11,7 @@ export interface ToolContext {
   headers: Headers;
 }
 
-export function getToolsForRole(role: string, ctx: ToolContext): ToolSet {
+export function getToolsForRole(role: 'patient' | 'doctor' | 'admin', ctx: ToolContext): ToolSet {
   switch (role) {
     case 'patient':
       return createPatientTools(ctx.caller);
@@ -35,7 +35,7 @@ interface RoleDefinition {
   extra: string;
 }
 
-export const ROLES: Record<string, RoleDefinition> = {
+export const ROLES: Record<'patient' | 'doctor' | 'admin', RoleDefinition> = {
   patient: {
     tools: ['get_my_appointments', 'get_my_today_pillbox'],
     scope: 'appointments and medication schedules',
@@ -78,11 +78,11 @@ export const ROLES: Record<string, RoleDefinition> = {
     refusal:
       'I can only help with platform administration (users, appointments, doctors, patients, medications). What would you like to do?',
     extra:
-      'Be precise and factual. When listing data, show relevant fields in a table. For destructive actions (ban, delete, remove), briefly state what you will do and ask "Shall I proceed?" — then execute on confirmation. For other mutations (create, update, unban), execute immediately.',
+      'Be precise and factual. For sensitive or destructive actions, briefly explain what will happen, then wait for the built-in approval step before execution. Do not ask for a separate textual confirmation if an approval UI is required.',
   },
 };
 
-export function getSystemPromptForRole(role: string): string {
+export function getSystemPromptForRole(role: 'patient' | 'doctor' | 'admin'): string {
   const def = ROLES[role];
   if (!def) return 'You are Corevia Assistant. You have no tools. Refuse all requests.';
 

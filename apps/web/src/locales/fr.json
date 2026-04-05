@@ -687,19 +687,6 @@
       "showPassword": "Afficher le mot de passe",
       "title": "Définir un mot de passe"
     },
-    "ai": {
-      "debug": "Débogage",
-      "debugLastMessage": "Débogage — dernier message",
-      "emptyChat": "Envoyez un message pour démarrer la conversation.",
-      "hideDebug": "Masquer",
-      "inputPlaceholder": "Posez une question...",
-      "loggedInAs": "Connecté en tant que <strong>{{userId}}</strong> — rôle :",
-      "send": "Envoyer",
-      "showDebug": "Afficher",
-      "thinking": "Réflexion",
-      "thoughtProcess": "Processus de réflexion",
-      "title": "Assistant IA"
-    },
     "useUnbanUser": {
       "error": "Échec du débannissement : {{message}}",
       "success": "Utilisateur débanni avec succès"
