@@ -24,6 +24,6 @@ pool.on('connect', () => {
 
 export const db = drizzle(pool, {
   schema,
-  logger: false,
+  logger: true,
 });
 export { pool, schema };

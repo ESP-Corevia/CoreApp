@@ -15,7 +15,10 @@ vi.mock('@ai-sdk/openai', () => ({
 
 const wrapLanguageModelMock = vi.fn().mockReturnValue('wrapped-model-instance');
 
+const extractReasoningMiddlewareMock = vi.fn().mockReturnValue('reasoning-middleware');
+
 vi.mock('ai', () => ({
+  extractReasoningMiddleware: extractReasoningMiddlewareMock,
   wrapLanguageModel: wrapLanguageModelMock,
 }));
 
@@ -33,9 +36,10 @@ describe('nvidiaModel', () => {
       name: 'nvidia',
     });
     expect(chatMock).toHaveBeenCalledWith('qwen/qwen3.5-397b-a17b');
+    expect(extractReasoningMiddlewareMock).toHaveBeenCalledWith({ tagName: 'think' });
     expect(wrapLanguageModelMock).toHaveBeenCalledWith({
       model: 'chat-model-instance',
-      middleware: 'devtools-middleware',
+      middleware: ['reasoning-middleware', 'devtools-middleware'],
     });
     expect(nvidiaModel).toBe('wrapped-model-instance');
   });

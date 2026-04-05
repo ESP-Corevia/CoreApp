@@ -47,16 +47,13 @@ export function useRequireAuth() {
   const {
     data: session,
     isPending: isSessionPending,
+    isRefetching,
     error: sessionError,
   } = authClient.useSession();
   const { allowed, isChecking: isPermChecking } = usePermission('panel', 'access');
 
-  // Track whether the user was ever authenticated in this mount.
-  // Prevents redirect during refetches where session is briefly null.
-  const wasAuthenticatedRef = useRef(false);
-  if (session?.isAuthenticated) {
-    wasAuthenticatedRef.current = true;
-  }
+  // True while the session state is not yet settled (initial load or refetch).
+  const isSessionLoading = isSessionPending || isRefetching;
 
   const redirectTo = useMemo(() => {
     const full = location.pathname + (location.search || '');
@@ -64,15 +61,13 @@ export function useRequireAuth() {
   }, [location.pathname, location.search]);
 
   useEffect(() => {
-    // Wait for both checks to complete before making any redirect decision
-    if (isSessionPending || isPermChecking) return;
+    // Wait for session AND permission checks to fully settle before redirecting.
+    // This prevents the login-flicker caused by a brief null session during
+    // Better Auth's background refetches (e.g. window focus, cross-tab sync).
+    if (isSessionLoading || isPermChecking) return;
 
-    // If session is gone but user was previously authenticated, it's likely
-    // a transient refetch — don't redirect.
     if (!session?.isAuthenticated) {
-      if (!wasAuthenticatedRef.current) {
-        void navigate(`/login?redirectTo=${redirectTo}`, { replace: true });
-      }
+      void navigate(`/login?redirectTo=${redirectTo}`, { replace: true });
       return;
     }
 
@@ -87,7 +82,7 @@ export function useRequireAuth() {
     }
   }, [
     session?.isAuthenticated,
-    isSessionPending,
+    isSessionLoading,
     isPermChecking,
     allowed,
     navigate,
@@ -99,7 +94,7 @@ export function useRequireAuth() {
 
   return {
     session: allowed === true ? session : null,
-    isLoading: isSessionPending || isPermChecking,
+    isLoading: isSessionLoading || isPermChecking,
     error: sessionError ?? null,
     isAuthorized: !!session?.isAuthenticated && allowed === true,
   };

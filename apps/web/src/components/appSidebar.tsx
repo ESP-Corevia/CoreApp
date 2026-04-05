@@ -102,14 +102,12 @@ export function AppSidebar() {
       { title: t('nav.aiMetrics', 'AI Metrics'), url: '/ai-metrics', icon: Bot },
       { title: t('nav.doctors', 'Doctors'), url: '/doctors', icon: Stethoscope },
       { title: t('nav.appointments', 'Appointments'), url: '/appointments', icon: Calendar },
+      { title: t('nav.ia', 'IA'), url: '/ai', icon: Sparkles, badge: t('nav.beta', 'Beta') },
     ],
     [t],
   );
 
-  const secondaryItems = useMemo<NavigationItem[]>(
-    () => [{ title: t('nav.ia', 'IA'), url: '/ai', icon: Sparkles, badge: t('nav.beta', 'Beta') }],
-    [t],
-  );
+  const secondaryItems = useMemo<NavigationItem[]>(() => [], []);
 
   const settingsItems = useMemo<NavigationItem[]>(
     () => [{ title: t('nav.settings', 'Settings'), url: '/settings', icon: Settings }],

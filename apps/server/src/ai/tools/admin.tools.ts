@@ -252,6 +252,7 @@ export function createAdminTools({ caller, auth, headers }: ToolContext) {
     create_appointment: tool({
       description: 'Create a new appointment for a patient with a doctor.',
       inputSchema: createAppointmentSchema,
+      needsApproval: true,
       execute: async args => {
         return await caller.admin.createAppointment({
           doctorId: args.doctorId,
@@ -266,6 +267,7 @@ export function createAdminTools({ caller, auth, headers }: ToolContext) {
     update_appointment: tool({
       description: 'Update appointment details (date, time, reason, reassign doctor/patient).',
       inputSchema: updateAppointmentSchema,
+      needsApproval: true,
       execute: async args => {
         return await caller.admin.updateAppointment({
           id: args.id,
@@ -281,6 +283,7 @@ export function createAdminTools({ caller, auth, headers }: ToolContext) {
     delete_appointment: tool({
       description: 'Permanently delete an appointment.',
       inputSchema: uuidSchema,
+      needsApproval: true,
       execute: async args => {
         return await caller.admin.deleteAppointment({ id: args.id });
       },
@@ -290,6 +293,7 @@ export function createAdminTools({ caller, auth, headers }: ToolContext) {
       description:
         'Update appointment status. Valid transitions: PENDING→CONFIRMED/CANCELLED, CONFIRMED→COMPLETED/CANCELLED, CANCELLED/COMPLETED→PENDING (reopen).',
       inputSchema: updateAppointmentStatusSchema,
+      needsApproval: true,
       execute: async args => {
         return await caller.admin.updateAppointmentStatus({
           id: args.id,
@@ -301,6 +305,7 @@ export function createAdminTools({ caller, auth, headers }: ToolContext) {
     create_doctor: tool({
       description: 'Create a doctor profile for an existing user with doctor role.',
       inputSchema: createDoctorSchema,
+      needsApproval: true,
       execute: async args => {
         return await caller.admin.createDoctor(args);
       },
@@ -309,6 +314,7 @@ export function createAdminTools({ caller, auth, headers }: ToolContext) {
     update_doctor: tool({
       description: 'Update a doctor profile (specialty, address, city).',
       inputSchema: updateDoctorSchema,
+      needsApproval: true,
       execute: async args => {
         return await caller.admin.updateDoctor({
           userId: args.userId,
@@ -322,6 +328,7 @@ export function createAdminTools({ caller, auth, headers }: ToolContext) {
     create_patient: tool({
       description: 'Create a patient profile for an existing user with patient role.',
       inputSchema: createPatientSchema,
+      needsApproval: true,
       execute: async args => {
         return await caller.admin.createPatient(args);
       },
@@ -330,6 +337,7 @@ export function createAdminTools({ caller, auth, headers }: ToolContext) {
     update_patient: tool({
       description: 'Update patient profile details.',
       inputSchema: updatePatientSchema,
+      needsApproval: true,
       execute: async args => {
         return await caller.admin.updatePatient({
           userId: args.userId,
@@ -348,6 +356,7 @@ export function createAdminTools({ caller, auth, headers }: ToolContext) {
     delete_patient: tool({
       description: 'Permanently delete a patient profile.',
       inputSchema: z.object({ userId: z.string().describe('Patient user UUID') }),
+      needsApproval: true,
       execute: async args => {
         return await caller.admin.deletePatient({ userId: args.userId });
       },
@@ -357,6 +366,7 @@ export function createAdminTools({ caller, auth, headers }: ToolContext) {
 
     update_user: tool({
       description: 'Update user fields (name, email, role, image, etc.).',
+      needsApproval: true,
       inputSchema: z.object({
         userId: z.string().describe('User UUID'),
         data: z
@@ -410,6 +420,7 @@ export function createAdminTools({ caller, auth, headers }: ToolContext) {
       inputSchema: z.object({
         userId: z.string().describe('User UUID to delete'),
       }),
+      needsApproval: true,
       execute: async args => {
         return await auth.api.removeUser({ body: { userId: args.userId }, headers });
       },
@@ -421,6 +432,7 @@ export function createAdminTools({ caller, auth, headers }: ToolContext) {
         userId: z.string().describe('User UUID'),
         newPassword: z.string().describe('The new password'),
       }),
+      needsApproval: true,
       execute: async args => {
         return await auth.api.setUserPassword({
           body: { userId: args.userId, newPassword: args.newPassword },

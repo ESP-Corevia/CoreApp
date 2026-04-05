@@ -194,7 +194,7 @@ export default function AiMetrics({
         }),
       );
     }
-  }, [data, error, t]);
+  }, [error, t]);
 
   const maxTrendCost = data?.trend.length
     ? Math.max(...data.trend.map(point => point.costUsd), 1)

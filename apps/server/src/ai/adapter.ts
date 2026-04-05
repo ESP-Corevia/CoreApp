@@ -1,6 +1,6 @@
 import { devToolsMiddleware } from '@ai-sdk/devtools';
 import { createOpenAI } from '@ai-sdk/openai';
-import { type LanguageModel, wrapLanguageModel } from 'ai';
+import { extractReasoningMiddleware, type LanguageModel, wrapLanguageModel } from 'ai';
 import { env } from '../env';
 
 // ---------------------------------------------------------------------------
@@ -20,7 +20,10 @@ const nvidia = createOpenAI({
 // Use .chat() to explicitly select the Chat Completions endpoint.
 const baseModel = nvidia.chat('qwen/qwen3.5-397b-a17b');
 
+// Qwen 3.5 emits reasoning inside <think>…</think> tags.
+// extractReasoningMiddleware strips those tags from the text and exposes them
+// as separate `reasoning` parts in the UI message stream.
 export const nvidiaModel: LanguageModel = wrapLanguageModel({
   model: baseModel,
-  middleware: devToolsMiddleware(),
+  middleware: [extractReasoningMiddleware({ tagName: 'think' }), devToolsMiddleware()],
 });

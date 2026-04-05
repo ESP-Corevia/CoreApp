@@ -103,7 +103,12 @@ export function chatRoutePlugin(
         },
       });
 
-      const response = result.toUIMessageStreamResponse();
+      const response = result.toUIMessageStreamResponse({
+        onError: error => {
+          aiLogger.error({ reqId, err: error }, '[ai:tool] execution error');
+          return error instanceof Error ? error.message : String(error);
+        },
+      });
       const nodeStream = Readable.fromWeb(response.body as never);
 
       return res
