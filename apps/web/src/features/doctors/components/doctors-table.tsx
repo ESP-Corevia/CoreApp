@@ -1,7 +1,7 @@
 'use client';
 
 import type { ColumnDef } from '@tanstack/react-table';
-import { ClipboardCopy, Mail, MapPin, Stethoscope, Text } from 'lucide-react';
+import { BadgeCheck, BadgeX, ClipboardCopy, Mail, MapPin, Stethoscope, Text } from 'lucide-react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -22,6 +22,7 @@ export interface Doctor {
   name: string | null;
   email: string | null;
   image: string | null;
+  verified: boolean;
 }
 
 export default function DoctorsTable({
@@ -110,6 +111,27 @@ export default function DoctorsTable({
           label: t('table.email', 'Email'),
           variant: 'text',
           icon: Mail,
+        },
+      },
+      {
+        id: 'verified',
+        accessorKey: 'verified',
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} label={t('doctors.verified', 'Verified')} />
+        ),
+        cell: ({ cell }) => {
+          const verified = cell.getValue<boolean>();
+          return verified ? (
+            <Badge variant="default" className="inline-flex items-center gap-1">
+              <BadgeCheck className="h-3.5 w-3.5" />
+              {t('doctors.verifiedStatus', 'Verified')}
+            </Badge>
+          ) : (
+            <Badge variant="secondary" className="inline-flex items-center gap-1">
+              <BadgeX className="h-3.5 w-3.5" />
+              {t('doctors.unverifiedStatus', 'Unverified')}
+            </Badge>
+          );
         },
       },
       {

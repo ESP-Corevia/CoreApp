@@ -14,6 +14,7 @@ const mockDoctors: Doctor[] = [
     name: 'Dr. Smith',
     email: 'smith@example.com',
     image: null,
+    verified: true,
   },
   {
     id: 'doc-2',
@@ -24,6 +25,7 @@ const mockDoctors: Doctor[] = [
     name: null,
     email: null,
     image: null,
+    verified: false,
   },
 ];
 
