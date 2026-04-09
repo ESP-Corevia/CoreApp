@@ -23,6 +23,14 @@ describe('createAdminTools', () => {
         createPatient: vi.fn().mockResolvedValue({ ok: 'createPatient' }),
         updatePatient: vi.fn().mockResolvedValue({ ok: 'updatePatient' }),
         deletePatient: vi.fn().mockResolvedValue({ ok: 'deletePatient' }),
+        setDoctorVerified: vi.fn().mockResolvedValue({
+          id: 'doc-1',
+          userId: 'user-1',
+          specialty: 'Cardiology',
+          address: '1 Rue Test',
+          city: 'Paris',
+          verified: true,
+        }),
       },
     };
     const auth = {
@@ -53,6 +61,7 @@ describe('createAdminTools', () => {
       'update_appointment_status',
       'create_doctor',
       'update_doctor',
+      'set_doctor_verified',
       'create_patient',
       'update_patient',
       'delete_patient',
@@ -286,6 +295,16 @@ describe('createAdminTools', () => {
     expect(auth.api.setUserPassword).toHaveBeenCalledWith({
       body: { userId: 'user-4', newPassword: 'secret' },
       headers,
+    });
+    await expect(
+      tools.set_doctor_verified.execute?.({ userId: 'doctor-1', verified: true }, execOpts),
+    ).resolves.toEqual({
+      id: 'doc-1',
+      userId: 'user-1',
+      specialty: 'Cardiology',
+      address: '1 Rue Test',
+      city: 'Paris',
+      verified: true,
     });
   });
 });

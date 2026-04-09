@@ -11,6 +11,7 @@ export const DoctorProfileSchema = z.object({
   specialty: z.string(),
   address: z.string(),
   city: z.string(),
+  verified: z.boolean(),
 });
 
 export const DoctorOutputSchema = z.object({

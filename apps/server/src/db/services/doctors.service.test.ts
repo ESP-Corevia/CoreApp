@@ -296,7 +296,9 @@ describe('setVerified', () => {
     const result = await doctorsService.setVerified('user-1', true);
 
     expect(mockRepositories.doctorsRepo.getByUserId).toHaveBeenCalledWith('user-1');
-    expect(mockRepositories.doctorsRepo.updateByUserId).toHaveBeenCalledWith('user-1', { verified: true });
+    expect(mockRepositories.doctorsRepo.updateByUserId).toHaveBeenCalledWith('user-1', {
+      verified: true,
+    });
     expect(result).toEqual(updatedDoctor);
   });
 
@@ -308,7 +310,9 @@ describe('setVerified', () => {
 
     const result = await doctorsService.setVerified('user-1', false);
 
-    expect(mockRepositories.doctorsRepo.updateByUserId).toHaveBeenCalledWith('user-1', { verified: false });
+    expect(mockRepositories.doctorsRepo.updateByUserId).toHaveBeenCalledWith('user-1', {
+      verified: false,
+    });
     expect(result).toEqual(updatedDoctor);
   });
 

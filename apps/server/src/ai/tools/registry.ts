@@ -63,6 +63,7 @@ export const ROLES: Record<'patient' | 'doctor' | 'admin', RoleDefinition> = {
       'update_appointment_status',
       'create_doctor',
       'update_doctor',
+      'set_doctor_verified',
       'create_patient',
       'update_patient',
       'delete_patient',

@@ -11,7 +11,7 @@ function hashRole(role: 'patient' | 'doctor' | 'admin'): string {
 const EXPECTED_HASHES: Record<'patient' | 'doctor' | 'admin', string> = {
   patient: 'bec1a987092f',
   doctor: '7609623714ba',
-  admin: '6c24c7d6ab80',
+  admin: '92a42208723b',
 };
 
 describe('AI registry — role definitions', () => {
@@ -125,6 +125,7 @@ describe('getToolsForRole', () => {
           createPatient: async () => ({}),
           updatePatient: async () => ({}),
           deletePatient: async () => ({}),
+          setDoctorVerified: async () => ({}),
         },
         auth: {},
         headers: new Headers(),
@@ -156,6 +157,7 @@ describe('getToolsForRole', () => {
       'update_appointment_status',
       'create_doctor',
       'update_doctor',
+      'set_doctor_verified',
       'create_patient',
       'update_patient',
       'delete_patient',

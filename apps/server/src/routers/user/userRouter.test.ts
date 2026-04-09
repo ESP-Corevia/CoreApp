@@ -31,6 +31,7 @@ const fakeDoctorProfile = {
   specialty: 'Cardiology',
   address: '10 Rue de Rivoli',
   city: 'Paris',
+  verified: true,
 };
 
 const fakePatientProfile = {

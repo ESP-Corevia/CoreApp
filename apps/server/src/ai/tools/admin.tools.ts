@@ -92,6 +92,11 @@ const updateDoctorSchema = z.object({
   city: z.string().nullish().describe('Updated city'),
 });
 
+const setDoctorVerifiedSchema = z.object({
+  userId: z.string().describe('Doctor user UUID'),
+  verified: z.boolean().describe('Whether the doctor is verified'),
+});
+
 // -- Patients ---------------------------------------------------------------
 
 const listPatientsSchema = paginationSchema.merge(
@@ -321,6 +326,18 @@ export function createAdminTools({ caller, auth, headers }: ToolContext) {
           specialty: args.specialty ?? undefined,
           address: args.address ?? undefined,
           city: args.city ?? undefined,
+        });
+      },
+    }),
+
+    set_doctor_verified: tool({
+      description: 'Set or remove the verified status of a doctor profile.',
+      inputSchema: setDoctorVerifiedSchema,
+      needsApproval: true,
+      execute: async args => {
+        return await caller.admin.setDoctorVerified({
+          userId: args.userId,
+          verified: args.verified,
         });
       },
     }),

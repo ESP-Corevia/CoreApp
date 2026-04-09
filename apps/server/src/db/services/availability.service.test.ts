@@ -17,6 +17,7 @@ beforeEach(() => {
     specialty: 'Cardiology',
     address: '1 Rue de Test',
     city: 'Paris',
+    verified: true,
   });
   mockAvailabilityRepo.getReservedSlots.mockResolvedValue([]);
   mockAvailabilityRepo.getBlockedSlots.mockResolvedValue([]);
