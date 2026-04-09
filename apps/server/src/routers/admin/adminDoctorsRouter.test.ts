@@ -28,6 +28,7 @@ describe('adminDoctorsRouter', () => {
             name: 'Dr. Smith',
             email: 'smith@example.com',
             image: null,
+            verified: true,
           },
         ],
         totalItems: 1,
@@ -101,6 +102,7 @@ describe('adminDoctorsRouter', () => {
         specialty: 'Cardiology',
         address: '10 Rue Test',
         city: 'Paris',
+        verified: false,
       };
 
       mockServices.doctorsService.createProfile.mockResolvedValue(mockCreated);
@@ -159,6 +161,7 @@ describe('adminDoctorsRouter', () => {
         specialty: 'Oncology',
         address: '10 Rue Test',
         city: 'Lyon',
+        verified: false,
       };
 
       mockServices.doctorsService.updateProfile.mockResolvedValue(mockUpdated);
@@ -216,6 +219,77 @@ describe('adminDoctorsRouter', () => {
           specialty: 'Oncology',
         }),
       ).rejects.toThrow('Failed to update doctor profile');
+    });
+  });
+
+  describe('setDoctorVerified', () => {
+    beforeEach(() => {
+      mockServices.doctorsService.setVerified.mockReset();
+      authMock.api.userHasPermission.mockResolvedValue({
+        success: true,
+        error: null,
+      });
+    });
+
+    it('sets a doctor as verified', async () => {
+      const caller = createTestCaller({ customSession: fakeSession });
+
+      const mockResult = {
+        id: 'doc-1',
+        userId: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+        specialty: 'Cardiology',
+        address: '10 Rue Test',
+        city: 'Paris',
+        verified: true,
+      };
+
+      mockServices.doctorsService.setVerified.mockResolvedValue(mockResult);
+
+      const result = await caller.admin.setDoctorVerified({
+        userId: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+        verified: true,
+      });
+
+      expect(result).toEqual(mockResult);
+      expect(mockServices.doctorsService.setVerified).toHaveBeenCalledWith(
+        'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+        true,
+      );
+    });
+
+    it('sets a doctor as unverified', async () => {
+      const caller = createTestCaller({ customSession: fakeSession });
+
+      const mockResult = {
+        id: 'doc-1',
+        userId: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+        specialty: 'Cardiology',
+        address: '10 Rue Test',
+        city: 'Paris',
+        verified: false,
+      };
+
+      mockServices.doctorsService.setVerified.mockResolvedValue(mockResult);
+
+      const result = await caller.admin.setDoctorVerified({
+        userId: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+        verified: false,
+      });
+
+      expect(result).toEqual(mockResult);
+    });
+
+    it('returns NOT_FOUND when doctor does not exist', async () => {
+      const caller = createTestCaller({ customSession: fakeSession });
+
+      mockServices.doctorsService.setVerified.mockResolvedValue(null as any);
+
+      await expect(
+        caller.admin.setDoctorVerified({
+          userId: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+          verified: true,
+        }),
+      ).rejects.toThrow('Doctor profile not found');
     });
   });
 });

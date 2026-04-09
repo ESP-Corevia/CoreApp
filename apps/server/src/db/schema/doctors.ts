@@ -18,6 +18,7 @@ export const doctors = pgTable(
     specialty: t.text('specialty').notNull(),
     address: t.text('address').notNull(),
     city: t.text('city').notNull(),
+    verified: t.boolean('verified').default(false).notNull(),
   }),
   table => [
     index('doctors_specialty_idx').on(table.specialty),

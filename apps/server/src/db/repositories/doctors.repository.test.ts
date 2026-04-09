@@ -41,7 +41,7 @@ beforeEach(async () => {
   // Create doctors linked to users
   await db
     .insert(doctors)
-    .values(SEED_DOCTORS.map((d, i) => ({ ...d, userId: insertedUsers[i].id })));
+    .values(SEED_DOCTORS.map((d, i) => ({ ...d, userId: insertedUsers[i].id, verified: i === 0 })));
 });
 
 describe('doctors.repository', () => {
@@ -103,6 +103,17 @@ describe('doctors.repository', () => {
       const items = await repo.listBookable({ specialty: 'Oncology', offset: 0, limit: 10 });
       expect(items).toEqual([]);
     });
+
+    it('returns verified field for each doctor', async () => {
+      const items = await repo.listBookable({ offset: 0, limit: 10 });
+      for (const item of items) {
+        expect(item).toHaveProperty('verified');
+        expect(typeof item.verified).toBe('boolean');
+      }
+      const cardiology = items.filter(d => d.specialty === 'Cardiology');
+      expect(cardiology.some(d => d.verified === true)).toBe(true);
+      expect(cardiology.some(d => d.verified === false)).toBe(true);
+    });
   });
 
   describe('countBookable', () => {
@@ -163,6 +174,13 @@ describe('doctors.repository', () => {
       const result = await repo.getByUserId('00000000-0000-0000-0000-000000000000');
 
       expect(result).toBeNull();
+    });
+
+    it('returns the verified field', async () => {
+      const result = await repo.getByUserId(userId);
+      expect(result).not.toBeNull();
+      expect(result).toHaveProperty('verified');
+      expect(result?.verified).toBe(false);
     });
   });
 
@@ -284,6 +302,12 @@ describe('doctors.repository', () => {
 
       expect(result).toBeNull();
     });
+
+    it('updates the verified field', async () => {
+      const result = await repo.updateByUserId(userId, { verified: true });
+      expect(result).not.toBeNull();
+      expect(result?.verified).toBe(true);
+    });
   });
 
   describe('listAllAdmin', () => {
@@ -322,6 +346,14 @@ describe('doctors.repository', () => {
 
       expect(page1).toHaveLength(2);
       expect(page2).toHaveLength(2);
+    });
+
+    it('returns verified field for each doctor', async () => {
+      const items = await repo.listAllAdmin({ offset: 0, limit: 10 });
+      for (const item of items) {
+        expect(item).toHaveProperty('verified');
+        expect(typeof item.verified).toBe('boolean');
+      }
     });
   });
 

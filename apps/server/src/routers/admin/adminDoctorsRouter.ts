@@ -30,6 +30,7 @@ export const createDoctor = adminProcedure
       specialty: z.string(),
       address: z.string(),
       city: z.string(),
+      verified: z.boolean(),
     }),
   )
   .mutation(async ({ input, ctx }) => {
@@ -63,6 +64,7 @@ export const updateDoctor = adminProcedure
       specialty: z.string(),
       address: z.string(),
       city: z.string(),
+      verified: z.boolean(),
     }),
   )
   .mutation(async ({ input, ctx }) => {
@@ -115,6 +117,7 @@ export const listDoctors = adminProcedure
           name: z.string().nullable(),
           email: z.string().nullable(),
           image: z.string().nullable(),
+          verified: z.boolean(),
         }),
       ),
       totalItems: z.number().int(),
@@ -131,4 +134,39 @@ export const listDoctors = adminProcedure
       specialty: input.specialty,
       city: input.city,
     });
+  });
+
+export const setDoctorVerified = adminProcedure
+  .meta({
+    openapi: {
+      method: 'PATCH',
+      path: '/admin/doctors/{userId}/verified',
+      summary: 'Set doctor verified status',
+      description: 'Admin sets the verified status of a doctor profile.',
+      protect: true,
+      tags: ['AdminRouter'],
+    },
+  })
+  .input(
+    z.object({
+      userId: z.uuid(),
+      verified: z.boolean(),
+    }),
+  )
+  .output(
+    z.object({
+      id: z.string(),
+      userId: z.string().nullable(),
+      specialty: z.string(),
+      address: z.string(),
+      city: z.string(),
+      verified: z.boolean(),
+    }),
+  )
+  .mutation(async ({ input, ctx }) => {
+    const result = await ctx.services.doctorsService.setVerified(input.userId, input.verified);
+    if (!result) {
+      throw new TRPCError({ code: 'NOT_FOUND', message: 'Doctor profile not found' });
+    }
+    return result;
   });
