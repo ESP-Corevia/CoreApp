@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.3.0 (2026-04-09)
+
+## What's Changed
+* feat: add doctor verification by @Yasser5711 in https://github.com/ESP-Corevia/CoreApp/pull/127
+
+
+**Full Changelog**: https://github.com/ESP-Corevia/CoreApp/compare/web-v1.2.0...web-v1.3.0
+
 ## 1.2.0 (2026-04-05)
 
 ## What's Changed

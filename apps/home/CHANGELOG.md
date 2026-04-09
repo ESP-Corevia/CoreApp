@@ -1,5 +1,34 @@
 # Changelog
 
+## 1.1.0 (2026-04-09)
+
+## What's Changed
+* feat: add medications backend (repository, service, router) by @Yasser5711 in https://github.com/ESP-Corevia/CoreApp/pull/106
+* feat: add pillbox seed data by @Yasser5711 in https://github.com/ESP-Corevia/CoreApp/pull/108
+* feat: add medications search and pillbox management UI by @Yasser5711 in https://github.com/ESP-Corevia/CoreApp/pull/107
+* chore: release master by @Yasser5711 in https://github.com/ESP-Corevia/CoreApp/pull/110
+* fix(deps): update server (drizzle) by @renovate[bot] in https://github.com/ESP-Corevia/CoreApp/pull/111
+* fix(deps): update server (postgres) to v8.20.0 by @renovate[bot] in https://github.com/ESP-Corevia/CoreApp/pull/112
+* chore: release master by @Yasser5711 in https://github.com/ESP-Corevia/CoreApp/pull/113
+* fix(deps): update dependency pino to v10 by @renovate[bot] in https://github.com/ESP-Corevia/CoreApp/pull/116
+* chore(deps): update pnpm/action-setup action to v5 by @renovate[bot] in https://github.com/ESP-Corevia/CoreApp/pull/115
+* chore(deps): update dorny/paths-filter action to v4 by @renovate[bot] in https://github.com/ESP-Corevia/CoreApp/pull/114
+* Pnpm docker by @Yasser5711 in https://github.com/ESP-Corevia/CoreApp/pull/118
+* Admin appointments by @Yasser5711 in https://github.com/ESP-Corevia/CoreApp/pull/119
+* chore: release master by @Yasser5711 in https://github.com/ESP-Corevia/CoreApp/pull/117
+* feat(server): add doctor router and reorganize route structure by @Yasser5711 in https://github.com/ESP-Corevia/CoreApp/pull/122
+* Homepage by @Yasser5711 in https://github.com/ESP-Corevia/CoreApp/pull/124
+* chore(deps): update dependency @biomejs/biome to ^2.4.10 by @renovate[bot] in https://github.com/ESP-Corevia/CoreApp/pull/121
+* feat: add AI metrics KPI page and admin API [KAN-25] by @MatteoCogan in https://github.com/ESP-Corevia/CoreApp/pull/125
+* Poc chat by @Yasser5711 in https://github.com/ESP-Corevia/CoreApp/pull/126
+* chore: release master by @Yasser5711 in https://github.com/ESP-Corevia/CoreApp/pull/123
+* feat: add doctor verification by @Yasser5711 in https://github.com/ESP-Corevia/CoreApp/pull/127
+
+## New Contributors
+* @MatteoCogan made their first contribution in https://github.com/ESP-Corevia/CoreApp/pull/125
+
+**Full Changelog**: https://github.com/ESP-Corevia/CoreApp/compare/home-v1.0.0...home-v1.1.0
+
 ## 1.0.0 (2026-03-24)
 
 
