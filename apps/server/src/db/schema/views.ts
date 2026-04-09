@@ -19,6 +19,7 @@ export const doctorUsersView = pgView('doctor_users_view', {
   specialty: text('specialty').notNull(),
   doctorAddress: text('doctor_address').notNull(),
   city: text('city').notNull(),
+  verified: boolean('verified').notNull(),
 }).existing();
 
 /**

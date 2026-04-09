@@ -113,7 +113,7 @@
     "tailwindcss": "4.1.8",
     "tsx": "4.21.0",
     "typescript": "catalog:",
-    "vite": "7.2.6",
+    "vite": "8.0.8",
     "vite-plugin-devtools-json": "1.0.0",
     "vite-tsconfig-paths": "catalog:",
     "vitest": "catalog:"

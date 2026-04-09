@@ -118,6 +118,7 @@ export const createDoctorsRepo = (db: DrizzleDB = DB) => ({
         address: doctorUsersView.doctorAddress,
         name: doctorUsersView.name,
         city: doctorUsersView.city,
+        verified: doctorUsersView.verified,
       })
       .from(doctorUsersView)
       .where(where)
@@ -136,6 +137,7 @@ export const createDoctorsRepo = (db: DrizzleDB = DB) => ({
         specialty: doctorUsersView.specialty,
         address: doctorUsersView.doctorAddress,
         city: doctorUsersView.city,
+        verified: doctorUsersView.verified,
       })
       .from(doctorUsersView)
       .where(eq(doctorUsersView.userId, userId))
@@ -177,6 +179,7 @@ export const createDoctorsRepo = (db: DrizzleDB = DB) => ({
       specialty: string;
       address: string;
       city: string;
+      verified: boolean;
     }>,
   ) => {
     return db.transaction(async tx => {
@@ -223,6 +226,7 @@ export const createDoctorsRepo = (db: DrizzleDB = DB) => ({
         name: doctorUsersView.name,
         email: doctorUsersView.email,
         image: doctorUsersView.image,
+        verified: doctorUsersView.verified,
       })
       .from(doctorUsersView)
       .where(where)

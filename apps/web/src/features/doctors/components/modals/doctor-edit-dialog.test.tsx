@@ -21,6 +21,7 @@ const baseDoctor = {
   name: 'Dr. Smith',
   email: 'smith@example.com',
   image: null,
+  verified: false,
 };
 
 describe('DoctorEditDialog', () => {

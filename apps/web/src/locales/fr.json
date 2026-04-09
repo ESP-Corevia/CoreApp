@@ -296,8 +296,15 @@
       "saving": "Enregistrement...",
       "searchPlaceholder": "Rechercher par nom ou spécialité…",
       "title": "Gestion des Médecins",
+      "unverified": "Médecin dévérifié avec succès",
+      "unverifiedStatus": "Non vérifié",
+      "unverify": "Dévérifier",
       "updated": "Profil médecin mis à jour avec succès",
-      "updateError": "Échec de la mise à jour du médecin : {{message}}"
+      "updateError": "Échec de la mise à jour du médecin : {{message}}",
+      "verified": "Médecin vérifié avec succès",
+      "verifiedStatus": "Vérifié",
+      "verify": "Vérifier",
+      "verifyError": "Échec de la mise à jour de la vérification : {{message}}"
     },
     "errorScreen": {
       "permissionDenied": "Vous n'avez pas l'autorisation d'accéder à cette ressource."

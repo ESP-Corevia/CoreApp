@@ -21,6 +21,7 @@ const fakeDoctor = {
   specialty: 'Cardiology',
   address: '10 Rue de Rivoli, Paris',
   city: 'Paris',
+  verified: false,
   imageUrl: null,
   name: 'Dr. John Doe',
 };
@@ -155,6 +156,7 @@ describe('listAllAdmin', () => {
     specialty: 'Cardiology',
     address: '10 Rue de Rivoli, Paris',
     city: 'Paris',
+    verified: false,
     name: 'Dr. John Doe',
     email: 'john@example.com',
     image: null,
@@ -282,6 +284,47 @@ describe('createProfile', () => {
     });
 
     expect(mockRepositories.doctorsRepo.getByUserId).not.toHaveBeenCalled();
+  });
+});
+
+describe('setVerified', () => {
+  it('sets verified to true and returns the updated doctor', async () => {
+    mockRepositories.doctorsRepo.getByUserId.mockResolvedValue(fakeDoctor);
+    const updatedDoctor = { ...fakeDoctor, verified: true };
+    mockRepositories.doctorsRepo.updateByUserId.mockResolvedValue(updatedDoctor);
+
+    const result = await doctorsService.setVerified('user-1', true);
+
+    expect(mockRepositories.doctorsRepo.getByUserId).toHaveBeenCalledWith('user-1');
+    expect(mockRepositories.doctorsRepo.updateByUserId).toHaveBeenCalledWith('user-1', {
+      verified: true,
+    });
+    expect(result).toEqual(updatedDoctor);
+  });
+
+  it('sets verified to false', async () => {
+    const verifiedDoctor = { ...fakeDoctor, verified: true };
+    mockRepositories.doctorsRepo.getByUserId.mockResolvedValue(verifiedDoctor);
+    const updatedDoctor = { ...fakeDoctor, verified: false };
+    mockRepositories.doctorsRepo.updateByUserId.mockResolvedValue(updatedDoctor);
+
+    const result = await doctorsService.setVerified('user-1', false);
+
+    expect(mockRepositories.doctorsRepo.updateByUserId).toHaveBeenCalledWith('user-1', {
+      verified: false,
+    });
+    expect(result).toEqual(updatedDoctor);
+  });
+
+  it('throws NOT_FOUND when doctor does not exist', async () => {
+    mockRepositories.doctorsRepo.getByUserId.mockResolvedValue(null as any);
+
+    await expect(doctorsService.setVerified('no-user', true)).rejects.toMatchObject({
+      code: 'NOT_FOUND',
+      message: 'Doctor profile not found',
+    });
+
+    expect(mockRepositories.doctorsRepo.updateByUserId).not.toHaveBeenCalled();
   });
 });
 

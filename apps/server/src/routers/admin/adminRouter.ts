@@ -9,7 +9,7 @@ import {
   updateAppointment,
   updateAppointmentStatus,
 } from './adminAppointmentsRouter';
-import { createDoctor, listDoctors, updateDoctor } from './adminDoctorsRouter';
+import { createDoctor, listDoctors, setDoctorVerified, updateDoctor } from './adminDoctorsRouter';
 import { createPatient, deletePatient, listPatients, updatePatient } from './adminPatientsRouter';
 import {
   adminCreateMedication,
@@ -127,6 +127,7 @@ export const adminRouter = router({
   listDoctors,
   createDoctor,
   updateDoctor,
+  setDoctorVerified,
   listPatients,
   createPatient,
   updatePatient,

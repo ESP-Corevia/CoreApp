@@ -295,8 +295,15 @@
       "saving": "Saving...",
       "searchPlaceholder": "Search by name or specialty…",
       "title": "Doctors Management",
+      "unverified": "Doctor unverified successfully",
+      "unverifiedStatus": "Unverified",
+      "unverify": "Unverify",
       "updated": "Doctor profile updated successfully",
-      "updateError": "Failed to update doctor: {{message}}"
+      "updateError": "Failed to update doctor: {{message}}",
+      "verified": "Doctor verified successfully",
+      "verifiedStatus": "Verified",
+      "verify": "Verify",
+      "verifyError": "Failed to update verification: {{message}}"
     },
     "errorScreen": {
       "permissionDenied": "You do not have permission to access that resource."

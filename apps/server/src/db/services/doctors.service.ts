@@ -11,6 +11,7 @@ export const DoctorProfileSchema = z.object({
   specialty: z.string(),
   address: z.string(),
   city: z.string(),
+  verified: z.boolean(),
 });
 
 export const DoctorOutputSchema = z.object({
@@ -19,6 +20,7 @@ export const DoctorOutputSchema = z.object({
   specialty: z.string(),
   address: z.string(),
   city: z.string(),
+  verified: z.boolean(),
   name: z.string().nullable(),
 });
 
@@ -154,5 +156,13 @@ export const createDoctorsService = (
       page: query.page,
       perPage: query.perPage,
     };
+  },
+
+  setVerified: async (userId: string, verified: boolean) => {
+    const doctor = await repo.getByUserId(userId);
+    if (!doctor) {
+      throw new TRPCError({ code: 'NOT_FOUND', message: 'Doctor profile not found' });
+    }
+    return repo.updateByUserId(userId, { verified });
   },
 });

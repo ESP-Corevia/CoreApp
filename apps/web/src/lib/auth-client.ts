@@ -7,6 +7,7 @@ import {
   inferAdditionalFields,
   lastLoginMethodClient,
 } from 'better-auth/client/plugins';
+import type {} from 'better-auth/plugins/access';
 import { createAuthClient } from 'better-auth/react';
 
 const authClientOptions = {
@@ -22,7 +23,7 @@ const authClientOptions = {
     lastLoginMethodClient(),
     adminClient(),
   ],
-};
+} satisfies Parameters<typeof createAuthClient>[0];
 
 export type AuthClient = ReturnType<typeof createAuthClient<typeof authClientOptions>>;
 export const authClient: AuthClient = createAuthClient(authClientOptions);

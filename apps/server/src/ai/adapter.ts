@@ -18,7 +18,7 @@ const nvidia = createOpenAI({
 // NVIDIA NIM only supports Chat Completions (/v1/chat/completions), not the
 // OpenAI Responses API (/v1/responses) which is the default since AI SDK 5.
 // Use .chat() to explicitly select the Chat Completions endpoint.
-const baseModel = nvidia.chat('qwen/qwen3.5-397b-a17b');
+const baseModel = nvidia.chat('mistralai/mistral-small-4-119b-2603');
 
 // Qwen 3.5 emits reasoning inside <think>…</think> tags.
 // extractReasoningMiddleware strips those tags from the text and exposes them
