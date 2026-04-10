@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.3.1 (2026-04-10)
+
+## What's Changed
+* fix(web): fix chat by @Yasser5711 in https://github.com/ESP-Corevia/CoreApp/pull/129
+
+
+**Full Changelog**: https://github.com/ESP-Corevia/CoreApp/compare/web-v1.3.0...web-v1.3.1
+
 ## 1.3.0 (2026-04-09)
 
 ## What's Changed
