@@ -1,0 +1,196 @@
+{
+  "translation": {
+    "app": { "name": "Corevia" },
+    "nav": {
+      "home": "Home",
+      "appointments": "Appointments",
+      "doctors": "Doctors",
+      "pillbox": "Pillbox",
+      "medications": "Medications",
+      "profile": "Profile",
+      "settings": "Settings",
+      "more": "More"
+    },
+    "auth": {
+      "signIn": {
+        "title": "Welcome back",
+        "subtitle": "Sign in to your account",
+        "email": "Email",
+        "password": "Password",
+        "submit": "Sign In",
+        "submitting": "Signing in...",
+        "success": "Signed in successfully",
+        "switchToSignUp": "Need an account? Sign Up",
+        "errors": {
+          "invalidEmail": "Invalid email address",
+          "shortPassword": "Password must be at least 8 characters",
+          "longPassword": "Password must be at most 100 characters"
+        }
+      },
+      "signUp": {
+        "title": "Create your account",
+        "subtitle": "Join Corevia",
+        "name": "Full Name",
+        "email": "Email",
+        "password": "Password",
+        "role": "I am a",
+        "rolePatient": "Patient",
+        "roleDoctor": "Doctor",
+        "submit": "Create Account",
+        "submitting": "Creating account...",
+        "success": "Account created successfully",
+        "switchToSignIn": "Already have an account? Sign In",
+        "errors": {
+          "nameMin": "Name must be at least 2 characters",
+          "invalidEmail": "Invalid email address",
+          "shortPassword": "Password must be at least 8 characters",
+          "longPassword": "Password must be at most 100 characters"
+        }
+      }
+    },
+    "patient": {
+      "home": {
+        "title": "Home",
+        "upcomingAppointments": "Upcoming Appointments",
+        "todaysMedications": "Today's Medications",
+        "nextAppointment": "Next Appointment",
+        "noUpcoming": "No upcoming appointments",
+        "noMedications": "No medications for today",
+        "bookAppointment": "Book Appointment",
+        "viewAll": "View All"
+      },
+      "appointments": {
+        "title": "My Appointments",
+        "book": "Book Appointment",
+        "empty": "No appointments yet",
+        "emptyDescription": "Book your first appointment with a doctor",
+        "status": {
+          "PENDING": "Pending",
+          "CONFIRMED": "Confirmed",
+          "COMPLETED": "Completed",
+          "CANCELLED": "Cancelled"
+        },
+        "filterByStatus": "Filter by status",
+        "allStatuses": "All statuses"
+      },
+      "doctors": {
+        "title": "Find a Doctor",
+        "search": "Search doctors...",
+        "filterSpecialty": "Specialty",
+        "filterCity": "City",
+        "empty": "No doctors found",
+        "emptyDescription": "Try adjusting your search filters",
+        "bookWith": "Book with {{name}}",
+        "availableSlots": "Available Slots",
+        "noSlots": "No available slots for this date",
+        "selectDate": "Select a date",
+        "confirmBooking": "Confirm Booking"
+      },
+      "pillbox": {
+        "title": "My Pillbox",
+        "today": "Today",
+        "myMedications": "My Medications",
+        "empty": "Your pillbox is empty",
+        "emptyDescription": "Add your first medication",
+        "addMedication": "Add Medication",
+        "taken": "Taken",
+        "skipped": "Skipped",
+        "pending": "Pending",
+        "markTaken": "Mark as Taken",
+        "markSkipped": "Skip",
+        "noSchedule": "No medications scheduled for today"
+      },
+      "medications": {
+        "title": "Medication Search",
+        "search": "Search medications...",
+        "empty": "No medications found",
+        "emptyDescription": "Try a different search term"
+      },
+      "onboarding": {
+        "title": "Complete Your Profile",
+        "subtitle": "Tell us a bit about yourself to get started",
+        "submit": "Complete Setup",
+        "submitting": "Saving..."
+      }
+    },
+    "doctor": {
+      "home": {
+        "title": "Home",
+        "todaysAppointments": "Today's Appointments",
+        "noAppointments": "No appointments today",
+        "upcomingCount": "{{count}} upcoming"
+      },
+      "appointments": {
+        "title": "My Appointments",
+        "empty": "No appointments",
+        "emptyDescription": "You have no appointments scheduled",
+        "confirm": "Confirm",
+        "complete": "Complete",
+        "cancel": "Cancel",
+        "filterByStatus": "Filter by status",
+        "allStatuses": "All statuses"
+      },
+      "patientPillbox": {
+        "title": "Patient Medications",
+        "today": "Today's Schedule",
+        "medications": "All Medications",
+        "empty": "No medications for this patient"
+      },
+      "medications": {
+        "title": "Medication Search",
+        "search": "Search medications...",
+        "empty": "No medications found"
+      },
+      "pendingVerification": {
+        "title": "Verification Pending",
+        "description": "Your account is being reviewed by our team. You'll get full access once your credentials are verified.",
+        "tip": "While you wait, you can update your profile and settings.",
+        "goToProfile": "Update Profile"
+      }
+    },
+    "shared": {
+      "profile": {
+        "title": "Profile",
+        "personalInfo": "Personal Information",
+        "save": "Save Changes",
+        "saving": "Saving..."
+      },
+      "settings": {
+        "title": "Settings",
+        "theme": "Theme",
+        "themeLight": "Light",
+        "themeDark": "Dark",
+        "themeSystem": "System",
+        "language": "Language",
+        "sessions": "Sessions"
+      }
+    },
+    "errors": {
+      "forbidden": {
+        "title": "Access Denied",
+        "description": "You don't have permission to access this page.",
+        "goHome": "Go Home"
+      },
+      "notFound": {
+        "title": "Page Not Found",
+        "description": "The page you're looking for doesn't exist.",
+        "goHome": "Go Home"
+      }
+    },
+    "common": {
+      "loading": "Loading...",
+      "error": "Something went wrong",
+      "retry": "Retry",
+      "noMore": "No more results",
+      "loadMore": "Load more",
+      "back": "Back",
+      "save": "Save",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "edit": "Edit",
+      "close": "Close",
+      "search": "Search...",
+      "signOut": "Sign Out"
+    }
+  }
+}
