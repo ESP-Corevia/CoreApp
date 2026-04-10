@@ -5,10 +5,12 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 
-function InputGroup({ className, ...props }: React.ComponentProps<'fieldset'>) {
+function InputGroup({ className, ...props }: React.ComponentProps<'div'>) {
   return (
-    <fieldset
+    // biome-ignore lint/a11y/useSemanticElements: pass
+    <div
       data-slot="input-group"
+      role="group"
       className={cn(
         'group/input-group relative flex w-full items-center rounded-md border border-input shadow-xs outline-none transition-[color,box-shadow] dark:bg-input/30',
         'h-9 min-w-0 has-[>textarea]:h-auto',
@@ -33,7 +35,7 @@ function InputGroup({ className, ...props }: React.ComponentProps<'fieldset'>) {
 }
 
 const inputGroupAddonVariants = cva(
-  "text-muted-foreground flex h-auto cursor-text items-center justify-center gap-2 py-1.5 text-sm font-medium select-none group-data-[disabled=true]/input-group:opacity-50 [&>kbd]:rounded-[calc(var(--radius)-5px)] [&>svg:not([class*='size-'])]:size-4",
+  "flex h-auto cursor-text items-center justify-center gap-2 py-1.5 text-sm font-medium text-muted-foreground select-none group-data-[disabled=true]/input-group:opacity-50 [&>kbd]:rounded-[calc(var(--radius)-5px)] [&>svg:not([class*='size-'])]:size-4",
   {
     variants: {
       align: {
@@ -57,8 +59,8 @@ function InputGroupAddon({
   ...props
 }: React.ComponentProps<'div'> & VariantProps<typeof inputGroupAddonVariants>) {
   return (
-    // biome-ignore lint/a11y/useKeyWithClickEvents: click focuses input, not interactive
-    // biome-ignore lint/a11y/useSemanticElements: fieldset breaks layout here
+    // biome-ignore lint/a11y/useSemanticElements: pass
+    // biome-ignore lint/a11y/useKeyWithClickEvents: pass
     <div
       role="group"
       data-slot="input-group-addon"

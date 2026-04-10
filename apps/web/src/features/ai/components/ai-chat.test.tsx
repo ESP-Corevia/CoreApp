@@ -28,6 +28,19 @@ vi.mock('ai', () => ({
   lastAssistantMessageIsCompleteWithApprovalResponses: vi.fn(),
 }));
 
+vi.mock('use-stick-to-bottom', () => {
+  const StickToBottom = ({ children, ...props }: { children: React.ReactNode }) => (
+    <div {...props}>{children}</div>
+  );
+  StickToBottom.Content = ({ children, ...props }: { children: React.ReactNode }) => (
+    <div {...props}>{children}</div>
+  );
+  return {
+    StickToBottom,
+    useStickToBottomContext: () => ({ isAtBottom: true, scrollToBottom: vi.fn() }),
+  };
+});
+
 describe('AiChat', () => {
   beforeEach(() => {
     vi.clearAllMocks();
