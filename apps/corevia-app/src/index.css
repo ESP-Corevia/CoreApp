@@ -1,0 +1,136 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans:
+    "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+html,
+body {
+  @apply bg-white dark:bg-gray-950;
+
+  @media (prefers-color-scheme: dark) {
+    color-scheme: dark;
+  }
+}
+
+:root {
+  --radius: 0.75rem;
+  --background: oklch(98.5% 0.005 155deg);
+  --foreground: oklch(18% 0.02 240deg);
+  --card: oklch(100% 0 0deg);
+  --card-foreground: oklch(18% 0.02 240deg);
+  --popover: oklch(100% 0 0deg);
+  --popover-foreground: oklch(18% 0.02 240deg);
+  --primary: oklch(52% 0.105 168deg);
+  --primary-foreground: oklch(98% 0 0deg);
+  --secondary: oklch(95% 0.01 155deg);
+  --secondary-foreground: oklch(30% 0.03 168deg);
+  --muted: oklch(95.5% 0.008 155deg);
+  --muted-foreground: oklch(50% 0.02 240deg);
+  --accent: oklch(93% 0.02 155deg);
+  --accent-foreground: oklch(30% 0.03 168deg);
+  --destructive: oklch(57.7% 0.245 27.325deg);
+  --border: oklch(90% 0.01 155deg);
+  --input: oklch(90% 0.01 155deg);
+  --ring: oklch(52% 0.105 168deg);
+  --chart-1: oklch(52% 0.105 168deg);
+  --chart-2: oklch(64% 0.12 200deg);
+  --chart-3: oklch(72% 0.1 140deg);
+  --chart-4: oklch(80% 0.08 90deg);
+  --chart-5: oklch(60% 0.15 280deg);
+  --sidebar: oklch(97.5% 0.008 155deg);
+  --sidebar-foreground: oklch(18% 0.02 240deg);
+  --sidebar-primary: oklch(52% 0.105 168deg);
+  --sidebar-primary-foreground: oklch(98% 0 0deg);
+  --sidebar-accent: oklch(93% 0.02 155deg);
+  --sidebar-accent-foreground: oklch(30% 0.03 168deg);
+  --sidebar-border: oklch(90% 0.01 155deg);
+  --sidebar-ring: oklch(52% 0.105 168deg);
+}
+
+.dark {
+  --background: oklch(14% 0.015 240deg);
+  --foreground: oklch(95% 0.005 155deg);
+  --card: oklch(19% 0.015 240deg);
+  --card-foreground: oklch(95% 0.005 155deg);
+  --popover: oklch(19% 0.015 240deg);
+  --popover-foreground: oklch(95% 0.005 155deg);
+  --primary: oklch(65% 0.12 168deg);
+  --primary-foreground: oklch(14% 0.015 240deg);
+  --secondary: oklch(22% 0.02 240deg);
+  --secondary-foreground: oklch(90% 0.01 155deg);
+  --muted: oklch(22% 0.02 240deg);
+  --muted-foreground: oklch(65% 0.02 240deg);
+  --accent: oklch(24% 0.025 240deg);
+  --accent-foreground: oklch(90% 0.01 155deg);
+  --destructive: oklch(70.4% 0.191 22.216deg);
+  --border: oklch(100% 0 0deg / 10%);
+  --input: oklch(100% 0 0deg / 15%);
+  --ring: oklch(65% 0.12 168deg);
+  --chart-1: oklch(65% 0.12 168deg);
+  --chart-2: oklch(55% 0.15 200deg);
+  --chart-3: oklch(72% 0.1 140deg);
+  --chart-4: oklch(62% 0.18 300deg);
+  --chart-5: oklch(58% 0.2 30deg);
+  --sidebar: oklch(17% 0.015 240deg);
+  --sidebar-foreground: oklch(95% 0.005 155deg);
+  --sidebar-primary: oklch(65% 0.12 168deg);
+  --sidebar-primary-foreground: oklch(14% 0.015 240deg);
+  --sidebar-accent: oklch(24% 0.025 240deg);
+  --sidebar-accent-foreground: oklch(90% 0.01 155deg);
+  --sidebar-border: oklch(100% 0 0deg / 10%);
+  --sidebar-ring: oklch(65% 0.12 168deg);
+}
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}

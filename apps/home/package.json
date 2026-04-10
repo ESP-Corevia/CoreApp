@@ -46,7 +46,7 @@
     "shadcn": "catalog:",
     "tailwindcss": "4.1.8",
     "typescript": "catalog:",
-    "vite": "8.0.8",
+    "vite": "catalog:",
     "vite-tsconfig-paths": "catalog:"
   },
   "packageManager": "pnpm@10.12.1",

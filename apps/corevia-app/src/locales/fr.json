@@ -1,0 +1,196 @@
+{
+  "translation": {
+    "app": { "name": "Corevia" },
+    "nav": {
+      "home": "Accueil",
+      "appointments": "Rendez-vous",
+      "doctors": "Médecins",
+      "pillbox": "Pilulier",
+      "medications": "Médicaments",
+      "profile": "Profil",
+      "settings": "Paramètres",
+      "more": "Plus"
+    },
+    "auth": {
+      "signIn": {
+        "title": "Bon retour",
+        "subtitle": "Connectez-vous à votre compte",
+        "email": "Email",
+        "password": "Mot de passe",
+        "submit": "Se connecter",
+        "submitting": "Connexion...",
+        "success": "Connexion réussie",
+        "switchToSignUp": "Pas de compte ? S'inscrire",
+        "errors": {
+          "invalidEmail": "Adresse email invalide",
+          "shortPassword": "Le mot de passe doit contenir au moins 8 caractères",
+          "longPassword": "Le mot de passe doit contenir au maximum 100 caractères"
+        }
+      },
+      "signUp": {
+        "title": "Créer votre compte",
+        "subtitle": "Rejoignez Corevia",
+        "name": "Nom complet",
+        "email": "Email",
+        "password": "Mot de passe",
+        "role": "Je suis",
+        "rolePatient": "Patient",
+        "roleDoctor": "Médecin",
+        "submit": "Créer le compte",
+        "submitting": "Création...",
+        "success": "Compte créé avec succès",
+        "switchToSignIn": "Déjà un compte ? Se connecter",
+        "errors": {
+          "nameMin": "Le nom doit contenir au moins 2 caractères",
+          "invalidEmail": "Adresse email invalide",
+          "shortPassword": "Le mot de passe doit contenir au moins 8 caractères",
+          "longPassword": "Le mot de passe doit contenir au maximum 100 caractères"
+        }
+      }
+    },
+    "patient": {
+      "home": {
+        "title": "Accueil",
+        "upcomingAppointments": "Rendez-vous à venir",
+        "todaysMedications": "Médicaments du jour",
+        "nextAppointment": "Prochain rendez-vous",
+        "noUpcoming": "Aucun rendez-vous à venir",
+        "noMedications": "Aucun médicament pour aujourd'hui",
+        "bookAppointment": "Prendre rendez-vous",
+        "viewAll": "Voir tout"
+      },
+      "appointments": {
+        "title": "Mes rendez-vous",
+        "book": "Prendre rendez-vous",
+        "empty": "Aucun rendez-vous",
+        "emptyDescription": "Prenez votre premier rendez-vous",
+        "status": {
+          "PENDING": "En attente",
+          "CONFIRMED": "Confirmé",
+          "COMPLETED": "Terminé",
+          "CANCELLED": "Annulé"
+        },
+        "filterByStatus": "Filtrer par statut",
+        "allStatuses": "Tous les statuts"
+      },
+      "doctors": {
+        "title": "Trouver un médecin",
+        "search": "Rechercher un médecin...",
+        "filterSpecialty": "Spécialité",
+        "filterCity": "Ville",
+        "empty": "Aucun médecin trouvé",
+        "emptyDescription": "Essayez d'ajuster vos filtres",
+        "bookWith": "Réserver avec {{name}}",
+        "availableSlots": "Créneaux disponibles",
+        "noSlots": "Aucun créneau disponible pour cette date",
+        "selectDate": "Sélectionner une date",
+        "confirmBooking": "Confirmer la réservation"
+      },
+      "pillbox": {
+        "title": "Mon pilulier",
+        "today": "Aujourd'hui",
+        "myMedications": "Mes médicaments",
+        "empty": "Votre pilulier est vide",
+        "emptyDescription": "Ajoutez votre premier médicament",
+        "addMedication": "Ajouter un médicament",
+        "taken": "Pris",
+        "skipped": "Passé",
+        "pending": "En attente",
+        "markTaken": "Marquer comme pris",
+        "markSkipped": "Passer",
+        "noSchedule": "Aucun médicament prévu pour aujourd'hui"
+      },
+      "medications": {
+        "title": "Recherche de médicaments",
+        "search": "Rechercher un médicament...",
+        "empty": "Aucun médicament trouvé",
+        "emptyDescription": "Essayez un autre terme de recherche"
+      },
+      "onboarding": {
+        "title": "Complétez votre profil",
+        "subtitle": "Parlez-nous un peu de vous",
+        "submit": "Terminer la configuration",
+        "submitting": "Enregistrement..."
+      }
+    },
+    "doctor": {
+      "home": {
+        "title": "Accueil",
+        "todaysAppointments": "Rendez-vous du jour",
+        "noAppointments": "Aucun rendez-vous aujourd'hui",
+        "upcomingCount": "{{count}} à venir"
+      },
+      "appointments": {
+        "title": "Mes rendez-vous",
+        "empty": "Aucun rendez-vous",
+        "emptyDescription": "Vous n'avez aucun rendez-vous prévu",
+        "confirm": "Confirmer",
+        "complete": "Terminer",
+        "cancel": "Annuler",
+        "filterByStatus": "Filtrer par statut",
+        "allStatuses": "Tous les statuts"
+      },
+      "patientPillbox": {
+        "title": "Médicaments du patient",
+        "today": "Programme du jour",
+        "medications": "Tous les médicaments",
+        "empty": "Aucun médicament pour ce patient"
+      },
+      "medications": {
+        "title": "Recherche de médicaments",
+        "search": "Rechercher un médicament...",
+        "empty": "Aucun médicament trouvé"
+      },
+      "pendingVerification": {
+        "title": "Vérification en cours",
+        "description": "Votre compte est en cours d'examen par notre équipe. Vous aurez accès complet une fois vos identifiants vérifiés.",
+        "tip": "En attendant, vous pouvez mettre à jour votre profil et vos paramètres.",
+        "goToProfile": "Modifier le profil"
+      }
+    },
+    "shared": {
+      "profile": {
+        "title": "Profil",
+        "personalInfo": "Informations personnelles",
+        "save": "Enregistrer",
+        "saving": "Enregistrement..."
+      },
+      "settings": {
+        "title": "Paramètres",
+        "theme": "Thème",
+        "themeLight": "Clair",
+        "themeDark": "Sombre",
+        "themeSystem": "Système",
+        "language": "Langue",
+        "sessions": "Sessions"
+      }
+    },
+    "errors": {
+      "forbidden": {
+        "title": "Accès refusé",
+        "description": "Vous n'avez pas la permission d'accéder à cette page.",
+        "goHome": "Retour à l'accueil"
+      },
+      "notFound": {
+        "title": "Page introuvable",
+        "description": "La page que vous cherchez n'existe pas.",
+        "goHome": "Retour à l'accueil"
+      }
+    },
+    "common": {
+      "loading": "Chargement...",
+      "error": "Une erreur est survenue",
+      "retry": "Réessayer",
+      "noMore": "Plus de résultats",
+      "loadMore": "Charger plus",
+      "back": "Retour",
+      "save": "Enregistrer",
+      "cancel": "Annuler",
+      "delete": "Supprimer",
+      "edit": "Modifier",
+      "close": "Fermer",
+      "search": "Rechercher...",
+      "signOut": "Se déconnecter"
+    }
+  }
+}

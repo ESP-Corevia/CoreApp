@@ -10,6 +10,7 @@
     "dev:home": "turbo -F home dev",
     "dev:web": "turbo -F web dev",
     "dev:server": "turbo -F server dev",
+    "dev:app": "turbo dev -F corevia-app -F server",
     "dev:backoffice": "turbo dev dev:devtools -F web -F server",
     "db:push": "turbo -F server db:push",
     "db:studio": "turbo -F server db:studio",
