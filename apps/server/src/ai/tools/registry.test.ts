@@ -9,7 +9,7 @@ function hashRole(role: 'patient' | 'doctor' | 'admin'): string {
 }
 
 const EXPECTED_HASHES: Record<'patient' | 'doctor' | 'admin', string> = {
-  patient: 'bec1a987092f',
+  patient: '2ed6a31812fa',
   doctor: '7609623714ba',
   admin: '92a42208723b',
 };
@@ -78,12 +78,36 @@ describe('getToolsForRole', () => {
   it('returns patient tools for patient sessions', () => {
     const tools = getToolsForRole('patient', {
       caller: {
-        appointments: { listMine: async () => [] },
-        pillbox: { today: async () => [] },
+        appointments: {
+          listMine: async () => [],
+          detail: async () => ({}),
+          create: async () => ({}),
+        },
+        doctors: { list: async () => [], availableSlots: async () => [] },
+        medications: { search: async () => [] },
+        pillbox: {
+          today: async () => [],
+          listMine: async () => [],
+          detail: async () => ({}),
+          markIntakeTaken: async () => ({}),
+          markIntakeSkipped: async () => ({}),
+        },
       },
     } as never);
 
-    expect(Object.keys(tools)).toEqual(['get_my_appointments', 'get_my_today_pillbox']);
+    expect(Object.keys(tools)).toEqual([
+      'get_my_appointments',
+      'get_appointment_detail',
+      'create_appointment',
+      'list_doctors',
+      'get_available_slots',
+      'search_medications',
+      'get_my_today_pillbox',
+      'list_my_medications',
+      'get_medication_detail',
+      'mark_intake_taken',
+      'mark_intake_skipped',
+    ]);
   });
 
   it('returns doctor tools for doctor sessions', () => {

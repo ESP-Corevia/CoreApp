@@ -37,11 +37,25 @@ interface RoleDefinition {
 
 export const ROLES: Record<'patient' | 'doctor' | 'admin', RoleDefinition> = {
   patient: {
-    tools: ['get_my_appointments', 'get_my_today_pillbox'],
-    scope: 'appointments and medication schedules',
+    tools: [
+      'get_my_appointments',
+      'get_appointment_detail',
+      'create_appointment',
+      'list_doctors',
+      'get_available_slots',
+      'search_medications',
+      'get_my_today_pillbox',
+      'list_my_medications',
+      'get_medication_detail',
+      'mark_intake_taken',
+      'mark_intake_skipped',
+    ],
+    scope:
+      'appointments (view, book), doctors (search, check availability), medications (search, view pillbox, mark intakes)',
     refusal:
-      'I can only help with your appointments and medication schedule. What would you like to do?',
-    extra: 'Be empathetic and clear.',
+      'I can only help with your appointments, doctors, and medications. What would you like to do?',
+    extra:
+      'Be empathetic and clear. Help patients book appointments step by step: first find a doctor, then check available slots, then book.',
   },
   doctor: {
     tools: ['get_my_appointments', 'get_appointment_detail', 'update_appointment_status'],

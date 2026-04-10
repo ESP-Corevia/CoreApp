@@ -10,11 +10,11 @@ const appointmentsSchema = z.object({
 });
 
 const appointmentDetailSchema = z.object({
-  id: z.uuid().describe('The appointment ID'),
+  id: z.string().describe('The appointment ID'),
 });
 
 const updateStatusSchema = z.object({
-  id: z.uuid().describe('The appointment ID'),
+  id: z.string().describe('The appointment ID'),
   status: z.enum(['CONFIRMED', 'COMPLETED', 'CANCELLED']).describe('The new status'),
 });
 
@@ -43,6 +43,7 @@ export function createDoctorTools(caller: AICaller) {
 
     update_appointment_status: tool({
       description: 'Update the status of an appointment (confirm, complete, or cancel it).',
+      needsApproval: true,
       inputSchema: updateStatusSchema,
       execute: async args => {
         return await caller.doctor.appointments.updateStatus({

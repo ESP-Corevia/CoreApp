@@ -136,6 +136,72 @@ fastify.get('/openapi.json', async (_req, reply) => {
   const authDoc = await auth.api.generateOpenAPISchema();
   const merged = mergeOpenApiDocs(trpcDoc, authDoc);
 
+  // Manually add the /chat route (not managed by tRPC)
+  merged.paths['/chat'] = {
+    post: {
+      operationId: 'chat',
+      summary: 'AI Chat (SSE streaming)',
+      description:
+        'Stream a conversation with the AI assistant. Uses the AI SDK UI Message protocol. The response is a streaming text/x-ui-message-stream-part body. Tools are selected based on the authenticated user role (patient, doctor, admin).',
+      tags: ['AI'],
+      servers: [{ url: env.BASE_URL }],
+      security: [{ cookieAuth: [] }],
+      requestBody: {
+        required: true,
+        content: {
+          'application/json': {
+            schema: {
+              type: 'object',
+              required: ['messages'],
+              properties: {
+                messages: {
+                  type: 'array',
+                  description: 'Array of UI messages (AI SDK UIMessage format)',
+                  items: {
+                    type: 'object',
+                    required: ['id', 'role', 'parts'],
+                    properties: {
+                      id: { type: 'string' },
+                      role: { type: 'string', enum: ['user', 'assistant'] },
+                      parts: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                          properties: {
+                            type: { type: 'string' },
+                            text: { type: 'string' },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      responses: {
+        '200': {
+          description: 'Streaming AI response',
+          content: {
+            'text/x-ui-message-stream-part': {
+              schema: { type: 'string' },
+            },
+          },
+        },
+        '401': { description: 'Unauthorized — no active session' },
+        '400': { description: 'Bad request — messages is required' },
+        '500': { description: 'AI chat failed' },
+      },
+    },
+  };
+
+  // Add AI tag if not present
+  if (!merged.tags.some((t: any) => t.name === 'AI')) {
+    merged.tags.push({ name: 'AI', description: 'AI Assistant endpoints' });
+  }
+
   reply.header('Content-Type', 'application/json').send(merged);
 });
 
