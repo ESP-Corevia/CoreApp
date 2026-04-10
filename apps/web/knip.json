@@ -19,7 +19,9 @@
     "src/components/ui/faceted.tsx",
     "src/components/ui/sortable.tsx",
     "src/components/ui/checkbox.tsx",
-    "src/lib/parsers.ts"
+    "src/components/ai-elements/**",
+    "src/lib/parsers.ts",
+    "src/components/ui/shining-text.tsx"
   ],
   "ignoreDependencies": [
     "@types/*",
@@ -44,7 +46,10 @@
     "@react-router/serve",
     "tsx",
     "vite-tsconfig-paths",
-    "@vitest/ui"
+    "@vitest/ui",
+    "@radix-ui/react-select",
+    "@radix-ui/react-separator",
+    "@radix-ui/react-tooltip"
   ],
   "ignoreExportsUsedInFile": true,
   "ignoreBinaries": [

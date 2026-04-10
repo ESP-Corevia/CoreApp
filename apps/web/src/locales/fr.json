@@ -11,13 +11,11 @@
       "approve": "Approuver",
       "approved": "approuvé",
       "chatDescription": "Posez une demande ou partez d'une des actions d'administration proposées.",
-      "debug": "Débogage",
       "debugLastMessage": "Dernier message de débogage",
       "denied": "refusé",
       "deny": "Refuser",
       "emptyChat": "Commencez par une demande ou choisissez l'une des actions proposées ci-dessous.",
       "hideDebug": "Masquer",
-      "inputLabel": "Message",
       "inputPlaceholder": "Demandez de lister des utilisateurs, modifier un profil, supprimer un utilisateur...",
       "showDebug": "Afficher",
       "suggestions": {
@@ -38,15 +36,8 @@
           "title": "Modifier un utilisateur"
         }
       },
-      "thinking": "Réflexion en cours",
-      "thoughtProcess": "Processus de réflexion",
       "title": "Assistant IA",
-      "tool": "Outil",
-      "toolDone": "terminé",
-      "toolError": "erreur",
-      "toolInput": "Entrée",
-      "toolOutput": "Sortie",
-      "toolRunning": "en cours…"
+      "tool": "Outil"
     },
     "aiMetrics": {
       "byFeature": {

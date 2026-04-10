@@ -11,13 +11,11 @@
       "approve": "Approve",
       "approved": "approved",
       "chatDescription": "Ask something or start from one of the suggested admin actions.",
-      "debug": "Debug",
       "debugLastMessage": "Last debug message",
       "denied": "denied",
       "deny": "Deny",
       "emptyChat": "Start with a request or pick one of the suggested actions below.",
       "hideDebug": "Hide",
-      "inputLabel": "Message",
       "inputPlaceholder": "Ask to list users, update a profile, delete a user...",
       "showDebug": "Show",
       "suggestions": {
@@ -38,15 +36,8 @@
           "title": "Update user"
         }
       },
-      "thinking": "Thinking...",
-      "thoughtProcess": "Thought process",
       "title": "AI Assistant",
-      "tool": "Tool",
-      "toolDone": "done",
-      "toolError": "error",
-      "toolInput": "Input",
-      "toolOutput": "Output",
-      "toolRunning": "running…"
+      "tool": "Tool"
     },
     "aiMetrics": {
       "byFeature": {

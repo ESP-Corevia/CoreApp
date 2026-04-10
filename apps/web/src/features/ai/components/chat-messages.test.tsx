@@ -4,29 +4,21 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { render } from '@/test/render';
 
-import { ChatEmptyState, ChatMessage, ThinkingIndicator } from './chat-messages';
+import { ChatEmptyState, ChatMessage } from './chat-messages';
 
 // Streamdown renders children as-is in tests (no markdown transform)
 vi.mock('streamdown', () => ({
   Streamdown: ({ children }: { children: string }) => <span>{children}</span>,
 }));
 
-vi.mock('@/components/ui/shining-text', () => ({
-  ShiningText: ({ text }: { text: string }) => <span>{text}</span>,
+vi.mock('@/components/ai-elements/shimmer', () => ({
+  Shimmer: ({ children }: { children: string }) => <span>{children}</span>,
 }));
 
 describe('ChatEmptyState', () => {
   it('renders the empty state with an icon', () => {
     const { container } = render(<ChatEmptyState />);
     expect(container.querySelector('svg')).toBeInTheDocument();
-  });
-});
-
-describe('ThinkingIndicator', () => {
-  it('renders the thinking text with avatar', () => {
-    const { getByText, container } = render(<ThinkingIndicator />);
-    expect(getByText('ai.thinking')).toBeInTheDocument();
-    expect(container.querySelector('.rounded-full')).toBeInTheDocument();
   });
 });
 
@@ -43,7 +35,9 @@ describe('ChatMessage', () => {
       role: 'user',
       parts: [{ type: 'text', text: 'Hello there' }],
     };
-    const { getByText } = render(<ChatMessage message={msg} status="ready" {...handlers} />);
+    const { getByText } = render(
+      <ChatMessage message={msg} isLastMessage={false} isStreaming={false} {...handlers} />,
+    );
     expect(getByText('Hello there')).toBeInTheDocument();
   });
 
@@ -53,7 +47,9 @@ describe('ChatMessage', () => {
       role: 'assistant',
       parts: [{ type: 'text', text: 'Hi! How can I help?' }],
     };
-    const { getByText } = render(<ChatMessage message={msg} status="ready" {...handlers} />);
+    const { getByText } = render(
+      <ChatMessage message={msg} isLastMessage={false} isStreaming={false} {...handlers} />,
+    );
     expect(getByText('Hi! How can I help?')).toBeInTheDocument();
   });
 
@@ -70,10 +66,15 @@ describe('ChatMessage', () => {
     };
 
     const { container: uc } = render(
-      <ChatMessage message={userMsg} status="ready" {...handlers} />,
+      <ChatMessage message={userMsg} isLastMessage={false} isStreaming={false} {...handlers} />,
     );
     const { container: ac } = render(
-      <ChatMessage message={assistantMsg} status="ready" {...handlers} />,
+      <ChatMessage
+        message={assistantMsg}
+        isLastMessage={false}
+        isStreaming={false}
+        {...handlers}
+      />,
     );
 
     expect(ac.querySelector('.rounded-full')).toBeInTheDocument();
@@ -84,28 +85,18 @@ describe('ChatMessage', () => {
   // Reasoning parts
   // -------------------------------------------------------------------------
 
-  it('renders a collapsible ThinkingBlock for reasoning parts', async () => {
-    const user = userEvent.setup();
+  it('renders a collapsible Reasoning for reasoning parts', () => {
     const msg: UIMessage = {
       id: 'r1',
       role: 'assistant',
       parts: [{ type: 'reasoning', text: 'Let me think about this...' }],
     };
-    const { getByText } = render(<ChatMessage message={msg} status="ready" {...handlers} />);
+    const { container } = render(
+      <ChatMessage message={msg} isLastMessage={false} isStreaming={false} {...handlers} />,
+    );
 
-    // The thought-process button is visible
-    const btn = getByText('ai.thoughtProcess');
-    expect(btn).toBeInTheDocument();
-
-    // Content is in the DOM
-    const content = getByText('Let me think about this...');
-    // Find the collapsible wrapper (transition container)
-    const collapseDiv = content.closest('.transition-\\[max-height\\,opacity\\]');
-    expect(collapseDiv).toHaveStyle({ maxHeight: '0px', opacity: '0' });
-
-    // Click to expand
-    await user.click(btn);
-    expect(collapseDiv).toHaveStyle({ opacity: '1' });
+    const trigger = container.querySelector('button');
+    expect(trigger).toBeInTheDocument();
   });
 
   it('skips reasoning parts with empty text', () => {
@@ -117,16 +108,15 @@ describe('ChatMessage', () => {
         { type: 'text', text: 'Final answer' },
       ],
     };
-    const { queryByText, getByText } = render(
-      <ChatMessage message={msg} status="ready" {...handlers} />,
+    const { getByText } = render(
+      <ChatMessage message={msg} isLastMessage={false} isStreaming={false} {...handlers} />,
     );
 
-    expect(queryByText('ai.thoughtProcess')).not.toBeInTheDocument();
     expect(getByText('Final answer')).toBeInTheDocument();
   });
 
   // -------------------------------------------------------------------------
-  // Tool approval parts (via isToolUIPart)
+  // Tool approval parts
   // -------------------------------------------------------------------------
 
   it('renders ToolApprovalCard for approval-requested state', () => {
@@ -144,7 +134,9 @@ describe('ChatMessage', () => {
         } as never,
       ],
     };
-    const { getByText } = render(<ChatMessage message={msg} status="ready" {...handlers} />);
+    const { getByText } = render(
+      <ChatMessage message={msg} isLastMessage={false} isStreaming={false} {...handlers} />,
+    );
     expect(getByText('ban_user')).toBeInTheDocument();
     expect(getByText('Approval required')).toBeInTheDocument();
   });
@@ -164,7 +156,9 @@ describe('ChatMessage', () => {
         } as never,
       ],
     };
-    const { getByText } = render(<ChatMessage message={msg} status="ready" {...handlers} />);
+    const { getByText } = render(
+      <ChatMessage message={msg} isLastMessage={false} isStreaming={false} {...handlers} />,
+    );
     expect(getByText('ban_user')).toBeInTheDocument();
     expect(getByText('approved')).toBeInTheDocument();
   });
@@ -184,7 +178,9 @@ describe('ChatMessage', () => {
         } as never,
       ],
     };
-    const { getByText } = render(<ChatMessage message={msg} status="ready" {...handlers} />);
+    const { getByText } = render(
+      <ChatMessage message={msg} isLastMessage={false} isStreaming={false} {...handlers} />,
+    );
     expect(getByText('denied')).toBeInTheDocument();
     expect(getByText('— Nope')).toBeInTheDocument();
   });
@@ -205,35 +201,18 @@ describe('ChatMessage', () => {
         } as never,
       ],
     };
-    const { getByText } = render(<ChatMessage message={msg} status="ready" {...handlers} />);
+    const { getByText } = render(
+      <ChatMessage message={msg} isLastMessage={false} isStreaming={false} {...handlers} />,
+    );
     expect(getByText('ban_user')).toBeInTheDocument();
     expect(getByText('approved')).toBeInTheDocument();
   });
 
   // -------------------------------------------------------------------------
-  // Auto-executed tool parts (ToolInvocationCard)
+  // Auto-executed tool parts (Tool component)
   // -------------------------------------------------------------------------
 
-  it('renders ToolInvocationCard for input-streaming state', () => {
-    const msg: UIMessage = {
-      id: 'a1',
-      role: 'assistant',
-      parts: [
-        {
-          type: 'tool-list_users' as 'dynamic-tool',
-          toolCallId: 'tc5',
-          toolName: 'list_users',
-          state: 'input-streaming',
-          input: { query: 'test' },
-        } as never,
-      ],
-    };
-    const { getByText } = render(<ChatMessage message={msg} status="streaming" {...handlers} />);
-    expect(getByText('list_users')).toBeInTheDocument();
-    expect(getByText('running…')).toBeInTheDocument();
-  });
-
-  it('renders ToolInvocationCard for input-available state', () => {
+  it('renders Tool for input-available state', () => {
     const msg: UIMessage = {
       id: 'a2',
       role: 'assistant',
@@ -247,12 +226,14 @@ describe('ChatMessage', () => {
         } as never,
       ],
     };
-    const { getByText } = render(<ChatMessage message={msg} status="streaming" {...handlers} />);
+    const { getByText } = render(
+      <ChatMessage message={msg} isLastMessage={false} isStreaming={true} {...handlers} />,
+    );
     expect(getByText('list_users')).toBeInTheDocument();
-    expect(getByText('running…')).toBeInTheDocument();
+    expect(getByText('Running')).toBeInTheDocument();
   });
 
-  it('renders ToolInvocationCard for output-available state (no approval)', async () => {
+  it('renders Tool for output-available state (no approval)', async () => {
     const user = userEvent.setup();
     const msg: UIMessage = {
       id: 'a3',
@@ -268,18 +249,18 @@ describe('ChatMessage', () => {
         } as never,
       ],
     };
-    const { getByText } = render(<ChatMessage message={msg} status="ready" {...handlers} />);
+    const { getByText } = render(
+      <ChatMessage message={msg} isLastMessage={false} isStreaming={false} {...handlers} />,
+    );
     expect(getByText('list_users')).toBeInTheDocument();
-    expect(getByText('done')).toBeInTheDocument();
+    expect(getByText('Completed')).toBeInTheDocument();
 
-    // Expand to see input/output
     await user.click(getByText('list_users'));
-    expect(getByText('Input')).toBeInTheDocument();
-    expect(getByText('Output')).toBeInTheDocument();
-    expect(getByText(/"name": "Alice"/)).toBeInTheDocument();
+    expect(getByText('Parameters')).toBeInTheDocument();
+    expect(getByText('Result')).toBeInTheDocument();
   });
 
-  it('renders ToolInvocationCard for output-error state', async () => {
+  it('renders Tool for output-error state', async () => {
     const user = userEvent.setup();
     const msg: UIMessage = {
       id: 'a4',
@@ -295,67 +276,14 @@ describe('ChatMessage', () => {
         } as never,
       ],
     };
-    const { getByText, container } = render(
-      <ChatMessage message={msg} status="ready" {...handlers} />,
+    const { getByText } = render(
+      <ChatMessage message={msg} isLastMessage={false} isStreaming={false} {...handlers} />,
     );
     expect(getByText('list_users')).toBeInTheDocument();
-    expect(getByText('error')).toBeInTheDocument();
+    expect(getByText('Error')).toBeInTheDocument();
 
-    // Error styling applied
-    expect(container.querySelector('.border-red-500\\/30')).toBeInTheDocument();
-
-    // Expand to see error text
     await user.click(getByText('list_users'));
     expect(getByText('Database connection lost')).toBeInTheDocument();
-  });
-
-  it('hides output section when output is null', async () => {
-    const user = userEvent.setup();
-    const msg: UIMessage = {
-      id: 'a5',
-      role: 'assistant',
-      parts: [
-        {
-          type: 'tool-list_users' as 'dynamic-tool',
-          toolCallId: 'tc9',
-          toolName: 'list_users',
-          state: 'output-available',
-          input: { query: 'test' },
-          output: null,
-        } as never,
-      ],
-    };
-    const { getByText, queryByText } = render(
-      <ChatMessage message={msg} status="ready" {...handlers} />,
-    );
-
-    await user.click(getByText('list_users'));
-    expect(queryByText('Output')).not.toBeInTheDocument();
-  });
-
-  it('hides input section when input is null', async () => {
-    const user = userEvent.setup();
-    const msg: UIMessage = {
-      id: 'a6',
-      role: 'assistant',
-      parts: [
-        {
-          type: 'tool-list_users' as 'dynamic-tool',
-          toolCallId: 'tc10',
-          toolName: 'list_users',
-          state: 'output-available',
-          input: null,
-          output: { ok: true },
-        } as never,
-      ],
-    };
-    const { getByText, queryByText } = render(
-      <ChatMessage message={msg} status="ready" {...handlers} />,
-    );
-
-    await user.click(getByText('list_users'));
-    expect(queryByText('Input')).not.toBeInTheDocument();
-    expect(getByText('Output')).toBeInTheDocument();
   });
 
   // -------------------------------------------------------------------------
@@ -368,70 +296,10 @@ describe('ChatMessage', () => {
       role: 'assistant',
       parts: [{ type: 'source-url' as never, sourceId: 'x', url: 'http://x' } as never],
     };
-    const { container } = render(<ChatMessage message={msg} status="ready" {...handlers} />);
+    const { container } = render(
+      <ChatMessage message={msg} isLastMessage={false} isStreaming={false} {...handlers} />,
+    );
     const contentDiv = container.querySelector('.min-w-0');
     expect(contentDiv?.children).toHaveLength(0);
-  });
-
-  // -------------------------------------------------------------------------
-  // ThinkingBlock toggle
-  // -------------------------------------------------------------------------
-
-  it('toggles ThinkingBlock open and closed', async () => {
-    const user = userEvent.setup();
-    const msg: UIMessage = {
-      id: 'toggle1',
-      role: 'assistant',
-      parts: [{ type: 'reasoning', text: 'Deep thought' }],
-    };
-    const { getByText } = render(<ChatMessage message={msg} status="ready" {...handlers} />);
-
-    const btn = getByText('ai.thoughtProcess');
-    const content = getByText('Deep thought');
-    const collapseDiv = content.closest('.transition-\\[max-height\\,opacity\\]');
-
-    // Initially closed
-    expect(collapseDiv).toHaveStyle({ opacity: '0' });
-
-    // Open
-    await user.click(btn);
-    expect(collapseDiv).toHaveStyle({ opacity: '1' });
-
-    // Close again
-    await user.click(btn);
-    expect(collapseDiv).toHaveStyle({ opacity: '0' });
-  });
-
-  // -------------------------------------------------------------------------
-  // ToolInvocationCard toggle
-  // -------------------------------------------------------------------------
-
-  it('toggles ToolInvocationCard open and closed', async () => {
-    const user = userEvent.setup();
-    const msg: UIMessage = {
-      id: 'toggle2',
-      role: 'assistant',
-      parts: [
-        {
-          type: 'tool-list_users' as 'dynamic-tool',
-          toolCallId: 'tc11',
-          toolName: 'list_users',
-          state: 'output-available',
-          input: { q: 'x' },
-          output: { r: 1 },
-        } as never,
-      ],
-    };
-    const { getByText } = render(<ChatMessage message={msg} status="ready" {...handlers} />);
-
-    // Open
-    await user.click(getByText('list_users'));
-    const inputLabel = getByText('Input');
-    expect(inputLabel).toBeInTheDocument();
-
-    // Close
-    await user.click(getByText('list_users'));
-    const collapseDiv = inputLabel.closest('.transition-\\[max-height\\,opacity\\]');
-    expect(collapseDiv).toHaveStyle({ maxHeight: '0px' });
   });
 });

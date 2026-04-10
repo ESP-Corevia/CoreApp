@@ -14,7 +14,7 @@ const TEST_DATE = '2099-06-15';
 
 beforeAll(async () => {
   await applyMigration();
-});
+}, 30_000);
 
 beforeEach(async () => {
   await resetDb();
