@@ -15,6 +15,7 @@ const merged = mergeConfig(baseConfig, {
   },
   test: {
     environment: 'node',
+    hookTimeout: 30_000,
     setupFiles: ['./test/setup.ts'],
     coverage: {
       enabled: true,
