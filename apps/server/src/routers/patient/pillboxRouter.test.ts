@@ -64,6 +64,7 @@ beforeEach(() => {
   mockServices.medicationsService.updateSchedule.mockReset();
   mockServices.medicationsService.deleteSchedule.mockReset();
   mockServices.medicationsService.today.mockReset();
+  mockServices.medicationsService.intakeHistory.mockReset();
   mockServices.medicationsService.markIntakeTaken.mockReset();
   mockServices.medicationsService.markIntakeSkipped.mockReset();
 });
@@ -216,6 +217,46 @@ describe('pillbox.today', () => {
     await caller.pillbox.today({});
 
     expect(mockServices.medicationsService.today).toHaveBeenCalledWith('u_1');
+  });
+});
+
+describe('pillbox.intakeHistory', () => {
+  it('rejects unauthenticated', async () => {
+    const caller = createTestCaller({ customSession: null });
+    await expect(
+      caller.pillbox.intakeHistory({ from: '2025-06-15', to: '2025-06-20' }),
+    ).rejects.toThrow('Authentication required');
+  });
+
+  it('calls service with session userId and date range', async () => {
+    mockServices.medicationsService.intakeHistory.mockResolvedValue({
+      days: [
+        { date: '2025-06-15', allTaken: true },
+        { date: '2025-06-16', allTaken: null },
+      ],
+    });
+
+    const caller = createTestCaller({ customSession: fakeSession });
+    const result = await caller.pillbox.intakeHistory({
+      from: '2025-06-15',
+      to: '2025-06-16',
+    });
+
+    expect(mockServices.medicationsService.intakeHistory).toHaveBeenCalledWith(
+      'u_1',
+      '2025-06-15',
+      '2025-06-16',
+    );
+    expect(result.days).toHaveLength(2);
+    expect(result.days[0].allTaken).toBe(true);
+    expect(result.days[1].allTaken).toBeNull();
+  });
+
+  it('rejects invalid date format', async () => {
+    const caller = createTestCaller({ customSession: fakeSession });
+    await expect(
+      caller.pillbox.intakeHistory({ from: 'not-a-date', to: '2025-06-20' }),
+    ).rejects.toThrow();
   });
 });
 

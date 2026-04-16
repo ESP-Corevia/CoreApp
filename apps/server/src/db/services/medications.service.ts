@@ -351,6 +351,33 @@ export const createMedicationsService = (repo: MedicationsRepo, provider: Medica
     },
 
     /**
+     * Retourne la compliance journalière du patient sur une plage de dates.
+     * `true` = toutes prises TAKEN, `false` = au moins une PENDING/SKIPPED, `null` = aucun médicament ce jour.
+     * @throws BAD_REQUEST si `from` > `to`.
+     */
+    intakeHistory: async (patientId: string, from: string, to: string) => {
+      if (from > to) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'from must be before or equal to to',
+        });
+      }
+      const rows = await repo.listIntakesByDateRange(patientId, from, to);
+      const lookup = new Map(rows.map(r => [r.date, r.allTaken]));
+
+      const days: Array<{ date: string; allTaken: boolean | null }> = [];
+      const cursor = new Date(`${from}T12:00:00Z`);
+      const end = new Date(`${to}T12:00:00Z`);
+      while (cursor <= end) {
+        const date = cursor.toISOString().slice(0, 10);
+        days.push({ date, allTaken: lookup.get(date) ?? null });
+        cursor.setUTCDate(cursor.getUTCDate() + 1);
+      }
+
+      return { days };
+    },
+
+    /**
      * Marque une prise comme TAKEN. Ne fonctionne que si la prise est encore PENDING.
      * @throws NOT_FOUND si la prise n'existe pas.
      * @throws FORBIDDEN si le médicament n'appartient pas au patient.

@@ -387,6 +387,39 @@ export const createMedicationsRepo = (db: DrizzleDB) => ({
   },
 
   /**
+   * Récupère la compliance journalière pour un patient sur une plage de dates.
+   * Pour chaque jour ayant des intakes, retourne `true` si TOUTES les prises sont TAKEN, `false` sinon.
+   * Ne retourne que les jours ayant au moins une intake.
+   */
+  listIntakesByDateRange: async (patientId: string, from: string, to: string) => {
+    const rows = await db
+      .select({
+        scheduledDate: patientMedicationIntakes.scheduledDate,
+        total: sql<number>`count(*)`,
+        taken: sql<number>`count(*) filter (where ${patientMedicationIntakes.status} = 'TAKEN')`,
+      })
+      .from(patientMedicationIntakes)
+      .innerJoin(
+        patientMedications,
+        eq(patientMedicationIntakes.patientMedicationId, patientMedications.id),
+      )
+      .where(
+        and(
+          eq(patientMedications.patientId, patientId),
+          gte(patientMedicationIntakes.scheduledDate, from),
+          lte(patientMedicationIntakes.scheduledDate, to),
+        ),
+      )
+      .groupBy(patientMedicationIntakes.scheduledDate)
+      .orderBy(asc(patientMedicationIntakes.scheduledDate));
+
+    return rows.map(r => ({
+      date: r.scheduledDate,
+      allTaken: Number(r.total) > 0 && Number(r.taken) === Number(r.total),
+    }));
+  },
+
+  /**
    * Met à jour le statut d'une prise (TAKEN ou SKIPPED). Ne fonctionne que si la prise est encore PENDING.
    * Enregistre `takenAt` automatiquement si le statut est TAKEN.
    * @returns La prise mise à jour, ou `null` si introuvable ou déjà traitée.
