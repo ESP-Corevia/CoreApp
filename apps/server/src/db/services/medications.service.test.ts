@@ -971,6 +971,59 @@ describe('adminDeleteMedication', () => {
   });
 });
 
+// ─── Intake History ───────────────────────────────────────────
+
+describe('intakeHistory', () => {
+  it('returns allTaken values for days with intakes and null for days without', async () => {
+    repo.listIntakesByDateRange.mockResolvedValue([
+      { date: '2025-06-15', allTaken: true },
+      { date: '2025-06-17', allTaken: false },
+    ]);
+
+    const result = await service.intakeHistory('u_1', '2025-06-15', '2025-06-18');
+
+    expect(result).toEqual({
+      days: [
+        { date: '2025-06-15', allTaken: true },
+        { date: '2025-06-16', allTaken: null },
+        { date: '2025-06-17', allTaken: false },
+        { date: '2025-06-18', allTaken: null },
+      ],
+    });
+    expect(repo.listIntakesByDateRange).toHaveBeenCalledWith('u_1', '2025-06-15', '2025-06-18');
+  });
+
+  it('returns all null when no intakes exist in range', async () => {
+    repo.listIntakesByDateRange.mockResolvedValue([]);
+
+    const result = await service.intakeHistory('u_1', '2025-06-15', '2025-06-17');
+
+    expect(result).toEqual({
+      days: [
+        { date: '2025-06-15', allTaken: null },
+        { date: '2025-06-16', allTaken: null },
+        { date: '2025-06-17', allTaken: null },
+      ],
+    });
+  });
+
+  it('returns single day when from equals to', async () => {
+    repo.listIntakesByDateRange.mockResolvedValue([{ date: '2025-06-15', allTaken: true }]);
+
+    const result = await service.intakeHistory('u_1', '2025-06-15', '2025-06-15');
+
+    expect(result).toEqual({
+      days: [{ date: '2025-06-15', allTaken: true }],
+    });
+  });
+
+  it('throws BAD_REQUEST when from > to', async () => {
+    await expect(service.intakeHistory('u_1', '2025-06-20', '2025-06-15')).rejects.toMatchObject({
+      code: 'BAD_REQUEST',
+    });
+  });
+});
+
 // ─── Doctor Operations ──────────────────────────────────────
 
 describe('doctorListPatientPillbox', () => {

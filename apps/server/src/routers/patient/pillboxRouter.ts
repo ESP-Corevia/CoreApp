@@ -4,6 +4,8 @@ import {
   AddScheduleInputSchema,
   CreatePatientMedicationInputSchema,
   DeleteScheduleInputSchema,
+  IntakeHistoryInputSchema,
+  IntakeHistoryOutputSchema,
   IntakeOutputSchema,
   ListPillboxInputSchema,
   ListPillboxOutputSchema,
@@ -179,6 +181,23 @@ export const patientPillboxRouter = router({
         input.id,
         session.role === 'admin',
       );
+    }),
+
+  intakeHistory: patientProcedure
+    .meta({
+      openapi: {
+        method: 'GET',
+        path: '/pillbox/history',
+        summary: 'Get intake history by date range',
+        description:
+          'Returns a boolean per day indicating whether all intakes were taken (true) or any were pending/skipped (false).',
+        tags: ['Pillbox'],
+      },
+    })
+    .input(IntakeHistoryInputSchema)
+    .output(IntakeHistoryOutputSchema)
+    .query(async ({ input, ctx: { session, services } }) => {
+      return await services.medicationsService.intakeHistory(session.userId, input.from, input.to);
     }),
 
   markIntakeTaken: patientProcedure

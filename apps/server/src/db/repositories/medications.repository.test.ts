@@ -653,6 +653,87 @@ describe('medications.repository', () => {
     });
   });
 
+  // ─── Intake History ─────────────────────────────────────
+
+  describe('listIntakesByDateRange', () => {
+    it('returns allTaken=true when all intakes are TAKEN', async () => {
+      const med = await seedMedication();
+      const i1 = await seedIntake(med.id, null, {
+        scheduledDate: '2025-06-15',
+        scheduledTime: '08:00',
+      });
+      const i2 = await seedIntake(med.id, null, {
+        scheduledDate: '2025-06-15',
+        scheduledTime: '20:00',
+      });
+      await repo.updateIntakeStatus(i1.id, 'TAKEN');
+      await repo.updateIntakeStatus(i2.id, 'TAKEN');
+
+      const result = await repo.listIntakesByDateRange(patientId, '2025-06-15', '2025-06-15');
+
+      expect(result).toHaveLength(1);
+      expect(result[0]).toEqual({ date: '2025-06-15', allTaken: true });
+    });
+
+    it('returns allTaken=false when some intakes are PENDING', async () => {
+      const med = await seedMedication();
+      const i1 = await seedIntake(med.id, null, {
+        scheduledDate: '2025-06-15',
+        scheduledTime: '08:00',
+      });
+      await seedIntake(med.id, null, { scheduledDate: '2025-06-15', scheduledTime: '20:00' });
+      await repo.updateIntakeStatus(i1.id, 'TAKEN');
+
+      const result = await repo.listIntakesByDateRange(patientId, '2025-06-15', '2025-06-15');
+
+      expect(result).toHaveLength(1);
+      expect(result[0]).toEqual({ date: '2025-06-15', allTaken: false });
+    });
+
+    it('returns allTaken=false when some intakes are SKIPPED', async () => {
+      const med = await seedMedication();
+      const i1 = await seedIntake(med.id, null, {
+        scheduledDate: '2025-06-15',
+        scheduledTime: '08:00',
+      });
+      await repo.updateIntakeStatus(i1.id, 'SKIPPED');
+
+      const result = await repo.listIntakesByDateRange(patientId, '2025-06-15', '2025-06-15');
+
+      expect(result).toHaveLength(1);
+      expect(result[0].allTaken).toBe(false);
+    });
+
+    it('returns multiple days ordered by date', async () => {
+      const med = await seedMedication();
+      const i1 = await seedIntake(med.id, null, {
+        scheduledDate: '2025-06-15',
+        scheduledTime: '08:00',
+      });
+      await seedIntake(med.id, null, { scheduledDate: '2025-06-16', scheduledTime: '08:00' });
+      await repo.updateIntakeStatus(i1.id, 'TAKEN');
+
+      const result = await repo.listIntakesByDateRange(patientId, '2025-06-15', '2025-06-16');
+
+      expect(result).toHaveLength(2);
+      expect(result[0]).toEqual({ date: '2025-06-15', allTaken: true });
+      expect(result[1]).toEqual({ date: '2025-06-16', allTaken: false });
+    });
+
+    it('returns empty array when no intakes in range', async () => {
+      const result = await repo.listIntakesByDateRange(patientId, '2025-06-15', '2025-06-20');
+      expect(result).toEqual([]);
+    });
+
+    it('excludes other patients intakes', async () => {
+      const otherMed = await seedMedication({ patientId: otherPatientId });
+      await seedIntake(otherMed.id, null, { scheduledDate: '2025-06-15' });
+
+      const result = await repo.listIntakesByDateRange(patientId, '2025-06-15', '2025-06-15');
+      expect(result).toEqual([]);
+    });
+  });
+
   // ─── Admin Queries ──────────────────────────────────────
 
   describe('listAllMedications', () => {

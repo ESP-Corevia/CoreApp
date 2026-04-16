@@ -201,6 +201,36 @@ services:
         limits:
           memory: 128M
 
+  minio:
+    profiles:
+      - minio
+    image: minio/minio:latest
+    container_name: Corevia-minio
+    command: server /data --console-address ":9001"
+    env_file:
+      - ./.env
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+    ports:
+      - "${MINIO_API_PORT:-9000}:9000"
+      - "${MINIO_CONSOLE_PORT:-9001}:9001"
+    volumes:
+      - Corevia_minio_data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - frontend
+      - backend
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
 networks:
   frontend:
     driver: bridge
@@ -210,4 +240,5 @@ networks:
 
 volumes:
   Corevia_postgres_data:
+  Corevia_minio_data:
   drizzle-gateway:

@@ -231,6 +231,24 @@ export const IntakeOutputSchema = z.object({
 
 // ─── Admin Pillbox ──────────────────────────────────────────
 
+// ─── Intake History ────────────────────────────────────────
+
+export const IntakeHistoryInputSchema = z.object({
+  from: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Must be YYYY-MM-DD'),
+  to: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Must be YYYY-MM-DD'),
+});
+
+export const IntakeHistoryOutputSchema = z.object({
+  days: z.array(
+    z.object({
+      date: z.string(),
+      allTaken: z.boolean().nullable(),
+    }),
+  ),
+});
+
+// ─── Admin Pillbox ──────────────────────────────────────────
+
 export const AdminListPillboxInputSchema = z.object({
   patientId: z.uuid().optional(),
   search: z.string().max(100).optional(),
