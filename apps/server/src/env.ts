@@ -22,6 +22,11 @@ const envSchema = z.object({
   API_MEDICAMENTS_TIMEOUT: z.coerce.number().default(5000),
   API_MEDICAMENTS_CACHE_TTL: z.coerce.number().default(900000),
   NVIDIA_API_KEY: z.string(),
+  S3_ENDPOINT: z.url().default('http://localhost:9000'),
+  S3_ACCESS_KEY: z.string().default('minioadmin'),
+  S3_SECRET_KEY: z.string().default('minioadmin'),
+  S3_BUCKET_NAME: z.string().default('corevia'),
+  S3_REGION: z.string().default('us-east-1'),
 });
 
 const parsed = envSchema.safeParse(process.env);

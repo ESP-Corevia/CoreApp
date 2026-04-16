@@ -3,6 +3,7 @@ import type { createAiMetricsService } from '../src/db/services/aiMetrics.servic
 import type { createAppointmentsService } from '../src/db/services/appointments.service';
 import type { createAvailabilityService } from '../src/db/services/availability.service';
 import type { createDoctorsService } from '../src/db/services/doctors.service';
+import type { createDocumentsService } from '../src/db/services/documents.service';
 import type { createMedicationsService } from '../src/db/services/medications.service';
 import type { createPatientsService } from '../src/db/services/patients.service';
 import type { createUsersService } from '../src/db/services/users.service';
@@ -14,6 +15,7 @@ type PatientsService = ReturnType<typeof createPatientsService>;
 type AvailabilityService = ReturnType<typeof createAvailabilityService>;
 type AppointmentsService = ReturnType<typeof createAppointmentsService>;
 type MedicationsService = ReturnType<typeof createMedicationsService>;
+type DocumentsService = ReturnType<typeof createDocumentsService>;
 
 export const mockUsersService: DeepMockProxy<UsersService> = mockDeep<UsersService>();
 export const mockAiMetricsService: DeepMockProxy<AiMetricsService> = mockDeep<AiMetricsService>();
@@ -25,6 +27,7 @@ export const mockAppointmentsService: DeepMockProxy<AppointmentsService> =
   mockDeep<AppointmentsService>();
 export const mockMedicationsService: DeepMockProxy<MedicationsService> =
   mockDeep<MedicationsService>();
+export const mockDocumentsService: DeepMockProxy<DocumentsService> = mockDeep<DocumentsService>();
 
 export const mockServices = {
   usersService: mockUsersService,
@@ -34,4 +37,5 @@ export const mockServices = {
   availabilityService: mockAvailabilityService,
   appointmentsService: mockAppointmentsService,
   medicationsService: mockMedicationsService,
+  documentsService: mockDocumentsService,
 };
