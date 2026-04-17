@@ -95,7 +95,19 @@
           "CANCELLED": "Cancelled"
         },
         "filterByStatus": "Filter by status",
-        "allStatuses": "All statuses"
+        "allStatuses": "All statuses",
+        "upcoming": "Upcoming",
+        "past": "Past",
+        "today": "Today",
+        "tomorrow": "Tomorrow",
+        "yesterday": "Yesterday",
+        "inDays_one": "In {{count}} day",
+        "inDays_other": "In {{count}} days",
+        "daysAgo_one": "{{count}} day ago",
+        "daysAgo_other": "{{count}} days ago",
+        "reason": "Reason",
+        "details": "Details",
+        "reference": "Reference"
       },
       "doctors": {
         "title": "Find a Doctor",
@@ -151,6 +163,7 @@
           "period": "Period",
           "schedules": "Schedules",
           "addSchedule": "Add schedule",
+          "editSchedule": "Edit schedule",
           "notes": "Notes",
           "notesPlaceholder": "Optional note (e.g. before breakfast)",
           "noSchedules": "No schedules yet",
@@ -208,7 +221,15 @@
         "complete": "Complete",
         "cancel": "Cancel",
         "filterByStatus": "Filter by status",
-        "allStatuses": "All statuses"
+        "allStatuses": "All statuses",
+        "upcoming": "Upcoming",
+        "past": "Past",
+        "statsTodayCount": "Today",
+        "statsPendingCount": "Pending",
+        "statsUpcomingCount": "Upcoming",
+        "viewPillbox": "View pillbox",
+        "reason": "Reason",
+        "details": "Details"
       },
       "patientPillbox": {
         "title": "Patient Medications",

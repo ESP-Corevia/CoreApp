@@ -39,13 +39,30 @@ export default function PatientHome() {
       p => ((p as Record<string, unknown>)?.items as Array<Record<string, unknown>>) ?? [],
     ) ?? [];
 
-  const upcomingCount = allAppointments.filter(
-    a => a.status === 'PENDING' || a.status === 'CONFIRMED',
-  ).length;
+  const getAppointmentTs = (a: Record<string, unknown>): number => {
+    const dateRaw = a.date as string | undefined;
+    if (!dateRaw) return Number.POSITIVE_INFINITY;
+    if (dateRaw.includes('T')) {
+      const d = new Date(dateRaw);
+      return Number.isNaN(d.getTime()) ? Number.POSITIVE_INFINITY : d.getTime();
+    }
+    const timeRaw = (a.time as string | undefined) ?? '00:00:00';
+    const d = new Date(`${dateRaw}T${timeRaw}`);
+    return Number.isNaN(d.getTime()) ? Number.POSITIVE_INFINITY : d.getTime();
+  };
 
-  const nextAppointment = allAppointments.find(
-    a => a.status === 'PENDING' || a.status === 'CONFIRMED',
-  ) as Parameters<typeof NextAppointmentCard>[0]['appointment'] | undefined;
+  const nowMs = Date.now();
+  const ONE_HOUR = 60 * 60 * 1000;
+  const upcomingSorted = allAppointments
+    .filter(a => a.status === 'PENDING' || a.status === 'CONFIRMED')
+    .map(a => ({ a, ts: getAppointmentTs(a) }))
+    .filter(x => x.ts >= nowMs - ONE_HOUR)
+    .sort((x, y) => x.ts - y.ts);
+
+  const upcomingCount = upcomingSorted.length;
+  const nextAppointment = upcomingSorted[0]?.a as
+    | Parameters<typeof NextAppointmentCard>[0]['appointment']
+    | undefined;
 
   const todayIntakes =
     ((pillboxToday.data as Record<string, unknown>)?.intakes as Array<Record<string, unknown>>) ??

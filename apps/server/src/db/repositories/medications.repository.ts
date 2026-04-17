@@ -280,14 +280,24 @@ export const createMedicationsRepo = (db: DrizzleDB) => ({
 
   /**
    * Supprime un schedule par son ID.
+   * Annule d'abord la référence `schedule_id` sur les prises existantes, car la FK composite
+   * (patient_medication_id, schedule_id) avec ON DELETE SET NULL tenterait sinon de mettre
+   * `patient_medication_id` (NOT NULL) à NULL, ce qui lève une erreur Postgres.
    * @returns L'ID du schedule supprimé, ou `null` si introuvable.
    */
   deleteSchedule: async (id: string) => {
-    const [row] = await db
-      .delete(patientMedicationSchedules)
-      .where(eq(patientMedicationSchedules.id, id))
-      .returning({ id: patientMedicationSchedules.id });
-    return row ?? null;
+    return await db.transaction(async tx => {
+      await tx
+        .update(patientMedicationIntakes)
+        .set({ scheduleId: null })
+        .where(eq(patientMedicationIntakes.scheduleId, id));
+
+      const [row] = await tx
+        .delete(patientMedicationSchedules)
+        .where(eq(patientMedicationSchedules.id, id))
+        .returning({ id: patientMedicationSchedules.id });
+      return row ?? null;
+    });
   },
 
   /**

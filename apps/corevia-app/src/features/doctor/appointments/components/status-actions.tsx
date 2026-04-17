@@ -14,13 +14,17 @@ export function StatusActions({ appointmentId, status }: StatusActionsProps) {
   const isPending = updateStatus.isPending;
 
   return (
-    <div className="flex flex-wrap gap-2" onClick={e => e.preventDefault()}>
+    <div className="flex flex-wrap gap-2">
       {status === 'PENDING' && (
         <Button
           size="sm"
           variant="default"
           disabled={isPending}
-          onClick={() => updateStatus.mutate({ id: appointmentId, status: 'CONFIRMED' })}
+          className="h-8 flex-1 sm:flex-initial"
+          onClick={e => {
+            e.preventDefault();
+            updateStatus.mutate({ id: appointmentId, status: 'CONFIRMED' });
+          }}
         >
           {t('doctor.appointments.confirm')}
         </Button>
@@ -30,7 +34,11 @@ export function StatusActions({ appointmentId, status }: StatusActionsProps) {
           size="sm"
           variant="outline"
           disabled={isPending}
-          onClick={() => updateStatus.mutate({ id: appointmentId, status: 'COMPLETED' })}
+          className="h-8 flex-1 sm:flex-initial"
+          onClick={e => {
+            e.preventDefault();
+            updateStatus.mutate({ id: appointmentId, status: 'COMPLETED' });
+          }}
         >
           {t('doctor.appointments.complete')}
         </Button>
@@ -40,7 +48,11 @@ export function StatusActions({ appointmentId, status }: StatusActionsProps) {
           size="sm"
           variant="destructive"
           disabled={isPending}
-          onClick={() => updateStatus.mutate({ id: appointmentId, status: 'CANCELLED' })}
+          className="h-8 flex-1 sm:flex-initial"
+          onClick={e => {
+            e.preventDefault();
+            updateStatus.mutate({ id: appointmentId, status: 'CANCELLED' });
+          }}
         >
           {t('doctor.appointments.cancel')}
         </Button>

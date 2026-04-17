@@ -1,4 +1,13 @@
-import { AlertTriangle, ArrowLeft, Calendar, Clock, PillBottle, Plus, Trash2 } from 'lucide-react';
+import {
+  AlertTriangle,
+  ArrowLeft,
+  Calendar,
+  Clock,
+  Pencil,
+  PillBottle,
+  Plus,
+  Trash2,
+} from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router';
@@ -13,15 +22,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
 import { usePatientOnboarded } from '@/hooks/use-patient-onboarded';
 import { useRequireAuth } from '@/hooks/use-require-auth';
@@ -31,9 +31,8 @@ import { useAddSchedule } from '@/queries/patient/useAddSchedule';
 import { useDeleteMedication } from '@/queries/patient/useDeleteMedication';
 import { useDeleteSchedule } from '@/queries/patient/useDeleteSchedule';
 import { usePillboxDetail } from '@/queries/patient/usePillboxDetail';
-
-type Moment = 'MORNING' | 'NOON' | 'EVENING' | 'BEDTIME' | 'CUSTOM';
-const MOMENTS: Moment[] = ['MORNING', 'NOON', 'EVENING', 'BEDTIME', 'CUSTOM'];
+import { useUpdateSchedule } from '@/queries/patient/useUpdateSchedule';
+import { type Moment, ScheduleForm, type ScheduleFormValue } from '../components/schedule-form';
 
 interface Schedule {
   id: string;
@@ -63,13 +62,10 @@ export default function PatientPillboxDetail() {
   const deleteMed = useDeleteMedication();
   const deleteSchedule = useDeleteSchedule(id ?? '');
   const addSchedule = useAddSchedule();
+  const updateSchedule = useUpdateSchedule(id ?? '');
 
   const [showAddSchedule, setShowAddSchedule] = useState(false);
-  const [newTime, setNewTime] = useState('08:00');
-  const [newMoment, setNewMoment] = useState<Moment>('MORNING');
-  const [newQuantity, setNewQuantity] = useState('1');
-  const [newUnit, setNewUnit] = useState('');
-  const [newNotes, setNewNotes] = useState('');
+  const [editing, setEditing] = useState<Schedule | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
 
   if (authLoading || roleLoading || onboardingLoading) return <Loader />;
@@ -89,26 +85,36 @@ export default function PatientPillboxDetail() {
     );
   };
 
-  const handleAddSchedule = () => {
+  const handleAddSchedule = (value: ScheduleFormValue) => {
     if (!id) return;
     addSchedule.mutate(
       {
         patientMedicationId: id,
-        intakeTime: newTime,
-        intakeMoment: newMoment,
-        quantity: newQuantity.trim() || '1',
-        unit: newUnit.trim() || null,
-        notes: newNotes.trim() || null,
+        intakeTime: value.intakeTime,
+        intakeMoment: value.intakeMoment,
+        quantity: value.quantity,
+        unit: value.unit || null,
+        notes: value.notes || null,
       },
       {
-        onSuccess: () => {
-          setShowAddSchedule(false);
-          setNewTime('08:00');
-          setNewMoment('MORNING');
-          setNewQuantity('1');
-          setNewUnit('');
-          setNewNotes('');
-        },
+        onSuccess: () => setShowAddSchedule(false),
+      },
+    );
+  };
+
+  const handleEditSchedule = (value: ScheduleFormValue) => {
+    if (!editing) return;
+    updateSchedule.mutate(
+      {
+        id: editing.id,
+        intakeTime: value.intakeTime,
+        intakeMoment: value.intakeMoment,
+        quantity: value.quantity,
+        unit: value.unit || null,
+        notes: value.notes || null,
+      },
+      {
+        onSuccess: () => setEditing(null),
       },
     );
   };
@@ -267,71 +273,14 @@ export default function PatientPillboxDetail() {
             </CardHeader>
             <CardContent className="space-y-3">
               {showAddSchedule && (
-                <div className="space-y-3 rounded-xl border bg-muted/30 p-3">
-                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                    <div className="space-y-1.5">
-                      <Label htmlFor="new-time">{t('patient.pillbox.form.time')}</Label>
-                      <Input
-                        id="new-time"
-                        type="time"
-                        value={newTime}
-                        onChange={e => setNewTime(e.target.value)}
-                        className="tabular-nums"
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <Label htmlFor="new-moment">{t('patient.pillbox.form.moment')}</Label>
-                      <Select value={newMoment} onValueChange={v => setNewMoment(v as Moment)}>
-                        <SelectTrigger id="new-moment">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {MOMENTS.map(m => (
-                            <SelectItem key={m} value={m}>
-                              {t(`patient.pillbox.moment.${m}`)}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="space-y-1.5">
-                      <Label htmlFor="new-qty">{t('patient.pillbox.form.quantity')}</Label>
-                      <Input
-                        id="new-qty"
-                        value={newQuantity}
-                        onChange={e => setNewQuantity(e.target.value)}
-                        placeholder="1"
-                        inputMode="decimal"
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <Label htmlFor="new-unit">{t('patient.pillbox.form.unit')}</Label>
-                      <Input
-                        id="new-unit"
-                        value={newUnit}
-                        onChange={e => setNewUnit(e.target.value)}
-                        placeholder={t('patient.pillbox.form.unitPlaceholder')}
-                        maxLength={30}
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="new-notes">{t('patient.pillbox.detail.notes')}</Label>
-                    <Input
-                      id="new-notes"
-                      value={newNotes}
-                      onChange={e => setNewNotes(e.target.value)}
-                      placeholder={t('patient.pillbox.detail.notesPlaceholder')}
-                      maxLength={200}
-                    />
-                  </div>
-                  <div className="flex justify-end gap-2">
-                    <Button size="sm" onClick={handleAddSchedule} disabled={addSchedule.isPending}>
-                      {addSchedule.isPending ? t('common.loading') : t('common.save')}
-                    </Button>
-                  </div>
+                <div className="rounded-xl border bg-muted/30 p-3">
+                  <ScheduleForm
+                    isPending={addSchedule.isPending}
+                    submitLabel={t('common.save')}
+                    onSubmit={handleAddSchedule}
+                    onCancel={() => setShowAddSchedule(false)}
+                    idPrefix="add"
+                  />
                 </div>
               )}
 
@@ -383,16 +332,29 @@ export default function PatientPillboxDetail() {
                             </p>
                           )}
                         </div>
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          className="h-9 w-9 text-muted-foreground hover:text-destructive"
-                          onClick={() => handleDeleteSchedule(schedule.id)}
-                          disabled={deleteSchedule.isPending}
-                          aria-label={t('common.delete')}
-                        >
-                          <Trash2 className="size-4" aria-hidden="true" />
-                        </Button>
+                        <div className="flex shrink-0 items-center gap-0.5">
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            className="h-9 w-9 text-muted-foreground hover:text-foreground"
+                            onClick={() => setEditing(schedule)}
+                            aria-label={t('patient.pillbox.detail.editSchedule')}
+                            title={t('patient.pillbox.detail.editSchedule')}
+                          >
+                            <Pencil className="size-4" aria-hidden="true" />
+                          </Button>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            className="h-9 w-9 text-muted-foreground hover:text-destructive"
+                            onClick={() => handleDeleteSchedule(schedule.id)}
+                            disabled={deleteSchedule.isPending}
+                            aria-label={t('common.delete')}
+                            title={t('common.delete')}
+                          >
+                            <Trash2 className="size-4" aria-hidden="true" />
+                          </Button>
+                        </div>
                       </li>
                     );
                   })}
@@ -451,6 +413,30 @@ export default function PatientPillboxDetail() {
                     : t('patient.pillbox.detail.deleteConfirm')}
                 </Button>
               </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          <Dialog open={!!editing} onOpenChange={o => !o && setEditing(null)}>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>{t('patient.pillbox.detail.editSchedule')}</DialogTitle>
+              </DialogHeader>
+              {editing && (
+                <ScheduleForm
+                  initial={{
+                    intakeTime: formatTime(editing.intakeTime) || '08:00',
+                    intakeMoment: (editing.intakeMoment as Moment | null | undefined) ?? 'MORNING',
+                    quantity: editing.quantity ?? '1',
+                    unit: editing.unit ?? '',
+                    notes: editing.notes ?? '',
+                  }}
+                  isPending={updateSchedule.isPending}
+                  submitLabel={t('common.save')}
+                  onSubmit={handleEditSchedule}
+                  onCancel={() => setEditing(null)}
+                  idPrefix="edit"
+                />
+              )}
             </DialogContent>
           </Dialog>
         </>
