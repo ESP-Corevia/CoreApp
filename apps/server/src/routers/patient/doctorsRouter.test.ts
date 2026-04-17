@@ -26,7 +26,7 @@ const fakeDoctors = [
     specialty: 'Dermatology',
     address: '5 Avenue des Champs',
     city: 'Lyon',
-    verified: false,
+    verified: true,
   },
 ];
 
@@ -65,6 +65,7 @@ describe('doctorsRouter', () => {
         search: undefined,
         page: 1,
         limit: 20,
+        verified: true,
       });
     });
 
@@ -93,6 +94,7 @@ describe('doctorsRouter', () => {
         search: 'Alice',
         page: 1,
         limit: 10,
+        verified: true,
       });
     });
 

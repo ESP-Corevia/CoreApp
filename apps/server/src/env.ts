@@ -27,6 +27,7 @@ const envSchema = z.object({
   S3_SECRET_KEY: z.string().default('minioadmin'),
   S3_BUCKET_NAME: z.string().default('corevia'),
   S3_REGION: z.string().default('us-east-1'),
+  S3_FORCE_PATH_STYLE: z.coerce.boolean().default(true),
 });
 
 const parsed = envSchema.safeParse(process.env);

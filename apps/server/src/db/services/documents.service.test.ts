@@ -85,6 +85,56 @@ describe('documentsService', () => {
     });
   });
 
+  describe('adminConfirmUpload', () => {
+    it('throws NOT_FOUND when document does not exist', async () => {
+      mockDocumentsRepo.findByIdIncludeDeleted.mockResolvedValue(null);
+
+      await expect(service.adminConfirmUpload('doc-1')).rejects.toThrow('Document not found');
+    });
+
+    it('throws BAD_REQUEST when file not in storage', async () => {
+      mockDocumentsRepo.findByIdIncludeDeleted.mockResolvedValue({
+        id: 'doc-1',
+        userId: 'user-1',
+        fileName: 'test.pdf',
+        fileKey: 'users/user-1/doc-1.pdf',
+        mimeType: 'application/pdf',
+        fileSize: 1024,
+        status: 'pending' as const,
+        deletedAt: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+      mockStorage.objectExists.mockResolvedValue(false);
+
+      await expect(service.adminConfirmUpload('doc-1')).rejects.toThrow('not been uploaded');
+    });
+
+    it('confirms upload when file exists in storage', async () => {
+      const doc = {
+        id: 'doc-1',
+        userId: 'user-1',
+        fileName: 'test.pdf',
+        fileKey: 'users/user-1/doc-1.pdf',
+        mimeType: 'application/pdf',
+        fileSize: 1024,
+        status: 'pending' as const,
+        deletedAt: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      mockDocumentsRepo.findByIdIncludeDeleted.mockResolvedValue(doc);
+      mockStorage.objectExists.mockResolvedValue(true);
+      mockDocumentsRepo.confirmUpload.mockResolvedValue({ ...doc, status: 'confirmed' as const });
+
+      const result = await service.adminConfirmUpload('doc-1');
+
+      expect(mockStorage.objectExists).toHaveBeenCalledWith('users/user-1/doc-1.pdf');
+      expect(mockDocumentsRepo.confirmUpload).toHaveBeenCalledWith('doc-1');
+      expect(result.status).toBe('confirmed');
+    });
+  });
+
   describe('list', () => {
     it('returns own documents for patient role', async () => {
       mockDocumentsRepo.findByUserId.mockResolvedValue([]);
@@ -116,6 +166,33 @@ describe('documentsService', () => {
   });
 
   describe('getDownloadUrl', () => {
+    it('throws NOT_FOUND when document does not exist', async () => {
+      mockDocumentsRepo.findById.mockResolvedValue(null);
+
+      await expect(service.getDownloadUrl('user-1', 'patient', 'doc-1')).rejects.toThrow(
+        'Document not found',
+      );
+    });
+
+    it('throws BAD_REQUEST when document upload is not confirmed', async () => {
+      mockDocumentsRepo.findById.mockResolvedValue({
+        id: 'doc-1',
+        userId: 'user-1',
+        fileName: 'test.pdf',
+        fileKey: 'users/user-1/doc-1.pdf',
+        mimeType: 'application/pdf',
+        fileSize: 1024,
+        status: 'pending',
+        deletedAt: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+
+      await expect(service.getDownloadUrl('user-1', 'patient', 'doc-1')).rejects.toThrow(
+        'not confirmed',
+      );
+    });
+
     it('generates a presigned download URL for doctor', async () => {
       mockDocumentsRepo.findById.mockResolvedValue({
         id: 'doc-1',
@@ -245,7 +322,12 @@ describe('documentsService', () => {
       mockDocumentsRepo.findAll.mockResolvedValue([fakeDoc]);
       mockDocumentsRepo.countAll.mockResolvedValue(1);
 
-      const result = await service.adminList({ page: 1, perPage: 10, search: 'john', includeDeleted: false });
+      const result = await service.adminList({
+        page: 1,
+        perPage: 10,
+        search: 'john',
+        includeDeleted: false,
+      });
 
       expect(mockDocumentsRepo.findAll).toHaveBeenCalledWith({
         search: 'john',

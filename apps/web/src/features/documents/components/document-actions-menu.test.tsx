@@ -41,9 +41,7 @@ describe('DocumentActionsMenu', () => {
 
   it('shows Download, Soft Delete, and Permanently Delete for active documents', async () => {
     const user = userEvent.setup();
-    const { getByRole, queryByText } = render(
-      <DocumentActionsMenu document={makeDocument()} />,
-    );
+    const { getByRole, queryByText } = render(<DocumentActionsMenu document={makeDocument()} />);
 
     await user.click(getByRole('button'));
 
@@ -56,9 +54,7 @@ describe('DocumentActionsMenu', () => {
   it('shows Download, Restore, and Permanently Delete for soft-deleted documents', async () => {
     const user = userEvent.setup();
     const { getByRole, queryByText } = render(
-      <DocumentActionsMenu
-        document={makeDocument({ deletedAt: '2024-02-01T00:00:00Z' })}
-      />,
+      <DocumentActionsMenu document={makeDocument({ deletedAt: '2024-02-01T00:00:00Z' })} />,
     );
 
     await user.click(getByRole('button'));
@@ -71,9 +67,7 @@ describe('DocumentActionsMenu', () => {
 
   it('shows confirmation dialog when clicking Permanently Delete', async () => {
     const user = userEvent.setup();
-    const { getByRole, queryByText } = render(
-      <DocumentActionsMenu document={makeDocument()} />,
-    );
+    const { getByRole, queryByText } = render(<DocumentActionsMenu document={makeDocument()} />);
 
     await user.click(getByRole('button'));
     // biome-ignore lint/style/noNonNullAssertion: test assertion

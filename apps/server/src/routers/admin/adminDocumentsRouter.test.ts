@@ -30,17 +30,17 @@ describe('adminDocumentsRouter', () => {
 
     it('rejects unauthenticated requests', async () => {
       const caller = createTestCaller({ customSession: null });
-      await expect(
-        caller.admin.adminListDocuments({ page: 1, perPage: 10 }),
-      ).rejects.toThrow('Authentication required');
+      await expect(caller.admin.adminListDocuments({ page: 1, perPage: 10 })).rejects.toThrow(
+        'Authentication required',
+      );
     });
 
     it('rejects non-admin users', async () => {
       authMock.api.userHasPermission.mockResolvedValue({ success: false, error: null });
       const caller = createTestCaller({ customSession: fakeSession });
-      await expect(
-        caller.admin.adminListDocuments({ page: 1, perPage: 10 }),
-      ).rejects.toThrow('You must be an admin to access this resource');
+      await expect(caller.admin.adminListDocuments({ page: 1, perPage: 10 })).rejects.toThrow(
+        'You must be an admin to access this resource',
+      );
     });
 
     it('calls service with correct params and returns paginated result', async () => {
@@ -96,9 +96,7 @@ describe('adminDocumentsRouter', () => {
 
     it('rejects perPage above the admin max', async () => {
       const caller = createTestCaller({ customSession: fakeSession });
-      await expect(
-        caller.admin.adminListDocuments({ page: 1, perPage: 101 }),
-      ).rejects.toThrow();
+      await expect(caller.admin.adminListDocuments({ page: 1, perPage: 101 })).rejects.toThrow();
       expect(mockServices.documentsService.adminList).not.toHaveBeenCalled();
     });
   });
@@ -112,9 +110,9 @@ describe('adminDocumentsRouter', () => {
     it('rejects non-admin users', async () => {
       authMock.api.userHasPermission.mockResolvedValue({ success: false, error: null });
       const caller = createTestCaller({ customSession: fakeSession });
-      await expect(
-        caller.admin.adminRestoreDocument({ documentId: DOC_UUID }),
-      ).rejects.toThrow('You must be an admin to access this resource');
+      await expect(caller.admin.adminRestoreDocument({ documentId: DOC_UUID })).rejects.toThrow(
+        'You must be an admin to access this resource',
+      );
     });
 
     it('calls service and returns restored document', async () => {
@@ -135,9 +133,9 @@ describe('adminDocumentsRouter', () => {
       );
 
       const caller = createTestCaller({ customSession: fakeSession });
-      await expect(
-        caller.admin.adminRestoreDocument({ documentId: DOC_UUID }),
-      ).rejects.toThrow('Document not found');
+      await expect(caller.admin.adminRestoreDocument({ documentId: DOC_UUID })).rejects.toThrow(
+        'Document not found',
+      );
     });
 
     it('rejects invalid UUID for documentId', async () => {
@@ -157,9 +155,9 @@ describe('adminDocumentsRouter', () => {
     it('rejects non-admin users', async () => {
       authMock.api.userHasPermission.mockResolvedValue({ success: false, error: null });
       const caller = createTestCaller({ customSession: fakeSession });
-      await expect(
-        caller.admin.adminHardDeleteDocument({ documentId: DOC_UUID }),
-      ).rejects.toThrow('You must be an admin to access this resource');
+      await expect(caller.admin.adminHardDeleteDocument({ documentId: DOC_UUID })).rejects.toThrow(
+        'You must be an admin to access this resource',
+      );
     });
 
     it('calls service and returns document id', async () => {
@@ -178,9 +176,9 @@ describe('adminDocumentsRouter', () => {
       );
 
       const caller = createTestCaller({ customSession: fakeSession });
-      await expect(
-        caller.admin.adminHardDeleteDocument({ documentId: DOC_UUID }),
-      ).rejects.toThrow('Document not found');
+      await expect(caller.admin.adminHardDeleteDocument({ documentId: DOC_UUID })).rejects.toThrow(
+        'Document not found',
+      );
     });
 
     it('rejects invalid UUID for documentId', async () => {
@@ -200,9 +198,9 @@ describe('adminDocumentsRouter', () => {
     it('rejects non-admin users', async () => {
       authMock.api.userHasPermission.mockResolvedValue({ success: false, error: null });
       const caller = createTestCaller({ customSession: fakeSession });
-      await expect(
-        caller.admin.adminSoftDeleteDocument({ documentId: DOC_UUID }),
-      ).rejects.toThrow('You must be an admin to access this resource');
+      await expect(caller.admin.adminSoftDeleteDocument({ documentId: DOC_UUID })).rejects.toThrow(
+        'You must be an admin to access this resource',
+      );
     });
 
     it('calls service and returns soft-deleted document', async () => {
@@ -223,9 +221,9 @@ describe('adminDocumentsRouter', () => {
       );
 
       const caller = createTestCaller({ customSession: fakeSession });
-      await expect(
-        caller.admin.adminSoftDeleteDocument({ documentId: DOC_UUID }),
-      ).rejects.toThrow('Document is already deleted');
+      await expect(caller.admin.adminSoftDeleteDocument({ documentId: DOC_UUID })).rejects.toThrow(
+        'Document is already deleted',
+      );
     });
 
     it('rejects invalid UUID for documentId', async () => {

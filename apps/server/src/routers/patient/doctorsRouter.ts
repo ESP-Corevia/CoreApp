@@ -38,6 +38,7 @@ export const patientDoctorsRouter = router({
         search: input.search,
         page: input.page,
         limit: input.limit,
+        verified: true,
       });
     }),
 
