@@ -1,29 +1,20 @@
 import { PillBottle, Plus } from 'lucide-react';
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router';
 import { InfiniteList } from '@/components/infinite-list';
 import Loader from '@/components/loader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { usePatientOnboarded } from '@/hooks/use-patient-onboarded';
 import { useRequireAuth } from '@/hooks/use-require-auth';
 import { useRoleGuard } from '@/hooks/use-role-guard';
 import { cn } from '@/lib/utils';
-import { useCreateMedication } from '@/queries/patient/useCreateMedication';
 import { useMarkIntakeSkipped } from '@/queries/patient/useMarkIntakeSkipped';
 import { useMarkIntakeTaken } from '@/queries/patient/useMarkIntakeTaken';
 import { useMyPillbox } from '@/queries/patient/useMyPillbox';
 import { usePillboxToday } from '@/queries/patient/usePillboxToday';
 import { MedicationCard } from '../components/medication-card';
-import { MedicationForm } from '../components/medication-form';
 import { TodaySchedule } from '../components/today-schedule';
 
 export default function PatientPillbox() {
@@ -32,13 +23,10 @@ export default function PatientPillbox() {
   const { isLoading: roleLoading } = useRoleGuard('patient');
   const { isLoading: onboardingLoading } = usePatientOnboarded();
 
-  const [sheetOpen, setSheetOpen] = useState(false);
-
   const pillboxToday = usePillboxToday();
   const myPillbox = useMyPillbox();
   const markTaken = useMarkIntakeTaken();
   const markSkipped = useMarkIntakeSkipped();
-  const createMed = useCreateMedication();
 
   if (authLoading || roleLoading || onboardingLoading) return <Loader />;
 
@@ -95,13 +83,11 @@ export default function PatientPillbox() {
             </div>
           </div>
 
-          <Button
-            size="default"
-            onClick={() => setSheetOpen(true)}
-            className="shrink-0 self-start md:self-auto"
-          >
-            <Plus className="size-4" aria-hidden="true" />
-            {t('patient.pillbox.addMedication')}
+          <Button asChild size="default" className="shrink-0 self-start md:self-auto">
+            <Link to="/patient/medications">
+              <Plus className="size-4" aria-hidden="true" />
+              {t('patient.pillbox.addMedication')}
+            </Link>
           </Button>
         </CardContent>
       </Card>
@@ -140,25 +126,6 @@ export default function PatientPillbox() {
           />
         </TabsContent>
       </Tabs>
-
-      <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-        <SheetContent
-          side="bottom"
-          className="max-h-[90vh] overflow-y-auto rounded-t-2xl sm:max-w-lg sm:rounded-t-none"
-        >
-          <SheetHeader className="mb-4 text-left">
-            <SheetTitle>{t('patient.pillbox.addMedication')}</SheetTitle>
-            <SheetDescription>{t('patient.pillbox.emptyDescription')}</SheetDescription>
-          </SheetHeader>
-          <MedicationForm
-            onSubmit={data => {
-              createMed.mutate(data, { onSuccess: () => setSheetOpen(false) });
-            }}
-            isPending={createMed.isPending}
-            onCancel={() => setSheetOpen(false)}
-          />
-        </SheetContent>
-      </Sheet>
     </div>
   );
 }

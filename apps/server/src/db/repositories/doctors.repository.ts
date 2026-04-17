@@ -45,6 +45,7 @@ export interface ListBookableParams {
   search?: string;
   offset: number;
   limit: number;
+  verified?: boolean;
 }
 
 export interface ListAllAdminParams {
@@ -121,7 +122,7 @@ export const createDoctorsRepo = (db: DrizzleDB = DB) => ({
         verified: doctorUsersView.verified,
       })
       .from(doctorUsersView)
-      .where(where)
+      .where(and(where, eq(doctorUsersView.verified, params.verified ?? true)))
       .orderBy(asc(doctorUsersView.specialty))
       .limit(params.limit)
       .offset(params.offset);

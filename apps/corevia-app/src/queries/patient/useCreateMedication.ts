@@ -30,6 +30,7 @@ export function useCreateMedication() {
     onSuccess: () => {
       toast.success(t('patient.pillbox.medicationCreated', 'Medication added'));
       void queryClient.invalidateQueries({ queryKey: ['patient', 'pillbox'] });
+      void queryClient.invalidateQueries({ queryKey: ['patient', 'pillbox', 'today'] });
     },
     onError: (error: Error) => {
       toast.error(error.message);

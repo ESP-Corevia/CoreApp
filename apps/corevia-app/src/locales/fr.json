@@ -127,7 +127,19 @@
         "availableSlots": "Créneaux disponibles",
         "noSlots": "Aucun créneau disponible pour cette date",
         "selectDate": "Sélectionner une date",
-        "confirmBooking": "Confirmer la réservation"
+        "pickSlot": "Choisir un horaire",
+        "morning": "Matin",
+        "afternoon": "Après-midi",
+        "reason": "Motif",
+        "reasonOptional": "Motif (facultatif)",
+        "reasonPlaceholder": "Brève description de votre visite",
+        "summary": "Récapitulatif",
+        "confirmBooking": "Confirmer la réservation",
+        "bookingSteps": {
+          "date": "1. Choisir une date",
+          "slot": "2. Sélectionner un horaire",
+          "confirm": "3. Confirmer"
+        }
       },
       "pillbox": {
         "title": "Mon pilulier",
@@ -192,9 +204,23 @@
       },
       "medications": {
         "title": "Recherche de médicaments",
-        "search": "Rechercher un médicament...",
+        "subtitle": "Cherchez dans la base des médicaments et ajoutez-les à votre pilulier.",
+        "search": "Rechercher par nom ou substance...",
+        "minChars": "Saisissez au moins 3 caractères",
         "empty": "Aucun médicament trouvé",
-        "emptyDescription": "Essayez un autre terme de recherche"
+        "emptyDescription": "Essayez un autre terme de recherche",
+        "resultsCount_one": "{{count}} médicament",
+        "resultsCount_other": "{{count}} médicaments",
+        "clearSearch": "Effacer la recherche",
+        "addToPillbox": "Ajouter au pilulier",
+        "added": "Ajouté à votre pilulier",
+        "form": "Forme",
+        "laboratory": "Laboratoire",
+        "substances": "Substances actives",
+        "price": "Prix",
+        "reimbursement": "Remboursement",
+        "addTitle": "Ajouter {{name}}",
+        "addDescription": "Indiquez quand prendre ce médicament. Vous pourrez ajouter d'autres prises plus tard."
       },
       "onboarding": {
         "title": "Complétez votre profil",

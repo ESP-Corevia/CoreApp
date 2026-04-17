@@ -127,7 +127,19 @@
         "availableSlots": "Available Slots",
         "noSlots": "No available slots for this date",
         "selectDate": "Select a date",
-        "confirmBooking": "Confirm Booking"
+        "pickSlot": "Pick a time",
+        "morning": "Morning",
+        "afternoon": "Afternoon",
+        "reason": "Reason",
+        "reasonOptional": "Reason (optional)",
+        "reasonPlaceholder": "Brief description of your visit",
+        "summary": "Summary",
+        "confirmBooking": "Confirm Booking",
+        "bookingSteps": {
+          "date": "1. Pick a date",
+          "slot": "2. Choose a time",
+          "confirm": "3. Confirm"
+        }
       },
       "pillbox": {
         "title": "My Pillbox",
@@ -192,9 +204,23 @@
       },
       "medications": {
         "title": "Medication Search",
-        "search": "Search medications...",
+        "subtitle": "Search the medications database and add them to your pillbox.",
+        "search": "Search by name or substance...",
+        "minChars": "Type at least 3 characters to search",
         "empty": "No medications found",
-        "emptyDescription": "Try a different search term"
+        "emptyDescription": "Try a different search term",
+        "resultsCount_one": "{{count}} medication",
+        "resultsCount_other": "{{count}} medications",
+        "clearSearch": "Clear search",
+        "addToPillbox": "Add to pillbox",
+        "added": "Added to your pillbox",
+        "form": "Form",
+        "laboratory": "Laboratory",
+        "substances": "Active substances",
+        "price": "Price",
+        "reimbursement": "Reimbursement",
+        "addTitle": "Add {{name}}",
+        "addDescription": "Set when to take this medication. You can add more schedules later."
       },
       "onboarding": {
         "title": "Complete Your Profile",

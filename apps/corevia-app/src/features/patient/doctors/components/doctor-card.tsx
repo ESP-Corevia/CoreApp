@@ -8,6 +8,7 @@ import { Card, CardContent } from '@/components/ui/card';
 interface DoctorCardProps {
   doctor: {
     id: string;
+    userId?: string | null;
     specialty?: string;
     city?: string;
     name?: string | null;
@@ -28,10 +29,12 @@ function getInitials(name?: string): string {
 export function DoctorCard({ doctor }: DoctorCardProps) {
   const { t } = useTranslation();
   const name = doctor.user?.name ?? doctor.name ?? '—';
+  const bookId = doctor.userId ?? doctor.id;
 
   return (
     <Link
-      to={`/patient/doctors/${doctor.id}/book`}
+      to={`/patient/doctors/${bookId}/book`}
+      state={{ doctor: { name, specialty: doctor.specialty, city: doctor.city } }}
       className="block rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       aria-label={t('patient.doctors.bookWith', { name })}
     >
