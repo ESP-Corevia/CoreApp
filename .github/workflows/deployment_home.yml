@@ -107,8 +107,6 @@ jobs:
         continue-on-error: true
         if: success()
         run: |
-          set -x
-
           all_tags=$(doctl registry repository list-tags corevia --format Tag --no-header)
           echo "All tags found: $all_tags"
 
