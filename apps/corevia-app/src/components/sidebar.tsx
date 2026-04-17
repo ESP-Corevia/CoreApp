@@ -6,6 +6,7 @@ import {
   LifeBuoy,
   LogOut,
   PillBottle,
+  Search,
   Settings,
   Stethoscope,
   UserRound,
@@ -22,6 +23,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
 import {
   SidebarContent,
   SidebarFooter,
@@ -34,8 +36,11 @@ import {
   SidebarMenuItem,
   Sidebar as SidebarPrimitive,
   SidebarRail,
+  SidebarSeparator,
+  useSidebar,
 } from '@/components/ui/sidebar';
 import { authClient } from '@/lib/auth-client';
+import { cn } from '@/lib/utils';
 
 type IconType = typeof House;
 
@@ -58,6 +63,8 @@ export function AppSidebar() {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { data: session } = authClient.useSession();
+  const { state } = useSidebar();
+  const collapsed = state === 'collapsed';
 
   const sessionAny = session as unknown as Record<string, unknown> | null;
   const user = sessionAny?.user as Record<string, unknown> | undefined;
@@ -112,17 +119,37 @@ export function AppSidebar() {
 
   const renderGroup = (label: string, items: NavItem[]) => (
     <SidebarGroup>
-      <SidebarGroupLabel>{label}</SidebarGroupLabel>
+      <SidebarGroupLabel className="px-2 font-medium text-[11px] text-sidebar-foreground/55 uppercase tracking-[0.08em]">
+        {label}
+      </SidebarGroupLabel>
       <SidebarGroupContent>
-        <SidebarMenu>
+        <SidebarMenu className="gap-0.5">
           {items.map(item => {
             const active = isActive(item);
             return (
-              <SidebarMenuItem key={item.url}>
-                <SidebarMenuButton asChild isActive={active} tooltip={item.title}>
+              <SidebarMenuItem key={item.url} className="relative">
+                <span
+                  aria-hidden="true"
+                  className={cn(
+                    'pointer-events-none absolute top-1.5 bottom-1.5 left-0 w-[3px] rounded-r-full bg-primary transition-all duration-200',
+                    active ? 'opacity-100' : 'opacity-0',
+                    collapsed && 'hidden',
+                  )}
+                />
+                <SidebarMenuButton
+                  asChild
+                  isActive={active}
+                  tooltip={item.title}
+                  className={cn(
+                    'h-9 gap-3 rounded-lg px-2.5 font-medium text-[13.5px] text-sidebar-foreground/75 transition-colors',
+                    'hover:bg-sidebar-accent/70 hover:text-sidebar-foreground',
+                    'data-[active=true]:bg-primary/10 data-[active=true]:text-primary data-[active=true]:hover:bg-primary/12',
+                    '[&>svg]:size-[18px] [&>svg]:shrink-0 [&>svg]:text-sidebar-foreground/60 data-[active=true]:[&>svg]:text-primary',
+                  )}
+                >
                   <Link to={item.url} aria-current={active ? 'page' : undefined}>
                     <item.icon aria-hidden="true" />
-                    <span>{item.title}</span>
+                    <span className="truncate">{item.title}</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -134,39 +161,65 @@ export function AppSidebar() {
   );
 
   return (
-    <SidebarPrimitive collapsible="icon">
-      <SidebarHeader>
+    <SidebarPrimitive collapsible="icon" className="border-sidebar-border/80 border-r">
+      <SidebarHeader className="gap-3 px-3 pt-4 pb-2">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
               size="lg"
               tooltip={t('app.name')}
-              className="hover:bg-transparent active:bg-transparent"
+              className="h-11 gap-2.5 rounded-lg px-2 hover:bg-transparent active:bg-transparent"
             >
               <Link to={`${prefix}/home`} aria-label={t('app.name')}>
-                <div
-                  className="relative flex aspect-square size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary/70 text-primary-foreground shadow-sm ring-1 ring-primary/20"
+                <span
+                  className="relative flex aspect-square size-7 items-center justify-center rounded-md bg-gradient-to-br from-primary to-primary/75 text-primary-foreground shadow-sm ring-1 ring-primary/25"
                   aria-hidden="true"
                 >
-                  <HeartPulse className="size-4" />
-                  <span className="absolute inset-0 rounded-lg bg-primary/30 opacity-0 motion-safe:animate-ping" />
-                </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold tracking-tight">{t('app.name')}</span>
+                  <HeartPulse className="size-4" strokeWidth={2.25} />
+                </span>
+                <span className="grid flex-1 text-left leading-tight">
+                  <span className="truncate font-semibold text-[15px] tracking-tight">
+                    {t('app.name')}
+                  </span>
                   {roleLabel && (
-                    <span className="truncate text-[11px] text-sidebar-foreground/60 uppercase tracking-wider">
+                    <span className="truncate text-[10.5px] text-sidebar-foreground/55 uppercase tracking-[0.1em]">
                       {roleLabel}
                     </span>
                   )}
-                </div>
+                </span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
+
+        {!collapsed && (
+          <div className="relative px-1">
+            <Search
+              aria-hidden="true"
+              className="pointer-events-none absolute top-1/2 left-3.5 size-3.5 -translate-y-1/2 text-sidebar-foreground/50"
+            />
+            <Input
+              type="search"
+              placeholder={t('common.search')}
+              aria-label={t('common.search')}
+              disabled
+              aria-disabled="true"
+              className="h-8 rounded-md border-sidebar-border/70 bg-sidebar-accent/40 pr-9 pl-8 text-[13px] shadow-none placeholder:text-sidebar-foreground/50 focus-visible:bg-background"
+            />
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute top-1/2 right-2 hidden h-5 -translate-y-1/2 select-none items-center rounded border border-sidebar-border/70 bg-background/60 px-1.5 font-medium font-mono text-[10px] text-sidebar-foreground/60 md:inline-flex"
+            >
+              ⌘K
+            </span>
+          </div>
+        )}
       </SidebarHeader>
 
-      <SidebarContent>
+      <SidebarSeparator className="mx-3 bg-sidebar-border/60" />
+
+      <SidebarContent className="px-2 py-2">
         {mainItems.length > 0 &&
           renderGroup(t('nav.main', { defaultValue: 'Navigation' }), mainItems)}
 
@@ -179,7 +232,11 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild size="sm" className="text-sidebar-foreground/60">
+                <SidebarMenuButton
+                  asChild
+                  size="sm"
+                  className="h-8 rounded-md px-2.5 text-[12.5px] text-sidebar-foreground/60"
+                >
                   <a
                     href="mailto:support@corevia.app"
                     aria-label={t('nav.support', { defaultValue: 'Support' })}
@@ -195,7 +252,7 @@ export function AppSidebar() {
       </SidebarContent>
 
       {userName && (
-        <SidebarFooter>
+        <SidebarFooter className="border-sidebar-border/60 border-t p-2">
           <SidebarMenu>
             <SidebarMenuItem>
               <DropdownMenu>
@@ -203,24 +260,27 @@ export function AppSidebar() {
                   <SidebarMenuButton
                     size="lg"
                     tooltip={userName}
-                    className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                     aria-label={userEmail ? `${userName}, ${userEmail}` : userName}
+                    className={cn(
+                      'h-12 gap-2.5 rounded-lg px-1.5',
+                      'data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground',
+                    )}
                   >
-                    <Avatar className="size-8 shrink-0 rounded-lg">
-                      <AvatarFallback className="rounded-lg bg-gradient-to-br from-primary/20 to-primary/5 font-medium text-primary text-xs">
+                    <Avatar className="size-8 shrink-0 rounded-md ring-1 ring-sidebar-border/60">
+                      <AvatarFallback className="rounded-md bg-gradient-to-br from-primary/25 to-primary/5 font-semibold text-[12px] text-primary">
                         {getInitials(userName)}
                       </AvatarFallback>
                     </Avatar>
-                    <div className="grid flex-1 text-left text-sm leading-tight">
-                      <span className="truncate font-medium">{userName}</span>
+                    <span className="grid flex-1 text-left leading-tight">
+                      <span className="truncate font-semibold text-[13px]">{userName}</span>
                       {userEmail && (
-                        <span className="truncate text-sidebar-foreground/60 text-xs">
+                        <span className="truncate text-[11.5px] text-sidebar-foreground/60">
                           {userEmail}
                         </span>
                       )}
-                    </div>
+                    </span>
                     <ChevronsUpDown
-                      className="ml-auto size-4 shrink-0 opacity-60"
+                      className="ml-auto size-4 shrink-0 text-sidebar-foreground/50"
                       aria-hidden="true"
                     />
                   </SidebarMenuButton>
@@ -228,7 +288,7 @@ export function AppSidebar() {
                 <DropdownMenuContent
                   side="right"
                   align="end"
-                  sideOffset={8}
+                  sideOffset={12}
                   className="w-60 rounded-lg"
                 >
                   <DropdownMenuLabel className="flex flex-col gap-0.5 p-3">
