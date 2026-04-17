@@ -1,3 +1,5 @@
+# Builds the web app Docker image and deploys it to the Kubernetes cluster on DigitalOcean.
+# Triggered on every push to master that touches apps/web or this workflow file.
 name: Build and Push Web Docker Image to DigitalOcean
 
 on:
@@ -10,6 +12,8 @@ on:
   workflow_dispatch:
 
 jobs:
+  # Runs linting, type-checking, and any other workspace-level quality checks
+  # before allowing the build to proceed.
   check-all:
     runs-on: ubuntu-latest
 
@@ -21,6 +25,8 @@ jobs:
       - name: Run all checks
         run: pnpm run check:all
 
+  # Reads the semver version from apps/web/package.json and exposes it as a
+  # job output so downstream jobs can tag the Docker image consistently.
   get-version:
     runs-on: ubuntu-latest
     needs: check-all
@@ -34,6 +40,10 @@ jobs:
         id: get_version
         run: echo "WEB_VERSION=$(jq -r .version apps/web/package.json)" >> $GITHUB_OUTPUT
 
+  # Builds the web Dockerfile and pushes two tags to the DigitalOcean registry:
+  #   - web-<version>  (immutable, version-pinned)
+  #   - web-latest     (floating, always points to the newest build)
+  # GitHub Actions cache is used to speed up layer reuse across runs.
   build-and-push:
     runs-on: ubuntu-latest
     needs: get-version
@@ -68,6 +78,8 @@ jobs:
           build-args: |
             VITE_SERVER_URL=${{ secrets.VITE_SERVER_URL }}
 
+  # Updates the running Kubernetes deployment to use the newly pushed image,
+  # then cleans up old tags and dangling manifests from the registry.
   deploy:
     runs-on: ubuntu-latest
     needs: [get-version, build-and-push]
@@ -77,6 +89,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
+      # kubectl is needed to interact with the DigitalOcean Kubernetes cluster.
       - name: Setup kubectl
         uses: azure/setup-kubectl@v4
 
@@ -87,6 +100,7 @@ jobs:
           username: ${{ secrets.DIGITALOCEAN_USERNAME }}
           password: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
+      # doctl is the DigitalOcean CLI used to manage the registry and fetch the kubeconfig.
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
         with:
@@ -95,14 +109,19 @@ jobs:
       - name: Create kube directory
         run: mkdir -p ~/.kube
 
+      # Writes the cluster credentials into ~/.kube/config so kubectl can authenticate.
       - name: Get kubeconfig
         run: |
           doctl kubernetes cluster kubeconfig show corevia > ~/.kube/config
 
+      # Performs a rolling update of the corevia-web deployment to the new image version.
+      # Kubernetes will drain old pods only after the new ones pass their readiness probes.
       - name: Update deployment image
         run: |
           kubectl set image deployment/corevia-web corevia-web=${{ secrets.DIGITALOCEAN_REGISTRY_URL }}/corevia:web-${{ env.WEB_VERSION }}
 
+      # Removes obsolete web-* tags and untagged (dangling) manifests from the registry
+      # to keep storage usage in check. Failures are non-blocking (continue-on-error).
       - name: Delete previous version tags
         continue-on-error: true
         if: success()
