@@ -285,18 +285,60 @@
     "shared": {
       "profile": {
         "title": "Profile",
-        "personalInfo": "Personal Information",
+        "personalInfo": "Personal information",
+        "doctorInfo": "Professional information",
+        "healthInfo": "Health information",
+        "emergencyContact": "Emergency contact",
         "save": "Save Changes",
-        "saving": "Saving..."
+        "saving": "Saving...",
+        "saved": "Profile saved",
+        "unsavedChanges": "Unsaved changes",
+        "noChanges": "No changes",
+        "discard": "Discard",
+        "fields": {
+          "name": "Full name",
+          "email": "Email",
+          "role": "Role",
+          "specialty": "Specialty",
+          "specialtyPlaceholder": "e.g. Cardiology",
+          "address": "Address",
+          "addressPlaceholder": "123 Main St",
+          "city": "City",
+          "cityPlaceholder": "e.g. Paris",
+          "dateOfBirth": "Date of birth",
+          "gender": "Gender",
+          "genderMale": "Male",
+          "genderFemale": "Female",
+          "genderSelect": "Select gender",
+          "phone": "Phone",
+          "phonePlaceholder": "+33 6 00 00 00 00",
+          "addressFull": "Street address",
+          "bloodType": "Blood type",
+          "bloodTypeSelect": "Select blood type",
+          "allergies": "Allergies",
+          "allergiesPlaceholder": "e.g. Penicillin, Peanuts",
+          "emergencyName": "Contact name",
+          "emergencyPhone": "Contact phone"
+        },
+        "verified": "Verified",
+        "unverified": "Awaiting verification"
       },
       "settings": {
         "title": "Settings",
+        "subtitle": "Preferences and account",
+        "appearance": "Appearance",
+        "appearanceDescription": "Choose how the app looks on this device.",
         "theme": "Theme",
         "themeLight": "Light",
         "themeDark": "Dark",
         "themeSystem": "System",
         "language": "Language",
-        "sessions": "Sessions"
+        "languageDescription": "Pick your preferred language.",
+        "account": "Account",
+        "accountDescription": "Manage your session.",
+        "sessions": "Sessions",
+        "signOutConfirmTitle": "Sign out?",
+        "signOutConfirmDescription": "You will be returned to the sign-in screen."
       }
     },
     "errors": {
