@@ -2,7 +2,7 @@ import type { AppRouter } from '@server/routers';
 
 import type { QueryClient } from '@tanstack/react-query';
 
-import { createTRPCClient, httpBatchLink, type TRPCClient } from '@trpc/client';
+import { createTRPCClient, httpBatchLink, httpLink, type TRPCClient } from '@trpc/client';
 import { createTRPCOptionsProxy } from '@trpc/tanstack-react-query';
 import { createContext, useContext, useMemo } from 'react';
 import { queryClient } from './query';
@@ -23,6 +23,18 @@ export const trpcClient: TRPCClient<AppRouter> = createTRPCClient<AppRouter>({
 export const trpc: TrpcProxy = createTRPCOptionsProxy<AppRouter>({
   client: trpcClient,
   queryClient,
+});
+
+/** Non-batched client for use in contexts where concurrent calls must not be merged (e.g. Uppy upload callbacks). */
+export const trpcUnbatchedClient: TRPCClient<AppRouter> = createTRPCClient<AppRouter>({
+  links: [
+    httpLink({
+      url: `${import.meta.env.VITE_SERVER_URL}/trpc`,
+      fetch(url, opts) {
+        return fetch(url, { ...opts, credentials: 'include' });
+      },
+    }),
+  ],
 });
 
 const TrpcTestContext = createContext<TrpcProxy | null>(null);

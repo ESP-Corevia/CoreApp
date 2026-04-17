@@ -10,6 +10,15 @@ import {
   updateAppointmentStatus,
 } from './adminAppointmentsRouter';
 import { createDoctor, listDoctors, setDoctorVerified, updateDoctor } from './adminDoctorsRouter';
+import {
+  adminConfirmUpload,
+  adminGetDocumentDownloadUrl,
+  adminHardDeleteDocument,
+  adminListDocuments,
+  adminRequestUpload,
+  adminRestoreDocument,
+  adminSoftDeleteDocument,
+} from './adminDocumentsRouter';
 import { createPatient, deletePatient, listPatients, updatePatient } from './adminPatientsRouter';
 import {
   adminCreateMedication,
@@ -142,4 +151,11 @@ export const adminRouter = router({
   adminUpdateMedication,
   adminDeleteMedication,
   adminTodayByPatient,
+  adminListDocuments,
+  adminRequestUpload,
+  adminConfirmUpload,
+  adminRestoreDocument,
+  adminHardDeleteDocument,
+  adminSoftDeleteDocument,
+  adminGetDocumentDownloadUrl,
 });

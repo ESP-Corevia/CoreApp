@@ -101,6 +101,7 @@ const ROUTES_WITH_LAYOUT = [
   '/profile',
   '/settings',
   '/ai',
+  '/documents',
 ];
 
 function ThemedShell() {

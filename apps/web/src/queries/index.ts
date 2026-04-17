@@ -1,3 +1,10 @@
+export {
+  useAdminDocumentDownloadUrl,
+  useHardDeleteDocument,
+  useListDocuments,
+  useRestoreDocument,
+  useSoftDeleteDocument,
+} from './useAdminDocuments';
 export { useCreateAppointment } from './useCreateAppointment';
 export { useCreateDoctor } from './useCreateDoctor';
 export { useCreatePatient } from './useCreatePatient';

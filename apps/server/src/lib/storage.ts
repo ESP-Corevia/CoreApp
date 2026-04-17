@@ -1,5 +1,6 @@
 import {
   CreateBucketCommand,
+  DeleteObjectCommand,
   GetObjectCommand,
   HeadBucketCommand,
   HeadObjectCommand,
@@ -21,6 +22,8 @@ export const s3Client = new S3Client({
     secretAccessKey: env.S3_SECRET_KEY,
   },
   forcePathStyle: true, // Required for MinIO
+  requestChecksumCalculation: 'WHEN_REQUIRED',
+  responseChecksumValidation: 'WHEN_REQUIRED',
 });
 
 export const createStorageService = (client: S3Client = s3Client) => ({
@@ -44,15 +47,17 @@ export const createStorageService = (client: S3Client = s3Client) => ({
   generateUploadUrl: async (
     fileKey: string,
     mimeType: string,
-    fileSize: number,
+    _fileSize: number,
   ): Promise<string> => {
     const command = new PutObjectCommand({
       Bucket: env.S3_BUCKET_NAME,
       Key: fileKey,
       ContentType: mimeType,
-      ContentLength: fileSize,
     });
-    return getSignedUrl(client, command, { expiresIn: PRESIGNED_URL_EXPIRY });
+    return getSignedUrl(client, command, {
+      expiresIn: PRESIGNED_URL_EXPIRY,
+      signableHeaders: new Set(['content-type', 'host']),
+    });
   },
 
   /**
@@ -76,6 +81,13 @@ export const createStorageService = (client: S3Client = s3Client) => ({
     } catch {
       return false;
     }
+  },
+
+  /**
+   * Deletes an object from S3.
+   */
+  deleteObject: async (fileKey: string): Promise<void> => {
+    await client.send(new DeleteObjectCommand({ Bucket: env.S3_BUCKET_NAME, Key: fileKey }));
   },
 });
 
