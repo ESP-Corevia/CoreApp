@@ -2,6 +2,7 @@ import { faker } from '@faker-js/faker';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
+  authMock,
   createTestCaller,
   fakeAdminSession,
   fakeDoctorSession,
@@ -49,6 +50,90 @@ const fakePatientProfile = {
 beforeEach(() => vi.clearAllMocks());
 
 describe('userRouter', () => {
+  describe('setInitialRole', () => {
+    it('updates the role from patient to doctor', async () => {
+      authMock.api.getUser.mockResolvedValue({ ...fakePatientUser, role: 'patient' } as never);
+      authMock.api.adminUpdateUser.mockResolvedValue({} as never);
+
+      const caller = createTestCaller({
+        customSession: { ...fakeSession, userId: fakePatientUser.id },
+      });
+      const res = await caller.user.setInitialRole({ role: 'doctor' });
+
+      expect(res).toEqual({ success: true });
+      // Regression: getUser must be called with { id }, not { userId }
+      expect(authMock.api.getUser).toHaveBeenCalledWith({
+        query: { id: fakePatientUser.id },
+      });
+      expect(authMock.api.adminUpdateUser).toHaveBeenCalledWith({
+        body: { userId: fakePatientUser.id, data: { role: 'doctor' } },
+      });
+    });
+
+    it('updates the role from patient to patient (idempotent default role)', async () => {
+      authMock.api.getUser.mockResolvedValue({ ...fakePatientUser, role: 'patient' } as never);
+      authMock.api.adminUpdateUser.mockResolvedValue({} as never);
+
+      const caller = createTestCaller({
+        customSession: { ...fakeSession, userId: fakePatientUser.id },
+      });
+      await expect(caller.user.setInitialRole({ role: 'patient' })).resolves.toEqual({
+        success: true,
+      });
+      expect(authMock.api.adminUpdateUser).toHaveBeenCalledWith({
+        body: { userId: fakePatientUser.id, data: { role: 'patient' } },
+      });
+    });
+
+    it('throws NOT_FOUND when the user cannot be fetched', async () => {
+      authMock.api.getUser.mockResolvedValue(null as never);
+
+      const caller = createTestCaller({
+        customSession: { ...fakeSession, userId: fakePatientUser.id },
+      });
+      await expect(caller.user.setInitialRole({ role: 'doctor' })).rejects.toThrow(
+        'User not found',
+      );
+      expect(authMock.api.adminUpdateUser).not.toHaveBeenCalled();
+    });
+
+    it('throws FORBIDDEN when current role is doctor', async () => {
+      authMock.api.getUser.mockResolvedValue({ ...fakeDoctorUser, role: 'doctor' } as never);
+
+      const caller = createTestCaller({ customSession: fakeDoctorSession });
+      await expect(caller.user.setInitialRole({ role: 'patient' })).rejects.toThrow(
+        'already been set',
+      );
+      expect(authMock.api.adminUpdateUser).not.toHaveBeenCalled();
+    });
+
+    it('throws FORBIDDEN when current role is admin', async () => {
+      authMock.api.getUser.mockResolvedValue({ ...fakeAdminUser, role: 'admin' } as never);
+
+      const caller = createTestCaller({ customSession: fakeAdminSession });
+      await expect(caller.user.setInitialRole({ role: 'doctor' })).rejects.toThrow(
+        'already been set',
+      );
+      expect(authMock.api.adminUpdateUser).not.toHaveBeenCalled();
+    });
+
+    it('rejects admin as a target role (zod input validation)', async () => {
+      const caller = createTestCaller({
+        customSession: { ...fakeSession, userId: fakePatientUser.id },
+      });
+      await expect(caller.user.setInitialRole({ role: 'admin' as never })).rejects.toThrow();
+      expect(authMock.api.getUser).not.toHaveBeenCalled();
+    });
+
+    it('throws when session is not authenticated', async () => {
+      const caller = createTestCaller({ customSession: null });
+      await expect(caller.user.setInitialRole({ role: 'doctor' })).rejects.toThrow(
+        'Authentication required',
+      );
+      expect(authMock.api.getUser).not.toHaveBeenCalled();
+    });
+  });
+
   describe('getMe', () => {
     it('returns base user + null profiles when patient has no profile yet', async () => {
       mockServices.usersService.getMe.mockResolvedValue(fakePatientUser);

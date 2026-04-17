@@ -39,7 +39,7 @@ describe('nvidiaModel', () => {
     expect(extractReasoningMiddlewareMock).toHaveBeenCalledWith({ tagName: 'think' });
     expect(wrapLanguageModelMock).toHaveBeenCalledWith({
       model: 'chat-model-instance',
-      middleware: ['reasoning-middleware', 'devtools-middleware'],
+      middleware: ['reasoning-middleware'],
     });
     expect(nvidiaModel).toBe('wrapped-model-instance');
   });

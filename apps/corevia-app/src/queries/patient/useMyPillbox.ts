@@ -1,7 +1,7 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { trpcClient } from '@/providers/trpc';
 
-export function useMyPillbox(params: { active?: boolean } = {}) {
+export function useMyPillbox(params: { isActive?: boolean } = {}) {
   const limit = 20;
 
   return useInfiniteQuery({
@@ -10,7 +10,7 @@ export function useMyPillbox(params: { active?: boolean } = {}) {
       trpcClient.pillbox.listMine.query({
         page: pageParam as number,
         limit,
-        active: params.active,
+        isActive: params.isActive,
       }),
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) => {

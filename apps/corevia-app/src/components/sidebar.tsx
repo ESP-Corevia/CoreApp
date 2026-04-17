@@ -24,7 +24,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useAiChat } from '@/features/ai/components/ai-chat-provider';
 import {
   SidebarContent,
   SidebarFooter,
@@ -40,6 +39,7 @@ import {
   SidebarSeparator,
   useSidebar,
 } from '@/components/ui/sidebar';
+import { useAiChat } from '@/features/ai/components/ai-chat-provider';
 import { authClient } from '@/lib/auth-client';
 import { cn } from '@/lib/utils';
 

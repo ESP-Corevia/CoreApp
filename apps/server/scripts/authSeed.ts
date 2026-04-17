@@ -212,6 +212,7 @@ async function seedDoctor() {
         specialty: faker.helpers.arrayElement(SPECIALTIES),
         address: `${faker.location.streetAddress()}, ${city}`,
         city,
+        verified: faker.datatype.boolean(),
       })
       .onConflictDoNothing();
 

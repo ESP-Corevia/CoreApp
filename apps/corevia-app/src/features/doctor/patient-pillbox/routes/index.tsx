@@ -49,18 +49,19 @@ export default function DoctorPatientPillbox() {
 
   if (authLoading || roleLoading || verifiedLoading) return <Loader />;
 
-  const todayIntakes =
-    ((todayQuery.data as Record<string, unknown>)?.intakes as Array<Record<string, unknown>>) ?? [];
+  type TodayIntake = Parameters<typeof TodayScheduleReadOnly>[0]['intakes'][number];
+  type PillboxMedication = Parameters<typeof PatientMedicationList>[0]['medications'][number];
+
+  const todayIntakes = (todayQuery.data as { intakes?: TodayIntake[] } | undefined)?.intakes ?? [];
 
   const medications =
     pillboxQuery.data?.pages?.flatMap(
-      p => ((p as Record<string, unknown>)?.items as Array<Record<string, unknown>>) ?? [],
+      p => (p as { items?: PillboxMedication[] } | undefined)?.items ?? [],
     ) ?? [];
 
   const historyDays = (historyQuery.data as { days?: HistoryDay[] } | undefined)?.days;
 
-  const isFetching =
-    todayQuery.isFetching || pillboxQuery.isFetching || historyQuery.isFetching;
+  const isFetching = todayQuery.isFetching || pillboxQuery.isFetching || historyQuery.isFetching;
 
   const handleRefresh = () => {
     void queryClient.invalidateQueries({
@@ -125,10 +126,7 @@ export default function DoctorPatientPillbox() {
         </TabsList>
 
         <TabsContent value="today" className="mt-4">
-          <TodayScheduleReadOnly
-            intakes={todayIntakes as Parameters<typeof TodayScheduleReadOnly>[0]['intakes']}
-            isLoading={todayQuery.isLoading}
-          />
+          <TodayScheduleReadOnly intakes={todayIntakes} isLoading={todayQuery.isLoading} />
         </TabsContent>
 
         <TabsContent value="history" className="mt-4">
@@ -142,7 +140,7 @@ export default function DoctorPatientPillbox() {
 
         <TabsContent value="medications" className="mt-4">
           <PatientMedicationList
-            medications={medications as Parameters<typeof PatientMedicationList>[0]['medications']}
+            medications={medications}
             isLoading={pillboxQuery.isLoading}
             isFetchingNextPage={pillboxQuery.isFetchingNextPage}
             hasNextPage={pillboxQuery.hasNextPage}

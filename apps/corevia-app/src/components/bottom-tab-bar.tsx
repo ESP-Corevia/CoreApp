@@ -92,15 +92,15 @@ export function BottomTabBar() {
                 aria-label={tab.title}
                 className={cn(
                   'relative flex min-h-[56px] flex-col items-center justify-center gap-0.5 rounded-lg px-2 py-1.5',
-                  'text-[11px] font-medium transition-colors duration-150',
-                  'active:scale-95 transition-transform',
+                  'font-medium text-[11px] transition-colors duration-150',
+                  'transition-transform active:scale-95',
                   active ? 'text-primary' : 'text-muted-foreground hover:text-foreground',
                 )}
               >
                 <span
                   aria-hidden="true"
                   className={cn(
-                    '-translate-x-1/2 absolute top-0 left-1/2 h-0.5 w-8 rounded-b-full transition-all duration-200',
+                    'absolute top-0 left-1/2 h-0.5 w-8 -translate-x-1/2 rounded-b-full transition-all duration-200',
                     active ? 'bg-primary opacity-100' : 'opacity-0',
                   )}
                 />
@@ -124,7 +124,7 @@ export function BottomTabBar() {
                   aria-expanded={moreOpen}
                   className={cn(
                     'relative flex min-h-[56px] w-full flex-col items-center justify-center gap-0.5 rounded-lg px-2 py-1.5',
-                    'text-[11px] font-medium transition-colors duration-150 active:scale-95',
+                    'font-medium text-[11px] transition-colors duration-150 active:scale-95',
                     isMoreActive || moreOpen
                       ? 'text-primary'
                       : 'text-muted-foreground hover:text-foreground',
@@ -133,7 +133,7 @@ export function BottomTabBar() {
                   <span
                     aria-hidden="true"
                     className={cn(
-                      '-translate-x-1/2 absolute top-0 left-1/2 h-0.5 w-8 rounded-b-full transition-all duration-200',
+                      'absolute top-0 left-1/2 h-0.5 w-8 -translate-x-1/2 rounded-b-full transition-all duration-200',
                       isMoreActive || moreOpen ? 'bg-primary opacity-100' : 'opacity-0',
                     )}
                   />
@@ -148,7 +148,7 @@ export function BottomTabBar() {
                     {t('nav.userMenu', { defaultValue: 'Additional navigation' })}
                   </SheetDescription>
                 </SheetHeader>
-                <ul className="flex flex-col p-2 pb-4 safe-bottom">
+                <ul className="safe-bottom flex flex-col p-2 pb-4">
                   {moreItems.map(item => {
                     const active = isActive(item.url);
                     return (
@@ -159,7 +159,7 @@ export function BottomTabBar() {
                           aria-current={active ? 'page' : undefined}
                           className={cn(
                             'flex min-h-[48px] items-center rounded-lg px-4 py-3 text-sm transition-colors',
-                            'active:scale-[0.98] transition-transform',
+                            'transition-transform active:scale-[0.98]',
                             active
                               ? 'bg-primary/10 font-medium text-primary'
                               : 'text-foreground hover:bg-accent',

@@ -217,10 +217,7 @@ export default function DoctorHome() {
             </span>
           )}
         </div>
-        <TodaysAppointments
-          appointments={todaysAppointments}
-          isLoading={todayQuery.isLoading}
-        />
+        <TodaysAppointments appointments={todaysAppointments} isLoading={todayQuery.isLoading} />
       </section>
     </div>
   );

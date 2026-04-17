@@ -4,10 +4,7 @@ import { StickToBottom, useStickToBottomContext } from 'use-stick-to-bottom';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
-export const Conversation = ({
-  className,
-  ...props
-}: ComponentProps<typeof StickToBottom>) => (
+export const Conversation = ({ className, ...props }: ComponentProps<typeof StickToBottom>) => (
   <StickToBottom
     role="log"
     initial="smooth"
@@ -32,7 +29,7 @@ export const ConversationScrollButton = () => {
       variant="outline"
       size="icon"
       onClick={() => scrollToBottom()}
-      className="-translate-x-1/2 absolute bottom-3 left-1/2 size-8 rounded-full shadow-md"
+      className="absolute bottom-3 left-1/2 size-8 -translate-x-1/2 rounded-full shadow-md"
       aria-label="Scroll to bottom"
     >
       <ArrowDown className="size-4" aria-hidden="true" />

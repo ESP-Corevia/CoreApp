@@ -1,7 +1,7 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { trpcClient } from '@/providers/trpc';
 
-export function usePatientPillbox(params: { patientId: string; active?: boolean }) {
+export function usePatientPillbox(params: { patientId: string; isActive?: boolean }) {
   const limit = 20;
 
   return useInfiniteQuery({
@@ -11,7 +11,7 @@ export function usePatientPillbox(params: { patientId: string; active?: boolean 
         patientId: params.patientId,
         page: pageParam as number,
         limit,
-        active: params.active,
+        isActive: params.isActive,
       }),
     initialPageParam: 1,
     enabled: !!params.patientId,

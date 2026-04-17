@@ -286,18 +286,11 @@ export const createMedicationsRepo = (db: DrizzleDB) => ({
    * @returns L'ID du schedule supprimé, ou `null` si introuvable.
    */
   deleteSchedule: async (id: string) => {
-    return await db.transaction(async tx => {
-      await tx
-        .update(patientMedicationIntakes)
-        .set({ scheduleId: null })
-        .where(eq(patientMedicationIntakes.scheduleId, id));
-
-      const [row] = await tx
-        .delete(patientMedicationSchedules)
-        .where(eq(patientMedicationSchedules.id, id))
-        .returning({ id: patientMedicationSchedules.id });
-      return row ?? null;
-    });
+    const [row] = await db
+      .delete(patientMedicationSchedules)
+      .where(eq(patientMedicationSchedules.id, id))
+      .returning({ id: patientMedicationSchedules.id });
+    return row ?? null;
   },
 
   /**

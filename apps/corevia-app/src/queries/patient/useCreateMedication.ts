@@ -16,7 +16,7 @@ export function useCreateMedication() {
       cip?: string | null;
       dosageLabel?: string | null;
       instructions?: string | null;
-      startDate?: string | null;
+      startDate: string;
       endDate?: string | null;
       schedules: Array<{
         intakeTime: string;

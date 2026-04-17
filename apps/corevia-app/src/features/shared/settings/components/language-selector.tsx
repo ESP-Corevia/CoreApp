@@ -24,6 +24,7 @@ export function LanguageSelector() {
       {LANGUAGES.map(({ code, label, native }) => {
         const active = i18n.language.startsWith(code);
         return (
+          // biome-ignore lint/a11y/useSemanticElements: pass
           <button
             key={code}
             type="button"

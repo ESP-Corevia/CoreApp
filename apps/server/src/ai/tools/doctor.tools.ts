@@ -133,10 +133,7 @@ export function createDoctorTools(caller: AICaller) {
       description:
         'Search the reference medications database (BDPM) by name or active substance. Use this to look up dosages, forms, active substances, or reimbursement info before discussing with a patient.',
       inputSchema: z.object({
-        query: z
-          .string()
-          .min(3)
-          .describe('Medication name or active substance (min 3 characters)'),
+        query: z.string().min(3).describe('Medication name or active substance (min 3 characters)'),
       }),
       execute: async args => {
         return await caller.doctor.medications.search({

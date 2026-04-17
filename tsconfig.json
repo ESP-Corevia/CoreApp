@@ -1,5 +1,10 @@
 {
   "extends": "./tsconfig.base.json",
   "files": [],
-  "references": [{ "path": "./apps/server" }, { "path": "./apps/web" }, { "path": "./apps/home" }]
+  "references": [
+    { "path": "./apps/server" },
+    { "path": "./apps/web" },
+    { "path": "./apps/home" },
+    { "path": "./apps/corevia-app" }
+  ]
 }

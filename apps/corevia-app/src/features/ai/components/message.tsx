@@ -55,10 +55,7 @@ function ToolApprovalCard({
   return (
     <div className="my-1 overflow-hidden rounded-xl border border-amber-500/30 bg-amber-50/30 dark:bg-amber-950/15">
       <div className="flex items-center gap-2 border-amber-500/20 border-b bg-amber-100/40 px-3 py-1.5 dark:bg-amber-900/15">
-        <ShieldAlert
-          className="size-3.5 text-amber-600 dark:text-amber-400"
-          aria-hidden="true"
-        />
+        <ShieldAlert className="size-3.5 text-amber-600 dark:text-amber-400" aria-hidden="true" />
         <span className="font-medium text-[11px] text-amber-800 uppercase tracking-wide dark:text-amber-300">
           {t('ai.approvalRequired', { defaultValue: 'Approval required' })}
         </span>
@@ -227,9 +224,7 @@ export function ChatMessage({ message, initials, onApprove, onDeny }: Props) {
 
   const textParts = message.parts.filter(p => p.type === 'text');
   const text = textParts.map(p => (p as { text: string }).text).join('');
-  const hasAnyRenderablePart = message.parts.some(
-    p => p.type === 'text' || isToolUIPart(p),
-  );
+  const hasAnyRenderablePart = message.parts.some(p => p.type === 'text' || isToolUIPart(p));
 
   const avatar = (
     <Avatar className="size-7 shrink-0">
@@ -276,7 +271,7 @@ export function ChatMessage({ message, initials, onApprove, onDeny }: Props) {
 
         {message.parts.map((part, idx) => {
           if (part.type === 'text') {
-            if (!part.text || !part.text.trim()) return null;
+            if (!part.text?.trim()) return null;
             return (
               <div
                 key={idx}

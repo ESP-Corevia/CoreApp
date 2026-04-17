@@ -32,11 +32,20 @@ export default function DoctorMedications() {
 
   if (authLoading || roleLoading || verifiedLoading) return <Loader />;
 
-  const results = (
-    Array.isArray(data)
-      ? data
-      : (((data as Record<string, unknown>)?.items as Array<Record<string, unknown>>) ?? [])
-  ) as Array<Record<string, unknown>>;
+  type MedicationItem = {
+    externalId: string | null;
+    cis: string | null;
+    cip: string | null;
+    name: string;
+    shortLabel: string;
+    form: string | null;
+    route: string | null;
+    activeSubstances: string[];
+  };
+
+  const results: MedicationItem[] = Array.isArray(data)
+    ? (data as MedicationItem[])
+    : ((data as { items?: MedicationItem[] } | undefined)?.items ?? []);
 
   return (
     <div className="space-y-4">
@@ -71,27 +80,19 @@ export default function DoctorMedications() {
       ) : (
         <div className="space-y-3">
           {results.map((med, i) => (
-            <Card key={(med.id as string) ?? i}>
+            <Card key={med.cis ?? med.cip ?? med.externalId ?? i}>
               <CardContent className="p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 space-y-1">
-                    <p className="truncate font-medium text-sm">
-                      {(med.name as string) ?? (med.denomination as string) ?? '—'}
-                    </p>
-                    {med.form && (
-                      <p className="text-muted-foreground text-xs">{med.form as string}</p>
-                    )}
-                    {med.activeSubstances && (
+                    <p className="truncate font-medium text-sm">{med.name ?? '—'}</p>
+                    {med.form && <p className="text-muted-foreground text-xs">{med.form}</p>}
+                    {med.activeSubstances.length > 0 && (
                       <div className="flex flex-wrap gap-1">
-                        {(Array.isArray(med.activeSubstances) ? med.activeSubstances : []).map(
-                          (sub, j) => (
-                            <Badge key={j} variant="outline" className="text-xs">
-                              {typeof sub === 'string'
-                                ? sub
-                                : (((sub as Record<string, unknown>)?.name as string) ?? '')}
-                            </Badge>
-                          ),
-                        )}
+                        {med.activeSubstances.map((sub, j) => (
+                          <Badge key={j} variant="outline" className="text-xs">
+                            {sub}
+                          </Badge>
+                        ))}
                       </div>
                     )}
                   </div>

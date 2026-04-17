@@ -68,7 +68,7 @@ export function createPatientTools(caller: AICaller) {
 
     list_doctors: tool({
       description:
-        "Search for bookable doctors. Optionally filter by specialty, city, or free-text search. Returns each doctor with a single `doctorId` field — always reuse THIS value as the `doctorId` in `get_available_slots` and `create_appointment`.",
+        'Search for bookable doctors. Optionally filter by specialty, city, or free-text search. Returns each doctor with a single `doctorId` field — always reuse THIS value as the `doctorId` in `get_available_slots` and `create_appointment`.',
       inputSchema: z.object({
         specialty: z.string().optional().describe('Filter by specialty'),
         city: z.string().optional().describe('Filter by city'),
@@ -100,9 +100,7 @@ export function createPatientTools(caller: AICaller) {
       description:
         'Get available appointment slots for a doctor on a given date. Returns 30-minute time slots. Pass the exact `doctorId` returned by `list_doctors`, NOT any other id.',
       inputSchema: z.object({
-        doctorId: z
-          .string()
-          .describe('The doctorId value from a previous list_doctors result'),
+        doctorId: z.string().describe('The doctorId value from a previous list_doctors result'),
         date: z
           .string()
           .regex(/^\d{4}-\d{2}-\d{2}$/)

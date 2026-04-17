@@ -11,7 +11,11 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
-import { ALLOWED_MIME_TYPES, type FileEntry, useDocumentUpload } from '../hooks/use-document-upload';
+import {
+  ALLOWED_MIME_TYPES,
+  type FileEntry,
+  useDocumentUpload,
+} from '../hooks/use-document-upload';
 
 interface Props {
   open: boolean;

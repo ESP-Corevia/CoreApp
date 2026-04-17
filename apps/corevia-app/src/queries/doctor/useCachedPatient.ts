@@ -16,7 +16,9 @@ function isDoctorAppointmentsKey(key: readonly unknown[]): boolean {
   return key[0] === 'doctor' && key[1] === 'appointments';
 }
 
-export function useCachedPatientForAppointment(appointmentId: string | undefined): PatientSummary | undefined {
+export function useCachedPatientForAppointment(
+  appointmentId: string | undefined,
+): PatientSummary | undefined {
   const queryClient = useQueryClient();
 
   return useMemo(() => {

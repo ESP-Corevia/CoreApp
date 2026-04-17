@@ -1,8 +1,21 @@
-import { devToolsMiddleware } from '@ai-sdk/devtools';
 import { createOpenAI } from '@ai-sdk/openai';
-import { extractReasoningMiddleware, type LanguageModel, wrapLanguageModel } from 'ai';
+import {
+  extractReasoningMiddleware,
+  type LanguageModel,
+  type LanguageModelMiddleware,
+  wrapLanguageModel,
+} from 'ai';
 import { env } from '../env';
 
+const middleware: LanguageModelMiddleware[] = [];
+if (env.NODE_ENV === 'development') {
+  try {
+    const { devToolsMiddleware } = await import('@ai-sdk/devtools');
+    middleware.push(devToolsMiddleware());
+  } catch {
+    // silently skip if devtools not available
+  }
+}
 // ---------------------------------------------------------------------------
 // NVIDIA NIM provider — OpenAI-compatible Chat Completions API
 // ---------------------------------------------------------------------------
@@ -25,5 +38,5 @@ const baseModel = nvidia.chat('mistralai/mistral-small-4-119b-2603');
 // as separate `reasoning` parts in the UI message stream.
 export const nvidiaModel: LanguageModel = wrapLanguageModel({
   model: baseModel,
-  middleware: [extractReasoningMiddleware({ tagName: 'think' }), devToolsMiddleware()],
+  middleware: [extractReasoningMiddleware({ tagName: 'think' }), ...middleware],
 });

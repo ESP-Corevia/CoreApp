@@ -15,8 +15,7 @@ export function usePatientDocuments() {
 
 export function useDocumentDownload() {
   return useMutation({
-    mutationFn: (documentId: string) =>
-      trpcClient.document.getDownloadUrl.query({ documentId }),
+    mutationFn: (documentId: string) => trpcClient.document.getDownloadUrl.query({ documentId }),
   });
 }
 
@@ -32,9 +31,7 @@ export function useDeleteDocuments() {
     },
     onSuccess: ({ total, failed }) => {
       if (failed === 0) {
-        toast.success(
-          total === 1 ? 'Document deleted' : `${total} documents deleted`,
-        );
+        toast.success(total === 1 ? 'Document deleted' : `${total} documents deleted`);
       } else if (failed < total) {
         toast.warning(`Deleted ${total - failed} of ${total} (${failed} failed)`);
       } else {

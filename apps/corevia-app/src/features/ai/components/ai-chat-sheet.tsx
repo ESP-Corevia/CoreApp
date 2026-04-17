@@ -18,10 +18,7 @@ export function AiChatSheet() {
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <SheetContent
-        side="right"
-        className="flex w-full flex-col gap-0 p-0 sm:max-w-md md:max-w-lg"
-      >
+      <SheetContent side="right" className="flex w-full flex-col gap-0 p-0 sm:max-w-md md:max-w-lg">
         <SheetHeader className="shrink-0 gap-1 border-b px-4 py-3 pr-12">
           <SheetTitle className="flex items-center gap-2 text-sm">
             <span

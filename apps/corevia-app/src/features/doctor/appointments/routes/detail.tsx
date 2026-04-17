@@ -21,10 +21,7 @@ import { useDoctorVerified } from '@/hooks/use-doctor-verified';
 import { useRequireAuth } from '@/hooks/use-require-auth';
 import { useRoleGuard } from '@/hooks/use-role-guard';
 import { cn } from '@/lib/utils';
-import {
-  useCachedPatientForAppointment,
-  useDoctorAppointmentDetail,
-} from '@/queries/doctor';
+import { useCachedPatientForAppointment, useDoctorAppointmentDetail } from '@/queries/doctor';
 import { PatientDocuments } from '../components/patient-documents';
 import { StatusActions } from '../components/status-actions';
 import { StatusBadge } from '../components/status-badge';
@@ -104,8 +101,7 @@ export default function DoctorAppointmentDetail() {
         const k = q.queryKey;
         if (!Array.isArray(k) || k.length === 0) return false;
         const head = k[0];
-        if (Array.isArray(head))
-          return head[0] === 'doctor' && head[1] === 'appointments';
+        if (Array.isArray(head)) return head[0] === 'doctor' && head[1] === 'appointments';
         return head === 'doctor' && k[1] === 'appointments';
       },
     });
@@ -225,10 +221,7 @@ export default function DoctorAppointmentDetail() {
               </Avatar>
               <div className="min-w-0 flex-1 space-y-2">
                 <div className="flex items-center gap-1.5">
-                  <User
-                    className="size-3.5 shrink-0 text-muted-foreground"
-                    aria-hidden="true"
-                  />
+                  <User className="size-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
                   <h2 className="truncate font-semibold text-base">
                     {patientName ??
                       t('doctor.appointments.unknownPatient', { defaultValue: 'Patient' })}
@@ -251,7 +244,10 @@ export default function DoctorAppointmentDetail() {
                 <dl className="grid grid-cols-1 gap-1.5 pt-1 sm:grid-cols-2">
                   {patientEmail && (
                     <div className="flex min-w-0 items-center gap-2 text-sm">
-                      <Mail className="size-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
+                      <Mail
+                        className="size-3.5 shrink-0 text-muted-foreground"
+                        aria-hidden="true"
+                      />
                       <a
                         href={`mailto:${patientEmail}`}
                         className="truncate rounded-sm hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -283,10 +279,7 @@ export default function DoctorAppointmentDetail() {
             <Card>
               <CardContent className="space-y-2 p-4 sm:p-5 md:p-6">
                 <div className="flex items-center gap-2">
-                  <FileText
-                    className="size-4 text-muted-foreground"
-                    aria-hidden="true"
-                  />
+                  <FileText className="size-4 text-muted-foreground" aria-hidden="true" />
                   <h2 className="font-medium text-[11px] text-muted-foreground uppercase tracking-[0.08em]">
                     {t('doctor.appointments.reason')}
                   </h2>

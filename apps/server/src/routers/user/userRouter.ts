@@ -38,12 +38,12 @@ export const userRouter = router({
     .input(z.object({ role: z.enum(ALLOWED_INITIAL_ROLES) }))
     .output(z.object({ success: z.boolean() }))
     .mutation(async ({ ctx: { auth, session }, input }) => {
-      const user = await auth.api.getUser({ query: { userId: session.userId } });
+      const user = await auth.api.getUser({ query: { id: session.userId } });
       if (!user) {
         throw new TRPCError({ code: 'NOT_FOUND', message: 'User not found' });
       }
       // Only allow changing from the default role (patient)
-      if ((user as Record<string, unknown>).role !== 'patient') {
+      if (user.role !== 'patient') {
         throw new TRPCError({
           code: 'FORBIDDEN',
           message: 'Role has already been set',

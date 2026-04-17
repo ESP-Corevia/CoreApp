@@ -52,7 +52,17 @@ export function AiChatProvider({ children }: { children: ReactNode }) {
       setOpen,
       toggle,
     }),
-    [messages, sendMessage, setMessages, addToolApprovalResponse, status, stop, error, open, toggle],
+    [
+      messages,
+      sendMessage,
+      setMessages,
+      addToolApprovalResponse,
+      status,
+      stop,
+      error,
+      open,
+      toggle,
+    ],
   );
 
   return <AiChatContext.Provider value={value}>{children}</AiChatContext.Provider>;

@@ -12,9 +12,9 @@ export function useUpdateMedication() {
       id: string;
       dosageLabel?: string | null;
       instructions?: string | null;
-      startDate?: string | null;
+      startDate?: string;
       endDate?: string | null;
-      active?: boolean;
+      isActive?: boolean;
     }) => trpcClient.pillbox.updateMedication.mutate(input),
     onSuccess: () => {
       toast.success(t('patient.pillbox.medicationUpdated', 'Medication updated'));

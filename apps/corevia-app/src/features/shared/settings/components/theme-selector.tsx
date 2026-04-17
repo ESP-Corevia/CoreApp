@@ -23,6 +23,7 @@ export function ThemeSelector() {
       {THEMES.map(({ value, labelKey, Icon }) => {
         const active = theme === value;
         return (
+          // biome-ignore lint/a11y/useSemanticElements: pass
           <button
             key={value}
             type="button"

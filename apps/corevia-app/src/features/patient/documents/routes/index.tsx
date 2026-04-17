@@ -198,7 +198,9 @@ export default function PatientDocuments() {
               disabled={deleteDocs.isPending}
               className="gap-2"
             >
-              {deleteDocs.isPending && <Loader2 className="size-4 animate-spin" aria-hidden="true" />}
+              {deleteDocs.isPending && (
+                <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+              )}
               <Trash2 className="size-4" aria-hidden="true" />
               {t('common.delete', { defaultValue: 'Delete' })}
             </Button>

@@ -1,11 +1,4 @@
-import {
-  Download,
-  FileImage,
-  FileSpreadsheet,
-  FileText,
-  FileType,
-  Loader2,
-} from 'lucide-react';
+import { Download, FileImage, FileSpreadsheet, FileText, FileType, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -13,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
-import { useDocumentDownload, useDoctorPatientDocuments } from '@/queries/doctor';
+import { useDoctorPatientDocuments, useDocumentDownload } from '@/queries/doctor';
 
 interface Props {
   patientUserId: string | undefined;
@@ -31,11 +24,7 @@ type DocItem = {
 function iconForMime(mime: string): typeof FileText {
   if (mime.startsWith('image/')) return FileImage;
   if (mime === 'application/pdf') return FileType;
-  if (
-    mime.includes('sheet') ||
-    mime.includes('excel') ||
-    mime === 'text/csv'
-  )
+  if (mime.includes('sheet') || mime.includes('excel') || mime === 'text/csv')
     return FileSpreadsheet;
   return FileText;
 }

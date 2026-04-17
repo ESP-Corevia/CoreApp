@@ -34,6 +34,7 @@ beforeEach(() => {
   mockServices.medicationsService.doctorListPatientPillbox.mockReset();
   mockServices.medicationsService.doctorViewPatientToday.mockReset();
   mockServices.medicationsService.doctorViewMedicationDetail.mockReset();
+  mockServices.medicationsService.intakeHistoryDetailed.mockReset();
 });
 
 describe('doctor.pillbox', () => {
@@ -115,6 +116,144 @@ describe('doctor.pillbox', () => {
       await expect(caller.doctor.pillbox.todayByPatient({ patientId: PATIENT_ID })).rejects.toThrow(
         'do not have access',
       );
+    });
+  });
+
+  describe('intakeHistory', () => {
+    const FROM = '2025-06-01';
+    const TO = '2025-06-07';
+
+    it('returns detailed intake history when doctor has relationship', async () => {
+      const fakeHistory = {
+        days: [
+          {
+            date: '2025-06-01',
+            allTaken: null,
+            totalCount: 0,
+            takenCount: 0,
+            intakes: [],
+          },
+          {
+            date: '2025-06-02',
+            allTaken: true,
+            totalCount: 1,
+            takenCount: 1,
+            intakes: [
+              {
+                id: 'c0a80121-1111-4111-8111-111111111111',
+                patientMedicationId: 'c0a80121-2222-4222-8222-222222222222',
+                scheduledTime: '08:00',
+                status: 'TAKEN',
+                takenAt: new Date('2025-06-02T08:05:00Z'),
+                notes: null,
+                medicationName: 'Doliprane',
+                medicationForm: 'comprimé',
+                dosageLabel: '500mg',
+                quantity: '1',
+                unit: 'tab',
+                intakeMoment: 'MORNING',
+              },
+            ],
+          },
+        ],
+      };
+      mockServices.appointmentsService.hasPatientRelationship.mockResolvedValue(true);
+      mockServices.medicationsService.intakeHistoryDetailed.mockResolvedValue(fakeHistory);
+
+      const caller = createTestCaller({ customSession: fakeDoctorSession });
+      const result = await caller.doctor.pillbox.intakeHistory({
+        patientId: PATIENT_ID,
+        from: FROM,
+        to: TO,
+      });
+
+      expect(result.days).toHaveLength(2);
+      expect(result.days[1].intakes[0]).toMatchObject({
+        id: 'c0a80121-1111-4111-8111-111111111111',
+        medicationName: 'Doliprane',
+        status: 'TAKEN',
+      });
+      expect(mockServices.appointmentsService.hasPatientRelationship).toHaveBeenCalledWith(
+        fakeDoctorSession.userId,
+        PATIENT_ID,
+      );
+      expect(mockServices.medicationsService.intakeHistoryDetailed).toHaveBeenCalledWith(
+        PATIENT_ID,
+        FROM,
+        TO,
+      );
+    });
+
+    it('rejects when doctor has no relationship with patient', async () => {
+      mockServices.appointmentsService.hasPatientRelationship.mockResolvedValue(false);
+
+      const caller = createTestCaller({ customSession: fakeDoctorSession });
+      await expect(
+        caller.doctor.pillbox.intakeHistory({ patientId: PATIENT_ID, from: FROM, to: TO }),
+      ).rejects.toThrow('do not have access');
+      expect(mockServices.medicationsService.intakeHistoryDetailed).not.toHaveBeenCalled();
+    });
+
+    it('rejects unauthenticated requests', async () => {
+      const caller = createTestCaller({ customSession: null });
+      await expect(
+        caller.doctor.pillbox.intakeHistory({ patientId: PATIENT_ID, from: FROM, to: TO }),
+      ).rejects.toThrow('Authentication required');
+    });
+
+    it('rejects patient role', async () => {
+      const caller = createTestCaller({ customSession: fakeSession });
+      await expect(
+        caller.doctor.pillbox.intakeHistory({ patientId: PATIENT_ID, from: FROM, to: TO }),
+      ).rejects.toThrow('Doctor access required');
+    });
+
+    it('rejects invalid patientId', async () => {
+      const caller = createTestCaller({ customSession: fakeDoctorSession });
+      await expect(
+        caller.doctor.pillbox.intakeHistory({ patientId: 'bad-id', from: FROM, to: TO }),
+      ).rejects.toThrow();
+    });
+
+    it('rejects invalid from date format', async () => {
+      const caller = createTestCaller({ customSession: fakeDoctorSession });
+      await expect(
+        caller.doctor.pillbox.intakeHistory({
+          patientId: PATIENT_ID,
+          from: '06/01/2025',
+          to: TO,
+        }),
+      ).rejects.toThrow();
+    });
+
+    it('rejects invalid to date format', async () => {
+      const caller = createTestCaller({ customSession: fakeDoctorSession });
+      await expect(
+        caller.doctor.pillbox.intakeHistory({
+          patientId: PATIENT_ID,
+          from: FROM,
+          to: 'not-a-date',
+        }),
+      ).rejects.toThrow();
+    });
+
+    it('propagates BAD_REQUEST from the service when from is after to', async () => {
+      mockServices.appointmentsService.hasPatientRelationship.mockResolvedValue(true);
+      mockServices.medicationsService.intakeHistoryDetailed.mockRejectedValue(
+        new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'from must be before or equal to to',
+        }),
+      );
+
+      const caller = createTestCaller({ customSession: fakeDoctorSession });
+      await expect(
+        caller.doctor.pillbox.intakeHistory({
+          patientId: PATIENT_ID,
+          from: '2025-06-30',
+          to: '2025-06-01',
+        }),
+      ).rejects.toThrow('before or equal');
     });
   });
 

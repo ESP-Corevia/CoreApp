@@ -1,30 +1,59 @@
 import type { ToolExecutionOptions } from 'ai';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createPatientTools } from './patient.tools';
 
 const execOpts = {} as ToolExecutionOptions;
 
+const DOCTOR_ROW = {
+  id: 'profile-1',
+  userId: 'user-1',
+  name: 'Dr. House',
+  specialty: 'Cardiology',
+  address: '1 Main St',
+  city: 'Lyon',
+  verified: true,
+};
+
 const mockCaller = {
   appointments: {
-    listMine: vi.fn().mockResolvedValue({ items: [] }),
-    detail: vi.fn().mockResolvedValue({ id: 'a1' }),
-    create: vi.fn().mockResolvedValue({ id: 'a2' }),
+    listMine: vi.fn(),
+    detail: vi.fn(),
+    create: vi.fn(),
   },
   doctors: {
-    list: vi.fn().mockResolvedValue({ items: [] }),
-    availableSlots: vi.fn().mockResolvedValue({ slots: [] }),
+    list: vi.fn(),
+    availableSlots: vi.fn(),
   },
   medications: {
-    search: vi.fn().mockResolvedValue({ items: [] }),
+    search: vi.fn(),
   },
   pillbox: {
-    today: vi.fn().mockResolvedValue({ medications: [] }),
-    listMine: vi.fn().mockResolvedValue({ items: [] }),
-    detail: vi.fn().mockResolvedValue({ id: 'm1' }),
-    markIntakeTaken: vi.fn().mockResolvedValue({ id: 'i1', status: 'TAKEN' }),
-    markIntakeSkipped: vi.fn().mockResolvedValue({ id: 'i2', status: 'SKIPPED' }),
+    today: vi.fn(),
+    listMine: vi.fn(),
+    detail: vi.fn(),
+    markIntakeTaken: vi.fn(),
+    markIntakeSkipped: vi.fn(),
   },
 };
+
+beforeEach(() => {
+  mockCaller.appointments.listMine.mockResolvedValue({ items: [] });
+  mockCaller.appointments.detail.mockResolvedValue({ id: 'a1' });
+  mockCaller.appointments.create.mockResolvedValue({ id: 'a2' });
+  mockCaller.doctors.list.mockResolvedValue({
+    items: [DOCTOR_ROW],
+    page: 1,
+    limit: 10,
+    total: 1,
+  });
+  mockCaller.doctors.availableSlots.mockResolvedValue({ slots: [] });
+  mockCaller.medications.search.mockResolvedValue({ items: [] });
+  mockCaller.pillbox.today.mockResolvedValue({ medications: [] });
+  mockCaller.pillbox.listMine.mockResolvedValue({ items: [] });
+  mockCaller.pillbox.detail.mockResolvedValue({ id: 'm1' });
+  mockCaller.pillbox.markIntakeTaken.mockResolvedValue({ id: 'i1', status: 'TAKEN' });
+  mockCaller.pillbox.markIntakeSkipped.mockResolvedValue({ id: 'i2', status: 'SKIPPED' });
+});
 
 const caller = mockCaller as never;
 
@@ -97,6 +126,26 @@ describe('createPatientTools', () => {
       page: 1,
       limit: 10,
     });
+  });
+
+  it('list_doctors remaps items to a single doctorId (from userId) and drops the profile id', async () => {
+    const tools = createPatientTools(caller);
+    const result = (await tools.list_doctors.execute?.({}, execOpts)) as {
+      items: Array<Record<string, unknown>>;
+    };
+    expect(result.items).toEqual([
+      {
+        doctorId: 'user-1',
+        name: 'Dr. House',
+        specialty: 'Cardiology',
+        address: '1 Main St',
+        city: 'Lyon',
+        verified: true,
+      },
+    ]);
+    // The internal profile id must NOT be exposed to the model
+    expect(result.items[0]).not.toHaveProperty('id');
+    expect(result.items[0]).not.toHaveProperty('userId');
   });
 
   it('get_available_slots forwards doctorId and date', async () => {

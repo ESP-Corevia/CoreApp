@@ -156,6 +156,7 @@ export function IntakeHistory({ days, isLoading, rangeDays, onRangeChange }: Pro
             </p>
           ) : (
             <>
+              {/** biome-ignore lint/a11y/useSemanticElements: pass */}
               <div
                 role="group"
                 aria-label={t('doctor.patientPillbox.historyLabel', {
@@ -293,14 +294,9 @@ export function IntakeHistory({ days, isLoading, rangeDays, onRangeChange }: Pro
                             {intake.scheduledTime?.slice(0, 5) || '—'}
                           </span>
                         </div>
-                        <Pill
-                          className="size-5 shrink-0 text-primary"
-                          aria-hidden="true"
-                        />
+                        <Pill className="size-5 shrink-0 text-primary" aria-hidden="true" />
                         <div className="min-w-0 flex-1">
-                          <p className="truncate font-semibold text-sm">
-                            {intake.medicationName}
-                          </p>
+                          <p className="truncate font-semibold text-sm">{intake.medicationName}</p>
                           <p className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-muted-foreground text-xs">
                             {intake.dosageLabel && <span>{intake.dosageLabel}</span>}
                             {intake.quantity && (
