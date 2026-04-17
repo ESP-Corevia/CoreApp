@@ -430,6 +430,49 @@ export const createMedicationsRepo = (db: DrizzleDB) => ({
   },
 
   /**
+   * Liste les prises détaillées d'un patient sur une plage de dates avec les infos médicament.
+   * Utilisé pour l'affichage de l'historique détaillé côté médecin.
+   */
+  listIntakeDetailsByDateRange: async (patientId: string, from: string, to: string) => {
+    return await db
+      .select({
+        id: patientMedicationIntakes.id,
+        patientMedicationId: patientMedicationIntakes.patientMedicationId,
+        scheduledDate: patientMedicationIntakes.scheduledDate,
+        scheduledTime: patientMedicationIntakes.scheduledTime,
+        status: patientMedicationIntakes.status,
+        takenAt: patientMedicationIntakes.takenAt,
+        notes: patientMedicationIntakes.notes,
+        medicationName: patientMedications.medicationName,
+        medicationForm: patientMedications.medicationForm,
+        dosageLabel: patientMedications.dosageLabel,
+        quantity: patientMedicationSchedules.quantity,
+        unit: patientMedicationSchedules.unit,
+        intakeMoment: patientMedicationSchedules.intakeMoment,
+      })
+      .from(patientMedicationIntakes)
+      .innerJoin(
+        patientMedications,
+        eq(patientMedicationIntakes.patientMedicationId, patientMedications.id),
+      )
+      .leftJoin(
+        patientMedicationSchedules,
+        eq(patientMedicationIntakes.scheduleId, patientMedicationSchedules.id),
+      )
+      .where(
+        and(
+          eq(patientMedications.patientId, patientId),
+          gte(patientMedicationIntakes.scheduledDate, from),
+          lte(patientMedicationIntakes.scheduledDate, to),
+        ),
+      )
+      .orderBy(
+        asc(patientMedicationIntakes.scheduledDate),
+        asc(patientMedicationIntakes.scheduledTime),
+      );
+  },
+
+  /**
    * Met à jour le statut d'une prise (TAKEN ou SKIPPED). Ne fonctionne que si la prise est encore PENDING.
    * Enregistre `takenAt` automatiquement si le statut est TAKEN.
    * @returns La prise mise à jour, ou `null` si introuvable ou déjà traitée.

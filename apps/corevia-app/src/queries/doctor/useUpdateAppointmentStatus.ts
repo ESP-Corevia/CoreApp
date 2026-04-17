@@ -3,6 +3,15 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { trpcClient } from '@/providers/trpc';
 
+function matchesDoctorAppointments(key: readonly unknown[]): boolean {
+  if (!Array.isArray(key) || key.length === 0) return false;
+  const head = key[0];
+  if (Array.isArray(head)) {
+    return head[0] === 'doctor' && head[1] === 'appointments';
+  }
+  return head === 'doctor' && key[1] === 'appointments';
+}
+
 export function useUpdateAppointmentStatus() {
   const queryClient = useQueryClient();
   const { t } = useTranslation();
@@ -10,11 +19,10 @@ export function useUpdateAppointmentStatus() {
   return useMutation({
     mutationFn: (input: { id: string; status: 'CONFIRMED' | 'COMPLETED' | 'CANCELLED' }) =>
       trpcClient.doctor.appointments.updateStatus.mutate(input),
-    onSuccess: (_data, variables) => {
+    onSuccess: () => {
       toast.success(t('doctor.appointments.statusUpdated', 'Appointment status updated'));
-      void queryClient.invalidateQueries({ queryKey: ['doctor', 'appointments'] });
       void queryClient.invalidateQueries({
-        queryKey: ['doctor', 'appointments', 'detail', variables.id],
+        predicate: q => matchesDoctorAppointments(q.queryKey),
       });
     },
     onError: (error: Error) => {

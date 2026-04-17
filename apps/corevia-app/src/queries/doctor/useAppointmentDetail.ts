@@ -6,5 +6,7 @@ export function useAppointmentDetail(id: string, enabled = true) {
   return useQuery({
     ...trpc.doctor.appointments.detail.queryOptions({ id }),
     enabled: enabled && !!id,
+    refetchOnWindowFocus: true,
+    staleTime: 15_000,
   });
 }

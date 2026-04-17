@@ -247,6 +247,33 @@ export const IntakeHistoryOutputSchema = z.object({
   ),
 });
 
+export const DetailedIntakeHistoryOutputSchema = z.object({
+  days: z.array(
+    z.object({
+      date: z.string(),
+      allTaken: z.boolean().nullable(),
+      totalCount: z.number(),
+      takenCount: z.number(),
+      intakes: z.array(
+        z.object({
+          id: z.uuid(),
+          patientMedicationId: z.uuid(),
+          scheduledTime: z.string(),
+          status: z.string(),
+          takenAt: z.coerce.date().nullable(),
+          notes: z.string().nullable(),
+          medicationName: z.string(),
+          medicationForm: z.string().nullable(),
+          dosageLabel: z.string().nullable(),
+          quantity: z.string().nullable(),
+          unit: z.string().nullable(),
+          intakeMoment: z.string().nullable(),
+        }),
+      ),
+    }),
+  ),
+});
+
 // ─── Admin Pillbox ──────────────────────────────────────────
 
 export const AdminListPillboxInputSchema = z.object({
