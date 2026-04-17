@@ -107,60 +107,57 @@ jobs:
         continue-on-error: true
         if: success()
         run: |
-          # Get all tags starting with "home-" except current and latest
-          old_tags=$(doctl registry repository list-tags corevia \
-            --format Tag \
-            --no-header | grep '^home-' | grep -v "home-${{ env.HOME_VERSION }}" | grep -v "home-latest")
+          set -x
 
-          # Track which digests we've already deleted
+          all_tags=$(doctl registry repository list-tags corevia --format Tag --no-header)
+          echo "All tags found: $all_tags"
+
+          old_tags=$(echo "$all_tags" | grep '^home-' | grep -v "home-${{ env.HOME_VERSION }}" | grep -v "home-latest" || true)
+          echo "Old tags to delete: ${old_tags:-none}"
+
           deleted_digests=""
 
           for tag in $old_tags; do
             echo "Processing tag: $tag"
 
-            # Get the digest for this tag
             digest=$(doctl registry repository list-tags corevia \
               --format Tag,Digest \
-              --no-header | grep "^$tag" | awk '{print $2}')
+              --no-header | grep "^$tag[[:space:]]" | awk '{print $2}' || true)
 
             if [[ -z "$digest" ]]; then
               echo "No digest found for tag $tag, skipping."
               continue
             fi
 
-            # Check if we already deleted this digest
-            if echo "$deleted_digests" | grep -q "$digest"; then
+            if echo "$deleted_digests" | grep -qF "$digest"; then
               echo "Digest $digest already deleted, skipping."
               continue
             fi
 
-            echo "Deleting manifest digest: $digest"
-            doctl registry repository delete-manifest corevia $digest --force
+            echo "Deleting manifest for tag $tag (digest: $digest)"
+            doctl registry repository delete-manifest corevia "$digest" --force
 
-            # Mark digest as deleted
             deleted_digests="$deleted_digests $digest"
           done
 
-          # Delete untagged images (images without tags)
-          echo "Deleting untagged images..."
-          untagged_digests=$(doctl registry repository list-tags corevia \
-            --format Tag,Digest \
-            --no-header | awk '$1 == "" {print $2}' | sort | uniq)
+          echo "Deleting untagged manifests..."
+          untagged_digests=$(doctl registry repository list-manifests corevia \
+            --format Digest,Tags \
+            --no-header | grep '\[\]' | awk '{print $1}' | sort | uniq || true)
+          echo "Untagged digests found: ${untagged_digests:-none}"
 
           for digest in $untagged_digests; do
             if [[ -z "$digest" ]]; then
               continue
             fi
 
-            # Check if we already deleted this digest
-            if echo "$deleted_digests" | grep -q "$digest"; then
+            if echo "$deleted_digests" | grep -qF "$digest"; then
               echo "Digest $digest already deleted, skipping."
               continue
             fi
 
-            echo "Deleting untagged manifest digest: $digest"
-            doctl registry repository delete-manifest corevia $digest --force
+            echo "Deleting untagged manifest (digest: $digest)"
+            doctl registry repository delete-manifest corevia "$digest" --force
 
-            # Mark digest as deleted
             deleted_digests="$deleted_digests $digest"
           done
