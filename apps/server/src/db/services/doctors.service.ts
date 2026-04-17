@@ -45,6 +45,7 @@ export interface ListBookableQuery {
   search?: string;
   page: number;
   limit: number;
+  verified?: boolean;
 }
 
 export const createDoctorsService = (

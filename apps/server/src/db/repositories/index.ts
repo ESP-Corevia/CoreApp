@@ -3,6 +3,7 @@ import { db } from '../index';
 import { createAppointmentsRepo } from './appointments.repository';
 import { createAvailabilityRepo } from './availability.repository';
 import { createDoctorsRepo } from './doctors.repository';
+import { createDocumentsRepo } from './documents.repository';
 import { createMedicationsRepo } from './medications.repository';
 import { createPatientsRepo } from './patients.repository';
 import { createUsersRepo } from './users.repository';
@@ -13,6 +14,7 @@ export const patientsRepo = createPatientsRepo(db);
 export const availabilityRepo = createAvailabilityRepo(db);
 export const appointmentsRepo = createAppointmentsRepo(db);
 export const medicationsRepo = createMedicationsRepo(db);
+export const documentsRepo = createDocumentsRepo(db);
 
 export type Repositories = {
   usersRepo: ReturnType<typeof createUsersRepo>;
@@ -21,4 +23,5 @@ export type Repositories = {
   availabilityRepo: ReturnType<typeof createAvailabilityRepo>;
   appointmentsRepo: ReturnType<typeof createAppointmentsRepo>;
   medicationsRepo: ReturnType<typeof createMedicationsRepo>;
+  documentsRepo: ReturnType<typeof createDocumentsRepo>;
 };

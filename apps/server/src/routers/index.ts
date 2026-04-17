@@ -5,6 +5,7 @@ import { doctorRouter } from './doctor/doctorRouter';
 import { helloWorldRouter } from './helloworld';
 import { patientAppointmentsRouter } from './patient/appointmentsRouter';
 import { patientDoctorsRouter } from './patient/doctorsRouter';
+import { patientDocumentsRouter } from './patient/documentsRouter';
 import { patientMedicationsRouter } from './patient/medicationsRouter';
 import { patientPillboxRouter } from './patient/pillboxRouter';
 import { userRouter } from './user/userRouter';
@@ -27,5 +28,6 @@ export const appRouter = router({
   medications: patientMedicationsRouter,
   pillbox: patientPillboxRouter,
   doctor: doctorRouter,
+  document: patientDocumentsRouter,
 });
 export type AppRouter = typeof appRouter;

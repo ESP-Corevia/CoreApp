@@ -14,6 +14,7 @@ import { env } from './env';
 import { auth } from './lib/auth';
 import printBanner from './lib/banner';
 import { createContext } from './lib/context';
+import { createStorageService } from './lib/storage';
 import { chatRoutePlugin } from './routers/ai/chatRoute';
 import { type AppRouter, appRouter } from './routers/index';
 import { mergeOpenApiDocs } from './utils/functions';
@@ -241,6 +242,12 @@ async function shutdown(signal: NodeJS.Signals) {
 
 process.once('SIGINT', () => void shutdown('SIGINT'));
 process.once('SIGTERM', () => void shutdown('SIGTERM'));
+
+// Ensure S3 bucket exists
+fastify.log.info('🪣 Initializing S3 storage...');
+const storageService = createStorageService();
+await storageService.ensureBucket();
+fastify.log.info('✅ S3 storage initialized');
 
 fastify.listen({ port: env.PORT, host: '0.0.0.0' }, err => {
   if (err) {

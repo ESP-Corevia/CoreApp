@@ -5,6 +5,7 @@ import {
   Bot,
   Calendar,
   ClipboardList,
+  FileText,
   Home,
   LayoutDashboard,
   Pill,
@@ -120,6 +121,7 @@ export function AppSidebar() {
     if (role === 'admin') {
       items.push(
         { title: t('nav.patients', 'Patients'), url: '/patients', icon: Users },
+        { title: t('nav.documents', 'Documents'), url: '/documents', icon: FileText },
         { title: t('nav.medications', 'Medications'), url: '/medications', icon: Pill },
         { title: t('nav.pillbox', 'Pillbox'), url: '/pillbox', icon: ClipboardList },
       );

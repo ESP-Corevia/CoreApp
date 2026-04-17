@@ -62,6 +62,8 @@
     "@trpc/server": "catalog:",
     "@trpc/tanstack-react-query": "11.8.1",
     "@uidotdev/usehooks": "2.4.1",
+    "@uppy/aws-s3": "^5.1.0",
+    "@uppy/core": "^5.2.0",
     "ai": "^6.0.146",
     "better-auth": "catalog:",
     "class-variance-authority": "catalog:",
