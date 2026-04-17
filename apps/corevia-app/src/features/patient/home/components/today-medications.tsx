@@ -1,4 +1,4 @@
-import { Check, CircleCheck, Pill, SkipForward, X } from 'lucide-react';
+import { Check, CircleCheck, Clock, Pill, SkipForward, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import { Button } from '@/components/ui/button';
@@ -7,21 +7,43 @@ import { cn } from '@/lib/utils';
 
 interface Intake {
   id: string;
-  status?: string;
+  patientMedicationId?: string;
+  medicationName?: string;
+  medicationForm?: string | null;
+  dosageLabel?: string | null;
   scheduledTime?: string;
-  schedule?: {
-    intakeTime?: string;
-    intakeMoment?: string;
-    medication?: {
-      medicationName?: string;
-    };
-  };
+  intakeMoment?: string | null;
+  quantity?: string | null;
+  unit?: string | null;
+  status?: string;
+  notes?: string | null;
 }
 
 interface TodayMedicationsProps {
   intakes: Intake[];
   onTake: (id: string) => void;
   onSkip: (id: string) => void;
+}
+
+const MOMENT_KEYS = ['MORNING', 'NOON', 'EVENING', 'BEDTIME'] as const;
+
+function formatTime(raw?: string): string {
+  if (!raw) return '';
+  // handle "HH:MM:SS" or "HH:MM"
+  const match = raw.match(/^(\d{2}):(\d{2})/);
+  return match ? `${match[1]}:${match[2]}` : raw;
+}
+
+function formatDosage(intake: Intake): string {
+  const parts: string[] = [];
+  if (intake.quantity && intake.unit) {
+    parts.push(`${intake.quantity} ${intake.unit}`);
+  } else if (intake.quantity) {
+    parts.push(intake.quantity);
+  }
+  if (intake.dosageLabel) parts.push(intake.dosageLabel);
+  else if (intake.medicationForm) parts.push(intake.medicationForm);
+  return parts.join(' · ');
 }
 
 export function TodayMedications({ intakes, onTake, onSkip }: TodayMedicationsProps) {
@@ -51,11 +73,18 @@ export function TodayMedications({ intakes, onTake, onSkip }: TodayMedicationsPr
   const progressPct = Math.round((takenCount / total) * 100);
   const allDone = takenCount === total;
 
+  // Sort by scheduled time ascending so morning doses come first
+  const sorted = [...intakes].sort((a, b) => {
+    const ta = formatTime(a.scheduledTime) || '99:99';
+    const tb = formatTime(b.scheduledTime) || '99:99';
+    return ta.localeCompare(tb);
+  });
+
   return (
     <Card>
       <CardContent className="p-5 md:p-6">
-        <div className="mb-4 flex items-center justify-between gap-3">
-          <div>
+        <div className="mb-4 flex items-start justify-between gap-3">
+          <div className="min-w-0">
             <h3 className="font-semibold text-base">{t('patient.home.todaysMedications')}</h3>
             <p className="text-muted-foreground text-sm">
               {allDone
@@ -86,9 +115,15 @@ export function TodayMedications({ intakes, onTake, onSkip }: TodayMedicationsPr
         </div>
 
         <ul className="space-y-2">
-          {intakes.map(intake => {
-            const medName = intake.schedule?.medication?.medicationName ?? '—';
-            const time = intake.schedule?.intakeTime ?? intake.scheduledTime ?? '';
+          {sorted.map(intake => {
+            const medName = intake.medicationName || '—';
+            const time = formatTime(intake.scheduledTime);
+            const moment =
+              intake.intakeMoment &&
+              (MOMENT_KEYS as readonly string[]).includes(intake.intakeMoment)
+                ? t(`patient.pillbox.moment.${intake.intakeMoment}`)
+                : '';
+            const dosage = formatDosage(intake);
             const status = intake.status ?? 'PENDING';
             const isPending = status === 'PENDING';
             const isTaken = status === 'TAKEN';
@@ -103,10 +138,10 @@ export function TodayMedications({ intakes, onTake, onSkip }: TodayMedicationsPr
                   isSkipped && 'border-muted bg-muted/30 opacity-70',
                 )}
               >
-                <div className="flex min-w-0 items-center gap-3">
+                <div className="flex min-w-0 flex-1 items-center gap-3">
                   <div
                     className={cn(
-                      'flex size-9 shrink-0 items-center justify-center rounded-lg',
+                      'flex size-10 shrink-0 items-center justify-center rounded-lg',
                       isTaken
                         ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'
                         : isSkipped
@@ -116,28 +151,49 @@ export function TodayMedications({ intakes, onTake, onSkip }: TodayMedicationsPr
                     aria-hidden="true"
                   >
                     {isTaken ? (
-                      <Check className="size-4" />
+                      <Check className="size-5" />
                     ) : isSkipped ? (
-                      <SkipForward className="size-4" />
+                      <SkipForward className="size-5" />
                     ) : (
-                      <Pill className="size-4" />
+                      <Pill className="size-5" />
                     )}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className={cn('truncate font-medium text-sm', isSkipped && 'line-through')}>
+                    <p
+                      className={cn('truncate font-medium text-sm', isSkipped && 'line-through')}
+                      title={medName}
+                    >
                       {medName}
                     </p>
-                    {time && <p className="text-muted-foreground text-xs tabular-nums">{time}</p>}
+                    {dosage && (
+                      <p className="truncate text-muted-foreground text-xs" title={dosage}>
+                        {dosage}
+                      </p>
+                    )}
+                    {(time || moment) && (
+                      <div className="mt-0.5 flex items-center gap-1 text-[11px] text-muted-foreground">
+                        <Clock className="size-3 shrink-0" aria-hidden="true" />
+                        <span className="tabular-nums">{time}</span>
+                        {moment && (
+                          <>
+                            <span aria-hidden="true">·</span>
+                            <span className="truncate">{moment}</span>
+                          </>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
+
                 {isPending ? (
                   <div className="flex shrink-0 gap-1.5">
                     <Button
                       size="sm"
                       variant="outline"
-                      className="h-9 min-w-[44px] gap-1"
+                      className="h-9 min-w-[44px] border-emerald-500/40 text-emerald-700 hover:bg-emerald-500/10 hover:text-emerald-700 dark:text-emerald-300 dark:hover:text-emerald-200"
                       onClick={() => onTake(intake.id)}
                       aria-label={t('patient.pillbox.markTaken')}
+                      title={t('patient.pillbox.markTaken')}
                     >
                       <Check className="size-4" aria-hidden="true" />
                     </Button>
@@ -147,6 +203,7 @@ export function TodayMedications({ intakes, onTake, onSkip }: TodayMedicationsPr
                       className="h-9 min-w-[44px] text-muted-foreground"
                       onClick={() => onSkip(intake.id)}
                       aria-label={t('patient.pillbox.markSkipped')}
+                      title={t('patient.pillbox.markSkipped')}
                     >
                       <X className="size-4" aria-hidden="true" />
                     </Button>
@@ -154,8 +211,10 @@ export function TodayMedications({ intakes, onTake, onSkip }: TodayMedicationsPr
                 ) : (
                   <span
                     className={cn(
-                      'shrink-0 font-medium text-xs',
-                      isTaken ? 'text-emerald-700 dark:text-emerald-300' : 'text-muted-foreground',
+                      'shrink-0 rounded-full px-2 py-0.5 font-medium text-[11px]',
+                      isTaken
+                        ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'
+                        : 'bg-muted text-muted-foreground',
                     )}
                   >
                     {isTaken ? t('patient.pillbox.taken') : t('patient.pillbox.skipped')}

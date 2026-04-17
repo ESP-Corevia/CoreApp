@@ -122,7 +122,13 @@
         "pending": "Pending",
         "markTaken": "Mark as Taken",
         "markSkipped": "Skip",
-        "noSchedule": "No medications scheduled for today"
+        "noSchedule": "No medications scheduled for today",
+        "moment": {
+          "MORNING": "Morning",
+          "NOON": "Noon",
+          "EVENING": "Evening",
+          "BEDTIME": "Bedtime"
+        }
       },
       "medications": {
         "title": "Medication Search",

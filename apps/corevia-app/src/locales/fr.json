@@ -122,7 +122,13 @@
         "pending": "En attente",
         "markTaken": "Marquer comme pris",
         "markSkipped": "Passer",
-        "noSchedule": "Aucun médicament prévu pour aujourd'hui"
+        "noSchedule": "Aucun médicament prévu pour aujourd'hui",
+        "moment": {
+          "MORNING": "Matin",
+          "NOON": "Midi",
+          "EVENING": "Soir",
+          "BEDTIME": "Coucher"
+        }
       },
       "medications": {
         "title": "Recherche de médicaments",
