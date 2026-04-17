@@ -59,6 +59,7 @@
     "tailwindcss": "4.1.8",
     "typescript": "catalog:",
     "vite": "catalog:",
+    "vite-plugin-devtools-json": "1.0.0",
     "vite-tsconfig-paths": "catalog:"
   },
   "packageManager": "pnpm@10.12.1"

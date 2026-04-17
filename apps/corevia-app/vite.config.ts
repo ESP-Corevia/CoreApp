@@ -3,6 +3,7 @@ import path from 'node:path';
 import { reactRouter } from '@react-router/dev/vite';
 import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'vite';
+import devtoolsJson from 'vite-plugin-devtools-json';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
 const certPath = path.resolve(__dirname, '../../certs/cert.pem');
@@ -12,7 +13,7 @@ const hasCerts = fs.existsSync(certPath) && fs.existsSync(keyPath);
 const serverTarget = hasCerts ? 'https://127.0.0.1:3000' : 'http://127.0.0.1:3000';
 
 export default defineConfig({
-  plugins: [tailwindcss(), reactRouter(), tsconfigPaths()],
+  plugins: [tailwindcss(), reactRouter(), tsconfigPaths(), devtoolsJson()],
 
   resolve: {
     alias: {
@@ -29,8 +30,28 @@ export default defineConfig({
       ? { cert: fs.readFileSync(certPath), key: fs.readFileSync(keyPath) }
       : undefined,
     proxy: {
-      '/api': { target: serverTarget, changeOrigin: true, secure: false },
+      '/reference': {
+        target: serverTarget,
+        changeOrigin: true,
+        rewrite: p => p.replace(/^\/reference/, '/reference'),
+        secure: false,
+      },
+      '/openapi.json': {
+        target: serverTarget,
+        changeOrigin: true,
+        secure: false,
+      },
+      '/api': {
+        target: serverTarget,
+        changeOrigin: true,
+        secure: false,
+      },
+      '/js': { target: serverTarget, changeOrigin: true, secure: false },
+      '/css': { target: serverTarget, changeOrigin: true, secure: false },
+      '/scalar': { target: serverTarget, changeOrigin: true, secure: false },
       '/trpc': { target: serverTarget, changeOrigin: true, secure: false },
+      '/chat': { target: serverTarget, changeOrigin: true, secure: false },
+      '/favicon.ico': { target: serverTarget, changeOrigin: true, secure: false },
     },
   },
 });

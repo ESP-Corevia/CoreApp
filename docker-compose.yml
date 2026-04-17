@@ -146,6 +146,29 @@ services:
         limits:
           memory: 128M
 
+  corevia-app:
+    profiles:
+      - corevia-app
+      - web
+    build:
+      context: .
+      dockerfile: ./apps/corevia-app/Dockerfile
+      args:
+        VITE_SERVER_URL: ${VITE_SERVER_URL:-https://api.corevia.local}
+    container_name: Corevia-app
+    environment:
+      NODE_ENV: production
+    depends_on:
+      server:
+        condition: service_healthy
+    networks:
+      - frontend
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+
   proxy:
     profiles:
       - web
@@ -161,6 +184,7 @@ services:
       - web
       - server
       - home
+      - corevia-app
     networks:
       - frontend
     restart: unless-stopped
