@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.4.0 (2026-04-17)
+
+## What's Changed
+* fix(web): fix chat by @Yasser5711 in https://github.com/ESP-Corevia/CoreApp/pull/129
+* feat(intake): implement intake history feature with date range queries and MinIO integration by @Yasser5711 in https://github.com/ESP-Corevia/CoreApp/pull/131
+* S3 docs by @Yasser5711 in https://github.com/ESP-Corevia/CoreApp/pull/132
+
+
+**Full Changelog**: https://github.com/ESP-Corevia/CoreApp/compare/server-v1.3.0...server-v1.4.0
+
 ## 1.3.0 (2026-04-09)
 
 ## What's Changed
