@@ -1,18 +1,40 @@
+import { useQuery } from '@tanstack/react-query';
 import { Info, ShieldCheck } from 'lucide-react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import Loader from '@/components/loader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useRequireAuth } from '@/hooks/use-require-auth';
 import { useRoleGuard } from '@/hooks/use-role-guard';
+import { useTrpc } from '@/providers/trpc';
 
 export default function PendingVerification() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { isLoading: authLoading } = useRequireAuth();
   const { isLoading: roleLoading } = useRoleGuard('doctor');
+  const trpc = useTrpc();
 
-  if (authLoading || roleLoading) return <Loader />;
+  const { data: user, isLoading: userLoading } = useQuery({
+    ...trpc.user.getMe.queryOptions({}),
+    enabled: !authLoading && !roleLoading,
+  });
+
+  const doctorProfile = (user?.user as Record<string, unknown> | undefined)?.doctorProfile as
+    | { verified?: boolean }
+    | null
+    | undefined;
+  const isVerified = doctorProfile?.verified === true;
+
+  useEffect(() => {
+    if (isVerified) {
+      void navigate('/doctor/home', { replace: true });
+    }
+  }, [isVerified, navigate]);
+
+  if (authLoading || roleLoading || userLoading) return <Loader />;
 
   return (
     <div className="flex min-h-[60vh] flex-col items-center justify-center space-y-6 px-4 text-center">

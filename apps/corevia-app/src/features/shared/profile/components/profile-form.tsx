@@ -17,10 +17,9 @@ import { trpcClient } from '@/providers/trpc';
 
 interface DoctorProfile {
   specialty?: string | null;
+  address?: string | null;
   city?: string | null;
-  phone?: string | null;
-  licenseNumber?: string | null;
-  bio?: string | null;
+  verified?: boolean;
 }
 
 interface PatientProfile {
@@ -57,9 +56,8 @@ export function ProfileForm({
 
   // Doctor fields
   const [formSpecialty, setFormSpecialty] = useState(doctorProfile?.specialty ?? '');
+  const [formDoctorAddress, setFormDoctorAddress] = useState(doctorProfile?.address ?? '');
   const [formCity, setFormCity] = useState(doctorProfile?.city ?? '');
-  const [formDoctorPhone, setFormDoctorPhone] = useState(doctorProfile?.phone ?? '');
-  const [formBio, setFormBio] = useState(doctorProfile?.bio ?? '');
 
   // Patient fields
   const [formPhone, setFormPhone] = useState(patientProfile?.phone ?? '');
@@ -86,9 +84,8 @@ export function ProfileForm({
         ...(role === 'doctor' && {
           doctorProfile: {
             specialty: formSpecialty || undefined,
+            address: formDoctorAddress || undefined,
             city: formCity || undefined,
-            phone: formDoctorPhone || null,
-            bio: formBio || null,
           },
         }),
         ...(role === 'patient' && {
@@ -151,6 +148,17 @@ export function ProfileForm({
                   value={formSpecialty}
                   onChange={e => setFormSpecialty(e.target.value)}
                   placeholder="e.g. Cardiology"
+                  autoComplete="organization-title"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="doctorAddress">Address</Label>
+                <Input
+                  id="doctorAddress"
+                  value={formDoctorAddress}
+                  onChange={e => setFormDoctorAddress(e.target.value)}
+                  placeholder="123 Main St"
+                  autoComplete="street-address"
                 />
               </div>
               <div className="space-y-2">
@@ -160,25 +168,7 @@ export function ProfileForm({
                   value={formCity}
                   onChange={e => setFormCity(e.target.value)}
                   placeholder="e.g. Paris"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="doctorPhone">Phone</Label>
-                <Input
-                  id="doctorPhone"
-                  type="tel"
-                  value={formDoctorPhone}
-                  onChange={e => setFormDoctorPhone(e.target.value)}
-                  placeholder="+33 6 00 00 00 00"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="bio">Bio</Label>
-                <Input
-                  id="bio"
-                  value={formBio}
-                  onChange={e => setFormBio(e.target.value)}
-                  placeholder="Short bio..."
+                  autoComplete="address-level2"
                 />
               </div>
             </>

@@ -16,15 +16,21 @@ export function useDoctorVerified() {
     enabled: !!session?.isAuthenticated && role === 'doctor',
   });
 
-  const isVerified = (user?.user as Record<string, unknown>)?.doctorVerified === true;
+  const doctorProfile = (user?.user as Record<string, unknown> | undefined)?.doctorProfile as
+    | { verified?: boolean }
+    | null
+    | undefined;
+  const isVerified = doctorProfile?.verified === true;
+  const hasProfile = doctorProfile != null;
   const isLoading = isSessionPending || isUserLoading;
 
   useEffect(() => {
     if (isLoading) return;
-    if (role === 'doctor' && !isVerified) {
+    if (role !== 'doctor') return;
+    if (hasProfile && !isVerified) {
       void navigate('/doctor/pending-verification', { replace: true });
     }
-  }, [isLoading, role, isVerified, navigate]);
+  }, [isLoading, role, isVerified, hasProfile, navigate]);
 
   return { isLoading, isVerified };
 }
