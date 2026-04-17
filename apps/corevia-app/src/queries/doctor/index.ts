@@ -1,4 +1,5 @@
 export { useAppointmentDetail as useDoctorAppointmentDetail } from './useAppointmentDetail';
+export { useDoctorAppointmentsRange } from './useAppointmentsRange';
 export { useMedicationDetail } from './useMedicationDetail';
 export { useMyAppointments as useDoctorMyAppointments } from './useMyAppointments';
 export { usePatientPillbox } from './usePatientPillbox';

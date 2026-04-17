@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/select';
 import { useRequireAuth } from '@/hooks/use-require-auth';
 import { useRoleGuard } from '@/hooks/use-role-guard';
+import { queryClient } from '@/providers/query';
 import { trpcClient } from '@/providers/trpc';
 
 export default function PatientOnboarding() {
@@ -50,6 +51,7 @@ export default function PatientOnboarding() {
           address: address || null,
         },
       });
+      await queryClient.invalidateQueries({ queryKey: [['user', 'getMe']] });
       toast.success(t('patient.onboarding.submit'));
       navigate('/patient/home', { replace: true });
     } catch (err) {

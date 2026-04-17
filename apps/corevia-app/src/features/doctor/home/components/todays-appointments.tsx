@@ -14,10 +14,9 @@ interface Appointment {
   date: string;
   time?: string;
   status: string;
-  reason?: string;
+  reason?: string | null;
   patient?: {
-    name?: string;
-    user?: { name?: string };
+    name?: string | null;
   };
 }
 
@@ -72,7 +71,7 @@ export function TodaysAppointments({ appointments, isLoading }: TodaysAppointmen
   return (
     <ul className="space-y-2.5">
       {sorted.map(appt => {
-        const patientName = appt.patient?.user?.name ?? appt.patient?.name ?? '—';
+        const patientName = appt.patient?.name ?? '—';
         const isDone = appt.status === 'COMPLETED' || appt.status === 'CANCELLED';
 
         return (
