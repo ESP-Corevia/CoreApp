@@ -12,6 +12,7 @@ export function useDeleteMedication() {
     onSuccess: () => {
       toast.success(t('patient.pillbox.medicationDeleted', 'Medication deleted'));
       void queryClient.invalidateQueries({ queryKey: ['patient', 'pillbox'] });
+      void queryClient.invalidateQueries({ queryKey: ['patient', 'pillbox', 'today'] });
     },
     onError: (error: Error) => {
       toast.error(error.message);

@@ -1,13 +1,22 @@
-import { Pill, Plus } from 'lucide-react';
+import { PillBottle, Plus } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { InfiniteList } from '@/components/infinite-list';
 import Loader from '@/components/loader';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { usePatientOnboarded } from '@/hooks/use-patient-onboarded';
 import { useRequireAuth } from '@/hooks/use-require-auth';
 import { useRoleGuard } from '@/hooks/use-role-guard';
+import { cn } from '@/lib/utils';
 import { useCreateMedication } from '@/queries/patient/useCreateMedication';
 import { useMarkIntakeSkipped } from '@/queries/patient/useMarkIntakeSkipped';
 import { useMarkIntakeTaken } from '@/queries/patient/useMarkIntakeTaken';
@@ -23,7 +32,7 @@ export default function PatientPillbox() {
   const { isLoading: roleLoading } = useRoleGuard('patient');
   const { isLoading: onboardingLoading } = usePatientOnboarded();
 
-  const [showForm, setShowForm] = useState(false);
+  const [sheetOpen, setSheetOpen] = useState(false);
 
   const pillboxToday = usePillboxToday();
   const myPillbox = useMyPillbox();
@@ -42,46 +51,77 @@ export default function PatientPillbox() {
       p => ((p as Record<string, unknown>)?.items as Array<Record<string, unknown>>) ?? [],
     ) ?? [];
 
-  return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h1 className="font-bold text-2xl">{t('patient.pillbox.title')}</h1>
-        <Button size="sm" onClick={() => setShowForm(true)}>
-          <Plus className="h-4 w-4" />
-          {t('patient.pillbox.addMedication')}
-        </Button>
-      </div>
+  const takenCount = todayIntakes.filter(i => i.status === 'TAKEN').length;
+  const total = todayIntakes.length;
+  const progressPct = total === 0 ? 0 : Math.round((takenCount / total) * 100);
+  const allDone = total > 0 && takenCount === total;
 
-      {showForm && (
-        <MedicationForm
-          onSubmit={data => {
-            createMed.mutate(data, { onSuccess: () => setShowForm(false) });
-          }}
-          isPending={createMed.isPending}
-          onCancel={() => setShowForm(false)}
+  return (
+    <div className="space-y-4 md:space-y-5">
+      <Card className="overflow-hidden">
+        <div
+          className={cn(
+            'h-1 w-full transition-colors',
+            allDone ? 'bg-emerald-500' : 'bg-gradient-to-r from-primary to-primary/40',
+          )}
+          aria-hidden="true"
         />
-      )}
+        <CardContent className="flex flex-col gap-4 p-5 md:flex-row md:items-center md:justify-between md:p-6">
+          <div className="min-w-0 space-y-2">
+            <div className="flex items-baseline gap-2">
+              <span className="font-semibold text-2xl tabular-nums md:text-3xl">{takenCount}</span>
+              <span className="text-muted-foreground text-sm">/ {total}</span>
+              <span className="text-muted-foreground text-sm">
+                {allDone
+                  ? t('patient.pillbox.allTaken')
+                  : t('patient.pillbox.progressLabel', { taken: takenCount, total })}
+              </span>
+            </div>
+            <div
+              className="h-1.5 w-full max-w-md overflow-hidden rounded-full bg-muted"
+              role="progressbar"
+              aria-valuenow={progressPct}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-label={t('patient.pillbox.progressLabel', { taken: takenCount, total })}
+            >
+              <div
+                className={cn(
+                  'h-full rounded-full transition-all duration-500 ease-out',
+                  allDone ? 'bg-emerald-500' : 'bg-primary',
+                )}
+                style={{ width: `${progressPct}%` }}
+              />
+            </div>
+          </div>
+
+          <Button
+            size="default"
+            onClick={() => setSheetOpen(true)}
+            className="shrink-0 self-start md:self-auto"
+          >
+            <Plus className="size-4" aria-hidden="true" />
+            {t('patient.pillbox.addMedication')}
+          </Button>
+        </CardContent>
+      </Card>
 
       <Tabs defaultValue="today" className="w-full">
-        <TabsList className="w-full">
-          <TabsTrigger value="today" className="flex-1">
-            {t('patient.pillbox.today')}
-          </TabsTrigger>
-          <TabsTrigger value="medications" className="flex-1">
-            {t('patient.pillbox.myMedications')}
-          </TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="today">{t('patient.pillbox.today')}</TabsTrigger>
+          <TabsTrigger value="medications">{t('patient.pillbox.myMedications')}</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="today">
+        <TabsContent value="today" className="mt-4">
           <TodaySchedule
-            intakes={todayIntakes as Parameters<typeof TodaySchedule>[0]['intakes']}
+            intakes={todayIntakes as unknown as Parameters<typeof TodaySchedule>[0]['intakes']}
             isLoading={pillboxToday.isLoading}
             onTake={id => markTaken.mutate({ id })}
             onSkip={id => markSkipped.mutate({ id })}
           />
         </TabsContent>
 
-        <TabsContent value="medications">
+        <TabsContent value="medications" className="mt-4">
           <InfiniteList
             items={medications}
             renderItem={item => (
@@ -94,12 +134,31 @@ export default function PatientPillbox() {
             isFetchingNextPage={myPillbox.isFetchingNextPage}
             hasNextPage={myPillbox.hasNextPage}
             fetchNextPage={myPillbox.fetchNextPage}
-            emptyIcon={<Pill className="h-12 w-12" />}
+            emptyIcon={<PillBottle className="h-12 w-12" />}
             emptyTitle={t('patient.pillbox.empty')}
             emptyDescription={t('patient.pillbox.emptyDescription')}
           />
         </TabsContent>
       </Tabs>
+
+      <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+        <SheetContent
+          side="bottom"
+          className="max-h-[90vh] overflow-y-auto rounded-t-2xl sm:max-w-lg sm:rounded-t-none"
+        >
+          <SheetHeader className="mb-4 text-left">
+            <SheetTitle>{t('patient.pillbox.addMedication')}</SheetTitle>
+            <SheetDescription>{t('patient.pillbox.emptyDescription')}</SheetDescription>
+          </SheetHeader>
+          <MedicationForm
+            onSubmit={data => {
+              createMed.mutate(data, { onSuccess: () => setSheetOpen(false) });
+            }}
+            isPending={createMed.isPending}
+            onCancel={() => setSheetOpen(false)}
+          />
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }

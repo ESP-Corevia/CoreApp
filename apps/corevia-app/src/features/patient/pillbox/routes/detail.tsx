@@ -1,26 +1,60 @@
-import { ArrowLeft, Calendar, Clock, Pill, Plus, Trash2 } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, Calendar, Clock, PillBottle, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router';
 import Loader from '@/components/loader';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
 import { usePatientOnboarded } from '@/hooks/use-patient-onboarded';
 import { useRequireAuth } from '@/hooks/use-require-auth';
 import { useRoleGuard } from '@/hooks/use-role-guard';
+import { cn } from '@/lib/utils';
 import { useAddSchedule } from '@/queries/patient/useAddSchedule';
 import { useDeleteMedication } from '@/queries/patient/useDeleteMedication';
 import { useDeleteSchedule } from '@/queries/patient/useDeleteSchedule';
 import { usePillboxDetail } from '@/queries/patient/usePillboxDetail';
 
+type Moment = 'MORNING' | 'NOON' | 'EVENING' | 'BEDTIME' | 'CUSTOM';
+const MOMENTS: Moment[] = ['MORNING', 'NOON', 'EVENING', 'BEDTIME', 'CUSTOM'];
+
+interface Schedule {
+  id: string;
+  weekday?: number | null;
+  intakeTime: string;
+  intakeMoment?: string | null;
+  quantity?: string | null;
+  unit?: string | null;
+  notes?: string | null;
+}
+
+function formatTime(raw?: string): string {
+  if (!raw) return '';
+  const match = raw.match(/^(\d{2}):(\d{2})/);
+  return match ? `${match[1]}:${match[2]}` : raw;
+}
+
 export default function PatientPillboxDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { isLoading: authLoading } = useRequireAuth();
   const { isLoading: roleLoading } = useRoleGuard('patient');
   const { isLoading: onboardingLoading } = usePatientOnboarded();
@@ -32,6 +66,11 @@ export default function PatientPillboxDetail() {
 
   const [showAddSchedule, setShowAddSchedule] = useState(false);
   const [newTime, setNewTime] = useState('08:00');
+  const [newMoment, setNewMoment] = useState<Moment>('MORNING');
+  const [newQuantity, setNewQuantity] = useState('1');
+  const [newUnit, setNewUnit] = useState('');
+  const [newNotes, setNewNotes] = useState('');
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   if (authLoading || roleLoading || onboardingLoading) return <Loader />;
 
@@ -39,14 +78,38 @@ export default function PatientPillboxDetail() {
 
   const handleDelete = () => {
     if (!id) return;
-    deleteMed.mutate({ id }, { onSuccess: () => navigate('/patient/pillbox') });
+    deleteMed.mutate(
+      { id },
+      {
+        onSuccess: () => {
+          setConfirmOpen(false);
+          navigate('/patient/pillbox');
+        },
+      },
+    );
   };
 
   const handleAddSchedule = () => {
     if (!id) return;
     addSchedule.mutate(
-      { patientMedicationId: id, intakeTime: newTime },
-      { onSuccess: () => setShowAddSchedule(false) },
+      {
+        patientMedicationId: id,
+        intakeTime: newTime,
+        intakeMoment: newMoment,
+        quantity: newQuantity.trim() || '1',
+        unit: newUnit.trim() || null,
+        notes: newNotes.trim() || null,
+      },
+      {
+        onSuccess: () => {
+          setShowAddSchedule(false);
+          setNewTime('08:00');
+          setNewMoment('MORNING');
+          setNewQuantity('1');
+          setNewUnit('');
+          setNewNotes('');
+        },
+      },
     );
   };
 
@@ -54,132 +117,342 @@ export default function PatientPillboxDetail() {
     deleteSchedule.mutate({ id: scheduleId });
   };
 
+  const schedules = Array.isArray(med?.schedules) ? (med.schedules as Schedule[]) : [];
+  const sortedSchedules = [...schedules].sort((a, b) =>
+    formatTime(a.intakeTime).localeCompare(formatTime(b.intakeTime)),
+  );
+
+  const medName = (med?.medicationName as string) ?? '—';
+  const isActive = (med?.isActive as boolean | undefined) !== false;
+  const dosageLabel = med?.dosageLabel as string | undefined;
+  const medForm = med?.medicationForm as string | undefined;
+  const dosage = [dosageLabel, medForm].filter(Boolean).join(' · ');
+  const instructions = med?.instructions as string | undefined;
+  const startDate = med?.startDate as string | undefined;
+  const endDate = med?.endDate as string | undefined;
+
+  const dateFmt = (iso?: string) =>
+    iso
+      ? new Intl.DateTimeFormat(i18n.language, {
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric',
+        }).format(new Date(iso))
+      : '';
+
   return (
-    <div className="space-y-4">
-      <Button variant="ghost" size="sm" onClick={() => navigate('/patient/pillbox')}>
-        <ArrowLeft className="h-4 w-4" />
+    <div className="space-y-4 md:space-y-5">
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => navigate('/patient/pillbox')}
+        className="-ml-2"
+      >
+        <ArrowLeft className="size-4" aria-hidden="true" />
         {t('common.back')}
       </Button>
 
       {isLoading ? (
         <div className="space-y-3">
-          <Skeleton className="h-8 w-48" />
+          <Skeleton className="h-28 w-full rounded-xl" />
           <Skeleton className="h-40 w-full rounded-xl" />
         </div>
       ) : !med ? (
-        <p className="text-muted-foreground">{t('common.error')}</p>
+        <Card className="border-dashed">
+          <CardContent className="flex flex-col items-center gap-2 p-10 text-center">
+            <PillBottle className="size-8 text-muted-foreground" aria-hidden="true" />
+            <p className="font-medium">{t('patient.pillbox.detail.notFound')}</p>
+          </CardContent>
+        </Card>
       ) : (
         <>
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <Pill className="h-5 w-5 text-primary" />
-                  <CardTitle className="text-lg">{(med.medicationName as string) ?? '—'}</CardTitle>
+          <Card className="overflow-hidden">
+            <div
+              className={cn(
+                'h-1 w-full',
+                isActive ? 'bg-gradient-to-r from-primary to-primary/40' : 'bg-muted',
+              )}
+              aria-hidden="true"
+            />
+            <CardContent className="space-y-4 p-5 md:p-6">
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex min-w-0 items-center gap-3">
+                  <div
+                    className={cn(
+                      'flex size-11 shrink-0 items-center justify-center rounded-xl',
+                      isActive ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground',
+                    )}
+                    aria-hidden="true"
+                  >
+                    <PillBottle className="size-5" />
+                  </div>
+                  <div className="min-w-0">
+                    <h1 className="truncate font-semibold text-lg tracking-tight md:text-xl">
+                      {medName}
+                    </h1>
+                    {dosage && <p className="truncate text-muted-foreground text-sm">{dosage}</p>}
+                  </div>
                 </div>
-                <Badge variant={(med.active as boolean) !== false ? 'default' : 'secondary'}>
-                  {(med.active as boolean) !== false ? 'Active' : 'Inactive'}
-                </Badge>
+                <span
+                  className={cn(
+                    'inline-flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 font-medium text-[11px] uppercase tracking-wide',
+                    isActive
+                      ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'
+                      : 'bg-muted text-muted-foreground',
+                  )}
+                >
+                  <span
+                    className={cn(
+                      'size-1.5 rounded-full',
+                      isActive ? 'bg-emerald-500' : 'bg-muted-foreground/60',
+                    )}
+                    aria-hidden="true"
+                  />
+                  {isActive ? t('patient.pillbox.active') : t('patient.pillbox.inactive')}
+                </span>
               </div>
+
+              <dl className="grid grid-cols-1 gap-3 border-t pt-4 sm:grid-cols-2">
+                {dosageLabel && (
+                  <div>
+                    <dt className="text-muted-foreground text-xs uppercase tracking-wider">
+                      {t('patient.pillbox.detail.dosage')}
+                    </dt>
+                    <dd className="mt-0.5 font-medium text-sm">{dosageLabel}</dd>
+                  </div>
+                )}
+                {instructions && (
+                  <div className="sm:col-span-2">
+                    <dt className="text-muted-foreground text-xs uppercase tracking-wider">
+                      {t('patient.pillbox.detail.instructions')}
+                    </dt>
+                    <dd className="mt-0.5 text-sm italic">{instructions}</dd>
+                  </div>
+                )}
+                {startDate && (
+                  <div>
+                    <dt className="text-muted-foreground text-xs uppercase tracking-wider">
+                      {t('patient.pillbox.detail.period')}
+                    </dt>
+                    <dd className="mt-0.5 flex items-center gap-1.5 font-medium text-sm">
+                      <Calendar className="size-3.5 text-muted-foreground" aria-hidden="true" />
+                      <span>
+                        {dateFmt(startDate)}
+                        {endDate && ` — ${dateFmt(endDate)}`}
+                      </span>
+                    </dd>
+                  </div>
+                )}
+              </dl>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0">
+              <CardTitle className="font-semibold text-base">
+                {t('patient.pillbox.detail.schedules')}
+              </CardTitle>
+              <Button
+                size="sm"
+                variant={showAddSchedule ? 'ghost' : 'outline'}
+                onClick={() => setShowAddSchedule(v => !v)}
+                aria-expanded={showAddSchedule}
+              >
+                <Plus
+                  className={cn('size-4 transition-transform', showAddSchedule && 'rotate-45')}
+                  aria-hidden="true"
+                />
+                {showAddSchedule ? t('common.cancel') : t('patient.pillbox.detail.addSchedule')}
+              </Button>
             </CardHeader>
             <CardContent className="space-y-3">
-              {med.dosageLabel && (
-                <div className="text-sm">
-                  <span className="text-muted-foreground">Dosage: </span>
-                  {med.dosageLabel as string}
-                </div>
-              )}
-              {med.instructions && (
-                <div className="text-sm">
-                  <span className="text-muted-foreground">Instructions: </span>
-                  {med.instructions as string}
-                </div>
-              )}
-              {med.startDate && (
-                <div className="flex items-center gap-2 text-sm">
-                  <Calendar className="h-4 w-4 text-muted-foreground" />
-                  <span>
-                    {new Date(med.startDate as string).toLocaleDateString()}
-                    {med.endDate && ` — ${new Date(med.endDate as string).toLocaleDateString()}`}
-                  </span>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-base">Schedules</CardTitle>
-                <Button size="sm" variant="outline" onClick={() => setShowAddSchedule(true)}>
-                  <Plus className="h-3 w-3" />
-                  Add
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-2">
               {showAddSchedule && (
-                <div className="flex items-end gap-2 rounded-lg border p-3">
-                  <div className="flex-1 space-y-1">
-                    <Label>Time</Label>
-                    <Input type="time" value={newTime} onChange={e => setNewTime(e.target.value)} />
+                <div className="space-y-3 rounded-xl border bg-muted/30 p-3">
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="new-time">{t('patient.pillbox.form.time')}</Label>
+                      <Input
+                        id="new-time"
+                        type="time"
+                        value={newTime}
+                        onChange={e => setNewTime(e.target.value)}
+                        className="tabular-nums"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="new-moment">{t('patient.pillbox.form.moment')}</Label>
+                      <Select value={newMoment} onValueChange={v => setNewMoment(v as Moment)}>
+                        <SelectTrigger id="new-moment">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {MOMENTS.map(m => (
+                            <SelectItem key={m} value={m}>
+                              {t(`patient.pillbox.moment.${m}`)}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
-                  <Button size="sm" onClick={handleAddSchedule} disabled={addSchedule.isPending}>
-                    {t('common.save')}
-                  </Button>
-                  <Button size="sm" variant="ghost" onClick={() => setShowAddSchedule(false)}>
-                    {t('common.cancel')}
-                  </Button>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="new-qty">{t('patient.pillbox.form.quantity')}</Label>
+                      <Input
+                        id="new-qty"
+                        value={newQuantity}
+                        onChange={e => setNewQuantity(e.target.value)}
+                        placeholder="1"
+                        inputMode="decimal"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="new-unit">{t('patient.pillbox.form.unit')}</Label>
+                      <Input
+                        id="new-unit"
+                        value={newUnit}
+                        onChange={e => setNewUnit(e.target.value)}
+                        placeholder={t('patient.pillbox.form.unitPlaceholder')}
+                        maxLength={30}
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="new-notes">{t('patient.pillbox.detail.notes')}</Label>
+                    <Input
+                      id="new-notes"
+                      value={newNotes}
+                      onChange={e => setNewNotes(e.target.value)}
+                      placeholder={t('patient.pillbox.detail.notesPlaceholder')}
+                      maxLength={200}
+                    />
+                  </div>
+                  <div className="flex justify-end gap-2">
+                    <Button size="sm" onClick={handleAddSchedule} disabled={addSchedule.isPending}>
+                      {addSchedule.isPending ? t('common.loading') : t('common.save')}
+                    </Button>
+                  </div>
                 </div>
               )}
 
-              {Array.isArray((med as Record<string, unknown>).schedules) ? (
-                ((med as Record<string, unknown>).schedules as Array<Record<string, unknown>>).map(
-                  schedule => (
-                    <div
-                      key={schedule.id as string}
-                      className="flex items-center justify-between rounded-lg border p-3"
-                    >
-                      <div className="flex items-center gap-2">
-                        <Clock className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-sm">{schedule.intakeTime as string}</span>
-                        {schedule.intakeMoment && (
-                          <Badge variant="outline" className="text-xs">
-                            {schedule.intakeMoment as string}
-                          </Badge>
-                        )}
-                        {schedule.quantity && (
-                          <span className="text-muted-foreground text-xs">
-                            {schedule.quantity as string}
-                            {schedule.unit ? ` ${schedule.unit as string}` : ''}
-                          </span>
-                        )}
-                      </div>
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={() => handleDeleteSchedule(schedule.id as string)}
-                      >
-                        <Trash2 className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  ),
-                )
+              {sortedSchedules.length === 0 && !showAddSchedule ? (
+                <div className="flex flex-col items-center gap-1 rounded-xl border border-dashed p-6 text-center">
+                  <p className="font-medium text-sm">{t('patient.pillbox.detail.noSchedules')}</p>
+                  <p className="max-w-xs text-muted-foreground text-xs">
+                    {t('patient.pillbox.detail.noSchedulesDescription')}
+                  </p>
+                </div>
               ) : (
-                <p className="text-muted-foreground text-sm">No schedules yet</p>
+                <ul className="space-y-2">
+                  {sortedSchedules.map(schedule => {
+                    const moment =
+                      schedule.intakeMoment && schedule.intakeMoment !== 'CUSTOM'
+                        ? t(`patient.pillbox.moment.${schedule.intakeMoment}`)
+                        : '';
+                    const qtyUnit = [schedule.quantity, schedule.unit].filter(Boolean).join(' ');
+
+                    return (
+                      <li
+                        key={schedule.id}
+                        className="flex items-center gap-3 rounded-xl border p-3 transition-colors hover:border-primary/30"
+                      >
+                        <div
+                          className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary"
+                          aria-hidden="true"
+                        >
+                          <Clock className="size-4" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="font-medium text-sm tabular-nums">
+                              {formatTime(schedule.intakeTime)}
+                            </span>
+                            {moment && (
+                              <span className="inline-flex items-center rounded-full bg-muted px-2 py-0.5 font-medium text-[10px] uppercase tracking-wide">
+                                {moment}
+                              </span>
+                            )}
+                          </div>
+                          {qtyUnit && <p className="text-muted-foreground text-xs">{qtyUnit}</p>}
+                          {schedule.notes && (
+                            <p
+                              className="mt-0.5 truncate text-muted-foreground/80 text-xs italic"
+                              title={schedule.notes}
+                            >
+                              {schedule.notes}
+                            </p>
+                          )}
+                        </div>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="h-9 w-9 text-muted-foreground hover:text-destructive"
+                          onClick={() => handleDeleteSchedule(schedule.id)}
+                          disabled={deleteSchedule.isPending}
+                          aria-label={t('common.delete')}
+                        >
+                          <Trash2 className="size-4" aria-hidden="true" />
+                        </Button>
+                      </li>
+                    );
+                  })}
+                </ul>
               )}
             </CardContent>
           </Card>
 
-          <Button
-            variant="destructive"
-            className="w-full"
-            onClick={handleDelete}
-            disabled={deleteMed.isPending}
-          >
-            <Trash2 className="h-4 w-4" />
-            {t('common.delete')}
-          </Button>
+          <Card className="border-destructive/30 bg-destructive/[0.02]">
+            <CardContent className="flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-start gap-3">
+                <div
+                  className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-destructive/10 text-destructive"
+                  aria-hidden="true"
+                >
+                  <AlertTriangle className="size-4" />
+                </div>
+                <div>
+                  <p className="font-semibold text-sm">{t('patient.pillbox.detail.dangerZone')}</p>
+                  <p className="text-muted-foreground text-xs">
+                    {t('patient.pillbox.detail.deleteDescription', { name: medName })}
+                  </p>
+                </div>
+              </div>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() => setConfirmOpen(true)}
+                className="shrink-0"
+              >
+                <Trash2 className="size-4" aria-hidden="true" />
+                {t('patient.pillbox.detail.deleteMedication')}
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>{t('patient.pillbox.detail.deleteTitle')}</DialogTitle>
+                <DialogDescription>
+                  {t('patient.pillbox.detail.deleteDescription', { name: medName })}
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter className="flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+                <Button
+                  variant="outline"
+                  onClick={() => setConfirmOpen(false)}
+                  disabled={deleteMed.isPending}
+                >
+                  {t('common.cancel')}
+                </Button>
+                <Button variant="destructive" onClick={handleDelete} disabled={deleteMed.isPending}>
+                  {deleteMed.isPending
+                    ? t('common.loading')
+                    : t('patient.pillbox.detail.deleteConfirm')}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </>
       )}
     </div>

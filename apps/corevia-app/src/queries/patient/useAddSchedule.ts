@@ -22,6 +22,7 @@ export function useAddSchedule() {
       void queryClient.invalidateQueries({
         queryKey: ['patient', 'pillbox', 'detail', variables.patientMedicationId],
       });
+      void queryClient.invalidateQueries({ queryKey: ['patient', 'pillbox', 'today'] });
       void queryClient.invalidateQueries({ queryKey: ['patient', 'pillbox'] });
     },
     onError: (error: Error) => {

@@ -123,11 +123,51 @@
         "markTaken": "Mark as Taken",
         "markSkipped": "Skip",
         "noSchedule": "No medications scheduled for today",
+        "noScheduleDescription": "Nothing to take today. Add a medication to get started.",
+        "progressLabel": "{{taken}} of {{total}} taken",
+        "allTaken": "All medications taken",
+        "active": "Active",
+        "inactive": "Inactive",
+        "schedulesCount_one": "{{count}} schedule",
+        "schedulesCount_other": "{{count}} schedules",
+        "undo": "Undo",
+        "form": {
+          "name": "Medication name",
+          "nameRequired": "Medication name is required",
+          "dosage": "Dosage",
+          "dosagePlaceholder": "e.g. 500mg",
+          "instructions": "Instructions",
+          "instructionsPlaceholder": "e.g. Take with food",
+          "time": "Time",
+          "moment": "Moment of day",
+          "quantity": "Quantity",
+          "unit": "Unit",
+          "unitPlaceholder": "e.g. tablet, mL",
+          "momentSelect": "Select a moment"
+        },
+        "detail": {
+          "dosage": "Dosage",
+          "instructions": "Instructions",
+          "period": "Period",
+          "schedules": "Schedules",
+          "addSchedule": "Add schedule",
+          "notes": "Notes",
+          "notesPlaceholder": "Optional note (e.g. before breakfast)",
+          "noSchedules": "No schedules yet",
+          "noSchedulesDescription": "Add a schedule to start tracking intakes for this medication.",
+          "deleteMedication": "Delete medication",
+          "deleteTitle": "Delete medication?",
+          "deleteDescription": "This will permanently remove {{name}} and all of its schedules and intake history. This action cannot be undone.",
+          "deleteConfirm": "Yes, delete",
+          "dangerZone": "Danger zone",
+          "notFound": "Medication not found"
+        },
         "moment": {
           "MORNING": "Morning",
           "NOON": "Noon",
           "EVENING": "Evening",
-          "BEDTIME": "Bedtime"
+          "BEDTIME": "Bedtime",
+          "CUSTOM": "Custom"
         }
       },
       "medications": {

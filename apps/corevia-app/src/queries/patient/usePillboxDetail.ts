@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
-import { useTrpc } from '@/providers/trpc';
+import { trpcClient } from '@/providers/trpc';
 
 export function usePillboxDetail(id: string, enabled = true) {
-  const trpc = useTrpc();
   return useQuery({
-    ...trpc.pillbox.detail.queryOptions({ id }),
+    queryKey: ['patient', 'pillbox', 'detail', id],
+    queryFn: () => trpcClient.pillbox.detail.query({ id }),
     enabled: enabled && !!id,
   });
 }

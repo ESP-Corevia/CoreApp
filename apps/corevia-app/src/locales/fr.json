@@ -123,11 +123,51 @@
         "markTaken": "Marquer comme pris",
         "markSkipped": "Passer",
         "noSchedule": "Aucun médicament prévu pour aujourd'hui",
+        "noScheduleDescription": "Rien à prendre aujourd'hui. Ajoutez un médicament pour commencer.",
+        "progressLabel": "{{taken}} sur {{total}} pris",
+        "allTaken": "Tous les médicaments pris",
+        "active": "Actif",
+        "inactive": "Inactif",
+        "schedulesCount_one": "{{count}} prise",
+        "schedulesCount_other": "{{count}} prises",
+        "undo": "Annuler",
+        "form": {
+          "name": "Nom du médicament",
+          "nameRequired": "Le nom du médicament est requis",
+          "dosage": "Dosage",
+          "dosagePlaceholder": "ex. 500mg",
+          "instructions": "Instructions",
+          "instructionsPlaceholder": "ex. À prendre avec de la nourriture",
+          "time": "Heure",
+          "moment": "Moment de la journée",
+          "quantity": "Quantité",
+          "unit": "Unité",
+          "unitPlaceholder": "ex. comprimé, mL",
+          "momentSelect": "Sélectionner un moment"
+        },
+        "detail": {
+          "dosage": "Dosage",
+          "instructions": "Instructions",
+          "period": "Période",
+          "schedules": "Prises",
+          "addSchedule": "Ajouter une prise",
+          "notes": "Note",
+          "notesPlaceholder": "Note facultative (ex. avant le petit-déjeuner)",
+          "noSchedules": "Aucune prise planifiée",
+          "noSchedulesDescription": "Ajoutez une prise pour commencer le suivi pour ce médicament.",
+          "deleteMedication": "Supprimer le médicament",
+          "deleteTitle": "Supprimer le médicament ?",
+          "deleteDescription": "{{name}} et toutes ses prises et son historique seront supprimés définitivement. Cette action est irréversible.",
+          "deleteConfirm": "Oui, supprimer",
+          "dangerZone": "Zone de danger",
+          "notFound": "Médicament introuvable"
+        },
         "moment": {
           "MORNING": "Matin",
           "NOON": "Midi",
           "EVENING": "Soir",
-          "BEDTIME": "Coucher"
+          "BEDTIME": "Coucher",
+          "CUSTOM": "Personnalisé"
         }
       },
       "medications": {

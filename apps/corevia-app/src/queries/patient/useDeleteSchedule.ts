@@ -14,6 +14,7 @@ export function useDeleteSchedule(medicationId: string) {
       void queryClient.invalidateQueries({
         queryKey: ['patient', 'pillbox', 'detail', medicationId],
       });
+      void queryClient.invalidateQueries({ queryKey: ['patient', 'pillbox', 'today'] });
       void queryClient.invalidateQueries({ queryKey: ['patient', 'pillbox'] });
     },
     onError: (error: Error) => {
