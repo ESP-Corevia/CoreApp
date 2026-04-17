@@ -9,7 +9,17 @@
       "medications": "Médicaments",
       "profile": "Profil",
       "settings": "Paramètres",
-      "more": "Plus"
+      "more": "Plus",
+      "main": "Navigation",
+      "library": "Bibliothèque",
+      "account": "Compte",
+      "support": "Support",
+      "notifications": "Notifications",
+      "noNotifications": "Aucune nouvelle notification",
+      "language": "Langue",
+      "toggleTheme": "Basculer le thème",
+      "toggleSidebar": "Basculer la barre latérale",
+      "userMenu": "Menu utilisateur"
     },
     "auth": {
       "signIn": {
@@ -51,13 +61,27 @@
     "patient": {
       "home": {
         "title": "Accueil",
-        "upcomingAppointments": "Rendez-vous à venir",
+        "greetingMorning": "Bonjour",
+        "greetingAfternoon": "Bon après-midi",
+        "greetingEvening": "Bonsoir",
+        "greetingNight": "Bonne nuit",
+        "welcomeSubtitle": "Voici un aperçu de vos soins aujourd'hui.",
+        "upcomingAppointments": "À venir",
+        "upcomingAppointmentsFull": "Rendez-vous à venir",
         "todaysMedications": "Médicaments du jour",
+        "medicationsProgress": "{{taken}} sur {{total}} pris aujourd'hui",
+        "allTaken": "Tous les médicaments pris",
         "nextAppointment": "Prochain rendez-vous",
         "noUpcoming": "Aucun rendez-vous à venir",
+        "noUpcomingDescription": "Prenez rendez-vous pour commencer.",
         "noMedications": "Aucun médicament pour aujourd'hui",
+        "noMedicationsDescription": "Votre pilulier est vide pour aujourd'hui.",
         "bookAppointment": "Prendre rendez-vous",
-        "viewAll": "Voir tout"
+        "viewAll": "Voir tout",
+        "viewDoctors": "Trouver un médecin",
+        "medsCompleted": "Terminé",
+        "medsPending": "En attente",
+        "quickActions": "Actions rapides"
       },
       "appointments": {
         "title": "Mes rendez-vous",
@@ -116,9 +140,19 @@
     "doctor": {
       "home": {
         "title": "Accueil",
+        "greetingMorning": "Bonjour, Dr.",
+        "greetingAfternoon": "Bon après-midi, Dr.",
+        "greetingEvening": "Bonsoir, Dr.",
+        "greetingNight": "Bonne nuit, Dr.",
+        "welcomeSubtitle": "Voici votre planning pour aujourd'hui.",
         "todaysAppointments": "Rendez-vous du jour",
         "noAppointments": "Aucun rendez-vous aujourd'hui",
-        "upcomingCount": "{{count}} à venir"
+        "noAppointmentsDescription": "Votre journée est libre.",
+        "upcomingCount": "{{count}} à venir",
+        "statsToday": "Aujourd'hui",
+        "statsPending": "En attente",
+        "statsCompleted": "Terminé",
+        "viewAll": "Voir tous les rendez-vous"
       },
       "appointments": {
         "title": "Mes rendez-vous",
@@ -190,7 +224,8 @@
       "edit": "Modifier",
       "close": "Fermer",
       "search": "Rechercher...",
-      "signOut": "Se déconnecter"
+      "signOut": "Se déconnecter",
+      "detail": "Détail"
     }
   }
 }

@@ -1,41 +1,44 @@
-import { Calendar, Pill } from 'lucide-react';
+import { CalendarDays, PillBottle, Stethoscope } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { Card, CardContent } from '@/components/ui/card';
+import { StatCard } from '@/components/stat-card';
 
 interface SummaryCardsProps {
   upcomingCount: number;
   todayMedCount: number;
+  takenMedCount: number;
 }
 
-export function SummaryCards({ upcomingCount, todayMedCount }: SummaryCardsProps) {
+export function SummaryCards({ upcomingCount, todayMedCount, takenMedCount }: SummaryCardsProps) {
   const { t } = useTranslation();
 
   return (
-    <div className="grid grid-cols-2 gap-4">
-      <Card>
-        <CardContent className="flex items-center gap-3 p-4">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10">
-            <Calendar className="h-5 w-5 text-primary" />
-          </div>
-          <div>
-            <p className="font-bold text-2xl">{upcomingCount}</p>
-            <p className="text-muted-foreground text-xs">
-              {t('patient.home.upcomingAppointments')}
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-      <Card>
-        <CardContent className="flex items-center gap-3 p-4">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10">
-            <Pill className="h-5 w-5 text-primary" />
-          </div>
-          <div>
-            <p className="font-bold text-2xl">{todayMedCount}</p>
-            <p className="text-muted-foreground text-xs">{t('patient.home.todaysMedications')}</p>
-          </div>
-        </CardContent>
-      </Card>
+    <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
+      <StatCard
+        label={t('patient.home.upcomingAppointments')}
+        value={upcomingCount}
+        icon={CalendarDays}
+        tone="primary"
+        to="/patient/appointments"
+      />
+      <StatCard
+        label={t('patient.home.todaysMedications')}
+        value={todayMedCount}
+        icon={PillBottle}
+        tone="accent"
+        hint={
+          todayMedCount > 0
+            ? t('patient.home.medicationsProgress', { taken: takenMedCount, total: todayMedCount })
+            : undefined
+        }
+        to="/patient/pillbox"
+      />
+      <StatCard
+        label={t('patient.home.viewDoctors')}
+        value={'→'}
+        icon={Stethoscope}
+        tone="muted"
+        to="/patient/doctors"
+      />
     </div>
   );
 }

@@ -3,21 +3,7 @@ import { BottomTabBar } from '@/components/bottom-tab-bar';
 import { Header } from '@/components/header';
 import { AppSidebar } from '@/components/sidebar';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
-import { Skeleton } from '@/components/ui/skeleton';
-
-function PageLoadingSkeleton() {
-  return (
-    <div className="mb-4 space-y-4">
-      <Skeleton className="h-8 w-48" />
-      <Skeleton className="h-4 w-64" />
-      <div className="grid gap-4 md:grid-cols-3">
-        {[1, 2, 3].map(i => (
-          <Skeleton key={i} className="h-32" />
-        ))}
-      </div>
-    </div>
-  );
-}
+import { cn } from '@/lib/utils';
 
 export function AppShell() {
   const { state } = useNavigation();
@@ -25,8 +11,11 @@ export function AppShell() {
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-background text-foreground">
-      <div className="fixed top-0 right-0 left-0 z-50 h-1 overflow-hidden">
-        {isNavigating && <div className="h-full animate-progress-bar bg-primary" />}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none fixed top-0 right-0 left-0 z-[60] h-0.5 overflow-hidden"
+      >
+        {isNavigating && <div className="h-full w-full animate-progress-bar bg-primary" />}
       </div>
 
       <SidebarProvider>
@@ -36,18 +25,30 @@ export function AppShell() {
           </div>
 
           <SidebarInset className="flex flex-1 flex-col">
-            <header className="sticky top-0 z-10 hidden h-14 shrink-0 items-center gap-2 border-border border-b bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:flex">
-              <SidebarTrigger className="-ml-1" />
-              <div className="mx-2 h-4 w-px bg-border" />
+            <header
+              className={cn(
+                'sticky top-0 z-30 flex h-14 shrink-0 items-center gap-2 border-border border-b px-3 md:px-4',
+                'bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70',
+                'safe-top',
+              )}
+            >
+              <SidebarTrigger className="-ml-1 hidden md:inline-flex" aria-label="Toggle sidebar" />
+              <div className="mx-1 hidden h-4 w-px bg-border md:block" />
               <Header />
             </header>
 
-            <main className="flex-1 overflow-auto pb-20 md:pb-0">
-              <div className="container mx-auto max-w-screen-xl space-y-4 p-4 md:p-6 lg:p-8">
-                {isNavigating && <PageLoadingSkeleton />}
-                <div style={isNavigating ? { opacity: 0.5, pointerEvents: 'none' } : {}}>
-                  <Outlet />
-                </div>
+            <main
+              aria-busy={isNavigating || undefined}
+              className="flex-1 overflow-auto pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-8"
+            >
+              <div
+                className={cn(
+                  'container mx-auto max-w-screen-xl space-y-4 p-4 md:p-6 lg:p-8',
+                  'transition-opacity duration-150',
+                  isNavigating && 'pointer-events-none opacity-60',
+                )}
+              >
+                <Outlet />
               </div>
             </main>
           </SidebarInset>

@@ -1,11 +1,13 @@
-import { Calendar, Search } from 'lucide-react';
+import { CalendarPlus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
+import { GreetingBanner } from '@/components/greeting-banner';
 import Loader from '@/components/loader';
 import { Button } from '@/components/ui/button';
 import { usePatientOnboarded } from '@/hooks/use-patient-onboarded';
 import { useRequireAuth } from '@/hooks/use-require-auth';
 import { useRoleGuard } from '@/hooks/use-role-guard';
+import { authClient } from '@/lib/auth-client';
 import { useMarkIntakeSkipped } from '@/queries/patient/useMarkIntakeSkipped';
 import { useMarkIntakeTaken } from '@/queries/patient/useMarkIntakeTaken';
 import { useMyAppointments } from '@/queries/patient/useMyAppointments';
@@ -19,6 +21,7 @@ export default function PatientHome() {
   const { isLoading: authLoading } = useRequireAuth();
   const { isLoading: roleLoading } = useRoleGuard('patient');
   const { isLoading: onboardingLoading } = usePatientOnboarded();
+  const { data: session } = authClient.useSession();
 
   const appointments = useMyAppointments();
   const pillboxToday = usePillboxToday();
@@ -26,6 +29,10 @@ export default function PatientHome() {
   const markSkipped = useMarkIntakeSkipped();
 
   if (authLoading || roleLoading || onboardingLoading) return <Loader />;
+
+  const sessionAny = session as unknown as Record<string, unknown> | null;
+  const user = sessionAny?.user as Record<string, unknown> | undefined;
+  const userName = user?.name as string | undefined;
 
   const allAppointments =
     appointments.data?.pages?.flatMap(
@@ -44,34 +51,37 @@ export default function PatientHome() {
     ((pillboxToday.data as Record<string, unknown>)?.intakes as Array<Record<string, unknown>>) ??
     (Array.isArray(pillboxToday.data) ? pillboxToday.data : []);
 
-  return (
-    <div className="space-y-6">
-      <h1 className="font-bold text-2xl">{t('patient.home.title')}</h1>
+  const takenCount = todayIntakes.filter(i => i.status === 'TAKEN').length;
 
-      <SummaryCards upcomingCount={upcomingCount} todayMedCount={todayIntakes.length} />
+  return (
+    <div className="space-y-5 md:space-y-6">
+      <GreetingBanner
+        name={userName}
+        audience="patient"
+        stat={{ label: t('patient.home.upcomingAppointments'), value: upcomingCount }}
+        action={
+          <Button asChild size="sm">
+            <Link to="/patient/doctors">
+              <CalendarPlus className="size-4" aria-hidden="true" />
+              {t('patient.home.bookAppointment')}
+            </Link>
+          </Button>
+        }
+      />
+
+      <SummaryCards
+        upcomingCount={upcomingCount}
+        todayMedCount={todayIntakes.length}
+        takenMedCount={takenCount}
+      />
 
       <NextAppointmentCard appointment={nextAppointment ?? null} />
 
       <TodayMedications
-        intakes={todayIntakes as Parameters<typeof TodayMedications>[0]['intakes']}
+        intakes={todayIntakes as unknown as Parameters<typeof TodayMedications>[0]['intakes']}
         onTake={id => markTaken.mutate({ id })}
         onSkip={id => markSkipped.mutate({ id })}
       />
-
-      <div className="grid grid-cols-2 gap-3">
-        <Button asChild>
-          <Link to="/patient/doctors">
-            <Search className="h-4 w-4" />
-            {t('patient.home.bookAppointment')}
-          </Link>
-        </Button>
-        <Button variant="outline" asChild>
-          <Link to="/patient/appointments">
-            <Calendar className="h-4 w-4" />
-            {t('patient.home.viewAll')}
-          </Link>
-        </Button>
-      </div>
     </div>
   );
 }

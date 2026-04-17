@@ -9,7 +9,17 @@
       "medications": "Medications",
       "profile": "Profile",
       "settings": "Settings",
-      "more": "More"
+      "more": "More",
+      "main": "Navigation",
+      "library": "Library",
+      "account": "Account",
+      "support": "Support",
+      "notifications": "Notifications",
+      "noNotifications": "No new notifications",
+      "language": "Language",
+      "toggleTheme": "Toggle theme",
+      "toggleSidebar": "Toggle sidebar",
+      "userMenu": "User menu"
     },
     "auth": {
       "signIn": {
@@ -51,13 +61,27 @@
     "patient": {
       "home": {
         "title": "Home",
-        "upcomingAppointments": "Upcoming Appointments",
+        "greetingMorning": "Good morning",
+        "greetingAfternoon": "Good afternoon",
+        "greetingEvening": "Good evening",
+        "greetingNight": "Good night",
+        "welcomeSubtitle": "Here is an overview of your care today.",
+        "upcomingAppointments": "Upcoming",
+        "upcomingAppointmentsFull": "Upcoming Appointments",
         "todaysMedications": "Today's Medications",
+        "medicationsProgress": "{{taken}} of {{total}} taken today",
+        "allTaken": "All medications taken",
         "nextAppointment": "Next Appointment",
         "noUpcoming": "No upcoming appointments",
+        "noUpcomingDescription": "Book a consultation to get started.",
         "noMedications": "No medications for today",
+        "noMedicationsDescription": "Your pillbox is clear for today.",
         "bookAppointment": "Book Appointment",
-        "viewAll": "View All"
+        "viewAll": "View All",
+        "viewDoctors": "Find a Doctor",
+        "medsCompleted": "Completed",
+        "medsPending": "Pending",
+        "quickActions": "Quick Actions"
       },
       "appointments": {
         "title": "My Appointments",
@@ -116,9 +140,19 @@
     "doctor": {
       "home": {
         "title": "Home",
+        "greetingMorning": "Good morning, Dr.",
+        "greetingAfternoon": "Good afternoon, Dr.",
+        "greetingEvening": "Good evening, Dr.",
+        "greetingNight": "Good night, Dr.",
+        "welcomeSubtitle": "Here is your schedule for today.",
         "todaysAppointments": "Today's Appointments",
         "noAppointments": "No appointments today",
-        "upcomingCount": "{{count}} upcoming"
+        "noAppointmentsDescription": "Your day is clear. Enjoy the quiet.",
+        "upcomingCount": "{{count}} upcoming",
+        "statsToday": "Today",
+        "statsPending": "Pending",
+        "statsCompleted": "Completed",
+        "viewAll": "View all appointments"
       },
       "appointments": {
         "title": "My Appointments",
@@ -190,7 +224,8 @@
       "edit": "Edit",
       "close": "Close",
       "search": "Search...",
-      "signOut": "Sign Out"
+      "signOut": "Sign Out",
+      "detail": "Detail"
     }
   }
 }
