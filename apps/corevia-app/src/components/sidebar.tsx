@@ -1,6 +1,7 @@
 import {
   CalendarDays,
   ChevronsUpDown,
+  FileText,
   HeartPulse,
   House,
   LifeBuoy,
@@ -96,7 +97,14 @@ export function AppSidebar() {
 
   const libraryItems = useMemo<NavItem[]>(() => {
     if (role === 'patient') {
-      return [{ title: t('nav.medications'), url: '/patient/medications', icon: PillBottle }];
+      return [
+        { title: t('nav.medications'), url: '/patient/medications', icon: PillBottle },
+        {
+          title: t('nav.documents', { defaultValue: 'Documents' }),
+          url: '/patient/documents',
+          icon: FileText,
+        },
+      ];
     }
     return [];
   }, [role, t]);

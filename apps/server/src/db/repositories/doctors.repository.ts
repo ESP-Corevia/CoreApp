@@ -99,6 +99,9 @@ function buildFilters(params: ListBookableParams) {
       or(ilike(doctorUsersView.specialty, pattern), ilike(doctorUsersView.doctorAddress, pattern)),
     );
   }
+  if (params.verified !== undefined) {
+    conditions.push(eq(doctorUsersView.verified, params.verified));
+  }
 
   return conditions.length > 0 ? and(...conditions) : undefined;
 }
@@ -122,7 +125,7 @@ export const createDoctorsRepo = (db: DrizzleDB = DB) => ({
         verified: doctorUsersView.verified,
       })
       .from(doctorUsersView)
-      .where(and(where, eq(doctorUsersView.verified, params.verified ?? true)))
+      .where(where)
       .orderBy(asc(doctorUsersView.specialty))
       .limit(params.limit)
       .offset(params.offset);

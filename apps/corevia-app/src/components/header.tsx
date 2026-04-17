@@ -43,6 +43,7 @@ function useBreadcrumbs(): { title: string; crumbs: Crumb[] } {
       doctors: t('nav.doctors'),
       pillbox: t('nav.pillbox'),
       medications: t('nav.medications'),
+      documents: t('nav.documents', { defaultValue: 'Documents' }),
       profile: t('nav.profile'),
       settings: t('nav.settings'),
       patients: t('nav.pillbox'),

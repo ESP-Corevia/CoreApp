@@ -30,6 +30,8 @@
     "@trpc/client": "catalog:",
     "@trpc/server": "catalog:",
     "@trpc/tanstack-react-query": "11.8.1",
+    "@uppy/aws-s3": "^5.1.0",
+    "@uppy/core": "^5.2.0",
     "better-auth": "catalog:",
     "class-variance-authority": "catalog:",
     "clsx": "catalog:",
