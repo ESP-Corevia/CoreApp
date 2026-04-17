@@ -3,6 +3,8 @@ import { BottomTabBar } from '@/components/bottom-tab-bar';
 import { Header } from '@/components/header';
 import { AppSidebar } from '@/components/sidebar';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
+import { AiChatProvider } from '@/features/ai/components/ai-chat-provider';
+import { AiChatSheet } from '@/features/ai/components/ai-chat-sheet';
 import { cn } from '@/lib/utils';
 
 export function AppShell() {
@@ -19,6 +21,7 @@ export function AppShell() {
       </div>
 
       <SidebarProvider className="h-svh bg-background text-foreground">
+        <AiChatProvider>
         <AppSidebar />
 
         <SidebarInset className="flex h-svh min-w-0 flex-1 flex-col overflow-hidden">
@@ -47,6 +50,8 @@ export function AppShell() {
             </div>
           </main>
         </SidebarInset>
+          <AiChatSheet />
+        </AiChatProvider>
       </SidebarProvider>
 
       <BottomTabBar />

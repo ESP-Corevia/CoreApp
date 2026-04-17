@@ -7,8 +7,8 @@ import {
   LifeBuoy,
   LogOut,
   PillBottle,
-  Search,
   Settings,
+  Sparkles,
   Stethoscope,
   UserRound,
 } from 'lucide-react';
@@ -24,7 +24,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
+import { useAiChat } from '@/features/ai/components/ai-chat-provider';
 import {
   SidebarContent,
   SidebarFooter,
@@ -66,6 +66,7 @@ export function AppSidebar() {
   const { data: session } = authClient.useSession();
   const { state } = useSidebar();
   const collapsed = state === 'collapsed';
+  const { setOpen: setChatOpen } = useAiChat();
 
   const sessionAny = session as unknown as Record<string, unknown> | null;
   const user = sessionAny?.user as Record<string, unknown> | undefined;
@@ -201,28 +202,29 @@ export function AppSidebar() {
           </SidebarMenuItem>
         </SidebarMenu>
 
-        {!collapsed && (
-          <div className="relative px-1">
-            <Search
-              aria-hidden="true"
-              className="pointer-events-none absolute top-1/2 left-3.5 size-3.5 -translate-y-1/2 text-sidebar-foreground/50"
-            />
-            <Input
-              type="search"
-              placeholder={t('common.search')}
-              aria-label={t('common.search')}
-              disabled
-              aria-disabled="true"
-              className="h-8 rounded-md border-sidebar-border/70 bg-sidebar-accent/40 pr-9 pl-8 text-[13px] shadow-none placeholder:text-sidebar-foreground/50 focus-visible:bg-background"
-            />
-            <span
-              aria-hidden="true"
-              className="pointer-events-none absolute top-1/2 right-2 hidden h-5 -translate-y-1/2 select-none items-center rounded border border-sidebar-border/70 bg-background/60 px-1.5 font-medium font-mono text-[10px] text-sidebar-foreground/60 md:inline-flex"
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              onClick={() => setChatOpen(true)}
+              tooltip={t('ai.title', { defaultValue: 'Corevia Assistant' })}
+              aria-label={t('ai.title', { defaultValue: 'Corevia Assistant' })}
+              className={cn(
+                'group/ask h-9 gap-2.5 rounded-lg px-2.5 font-medium text-[13.5px] text-sidebar-foreground transition-colors',
+                'bg-gradient-to-br from-amber-500/15 via-orange-500/5 to-transparent ring-1 ring-amber-500/20',
+                'hover:from-amber-500/25 hover:via-orange-500/10 hover:ring-amber-500/30',
+              )}
             >
-              ⌘K
-            </span>
-          </div>
-        )}
+              <Sparkles
+                className="size-[18px] shrink-0 text-amber-600 dark:text-amber-400"
+                strokeWidth={2.25}
+                aria-hidden="true"
+              />
+              <span className="flex-1 truncate text-left">
+                {t('ai.askCta', { defaultValue: 'Ask Corevia AI' })}
+              </span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarHeader>
 
       <SidebarSeparator className="mx-3 bg-sidebar-border/60" />

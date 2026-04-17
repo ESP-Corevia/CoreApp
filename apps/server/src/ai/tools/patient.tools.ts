@@ -68,32 +68,45 @@ export function createPatientTools(caller: AICaller) {
 
     list_doctors: tool({
       description:
-        'Search for bookable doctors. Optionally filter by specialty, city, or free-text search.',
+        "Search for bookable doctors. Optionally filter by specialty, city, or free-text search. Returns each doctor with a single `doctorId` field — always reuse THIS value as the `doctorId` in `get_available_slots` and `create_appointment`.",
       inputSchema: z.object({
         specialty: z.string().optional().describe('Filter by specialty'),
         city: z.string().optional().describe('Filter by city'),
         search: z.string().optional().describe('Free-text search on doctor name'),
       }),
       execute: async args => {
-        return await caller.doctors.list({
+        const result = await caller.doctors.list({
           specialty: args.specialty,
           city: args.city,
           search: args.search,
           page: 1,
           limit: 10,
         });
+        return {
+          ...result,
+          items: result.items.map(d => ({
+            doctorId: d.userId,
+            name: d.name,
+            specialty: d.specialty,
+            address: d.address,
+            city: d.city,
+            verified: d.verified,
+          })),
+        };
       },
     }),
 
     get_available_slots: tool({
       description:
-        'Get available appointment slots for a doctor on a given date. Returns 30-minute time slots.',
+        'Get available appointment slots for a doctor on a given date. Returns 30-minute time slots. Pass the exact `doctorId` returned by `list_doctors`, NOT any other id.',
       inputSchema: z.object({
-        doctorId: z.string().describe('The doctor ID'),
+        doctorId: z
+          .string()
+          .describe('The doctorId value from a previous list_doctors result'),
         date: z
           .string()
           .regex(/^\d{4}-\d{2}-\d{2}$/)
-          .describe('Date to check (YYYY-MM-DD)'),
+          .describe('Date to check (YYYY-MM-DD), must be today or later'),
       }),
       execute: async args => {
         return await caller.doctors.availableSlots({

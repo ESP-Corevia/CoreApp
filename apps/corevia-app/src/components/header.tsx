@@ -1,4 +1,4 @@
-import { Bell, Check, ChevronRight, Globe, Moon, Sun } from 'lucide-react';
+import { Bell, Check, ChevronRight, Globe, Moon, Sparkles, Sun } from 'lucide-react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation, useParams } from 'react-router';
@@ -11,6 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useAiChat } from '@/features/ai/components/ai-chat-provider';
 import { authClient } from '@/lib/auth-client';
 import { cn } from '@/lib/utils';
 import { useTheme } from '@/providers/theme';
@@ -79,6 +80,7 @@ export function Header() {
   const { t, i18n } = useTranslation();
   const { theme, setTheme, resolvedTheme } = useTheme();
   const { data: session } = authClient.useSession();
+  const { setOpen: setChatOpen } = useAiChat();
   const { title, crumbs } = useBreadcrumbs();
 
   const sessionAny = session as unknown as Record<string, unknown> | null;
@@ -131,6 +133,16 @@ export function Header() {
         aria-label={t('nav.headerActions', { defaultValue: 'Header actions' })}
         className="flex items-center gap-1"
       >
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setChatOpen(true)}
+          aria-label={t('ai.title', { defaultValue: 'Corevia Assistant' })}
+          className="size-9 rounded-full text-amber-600 hover:bg-amber-500/10 hover:text-amber-700 md:hidden dark:text-amber-400 dark:hover:text-amber-300"
+        >
+          <Sparkles className="size-[18px]" strokeWidth={2.25} aria-hidden="true" />
+        </Button>
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
