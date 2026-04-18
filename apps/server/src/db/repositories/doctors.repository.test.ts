@@ -98,6 +98,11 @@ describe('doctors.repository', () => {
       expect(page3).toHaveLength(1);
       expect(page1[0].id).not.toBe(page2[0].id);
     });
+    it('returns only verified doctors when verified filter is true', async () => {
+      const items = await repo.listBookable({ verified: true, offset: 0, limit: 10 });
+      expect(items).toHaveLength(1);
+      expect(items[0].verified).toBe(true);
+    });
 
     it('returns empty array when no match', async () => {
       const items = await repo.listBookable({ specialty: 'Oncology', offset: 0, limit: 10 });

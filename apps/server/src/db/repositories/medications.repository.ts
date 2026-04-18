@@ -280,6 +280,9 @@ export const createMedicationsRepo = (db: DrizzleDB) => ({
 
   /**
    * Supprime un schedule par son ID.
+   * Annule d'abord la référence `schedule_id` sur les prises existantes, car la FK composite
+   * (patient_medication_id, schedule_id) avec ON DELETE SET NULL tenterait sinon de mettre
+   * `patient_medication_id` (NOT NULL) à NULL, ce qui lève une erreur Postgres.
    * @returns L'ID du schedule supprimé, ou `null` si introuvable.
    */
   deleteSchedule: async (id: string) => {
@@ -417,6 +420,49 @@ export const createMedicationsRepo = (db: DrizzleDB) => ({
       date: r.scheduledDate,
       allTaken: Number(r.total) > 0 && Number(r.taken) === Number(r.total),
     }));
+  },
+
+  /**
+   * Liste les prises détaillées d'un patient sur une plage de dates avec les infos médicament.
+   * Utilisé pour l'affichage de l'historique détaillé côté médecin.
+   */
+  listIntakeDetailsByDateRange: async (patientId: string, from: string, to: string) => {
+    return await db
+      .select({
+        id: patientMedicationIntakes.id,
+        patientMedicationId: patientMedicationIntakes.patientMedicationId,
+        scheduledDate: patientMedicationIntakes.scheduledDate,
+        scheduledTime: patientMedicationIntakes.scheduledTime,
+        status: patientMedicationIntakes.status,
+        takenAt: patientMedicationIntakes.takenAt,
+        notes: patientMedicationIntakes.notes,
+        medicationName: patientMedications.medicationName,
+        medicationForm: patientMedications.medicationForm,
+        dosageLabel: patientMedications.dosageLabel,
+        quantity: patientMedicationSchedules.quantity,
+        unit: patientMedicationSchedules.unit,
+        intakeMoment: patientMedicationSchedules.intakeMoment,
+      })
+      .from(patientMedicationIntakes)
+      .innerJoin(
+        patientMedications,
+        eq(patientMedicationIntakes.patientMedicationId, patientMedications.id),
+      )
+      .leftJoin(
+        patientMedicationSchedules,
+        eq(patientMedicationIntakes.scheduleId, patientMedicationSchedules.id),
+      )
+      .where(
+        and(
+          eq(patientMedications.patientId, patientId),
+          gte(patientMedicationIntakes.scheduledDate, from),
+          lte(patientMedicationIntakes.scheduledDate, to),
+        ),
+      )
+      .orderBy(
+        asc(patientMedicationIntakes.scheduledDate),
+        asc(patientMedicationIntakes.scheduledTime),
+      );
   },
 
   /**

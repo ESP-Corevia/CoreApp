@@ -378,6 +378,77 @@ export const createMedicationsService = (repo: MedicationsRepo, provider: Medica
     },
 
     /**
+     * Historique détaillé avec chaque prise et ses infos médicament, groupé par jour.
+     */
+    intakeHistoryDetailed: async (patientId: string, from: string, to: string) => {
+      if (from > to) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'from must be before or equal to to',
+        });
+      }
+      const rows = await repo.listIntakeDetailsByDateRange(patientId, from, to);
+
+      const byDate = new Map<string, typeof rows>();
+      for (const r of rows) {
+        const list = byDate.get(r.scheduledDate) ?? [];
+        list.push(r);
+        byDate.set(r.scheduledDate, list);
+      }
+
+      const days: Array<{
+        date: string;
+        allTaken: boolean | null;
+        totalCount: number;
+        takenCount: number;
+        intakes: Array<{
+          id: string;
+          patientMedicationId: string;
+          scheduledTime: string;
+          status: string;
+          takenAt: Date | null;
+          notes: string | null;
+          medicationName: string;
+          medicationForm: string | null;
+          dosageLabel: string | null;
+          quantity: string | null;
+          unit: string | null;
+          intakeMoment: string | null;
+        }>;
+      }> = [];
+      const cursor = new Date(`${from}T12:00:00Z`);
+      const end = new Date(`${to}T12:00:00Z`);
+      while (cursor <= end) {
+        const date = cursor.toISOString().slice(0, 10);
+        const list = byDate.get(date) ?? [];
+        const taken = list.filter(r => r.status === 'TAKEN').length;
+        days.push({
+          date,
+          allTaken: list.length === 0 ? null : taken === list.length,
+          totalCount: list.length,
+          takenCount: taken,
+          intakes: list.map(r => ({
+            id: r.id,
+            patientMedicationId: r.patientMedicationId,
+            scheduledTime: r.scheduledTime,
+            status: r.status,
+            takenAt: r.takenAt,
+            notes: r.notes,
+            medicationName: r.medicationName,
+            medicationForm: r.medicationForm,
+            dosageLabel: r.dosageLabel,
+            quantity: r.quantity,
+            unit: r.unit,
+            intakeMoment: r.intakeMoment,
+          })),
+        });
+        cursor.setUTCDate(cursor.getUTCDate() + 1);
+      }
+
+      return { days };
+    },
+
+    /**
      * Marque une prise comme TAKEN. Ne fonctionne que si la prise est encore PENDING.
      * @throws NOT_FOUND si la prise n'existe pas.
      * @throws FORBIDDEN si le médicament n'appartient pas au patient.

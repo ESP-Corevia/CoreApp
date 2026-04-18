@@ -101,7 +101,9 @@ export const patientMedicationIntakes = pgTable(
       .uuid('patient_medication_id')
       .notNull()
       .references(() => patientMedications.id, { onDelete: 'cascade' }),
-    scheduleId: t.uuid('schedule_id'),
+    scheduleId: t
+      .uuid('schedule_id')
+      .references(() => patientMedicationSchedules.id, { onDelete: 'set null' }),
     scheduledDate: t.date('scheduled_date', { mode: 'string' }).notNull(),
     scheduledTime: t.varchar('scheduled_time', { length: 5 }).notNull(),
     status: intakeStatusEnum('status').notNull().default('PENDING'),

@@ -1116,3 +1116,118 @@ describe('doctorViewMedicationDetail', () => {
     });
   });
 });
+describe('intakeHistoryDetailed', () => {
+  it('groups intakes by date, fills empty days with null and computes taken/total counts', async () => {
+    const rows = [
+      {
+        id: 'int_1',
+        patientMedicationId: 'pm_1',
+        scheduledDate: '2025-06-02',
+        scheduledTime: '08:00',
+        status: 'TAKEN',
+        takenAt: new Date('2025-06-02T08:05:00Z'),
+        notes: 'Felt good',
+        medicationName: 'Paracetamol',
+        medicationForm: 'Tablet',
+        dosageLabel: '500mg',
+        quantity: '1',
+        unit: 'tab',
+        intakeMoment: 'MORNING',
+      },
+      {
+        id: 'int_2',
+        patientMedicationId: 'pm_1',
+        scheduledDate: '2025-06-02',
+        scheduledTime: '20:00',
+        status: 'SKIPPED',
+        takenAt: null,
+        notes: null,
+        medicationName: 'Paracetamol',
+        medicationForm: 'Tablet',
+        dosageLabel: '500mg',
+        quantity: '1',
+        unit: 'tab',
+        intakeMoment: 'EVENING',
+      },
+      {
+        id: 'int_3',
+        patientMedicationId: 'pm_1',
+        scheduledDate: '2025-06-04',
+        scheduledTime: '08:00',
+        status: 'TAKEN',
+        takenAt: new Date('2025-06-04T08:10:00Z'),
+        notes: null,
+        medicationName: 'Paracetamol',
+        medicationForm: 'Tablet',
+        dosageLabel: '500mg',
+        quantity: '1',
+        unit: 'tab',
+        intakeMoment: 'MORNING',
+      },
+    ];
+    repo.listIntakeDetailsByDateRange.mockResolvedValue(rows as any);
+
+    const result = await service.intakeHistoryDetailed('patient_1', '2025-06-01', '2025-06-04');
+
+    expect(repo.listIntakeDetailsByDateRange).toHaveBeenCalledWith(
+      'patient_1',
+      '2025-06-01',
+      '2025-06-04',
+    );
+    expect(result.days).toHaveLength(4);
+    expect(result.days[0]).toEqual({
+      date: '2025-06-01',
+      allTaken: null,
+      totalCount: 0,
+      takenCount: 0,
+      intakes: [],
+    });
+    expect(result.days[1]).toMatchObject({
+      date: '2025-06-02',
+      allTaken: false,
+      totalCount: 2,
+      takenCount: 1,
+    });
+    expect(result.days[1].intakes).toHaveLength(2);
+    expect(result.days[1].intakes[0]).toMatchObject({
+      id: 'int_1',
+      medicationName: 'Paracetamol',
+      status: 'TAKEN',
+      intakeMoment: 'MORNING',
+    });
+    expect(result.days[2]).toEqual({
+      date: '2025-06-03',
+      allTaken: null,
+      totalCount: 0,
+      takenCount: 0,
+      intakes: [],
+    });
+    expect(result.days[3]).toMatchObject({
+      date: '2025-06-04',
+      allTaken: true,
+      totalCount: 1,
+      takenCount: 1,
+    });
+  });
+
+  it('returns only null days when the patient has no intakes in the range', async () => {
+    repo.listIntakeDetailsByDateRange.mockResolvedValue([]);
+
+    const result = await service.intakeHistoryDetailed('patient_1', '2025-06-15', '2025-06-17');
+
+    expect(result.days).toEqual([
+      { date: '2025-06-15', allTaken: null, totalCount: 0, takenCount: 0, intakes: [] },
+      { date: '2025-06-16', allTaken: null, totalCount: 0, takenCount: 0, intakes: [] },
+      { date: '2025-06-17', allTaken: null, totalCount: 0, takenCount: 0, intakes: [] },
+    ]);
+  });
+
+  it('throws BAD_REQUEST when from is after to', async () => {
+    await expect(
+      service.intakeHistoryDetailed('patient_1', '2025-06-30', '2025-06-01'),
+    ).rejects.toMatchObject({
+      code: 'BAD_REQUEST',
+    });
+    expect(repo.listIntakeDetailsByDateRange).not.toHaveBeenCalled();
+  });
+});

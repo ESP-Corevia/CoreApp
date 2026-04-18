@@ -43,6 +43,8 @@ export const auth = betterAuth({
     'http://localhost:3000',
     'http://127.0.0.1:3000',
     'http://10.0.2.2:3000',
+    'https://localhost:5174',
+    '*.corevia.local:5174',
   ],
   emailAndPassword: {
     enabled: true,

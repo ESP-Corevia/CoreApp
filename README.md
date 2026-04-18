@@ -73,6 +73,7 @@ Add-Content -Path "C:\Windows\System32\drivers\etc\hosts" -Value @"
 127.0.0.1 back-office.corevia.local
 127.0.0.1 api.corevia.local
 127.0.0.1 home.corevia.local
+127.0.0.1 app.corevia.local
 "@
 ```
 
@@ -90,6 +91,7 @@ mkcert -install
 echo "127.0.0.1 back-office.corevia.local" | sudo tee -a /etc/hosts
 echo "127.0.0.1 api.corevia.local" | sudo tee -a /etc/hosts
 echo "127.0.0.1 home.corevia.local" | sudo tee -a /etc/hosts
+echo "127.0.0.1 app.corevia.local" | sudo tee -a /etc/hosts
 ```
 
 #### Generate Certificates (all platforms)
@@ -99,7 +101,7 @@ From the project root:
 ```bash
 mkdir -p certs
 mkcert -cert-file certs/cert.pem -key-file certs/key.pem \
-  back-office.corevia.local api.corevia.local home.corevia.local localhost 127.0.0.1
+  back-office.corevia.local api.corevia.local home.corevia.local app.corevia.local localhost 127.0.0.1
 ```
 
 ### 2. Configure Environment
@@ -149,6 +151,7 @@ docker compose logs -f server
 |---------|-----|
 | Home | https://home.corevia.local |
 | Back-office | https://back-office.corevia.local |
+| Corevia App | https://app.corevia.local |
 | API | https://api.corevia.local |
 | API reference | https://api.corevia.local/reference |
 | Drizzle Studio | http://localhost:4983 |
@@ -157,32 +160,33 @@ docker compose logs -f server
 ### Docker Architecture
 
 ```
-                    ┌─────────────────┐
-                    │   nginx proxy   │
-                    │   :80 / :443    │
-                    └────────┬────────┘
-                             │
-         ┌───────────────────┼───────────────────┐
-         │ home.             │ back-office.       │ api.
-         │ corevia.local     │ corevia.local      │ corevia.local
-         ▼                   ▼                    ▼
-   ┌───────────┐      ┌───────────┐       ┌───────────┐
-   │home(nginx)│      │ web(nginx)│       │  server   │
-   │   :8080   │      │   :8080   │       │  :3000    │
-   └───────────┘      └───────────┘       └─────┬─────┘
-                                                │
-                                          ┌─────▼─────┐
-                                          │ postgres  │
-                                          │  :5432    │
-                                          └───────────┘
+                             ┌─────────────────┐
+                             │   nginx proxy   │
+                             │   :80 / :443    │
+                             └────────┬────────┘
+                                      │
+       ┌──────────────┬────────────────┼────────────────┬──────────────┐
+       │ home.        │ back-office.   │ app.           │ api.
+       │ corevia.local│ corevia.local  │ corevia.local  │ corevia.local
+       ▼              ▼                ▼                ▼
+ ┌───────────┐  ┌───────────┐   ┌───────────────┐  ┌───────────┐
+ │home(nginx)│  │ web(nginx)│   │corevia-app    │  │  server   │
+ │   :8080   │  │   :8080   │   │ (nginx) :8080 │  │   :3000   │
+ └───────────┘  └───────────┘   └───────────────┘  └─────┬─────┘
+                                                         │
+                                                   ┌─────▼─────┐
+                                                   │ postgres  │
+                                                   │   :5432   │
+                                                   └───────────┘
 ```
 
 ### Docker Profiles
 
 | Profile | Services started |
 |---------|-----------------|
-| `web` | postgres, migrate, server, web, home, proxy |
+| `web` | postgres, migrate, server, web, home, corevia-app, proxy |
 | `home` | home |
+| `corevia-app` | corevia-app |
 | `server` | postgres, migrate, server |
 | `seed` | postgres, migrate, seed |
 
@@ -191,7 +195,8 @@ docker compose logs -f server
 ```
 Corevia/
 ├── apps/
-│   ├── web/         # Frontend application (React + React Router)
+│   ├── web/         # Back-office frontend (React + React Router)
+│   ├── corevia-app/ # Patient & doctor frontend (React + React Router)
 │   ├── server/      # Backend API (Fastify, tRPC)
 │   └── home/        # Landing page
 ├── proxy/           # Nginx reverse proxy config (SSL termination)

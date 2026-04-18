@@ -794,4 +794,34 @@ describe('medications.repository', () => {
       expect(await repo.countAllMedications({ search: 'Doliprane' })).toBe(2);
     });
   });
+  describe('listIntakeDetailsByDateRange', () => {
+    it('returns detailed intakes with medication and schedule info', async () => {
+      const med = await seedMedication();
+      const sched = await seedSchedule(med.id, { intakeTime: '08:00', intakeMoment: 'MORNING' });
+      const intake = await seedIntake(med.id, sched.id, {
+        scheduledDate: '2025-06-15',
+        scheduledTime: '08:00',
+      });
+
+      const details = await repo.listIntakeDetailsByDateRange(
+        patientId,
+        '2025-06-15',
+        '2025-06-15',
+      );
+
+      expect(details).toHaveLength(1);
+      expect(details[0].id).toBe(intake.id);
+      expect(details[0].medicationName).toBe('Doliprane 500mg');
+      expect(details[0].intakeMoment).toBe('MORNING');
+    });
+
+    it('returns empty array when no intakes in range', async () => {
+      const details = await repo.listIntakeDetailsByDateRange(
+        patientId,
+        '2025-06-15',
+        '2025-06-20',
+      );
+      expect(details).toEqual([]);
+    });
+  });
 });

@@ -45,6 +45,7 @@ export interface ListBookableParams {
   search?: string;
   offset: number;
   limit: number;
+  verified?: boolean;
 }
 
 export interface ListAllAdminParams {
@@ -97,6 +98,9 @@ function buildFilters(params: ListBookableParams) {
     conditions.push(
       or(ilike(doctorUsersView.specialty, pattern), ilike(doctorUsersView.doctorAddress, pattern)),
     );
+  }
+  if (params.verified !== undefined) {
+    conditions.push(eq(doctorUsersView.verified, params.verified));
   }
 
   return conditions.length > 0 ? and(...conditions) : undefined;

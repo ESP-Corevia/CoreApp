@@ -2,6 +2,8 @@ import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
 import {
+  DetailedIntakeHistoryOutputSchema,
+  IntakeHistoryInputSchema,
   ListPillboxInputSchema,
   ListPillboxOutputSchema,
   PatientMedicationDetailOutputSchema,
@@ -66,6 +68,37 @@ export const doctorPillboxRouter = router({
         });
       }
       return await services.medicationsService.doctorViewPatientToday(input.patientId);
+    }),
+
+  intakeHistory: doctorProcedure
+    .meta({
+      openapi: {
+        method: 'GET',
+        path: '/doctor/pillbox/{patientId}/history',
+        summary: 'Get patient intake history by date range (doctor)',
+        description:
+          'Returns a boolean per day indicating whether all intakes were taken (true), some were missed/pending (false), or there were none (null).',
+        tags: ['Doctor Pillbox'],
+      },
+    })
+    .input(DoctorPatientInputSchema.merge(IntakeHistoryInputSchema))
+    .output(DetailedIntakeHistoryOutputSchema)
+    .query(async ({ input, ctx: { session, services } }) => {
+      const hasRelationship = await services.appointmentsService.hasPatientRelationship(
+        session.userId,
+        input.patientId,
+      );
+      if (!hasRelationship) {
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+          message: 'You do not have access to this patient records',
+        });
+      }
+      return await services.medicationsService.intakeHistoryDetailed(
+        input.patientId,
+        input.from,
+        input.to,
+      );
     }),
 
   medicationDetail: doctorProcedure

@@ -9,6 +9,8 @@ import {
 import { UserOutputSchema } from '../../db/services/users.service';
 import { protectedProcedure, router } from '../../middlewares';
 
+const ALLOWED_INITIAL_ROLES = ['patient', 'doctor'] as const;
+
 const GetMeOutputSchema = UserOutputSchema.extend({
   doctorProfile: DoctorProfileSchema.nullable(),
   patientProfile: PatientProfileSchema.nullable(),
@@ -21,6 +23,38 @@ const UpdateProfileInputSchema = z.object({
 });
 
 export const userRouter = router({
+  setInitialRole: protectedProcedure
+    .meta({
+      openapi: {
+        method: 'POST',
+        path: '/me/initial-role',
+        summary: 'Set initial role after sign-up',
+        description:
+          'Allows a newly created user to set their role to patient or doctor. Only works if the current role is the default (patient). Cannot set admin.',
+        protect: true,
+        tags: ['UserRouter'],
+      },
+    })
+    .input(z.object({ role: z.enum(ALLOWED_INITIAL_ROLES) }))
+    .output(z.object({ success: z.boolean() }))
+    .mutation(async ({ ctx: { auth, session }, input }) => {
+      const user = await auth.api.getUser({ query: { id: session.userId } });
+      if (!user) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'User not found' });
+      }
+      // Only allow changing from the default role (patient)
+      if (user.role !== 'patient') {
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+          message: 'Role has already been set',
+        });
+      }
+      await auth.api.adminUpdateUser({
+        body: { userId: session.userId, data: { role: input.role } },
+      });
+      return { success: true };
+    }),
+
   getMe: protectedProcedure
     .meta({
       openapi: {

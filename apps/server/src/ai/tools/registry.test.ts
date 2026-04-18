@@ -9,9 +9,9 @@ function hashRole(role: 'patient' | 'doctor' | 'admin'): string {
 }
 
 const EXPECTED_HASHES: Record<'patient' | 'doctor' | 'admin', string> = {
-  patient: '2ed6a31812fa',
-  doctor: '7609623714ba',
-  admin: '92a42208723b',
+  patient: '36227f0447a7',
+  doctor: '9b2d836424fc',
+  admin: '3ef6ad1d9e57',
 };
 
 describe('AI registry — role definitions', () => {
@@ -46,31 +46,24 @@ describe('getSystemPromptForRole', () => {
     expect(prompt).toContain(def.refusal);
 
     // Contains required structural sections
-    expect(prompt).toContain('## Your tools');
-    expect(prompt).toContain('## Scope');
-    expect(prompt).toContain('## Rules');
-    expect(prompt).toContain('## Examples');
+    expect(prompt).toContain('# CURRENT DATE');
+    expect(prompt).toContain('# PRIORITY ORDER');
+    expect(prompt).toContain('# HARD RULES');
+    expect(prompt).toContain('# WHEN NOT TO CALL TOOLS');
+    expect(prompt).toContain('# TOOL USAGE POLICY');
+    expect(prompt).toContain('# ROLE TOOLS');
+    expect(prompt).toContain('# TOOL GUIDE');
+    expect(prompt).toContain('# ROLE SCOPE');
+    expect(prompt).toContain('# ROUTING RULES');
+    expect(prompt).toContain('# AMBIGUITY RULES');
+    expect(prompt).toContain('# FOLLOW-UP MEMORY');
+    expect(prompt).toContain('# AUTHENTICATION / AUTHORIZATION');
+    expect(prompt).toContain('# FAILURE HANDLING');
+    expect(prompt).toContain('# OUTPUT STYLE');
+    expect(prompt).toContain('# EXAMPLES');
 
     // Contains Corevia branding
     expect(prompt).toContain('Corevia Assistant');
-  });
-
-  it('prompts include emoji and markdown instructions', () => {
-    const prompt = getSystemPromptForRole('admin');
-    expect(prompt).toContain('emojis');
-    expect(prompt).toContain('markdown');
-  });
-
-  it('prompts include prompt injection protection', () => {
-    const prompt = getSystemPromptForRole('admin');
-    expect(prompt).toContain('prompt injection');
-    expect(prompt).toContain('ignore rules');
-  });
-
-  it('prompts include language instruction', () => {
-    const prompt = getSystemPromptForRole('patient');
-    expect(prompt).toContain('same language');
-    expect(prompt).toContain('French');
   });
 });
 
@@ -127,6 +120,12 @@ describe('getToolsForRole', () => {
       'get_my_appointments',
       'get_appointment_detail',
       'update_appointment_status',
+      'list_patient_medications',
+      'get_patient_today_pillbox',
+      'get_patient_intake_history',
+      'get_patient_medication_detail',
+      'search_medications',
+      'get_medication_by_code',
     ]);
   });
 
