@@ -22,9 +22,11 @@ import { mergeOpenApiDocs } from './utils/functions';
 const certPath = path.resolve(import.meta.dirname, '../../../certs/cert.pem');
 const keyPath = path.resolve(import.meta.dirname, '../../../certs/key.pem');
 const hasCerts = fs.existsSync(certPath) && fs.existsSync(keyPath);
+const CORS_PROD_RE  = /^https:\/\/([a-z0-9-]+\.)*corevia\.world$/;
 
 const baseCorsConfig = {
   origin: [
+    CORS_PROD_RE,
     env.CORS_ORIGIN,
     'http://localhost:3000',
     'http://127.0.0.1:3000',
