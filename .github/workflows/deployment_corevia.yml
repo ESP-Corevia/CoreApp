@@ -1,0 +1,180 @@
+# Builds the corevia-app Docker image and deploys it to the Kubernetes cluster on DigitalOcean.
+# Triggered on every push to master that touches apps/corevia-app or this workflow file.
+name: Build and Push Corevia App Docker Image to DigitalOcean
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - "apps/corevia-app/**"
+      - ".github/workflows/deployment_corevia.yml"
+  workflow_dispatch:
+
+jobs:
+  # Runs linting, type-checking, and any other workspace-level quality checks
+  # before allowing the build to proceed.
+  check-all:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+      - uses: ./.github/actions/setup-pnpm
+      - name: Run all checks
+        run: pnpm run check:all
+
+  # Reads the semver version from apps/corevia-app/package.json and exposes it as a
+  # job output so downstream jobs can tag the Docker image consistently.
+  get-version:
+    runs-on: ubuntu-latest
+    needs: check-all
+    outputs:
+      COREVIA_APP_VERSION: ${{ steps.get_version.outputs.COREVIA_APP_VERSION }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Get corevia-app version
+        id: get_version
+        run: echo "COREVIA_APP_VERSION=$(jq -r .version apps/corevia-app/package.json)" >> $GITHUB_OUTPUT
+
+  # Builds the corevia-app Dockerfile and pushes two tags to the DigitalOcean registry:
+  #   - corevia-app-<version>  (immutable, version-pinned)
+  #   - corevia-app-latest     (floating, always points to the newest build)
+  # GitHub Actions cache is used to speed up layer reuse across runs.
+  build-and-push:
+    runs-on: ubuntu-latest
+    needs: get-version
+    env:
+      COREVIA_APP_VERSION: ${{ needs.get-version.outputs.COREVIA_APP_VERSION }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to DigitalOcean Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ secrets.DIGITALOCEAN_REGISTRY_URL }}
+          username: ${{ secrets.DIGITALOCEAN_USERNAME }}
+          password: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./
+          push: true
+          tags: |
+            ${{ secrets.DIGITALOCEAN_REGISTRY_URL }}/corevia:corevia-app-${{ env.COREVIA_APP_VERSION }}
+            ${{ secrets.DIGITALOCEAN_REGISTRY_URL }}/corevia:corevia-app-latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          file: ./apps/corevia-app/Dockerfile
+          provenance: false
+          build-args: |
+            VITE_SERVER_URL=${{ secrets.VITE_SERVER_URL }}
+
+  # Updates the running Kubernetes deployment to use the newly pushed image,
+  # then cleans up old tags and dangling manifests from the registry.
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [get-version, build-and-push]
+    env:
+      COREVIA_APP_VERSION: ${{ needs.get-version.outputs.COREVIA_APP_VERSION }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      # kubectl is needed to interact with the DigitalOcean Kubernetes cluster.
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v4
+
+      - name: Log in to DigitalOcean Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ secrets.DIGITALOCEAN_REGISTRY_URL }}
+          username: ${{ secrets.DIGITALOCEAN_USERNAME }}
+          password: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      # doctl is the DigitalOcean CLI used to manage the registry and fetch the kubeconfig.
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Create kube directory
+        run: mkdir -p ~/.kube
+
+      # Writes the cluster credentials into ~/.kube/config so kubectl can authenticate.
+      - name: Get kubeconfig
+        run: |
+          doctl kubernetes cluster kubeconfig show corevia > ~/.kube/config
+
+      # Performs a rolling update of the corevia-app deployment to the new image version.
+      # Kubernetes will drain old pods only after the new ones pass their readiness probes.
+      - name: Update deployment image
+        run: |
+          kubectl set image deployment/corevia-app corevia-app=${{ secrets.DIGITALOCEAN_REGISTRY_URL }}/corevia:corevia-app-${{ env.COREVIA_APP_VERSION }}
+
+      # Removes obsolete corevia-app-* tags and untagged (dangling) manifests from the registry
+      # to keep storage usage in check. Failures are non-blocking (continue-on-error).
+      - name: Delete previous version tags
+        continue-on-error: true
+        if: success()
+        run: |
+          all_tags=$(doctl registry repository list-tags corevia --format Tag --no-header)
+          echo "All tags found: $all_tags"
+
+          old_tags=$(echo "$all_tags" | grep '^corevia-app-' | grep -v "corevia-app-${{ env.COREVIA_APP_VERSION }}" | grep -v "corevia-app-latest" || true)
+          echo "Old tags to delete: ${old_tags:-none}"
+
+          deleted_digests=""
+
+          for tag in $old_tags; do
+            echo "Processing tag: $tag"
+
+            digest=$(doctl registry repository list-tags corevia \
+              --format Tag,Digest \
+              --no-header | grep "^$tag[[:space:]]" | awk '{print $2}' || true)
+
+            if [[ -z "$digest" ]]; then
+              echo "No digest found for tag $tag, skipping."
+              continue
+            fi
+
+            if echo "$deleted_digests" | grep -qF "$digest"; then
+              echo "Digest $digest already deleted, skipping."
+              continue
+            fi
+
+            echo "Deleting manifest for tag $tag (digest: $digest)"
+            doctl registry repository delete-manifest corevia "$digest" --force
+
+            deleted_digests="$deleted_digests $digest"
+          done
+
+          echo "Deleting untagged manifests..."
+          untagged_digests=$(doctl registry repository list-manifests corevia \
+            --format Digest,Tags \
+            --no-header | grep '\[\]' | awk '{print $1}' | sort | uniq || true)
+          echo "Untagged digests found: ${untagged_digests:-none}"
+
+          for digest in $untagged_digests; do
+            if [[ -z "$digest" ]]; then
+              continue
+            fi
+
+            if echo "$deleted_digests" | grep -qF "$digest"; then
+              echo "Digest $digest already deleted, skipping."
+              continue
+            fi
+
+            echo "Deleting untagged manifest (digest: $digest)"
+            doctl registry repository delete-manifest corevia "$digest" --force
+
+            deleted_digests="$deleted_digests $digest"
+          done
