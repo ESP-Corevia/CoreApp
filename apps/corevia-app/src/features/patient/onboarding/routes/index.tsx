@@ -17,7 +17,7 @@ import {
 import { useRequireAuth } from '@/hooks/use-require-auth';
 import { useRoleGuard } from '@/hooks/use-role-guard';
 import { queryClient } from '@/providers/query';
-import { trpcClient } from '@/providers/trpc';
+import { trpc, trpcClient } from '@/providers/trpc';
 
 export default function PatientOnboarding() {
   const { t } = useTranslation();
@@ -43,7 +43,7 @@ export default function PatientOnboarding() {
 
     setIsSubmitting(true);
     try {
-      await trpcClient.user.updateProfile.mutate({
+      const result = await trpcClient.user.updateProfile.mutate({
         patientProfile: {
           dateOfBirth,
           gender: gender as 'MALE' | 'FEMALE',
@@ -51,7 +51,7 @@ export default function PatientOnboarding() {
           address: address || null,
         },
       });
-      await queryClient.invalidateQueries({ queryKey: [['user', 'getMe']] });
+      queryClient.setQueryData(trpc.user.getMe.queryKey({}), result);
       toast.success(t('patient.onboarding.submit'));
       navigate('/patient/home', { replace: true });
     } catch (err) {
