@@ -30,3 +30,5 @@ GEMINI.md.bak
 # END Ruler Generated Files
 .vscode/settings.json
 **/coverage/*
+# Brainstorming visual companion workdir
+.superpowers/
