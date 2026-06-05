@@ -74,5 +74,5 @@
     "zod-openapi": "5.3.1"
   },
   "packageManager": "pnpm@10.12.1",
-  "version": "1.4.0"
+  "version": "1.4.1"
 }
