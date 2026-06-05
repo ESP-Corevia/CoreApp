@@ -35,8 +35,10 @@ describe('nvidiaModel', () => {
       baseURL: 'https://integrate.api.nvidia.com/v1',
       name: 'nvidia',
     });
-    expect(chatMock).toHaveBeenCalledWith('mistralai/mistral-small-4-119b-2603');
-    expect(extractReasoningMiddlewareMock).toHaveBeenCalledWith({ tagName: 'think' });
+    expect(chatMock).toHaveBeenCalledWith('qwen/qwen3.5-397b-a17b');
+    expect(extractReasoningMiddlewareMock).toHaveBeenCalledWith({
+      tagName: 'think',
+    });
     expect(wrapLanguageModelMock).toHaveBeenCalledWith({
       model: 'chat-model-instance',
       middleware: ['reasoning-middleware'],
