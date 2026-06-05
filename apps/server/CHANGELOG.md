@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.4.1 (2026-06-05)
+
+## What's Changed
+* coreapp by @Yasser5711 in https://github.com/ESP-Corevia/CoreApp/pull/133
+* feat(home): add QR code download modal to CTA section by @Yasser5711 in https://github.com/ESP-Corevia/CoreApp/pull/135
+
+
+**Full Changelog**: https://github.com/ESP-Corevia/CoreApp/compare/server-v1.4.0...server-v1.4.1
+
 ## 1.4.0 (2026-04-17)
 
 ## What's Changed

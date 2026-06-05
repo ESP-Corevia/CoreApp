@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.2.0 (2026-06-05)
+
+## What's Changed
+* fix(web): fix chat by @Yasser5711 in https://github.com/ESP-Corevia/CoreApp/pull/129
+* feat(intake): implement intake history feature with date range queries and MinIO integration by @Yasser5711 in https://github.com/ESP-Corevia/CoreApp/pull/131
+* S3 docs by @Yasser5711 in https://github.com/ESP-Corevia/CoreApp/pull/132
+* chore: release master by @Yasser5711 in https://github.com/ESP-Corevia/CoreApp/pull/130
+* coreapp by @Yasser5711 in https://github.com/ESP-Corevia/CoreApp/pull/133
+* feat(home): add QR code download modal to CTA section by @Yasser5711 in https://github.com/ESP-Corevia/CoreApp/pull/135
+
+
+**Full Changelog**: https://github.com/ESP-Corevia/CoreApp/compare/home-v1.1.0...home-v1.2.0
+
 ## 1.1.0 (2026-04-09)
 
 ## What's Changed
