@@ -2,6 +2,7 @@ import { ArrowRight, Heart } from 'lucide-react';
 import FadeContent from '@/components/FadeContent';
 import Magnet from '@/components/Magnet';
 import { Button } from '@/components/ui/button';
+import DownloadAppDialog from '../download-app-dialog';
 
 export default function CtaSection() {
   return (
@@ -73,13 +74,15 @@ export default function CtaSection() {
               </Button>
             </Magnet>
             <Magnet padding={80} magnetStrength={3}>
-              <Button
-                variant="outline"
-                size="lg"
-                className="h-13 cursor-pointer rounded-full border-white/30 bg-transparent px-8 font-semibold text-base text-white hover:bg-white/10 hover:text-white"
-              >
-                Telecharger l'application
-              </Button>
+              <DownloadAppDialog>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="h-13 cursor-pointer rounded-full border-white/30 bg-transparent px-8 font-semibold text-base text-white hover:bg-white/10 hover:text-white"
+                >
+                  Telecharger l'application
+                </Button>
+              </DownloadAppDialog>
             </Magnet>
           </div>
 
