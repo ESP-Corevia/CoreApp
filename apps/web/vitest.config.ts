@@ -18,6 +18,13 @@ export default mergeConfig(
       environment: 'jsdom',
       setupFiles: ['./src/test/setup.ts'],
       exclude: ['node_modules', 'dist', 'build', 'e2e/**', 'playwright/**', 'coverage/**'],
+      reporters: process.env.CI
+        ? [
+            'default',
+            'github-actions',
+            ['junit', { outputFile: './reports/junit.xml', addFileAttribute: true }],
+          ]
+        : ['default'],
       coverage: {
         provider: 'v8',
         reporter: ['text', 'text-summary', 'json', 'json-summary', 'html'],
@@ -35,6 +42,10 @@ export default mergeConfig(
           'src/components/data-table/**.tsx',
           '**/index.{ts,tsx}',
           'src/routes/**',
+          // Playwright suite: test code, driven by `pnpm e2e`, not by vitest.
+          'e2e/**',
+          'playwright-report/**',
+          'reports/**',
         ],
         thresholds: {
           branches: 85,

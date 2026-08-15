@@ -131,15 +131,37 @@ jobs:
           fetch-depth: 1
       - uses: ./.github/actions/setup-pnpm
 
-      - name: 🧪 Run Tests
+      - name: 🧪 Run Tests (unit + API integration)
         run: pnpm turbo run server#check:test
+
+      - name: 🧾 Publish Test Report
+        if: always()
+        uses: mikepenz/action-junit-report@v5
+        with:
+          report_paths: apps/server/reports/junit.xml
+          check_name: "Server Tests"
+          detailed_summary: true
+          include_passed: false
+          annotate_only: false
+          fail_on_failure: true
+          require_tests: true
+
+      - name: 📎 Upload Test Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: server-test-report
+          path: |
+            apps/server/reports/junit.xml
+            apps/server/coverage
+          retention-days: 14
+
       - name: 📈 Report Coverage
         if: always()
         uses: davelosert/vitest-coverage-report-action@v2
         with:
           name: "Server Coverage Report"
           json-summary-path: apps/server/coverage/coverage-summary.json
-          json-summary-compare-path: apps/server/coverage/coverage-summary.json
           json-final-path: apps/server/coverage/coverage-final.json
           vite-config-path: apps/server/vitest.config.ts
           github-token: ${{ secrets.GITHUB_TOKEN }}

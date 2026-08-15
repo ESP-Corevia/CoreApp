@@ -1,0 +1,3 @@
+ALTER TABLE "patient_medication_intakes" DROP CONSTRAINT "patient_medication_intakes_patient_medication_id_schedule_id_patient_medication_schedules_patient_medication_id_id_fk";
+--> statement-breakpoint
+ALTER TABLE "patient_medication_intakes" ADD CONSTRAINT "patient_medication_intakes_schedule_id_patient_medication_schedules_id_fk" FOREIGN KEY ("schedule_id") REFERENCES "public"."patient_medication_schedules"("id") ON DELETE set null ON UPDATE no action;

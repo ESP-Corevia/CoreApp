@@ -18,7 +18,7 @@
     "test:ui": "vitest --ui",
     "check:test": "vitest run --coverage && echo 🧪✅ Tests passed! || (echo ❌ Tests failed 💥 && exit 1)",
     "verify-env": "tsx scripts/verify-env.ts",
-    "e2e": "playwright test && echo 🚦✅ E2E passed! || (echo ❌ E2E failed 💥 && exit 1)",
+    "e2e": "pnpm --filter server db:seed:e2e && playwright test && echo 🚦✅ E2E passed! || (echo ❌ E2E failed 💥 && exit 1)",
     "e2e:ui": "playwright test --ui",
     "e2e:headed": "playwright test --headed",
     "i18n:status": "i18next-cli status",
@@ -94,6 +94,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "@faker-js/faker": "catalog:",
     "@lhci/cli": "0.15.1",
     "@playwright/test": "1.57.0",

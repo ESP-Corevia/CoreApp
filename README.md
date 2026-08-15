@@ -216,3 +216,21 @@ Corevia/
 - `pnpm db:migrate` - Run database migrations
 - `pnpm db:seed` - Seed the database
 - `pnpm db:studio` - Open database studio UI
+
+## Testing
+
+| Command | Scope |
+| --- | --- |
+| `pnpm --filter server check:test` | Server unit tests + API integration journeys (in-memory PGlite, real better-auth, real tRPC over HTTP) with coverage thresholds |
+| `pnpm --filter web check:test` | Web component/hook tests (jsdom) with coverage thresholds |
+| `pnpm --filter web e2e` | Seeds the deterministic e2e dataset then runs Playwright (back-office flows + accessibility) against a real server, database and browser |
+| `pnpm --filter web e2e:ui` | Same suite in the Playwright UI runner |
+| `pnpm --filter server db:seed:e2e` | Re-create only the e2e fixtures (`e2e-admin@`, `e2e-doctor@`, `e2e-patient@corevia.test`) |
+
+The integration journeys live in `apps/server/test/integration/` and run the whole stack
+(HTTP → tRPC → services → repositories → SQL); only S3 and the external medication API are faked.
+`pnpm --filter web e2e` needs Postgres and MinIO reachable (see `docker-compose.yml`) and starts the
+API in development mode so session cookies work over plain http.
+
+Every suite writes a JUnit report (`apps/*/reports/*.xml`) that CI publishes as a check with the
+failing test names, next to the coverage summary comment and the Playwright HTML report artifact.
