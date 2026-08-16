@@ -1,6 +1,6 @@
-import { expect, test as setup } from '@playwright/test';
+import { expect } from '@playwright/test';
 
-import { ADMIN_STATE, E2E_ADMIN, E2E_PASSWORD, signIn } from './fixtures';
+import { ADMIN_STATE, E2E_ADMIN, E2E_PASSWORD, test as setup, signIn } from './fixtures';
 
 /**
  * Signs the seeded administrator in once and stores the browser state so the back-office specs

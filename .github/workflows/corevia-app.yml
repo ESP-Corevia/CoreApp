@@ -4,9 +4,27 @@ on:
   pull_request:
     paths:
       - "apps/corevia-app/**"
+      # The tRPC routers and services define the API contract the app consumes.
+      - "apps/server/src/routers/**"
+      - "apps/server/src/db/services/**"
+      - "apps/server/scripts/e2eSeed.ts"
+      # Shared configuration.
+      - "turbo.json"
+      - "tsconfig.base.json"
+      - "biome.json"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
+      - ".github/workflows/corevia-app.yml"
+      - ".github/actions/**"
+  # Anything reaching master (direct push or merge queue) is validated too.
+  push:
+    branches: [master]
+  merge_group:
 
 permissions:
   contents: read
+  checks: write
   pull-requests: write
   deployments: write
   statuses: write
@@ -21,7 +39,7 @@ concurrency:
 
 jobs:
   lint:
-    if: "!contains(github.event.pull_request.labels.*.name, 'autorelease: pending')"
+    # No label guard here: release pull requests must run the tests like any other change.
     name: 🧼 Lint Code
     runs-on: ubuntu-latest
     steps:
@@ -83,3 +101,104 @@ jobs:
           team: ${{ secrets.TURBO_TEAM }}
       - name: 🏗️ Build Corevia App
         run: pnpm turbo run corevia-app#build --cache="${{env.TURBO_CACHE}}"
+
+  e2e:
+    name: 🚦 E2E Tests (patient & doctor)
+    runs-on: ubuntu-latest
+    needs: [build]
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: app_e2e
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d app_e2e"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=20
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/app_e2e
+      # Development mode keeps better-auth cookies non-secure so they survive plain http.
+      NODE_ENV: development
+      PORT: "3000"
+      BASE_URL: http://localhost:3000
+      BETTER_AUTH_URL: http://localhost:3000
+      BETTER_AUTH_SECRET: e2e_better_auth_secret
+      SESSION_SECRET: e2e_session_secret
+      CORS_ORIGIN: http://localhost:5173
+      NVIDIA_API_KEY: e2e_placeholder_key
+      LOG_LEVEL: warn
+      S3_ENDPOINT: http://localhost:9000
+      S3_ACCESS_KEY: minioadmin
+      S3_SECRET_KEY: minioadmin
+      S3_BUCKET_NAME: corevia
+      S3_REGION: us-east-1
+      S3_FORCE_PATH_STYLE: "true"
+      # Empty on purpose: the app calls /trpc and /api/auth relatively and Vite proxies them.
+      VITE_SERVER_URL: ""
+      E2E_API_URL: http://localhost:3000
+      E2E_APP_URL: http://localhost:5174
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+      - uses: ./.github/actions/setup-pnpm
+
+      # MinIO cannot be a service container: the official image needs the `server /data`
+      # command, and service containers cannot override a command. The API refuses to boot
+      # without reachable object storage, hence this step runs before the migrations.
+      - name: 🪣 Start MinIO
+        run: |
+          docker run -d --name minio \
+            -p 9000:9000 \
+            -e MINIO_ROOT_USER=minioadmin \
+            -e MINIO_ROOT_PASSWORD=minioadmin \
+            minio/minio:latest server /data
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:9000/minio/health/live > /dev/null; then
+              echo "MinIO is live"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "MinIO did not become live in time" >&2
+          docker logs minio || true
+          exit 1
+
+      - name: 🐘 Apply migrations
+        run: pnpm turbo run server#db:migrate
+
+      - name: 🌱 Seed the e2e dataset
+        run: pnpm --filter server db:seed:e2e
+
+      - name: 🎭 Install Playwright browsers
+        run: pnpm --filter corevia-app exec playwright install --with-deps chromium
+
+      - name: 🚦 Run Playwright (patient & doctor journeys)
+        run: pnpm --filter corevia-app exec playwright test
+
+      - name: 🧾 Publish E2E Report
+        if: always()
+        uses: mikepenz/action-junit-report@v5
+        with:
+          report_paths: apps/corevia-app/reports/e2e-junit.xml
+          check_name: "Corevia App E2E Tests"
+          detailed_summary: true
+          include_passed: false
+          fail_on_failure: true
+          require_tests: true
+
+      - name: 📎 Upload E2E Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: corevia-app-e2e-report
+          path: |
+            apps/corevia-app/reports/e2e-junit.xml
+            apps/corevia-app/playwright-report
+            apps/corevia-app/test-results
+          retention-days: 14

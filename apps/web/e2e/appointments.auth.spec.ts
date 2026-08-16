@@ -1,7 +1,7 @@
 import type { APIRequestContext, Locator, Page } from '@playwright/test';
-import { expect, test } from '@playwright/test';
+import { expect } from '@playwright/test';
 
-import { E2E_DOCTOR, E2E_PATIENT } from './fixtures';
+import { E2E_DOCTOR, E2E_PATIENT, test } from './fixtures';
 
 const API_URL = process.env.E2E_API_URL ?? 'http://localhost:3000';
 
@@ -83,37 +83,59 @@ test.describe('back-office appointment management', () => {
     return dialog;
   }
 
-  async function deleteRow(page: Page, row: Locator): Promise<void> {
+  /**
+   * Runs one action of the row menu and confirms it.
+   *
+   * The menu must be closed before the dialog is touched: while it is still open its overlay sits
+   * above the dialog and the confirmation button never becomes clickable.
+   */
+  async function runRowAction(page: Page, row: Locator, action: string): Promise<void> {
     await row.getByRole('button', { name: 'Open appointment menu' }).click();
-    await page.getByRole('menuitem', { name: 'Delete' }).click();
-    await page.getByRole('alertdialog').getByRole('button', { name: 'Delete' }).click();
+    await page.getByRole('menuitem', { name: action }).click();
+    await expect(page.getByRole('menu')).toBeHidden();
+
+    const dialog = page.getByRole('alertdialog');
+    await expect(dialog).toBeVisible();
+    await dialog.getByRole('button', { name: action }).click();
+    await expect(dialog).toBeHidden({ timeout: 30_000 });
+  }
+
+  async function deleteRow(page: Page, row: Locator): Promise<void> {
+    await runRowAction(page, row, 'Delete');
     await expect(row).toBeHidden({ timeout: 30_000 });
   }
 
   test('finds the seeded appointment with its patient, doctor and status', async ({ page }) => {
-    const row = await openSeededList(page);
+    // The seed creates several appointments for that patient (one upcoming, one today for the
+    // mobile app), so the row is identified by its time slot as well.
+    const row = (await openSeededList(page)).filter({ hasText: '09:00' });
 
     await expect(row).toBeVisible({ timeout: 30_000 });
     await expect(row).toContainText(E2E_DOCTOR.name);
-    await expect(row).toContainText('09:00');
     await expect(row.getByText('Pending')).toBeVisible();
   });
 
   test('confirms then completes an appointment from the actions menu', async ({ page }) => {
-    const row = await openSeededList(page);
-    await expect(row).toBeVisible({ timeout: 30_000 });
+    // The test books its own appointment instead of consuming the seeded one: a status change is
+    // destructive, so reusing the fixture would make any retry (CI runs with retries: 2) fail on a
+    // state it did not create.
+    const { doctorId, patientId } = await seededIds(page.request);
+    const date = futureDate(14);
 
-    await row.getByRole('button', { name: 'Open appointment menu' }).click();
-    await page.getByRole('menuitem', { name: 'Confirm' }).click();
-    await page.getByRole('alertdialog').getByRole('button', { name: 'Confirm' }).click();
+    const rows = await openSeededList(page);
+    const dialog = await createAppointment(page, { doctorId, patientId, date, time: '15:00' });
+    await expect(dialog).toBeHidden({ timeout: 30_000 });
 
+    const row = rows.filter({ hasText: '15:00' });
+    await expect(row.getByText('Pending')).toBeVisible({ timeout: 30_000 });
+
+    await runRowAction(page, row, 'Confirm');
     await expect(row.getByText('Confirmed')).toBeVisible({ timeout: 30_000 });
 
-    await row.getByRole('button', { name: 'Open appointment menu' }).click();
-    await page.getByRole('menuitem', { name: 'Complete' }).click();
-    await page.getByRole('alertdialog').getByRole('button', { name: 'Complete' }).click();
-
+    await runRowAction(page, row, 'Complete');
     await expect(row.getByText('Completed')).toBeVisible({ timeout: 30_000 });
+
+    await deleteRow(page, row);
   });
 
   test('rejects an appointment form filled with an invalid doctor id', async ({ page }) => {

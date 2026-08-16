@@ -1,5 +1,40 @@
 import type { Page } from '@playwright/test';
-import { expect } from '@playwright/test';
+import { test as base, expect } from '@playwright/test';
+
+/**
+ * CSS animations make elements move while Playwright waits for them to be "stable", which times
+ * out clicks on Radix dialogs and dropdowns on slow machines (observed on the CI runner, never
+ * locally). Every spec therefore imports this `test` instead of the one from `@playwright/test`.
+ */
+const DISABLE_ANIMATIONS_CSS = `*, *::before, *::after {
+  animation-duration: 0s !important;
+  animation-delay: 0s !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0s !important;
+  transition-delay: 0s !important;
+  scroll-behavior: auto !important;
+}`;
+
+export const test = base.extend({
+  page: async ({ page }, use) => {
+    await page.addInitScript(css => {
+      const inject = () => {
+        const style = document.createElement('style');
+        style.setAttribute('data-e2e', 'disable-animations');
+        style.textContent = css;
+        document.head.append(style);
+      };
+
+      if (document.head) {
+        inject();
+      } else {
+        document.addEventListener('DOMContentLoaded', inject, { once: true });
+      }
+    }, DISABLE_ANIMATIONS_CSS);
+
+    await use(page);
+  },
+});
 
 /**
  * Accounts created by `pnpm --filter server db:seed:e2e` (see `apps/server/scripts/e2eSeed.ts`).

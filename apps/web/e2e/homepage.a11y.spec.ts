@@ -1,5 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test } from '@playwright/test';
+import { expect } from '@playwright/test';
+
+import { test } from './fixtures';
 
 /**
  * Accessibility gate for the entry screen. An anonymous visitor is always routed to the login form,

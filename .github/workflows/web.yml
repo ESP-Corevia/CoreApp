@@ -2,12 +2,31 @@ name: 🎨 Frontend CI (Web)
 
 on:
   pull_request:
-    # types: [ready_for_review, review_requested, opened, reopened, synchronize]
     paths:
       - "apps/web/**"
+      # The tRPC routers and services define the API contract the web app consumes: a change
+      # there can break the web build or its e2e flows without touching apps/web.
+      - "apps/server/src/routers/**"
+      - "apps/server/src/db/services/**"
+      - "apps/server/scripts/e2eSeed.ts"
+      # Shared configuration.
+      - "turbo.json"
+      - "vitest.config.ts"
+      - "tsconfig.base.json"
+      - "biome.json"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
+      - ".github/workflows/web.yml"
+      - ".github/actions/**"
+  # Anything reaching master (direct push or merge queue) is validated too.
+  push:
+    branches: [master]
+  merge_group:
 
 permissions:
   contents: read
+  checks: write
   pull-requests: write
   deployments: write
   statuses: write
@@ -22,7 +41,7 @@ concurrency:
 
 jobs:
   lint:
-    if: "!contains(github.event.pull_request.labels.*.name, 'autorelease: pending')"
+    # No label guard here: release pull requests must run the tests like any other change.
     name: 🧼 Lint Code
     runs-on: ubuntu-latest
     steps:
@@ -171,7 +190,8 @@ jobs:
           retention-days: 14
 
       - name: 📈 Report Coverage
-        if: always()
+        # The action comments on the pull request, so it only applies to PR runs.
+        if: always() && github.event_name == 'pull_request'
         uses: davelosert/vitest-coverage-report-action@v2
         with:
           name: "Web Coverage Report"

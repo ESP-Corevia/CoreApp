@@ -1,6 +1,6 @@
-import { expect, test } from '@playwright/test';
+import { expect } from '@playwright/test';
 
-import { E2E_ADMIN, E2E_PASSWORD, E2E_PATIENT, signIn } from './fixtures';
+import { E2E_ADMIN, E2E_PASSWORD, E2E_PATIENT, signIn, test } from './fixtures';
 
 /**
  * Guest journey: the login form and the guard protecting the back-office.
