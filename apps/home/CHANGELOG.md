@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.3.0 (2026-08-20)
+
+## What's Changed
+* feat: add e2e tests by @Yasser5711 in https://github.com/ESP-Corevia/CoreApp/pull/137
+
+
+**Full Changelog**: https://github.com/ESP-Corevia/CoreApp/compare/home-v1.2.0...home-v1.3.0
+
 ## 1.2.0 (2026-06-05)
 
 ## What's Changed
