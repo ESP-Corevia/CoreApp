@@ -43,6 +43,11 @@ export const auth = betterAuth({
     'http://localhost:3000',
     'http://127.0.0.1:3000',
     'http://10.0.2.2:3000',
+    // corevia-app dev server. It proxies /api/auth to this API, which rewrites the Host header
+    // while keeping the app Origin, so the origin must be trusted explicitly — over http too,
+    // otherwise the app only works when local TLS certificates are present.
+    'http://localhost:5174',
+    'http://127.0.0.1:5174',
     'https://localhost:5174',
     '*.corevia.local:5174',
     '*.corevia.world',

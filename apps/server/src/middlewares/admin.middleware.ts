@@ -8,10 +8,12 @@ export const isAdmin = isAuthed.unstable_pipe(async ({ ctx, next }) => {
     session: { userId },
     auth,
   } = ctx;
+  // Only `userId` is passed on purpose: better-auth resolves the stored role for that user.
+  // Passing `role: 'admin'` would make it evaluate the permissions of the admin role itself
+  // instead of the caller's, and the check would succeed for every authenticated user.
   const isAdmin = await auth.api.userHasPermission({
     body: {
       userId,
-      role: 'admin',
       permissions: ALL_PERMISSIONS,
     },
   });

@@ -1,25 +1,12 @@
-import { afterAll, afterEach, beforeAll, vi } from 'vitest';
+import { afterEach, vi } from 'vitest';
 
-// import { setLogger } from '../src/lib/logger';
-
-// import type { FastifyBaseLogger } from 'fastify';
-
-// export const mockLogger = mockDeep<FastifyBaseLogger>();
-beforeAll(() => {
-  //   setLogger(mockLogger);
-  vi.mock('../src/env', () => ({
-    env: {
-      NODE_ENV: 'test',
-      SESSION_SECRET: 'test_session_secret',
-      BASE_URL: 'http://localhost:3000',
-    },
-  }));
-});
-
+/**
+ * Environment variables come from `test.env` in `vitest.config.ts` so every suite — unit and
+ * integration — runs against the real `src/env` module with deterministic values. Stubbing the
+ * env module here used to leave most variables `undefined`, which silently disabled parts of the
+ * configuration under test (CORS origins, auth secret, S3 settings).
+ */
 afterEach(() => {
-  //   mockReset(mockLogger);
-  // resetRateLimit();
   vi.clearAllMocks();
   vi.restoreAllMocks();
 });
-afterAll(() => {});

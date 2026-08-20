@@ -11,7 +11,10 @@
     "format": "biome check --write . && echo 🧰✨ Codebase formatted",
     "i18n:status": "i18next-cli status",
     "i18n:extract": "i18next-cli extract && echo 🌍✅ i18n extraction passed! || (echo ❌ i18n extraction failed 💥 && exit 1)",
-    "check:i18n": "i18next-cli extract --ci && echo 🌍✅ i18n check passed! || (echo ❌ i18n check failed 💥 && exit 1)"
+    "check:i18n": "i18next-cli extract --ci && echo 🌍✅ i18n check passed! || (echo ❌ i18n check failed 💥 && exit 1)",
+    "e2e": "pnpm --filter server db:seed:e2e && playwright test && echo 🚦✅ E2E passed! || (echo ❌ E2E failed 💥 && exit 1)",
+    "e2e:ui": "playwright test --ui",
+    "e2e:headed": "playwright test --headed"
   },
   "dependencies": {
     "@ai-sdk/react": "^3.0.148",
@@ -58,6 +61,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@playwright/test": "1.57.0",
     "@react-router/dev": "catalog:",
     "@tailwindcss/vite": "4.1.17",
     "@tanstack/react-query-devtools": "catalog:",
@@ -65,10 +69,10 @@
     "@types/react": "~19.1.10",
     "@types/react-dom": "19.0.4",
     "@vitejs/plugin-react": "5.0.4",
+    "i18next-cli": "1.10.3",
     "tailwindcss": "4.1.8",
     "typescript": "catalog:",
     "vite": "catalog:",
-    "i18next-cli": "1.10.3",
     "vite-plugin-devtools-json": "1.0.0"
   },
   "packageManager": "pnpm@10.12.1"

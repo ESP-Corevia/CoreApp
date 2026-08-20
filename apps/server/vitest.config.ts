@@ -17,6 +17,23 @@ const merged = mergeConfig(baseConfig, {
     environment: 'node',
     hookTimeout: 30_000,
     setupFiles: ['./test/setup.ts'],
+    env: {
+      NODE_ENV: 'test',
+      SESSION_SECRET: 'test_session_secret',
+      BETTER_AUTH_SECRET: 'test_better_auth_secret',
+      BETTER_AUTH_URL: 'http://localhost:3000',
+      BASE_URL: 'http://localhost:3000',
+      CORS_ORIGIN: 'http://localhost:5173',
+      NVIDIA_API_KEY: 'test_nvidia_key',
+      LOG_LEVEL: 'error',
+    },
+    reporters: process.env.CI
+      ? [
+          'default',
+          'github-actions',
+          ['junit', { outputFile: './reports/junit.xml', addFileAttribute: true }],
+        ]
+      : ['default'],
     coverage: {
       enabled: true,
       provider: 'istanbul',
@@ -29,16 +46,13 @@ const merged = mergeConfig(baseConfig, {
         lines: 95,
         statements: 95,
       },
-      include: ['src/**/*.ts', 'test/**/*.ts'],
+      include: ['src/**/*.ts'],
       exclude: [
-        'src/utils/auth.ts',
         'src/env.ts',
         '**/index.ts',
-        'test/test.ts',
         'src/db/migrations/**',
         'src/db/schema/**',
         'src/utils/functions.ts',
-        'src/lib/auth.ts',
         'src/lib/banner.ts',
       ],
     },

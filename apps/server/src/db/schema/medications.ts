@@ -1,5 +1,5 @@
 import { relations } from 'drizzle-orm';
-import { foreignKey, index, pgEnum, pgTable, unique } from 'drizzle-orm/pg-core';
+import { index, pgEnum, pgTable, unique } from 'drizzle-orm/pg-core';
 
 import { users } from './auth';
 
@@ -120,13 +120,11 @@ export const patientMedicationIntakes = pgTable(
       table.scheduledDate,
     ),
     index('patient_medication_intakes_status_idx').on(table.scheduledDate, table.status),
-    foreignKey({
-      columns: [table.patientMedicationId, table.scheduleId],
-      foreignColumns: [
-        patientMedicationSchedules.patientMedicationId,
-        patientMedicationSchedules.id,
-      ],
-    }).onDelete('set null'),
+    // Only single-column foreign keys here on purpose. A composite key on
+    // (patient_medication_id, schedule_id) with ON DELETE SET NULL made every schedule
+    // deletion fail: Postgres nulls *all* columns of the key, and patient_medication_id is
+    // NOT NULL. Intake history must survive a schedule deletion, so `schedule_id` alone is
+    // nulled through its own foreign key.
     unique('patient_medication_intakes_med_sched_date_uniq').on(
       table.patientMedicationId,
       table.scheduleId,
