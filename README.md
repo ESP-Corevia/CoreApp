@@ -237,6 +237,7 @@ failing test names, next to the coverage summary comment and the Playwright HTML
 
 ## Quality and standards
 
+- [ESP902 evidence sheet](docs/ESP902_EVIDENCE.md)
 - [Architecture](docs/ARCHITECTURE.md)
 - [Environment reference](docs/ENVIRONMENT.md)
 - [API reference](docs/API.md)
