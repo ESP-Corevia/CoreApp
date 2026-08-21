@@ -234,3 +234,9 @@ API in development mode so session cookies work over plain http.
 
 Every suite writes a JUnit report (`apps/*/reports/*.xml`) that CI publishes as a check with the
 failing test names, next to the coverage summary comment and the Playwright HTML report artifact.
+
+## Quality and standards
+
+- [Quality Acceptance Process](QUALITY_ACCEPTANCE_PROCESS.md)
+- [Engineering Standards](ENGINEERING_STANDARDS.md)
+- [Contributing Guide](CONTRIBUTING.md)
