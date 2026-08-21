@@ -2,8 +2,8 @@
 
 Before opening a pull request, read:
 
-- [Engineering Standards](ENGINEERING_STANDARDS.md)
-- [Quality Acceptance Process](QUALITY_ACCEPTANCE_PROCESS.md)
+- [Engineering Standard](docs/quality/ENGINEERING_STANDARD.md)
+- [Quality Acceptance Process](docs/quality/QUALITY_ACCEPTANCE_PROCESS.md)
 
 Use Conventional Commits, keep changes focused, and include tests for changed behaviour. At a
 minimum, run:

@@ -237,6 +237,6 @@ failing test names, next to the coverage summary comment and the Playwright HTML
 
 ## Quality and standards
 
-- [Quality Acceptance Process](QUALITY_ACCEPTANCE_PROCESS.md)
-- [Engineering Standards](ENGINEERING_STANDARDS.md)
+- [Quality Acceptance Process](docs/quality/QUALITY_ACCEPTANCE_PROCESS.md)
+- [Engineering Standard](docs/quality/ENGINEERING_STANDARD.md)
 - [Contributing Guide](CONTRIBUTING.md)
