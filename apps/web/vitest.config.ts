@@ -16,6 +16,12 @@ export default mergeConfig(
     test: {
       globals: true,
       environment: 'jsdom',
+      // Fork workers can remain blocked on Windows with the supported Node runtimes.
+      // Threads keep the test process deterministic in local and CI execution.
+      pool: 'threads',
+      // React/JSDOM suites are resource-intensive; two workers avoid host contention
+      // that otherwise causes valid interactions to exceed Vitest's default timeout.
+      maxWorkers: 2,
       setupFiles: ['./src/test/setup.ts'],
       exclude: ['node_modules', 'dist', 'build', 'e2e/**', 'playwright/**', 'coverage/**'],
       reporters: process.env.CI

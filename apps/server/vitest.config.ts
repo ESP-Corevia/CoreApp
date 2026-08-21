@@ -16,6 +16,10 @@ const merged = mergeConfig(baseConfig, {
   test: {
     environment: 'node',
     hookTimeout: 30_000,
+    // Integration suites share the test database and reload auth/application state.
+    // Running files concurrently causes cross-suite contention and false timeouts.
+    fileParallelism: false,
+    maxWorkers: 1,
     setupFiles: ['./test/setup.ts'],
     env: {
       NODE_ENV: 'test',

@@ -23,7 +23,12 @@ export function render(ui: React.ReactElement, opts: Options = {}): RenderResult
   const {
     router,
     lang = 'en',
-    queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } }),
+    queryClient = new QueryClient({
+      defaultOptions: {
+        queries: { retry: false, gcTime: 0 },
+        mutations: { gcTime: 0 },
+      },
+    }),
     trpcHandlers = {},
     ...rtlOpts
   } = opts;
