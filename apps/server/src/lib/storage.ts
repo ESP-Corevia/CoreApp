@@ -26,6 +26,13 @@ export const s3Client = new S3Client({
   responseChecksumValidation: 'WHEN_REQUIRED',
 });
 
+/**
+ * Creates the object-storage operations used by the API.
+ *
+ * The optional client parameter keeps the production S3 client injectable, which
+ * lets tests exercise bucket and presigned-URL behavior without changing runtime
+ * configuration or contacting an external storage service.
+ */
 export const createStorageService = (client: S3Client = s3Client) => ({
   /**
    * Ensures the configured bucket exists, creating it if necessary.

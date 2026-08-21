@@ -1,6 +1,12 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: pass */
 import pkg from '../../package.json';
 /* c8 ignore file */
+
+/**
+ * Combines the generated tRPC and Better Auth OpenAPI documents into the single
+ * contract exposed by `/openapi.json`, preserving component definitions while
+ * avoiding operation ID collisions between the two sources.
+ */
 export function mergeOpenApiDocs(a: any, b: any) {
   const servers = [
     { url: '/api' }, // tRPC
