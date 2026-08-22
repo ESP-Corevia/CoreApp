@@ -6,7 +6,7 @@
     "check:all": "turbo check:all",
     "dev": "turbo dev",
     "build": "turbo build",
-    "check-types": "turbo check-types",
+    "check-types": "turbo run check:types",
     "dev:home": "turbo -F home dev",
     "dev:web": "turbo -F web dev",
     "dev:server": "turbo -F server dev",
@@ -32,6 +32,12 @@
     "vitest": "^4.1.4"
   },
   "pnpm": {
+    "onlyBuiltDependencies": [
+      "@swc/core",
+      "@tailwindcss/oxide",
+      "esbuild",
+      "msw"
+    ],
     "overrides": {
       "h3": ">=1.15.6",
       "glob": ">=11.1.0",

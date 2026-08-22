@@ -141,6 +141,12 @@ export function createMedicationsProvider() {
     }
   }
 
+  /**
+   * Adapts the external medication API to the internal search model.
+   *
+   * Search results are normalized, paginated in memory and cached by query; detail
+   * lookups accept CIS, CIP or external IDs and use the same timeout/cache policy.
+   */
   return {
     /**
      * Search medications by name.

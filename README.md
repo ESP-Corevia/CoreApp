@@ -234,3 +234,18 @@ API in development mode so session cookies work over plain http.
 
 Every suite writes a JUnit report (`apps/*/reports/*.xml`) that CI publishes as a check with the
 failing test names, next to the coverage summary comment and the Playwright HTML report artifact.
+
+## Quality and standards
+
+- [ESP902 evidence sheet](docs/ESP902_EVIDENCE.md)
+- [Architecture](docs/ARCHITECTURE.md)
+- [Environment reference](docs/ENVIRONMENT.md)
+- [API reference](docs/API.md)
+- [Testing guide](docs/TESTING.md)
+- [Quality Acceptance Process](docs/quality/QUALITY_ACCEPTANCE_PROCESS.md)
+- [Engineering Standard](docs/quality/ENGINEERING_STANDARD.md)
+- [Contributing Guide](CONTRIBUTING.md)
+
+The interactive API reference is generated from the registered tRPC and Better
+Auth schemas at runtime and is available at `/reference`; the source OpenAPI
+document is available at `/openapi.json`.

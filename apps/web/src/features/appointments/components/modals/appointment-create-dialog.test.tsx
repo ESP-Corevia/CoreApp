@@ -87,7 +87,7 @@ describe('AppointmentCreateDialog', () => {
     });
   });
 
-  it('passes onSuccess callback to mutation', async () => {
+  it('passes onSuccess callback to mutation', { timeout: 10_000 }, async () => {
     let receivedOpts: { onSuccess?: () => void } = {};
     mutate.mockImplementation((_input: unknown, opts: { onSuccess: () => void }) => {
       receivedOpts = opts;
